@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 该配置主要是打印 logback 的配置信息 -->
+	<!-- <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" /> -->
+
+	<!-- 控制台 -->
+	<appender name="console-appender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d [%t] %-5p - %m[%c:%L]%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 文件 -->
+	<appender name="rolling-file-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/current.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/history%d{yyyyMMddHH}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d [%t] %-5p - %m[%c:%L]%n</pattern>
+			<!-- <pattern>%m%n</pattern> -->
+		</encoder>
+	</appender>
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="console-appender" />
+		<appender-ref ref="rolling-file-appender" />
+	</root>
+
+</configuration> 

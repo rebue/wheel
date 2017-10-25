@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>wheel-core</artifactId>
+	<parent>
+		<groupId>com.zboss.wheel</groupId>
+		<artifactId>wheel-parent</artifactId>
+		<version>1.0.3-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<wheel.groupId>com.zboss.wheel</wheel.groupId>
+		<wheel-test.version>1.0.3-SNAPSHOT</wheel-test.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>${wheel.groupId}</groupId>
+			<artifactId>wheel-test</artifactId>
+			<version>${wheel-test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<!-- 使用字符串的一些帮助库 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<!-- 生成动态代理的类库 -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+	</dependencies>
+</project>

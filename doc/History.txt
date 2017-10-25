@@ -1,0 +1,9 @@
+1.0.1-SNAPSHOT
+* BaseTest > AbstractSpringContextTest
++ FileModifier
+* FileUtils中的递归搜索方法移入到新增的FileSearcher类中
++ IdWorkerHelper类
+
+1.0.3-SNAPSHOT
+* 将wheel-core/wheel-test/wheel-turing/wheel-protostuff项目统一整合到wheel的子项目
+* IdWorker3和IdWorker3Helper类
