@@ -205,13 +205,13 @@
 		<snapshotRepository>
 			<id>my-snapshots</id>
 			<name>my-snapshots</name>
-			<url>http://${nexus.ip}/repository/my-snapshots/</url>
+			<url>${my-snapshots.url}</url>
 			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 		<repository>
 			<id>my-releases</id>
 			<name>my-releases</name>
-			<url>http://${nexus.ip}/repository/my-releases/</url>
+			<url>${my-releases.url}</url>
 		</repository>
 	</distributionManagement>
 </project>
