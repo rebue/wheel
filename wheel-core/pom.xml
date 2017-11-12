@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>wheel-core</artifactId>
 	<parent>
-		<groupId>com.zboss.wheel</groupId>
+		<groupId>rebue.wheel</groupId>
 		<artifactId>wheel-parent</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
 	<properties>
-		<wheel.groupId>com.zboss.wheel</wheel.groupId>
+		<wheel.groupId>rebue.wheel</wheel.groupId>
 		<wheel-test.version>1.0.3-SNAPSHOT</wheel-test.version>
 	</properties>
 

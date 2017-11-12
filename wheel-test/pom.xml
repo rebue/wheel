@@ -4,7 +4,7 @@
 	<artifactId>wheel-test</artifactId>
 
 	<parent>
-		<groupId>com.zboss.wheel</groupId>
+		<groupId>rebue.wheel</groupId>
 		<artifactId>wheel-parent</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<!-- spring用到了jcl，用slf4j的接口代替jcl -->
 		<dependency>

@@ -1,4 +1,4 @@
-package com.zboss.mincms.authc.po;
+package rebue.mincms.authc.po;
 // Generated 2016-9-24 22:26:07 by Hibernate Tools 5.2.0.Beta1
 
 import java.util.HashSet;

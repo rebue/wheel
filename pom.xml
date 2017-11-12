@@ -2,9 +2,15 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.zboss.wheel</groupId>
+
+	<parent>
+		<groupId>rebue.common-pom</groupId>
+		<artifactId>common-dependencies</artifactId>
+		<version>1.0.3-SNAPSHOT</version>
+	</parent>
+
+	<groupId>rebue.wheel</groupId>
 	<artifactId>wheel-parent</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -15,40 +21,11 @@
 	</modules>
 
 	<properties>
-		<wheel.groupId>com.zboss.wheel</wheel.groupId>
+		<wheel.groupId>rebue.wheel</wheel.groupId>
 		<wheel.version>1.0.3-SNAPSHOT</wheel.version>
-
-		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<logback.version>1.2.3</logback.version>
-		<spring.version>4.3.12.RELEASE</spring.version>
-		<commons-lang3.version>3.6</commons-lang3.version>
-		<javassist.version>3.22.0-GA</javassist.version>
-		<jcl-over-slf4j.version>1.7.21</jcl-over-slf4j.version>
-		<commons-configuration.version>2.2</commons-configuration.version>
-		<bouncycastle.version>1.58</bouncycastle.version>
-		<protostuff.version>1.6.0</protostuff.version>
-
-		<!-- JDK版本 -->
-		<java.version>1.8</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-
-		<!-- 使用UTF-8 -->
-		<encoding>UTF-8</encoding>
-		<!-- 设定整个项目的编码 -->
-		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
-		<!-- 编译时的编码 -->
-		<maven.compiler.encoding>${encoding}</maven.compiler.encoding>
-		<project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-		<argLine>-Dfile.encoding=${encoding}</argLine>
-
-		<!-- 项目编译使用UTF-8 -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencyManagement>
-
 		<dependencies>
 			<dependency>
 				<groupId>${wheel.groupId}</groupId>
@@ -56,162 +33,6 @@
 				<version>${wheel.version}</version>
 				<scope>test</scope>
 			</dependency>
-
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
-				<version>${jcl-over-slf4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>${spring.version}</version>
-				<scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${spring.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- 使用字符串的一些帮助库 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3.version}</version>
-			</dependency>
-			<!-- 生成动态代理的类库 -->
-			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>${javassist.version}</version>
-			</dependency>
-
-			<!-- 读取properties/xml等类型的配置文件 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-configuration2</artifactId>
-				<version>${commons-configuration.version}</version>
-			</dependency>
-
-			<!-- 加密算法库 -->
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcprov-jdk15on</artifactId>
-				<version>${bouncycastle.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcpkix-jdk15on</artifactId>
-				<version>${bouncycastle.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-core</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-runtime</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<!-- resource插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<!-- 指定编码格式，否则在DOS下运行mvn命令时当发生文件资源copy时将使用系统默认使用GBK编码 -->
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-
-			<!-- enforcer插件, 避免被依赖的依赖引入过期的jar包 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<!-- <version>1.2</version> -->
-				<dependencies>
-					<dependency>
-						<groupId>com.zboss.maven</groupId>
-						<artifactId>enforcer-rulex</artifactId>
-						<version>1.0.0-SNAPSHOT</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>enforce-banned-dependencies</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<bannedDependenciesEx
-									implementation="com.zboss.maven.enforcer.BannedDependenciesEx">
-									<!-- 是否搜索传递性依赖(间接依赖)，默认false -->
-									<searchTransitive>true</searchTransitive>
-									<excludes>
-										<!--groupId[:artifactId][:version][:type][:scope][:classifier] -->
-										<exclude>commons-logging:commons-logging</exclude>
-										<exclude>aspectj:aspectj*</exclude>
-										<exclude>org.springframework:2.*</exclude>
-										<exclude>org.springframework:3.*</exclude>
-										<exclude>spring-boot-starter-logging</exclude>
-										<exclude>hibernate-jpa-2.0-api</exclude>
-									</excludes>
-									<includes>
-										<!-- 如果是spring-cloud-starter-eureka-server带的jcl则不用报错 -->
-										<include>org.springframework.cloud:spring-cloud-starter-eureka-server->commons-logging:commons-logging</include>
-									</includes>
-								</bannedDependenciesEx>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-	<!-- 配置部署的远程仓库 -->
-	<distributionManagement>
-		<snapshotRepository>
-			<id>my-snapshots</id>
-			<name>my-snapshots</name>
-			<url>${my-snapshots.url}</url>
-			<uniqueVersion>true</uniqueVersion>
-		</snapshotRepository>
-		<repository>
-			<id>my-releases</id>
-			<name>my-releases</name>
-			<url>${my-releases.url}</url>
-		</repository>
-	</distributionManagement>
 </project>

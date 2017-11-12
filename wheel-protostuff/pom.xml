@@ -4,7 +4,7 @@
 	<artifactId>wheel-protostuff</artifactId>
 
 	<parent>
-		<groupId>com.zboss.wheel</groupId>
+		<groupId>rebue.wheel</groupId>
 		<artifactId>wheel-parent</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
