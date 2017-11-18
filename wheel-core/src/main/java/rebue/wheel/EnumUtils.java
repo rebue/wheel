@@ -9,16 +9,14 @@ package rebue.wheel;
  */
 public final class EnumUtils {
 
-//	enum<->int
+//	enum <---> int(code)
 //
-//
-//	enum -> int: int i = enumType.value.ordinal();
-//	int -> enum: enumType b= enumType.values()[i];
+//	enum ---> int: int i = enumType.value.ordinal();
+//	int  ---> enum: enumType b= enumType.values()[i];
 //	 
 //
-//	enum<->String
+//	enum <---> String(name)
 //
-//	enum -> String: enumType.name()
-//
-//	String -> enum: enumType.valueOf(name);
+//	enum   ---> String: enumType.name()
+//	String ---> enum: enumType.valueOf(name);
 }
