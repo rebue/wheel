@@ -9,8 +9,8 @@
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
-	<groupId>rebue.wheel</groupId>
-	<artifactId>wheel-parent</artifactId>
+	<groupId>${wheel.groupId}</groupId>
+	<artifactId>wheel-aggregator</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -20,19 +20,4 @@
 		<module>wheel-protostuff</module>
 	</modules>
 
-	<properties>
-		<wheel.groupId>rebue.wheel</wheel.groupId>
-		<wheel.version>1.0.3-SNAPSHOT</wheel.version>
-	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>${wheel.groupId}</groupId>
-				<artifactId>wheel-test</artifactId>
-				<version>${wheel.version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>

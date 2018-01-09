@@ -8,7 +8,7 @@ public class IdWorker3Helper {
 
     private static IdWorker3 idwork3 = new IdWorker3();
 
-    public static long nextId() {
+    public static long getId() {
         return idwork3.getId();
     }
 

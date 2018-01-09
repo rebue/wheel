@@ -31,4 +31,14 @@ public class RegexUtils {
         return Pattern.matches("[0-9a-zA-Z].{0,63}@[0-9a-zA-Z][0-9a-zA-Z\\.-]{0,252}", email);
     }
 
+    /**
+     * 验证身份证号码是否符合格式
+     * 
+     * @param idcard
+     *            身份证号码
+     */
+    public static boolean matchIdcard(String idcard) {
+        return Pattern.matches(
+                "[1-9]\\d{5}(19|20)\\d{2}((0[1-9])|(1[012]))((0[1-9])|([12]\\d)|(3[01]))\\d{3}[0-9Xx]", idcard);
+    }
 }

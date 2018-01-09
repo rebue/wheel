@@ -38,7 +38,7 @@ public class HashUtils {
     }
 
     /**
-     * getHexStrByAlgorithm By MD5 输出32个char长度的字符串
+     * getHashByMd5 By MD5 输出32个char长度的字符串
      *
      * @param data
      * @return String 输出32个char长度的字符串
@@ -53,12 +53,12 @@ public class HashUtils {
      * @param data
      * @return String 输出32个char长度的字符串
      */
-    public static String getHexStrByMd5x32(byte[] data) {
+    public static String getHashHexStrByMd5x32(byte[] data) {
         return getHexStrByAlgorithm(data, ALGORITHM_MD5);
     }
 
-    public static String getHexStrByMd5x32(String data) {
-        return getHexStrByMd5x32(data.getBytes());
+    public static String getHashHexStrByMd5x32(String data) {
+        return getHashHexStrByMd5x32(data.getBytes());
     }
 
     /**
@@ -68,7 +68,7 @@ public class HashUtils {
      * @return String 输出16个char长度的字符串
      */
     public static String getHexStrByMd5x16(byte[] data) {
-        return getHexStrByMd5x32(data).substring(8, 24);
+        return getHashHexStrByMd5x32(data).substring(8, 24);
     }
 
     public static String getHexStrByMd5x16(String data) {
@@ -90,7 +90,7 @@ public class HashUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println("111111 MD5 32:" + HashUtils.getHexStrByMd5x32("111111"));
+        System.out.println("111111 MD5 32:" + HashUtils.getHashHexStrByMd5x32("111111"));
         System.out.println("111111 MD5 16:" + HashUtils.getHexStrByMd5x16("111111"));
         System.out.println("111111 SHA1  :" + HashUtils.getHashBySha1("111111"));
     }

@@ -1,17 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>wheel-core</artifactId>
 	<parent>
-		<groupId>rebue.wheel</groupId>
-		<artifactId>wheel-parent</artifactId>
+		<groupId>rebue.common-pom</groupId>
+		<artifactId>common-dependencies</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
+		<relativePath />
 	</parent>
 
-	<properties>
-		<wheel.groupId>rebue.wheel</wheel.groupId>
-		<wheel-test.version>1.0.3-SNAPSHOT</wheel-test.version>
-	</properties>
+	<groupId>${wheel.groupId}</groupId>
+	<artifactId>wheel-core</artifactId>
+	<version>${wheel-core.version}</version>
 
 	<dependencies>
 		<dependency>
@@ -35,6 +34,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
 		<!-- 使用字符串的一些帮助库 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -50,6 +53,35 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>
+
+		<!-- 解析Json格式 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- 克隆对象 -->
+		<dependency>
+			<groupId>com.github.dozermapper</groupId>
+			<artifactId>dozer-core</artifactId>
+		</dependency>
+
+		<!-- 解析XML格式 -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 
 	</dependencies>
 </project>

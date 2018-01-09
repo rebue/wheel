@@ -15,7 +15,7 @@ public class DateUtils {
      * 
      * @return 到明天0时的毫秒数
      */
-    public static int msUtilTomorrow() {
+    public static int getMsUtilTomorrow() {
         // 计算明天零时
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -24,7 +24,7 @@ public class DateUtils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // 计算到明天零时的毫秒数(加入黑名单的时间)
+        // 计算到明天零时的毫秒数
         return (int) (calendar.getTimeInMillis() - System.currentTimeMillis());
     }
 
@@ -33,8 +33,8 @@ public class DateUtils {
      * 
      * @return 到明天0时的秒数
      */
-    public static int secondUtilTomorrow() {
-        return msUtilTomorrow() / 1000;
+    public static int getSecondUtilTomorrow() {
+        return getMsUtilTomorrow() / 1000;
     }
 
 }
