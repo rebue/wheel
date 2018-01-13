@@ -23,4 +23,5 @@ public class MapUtils {
 
         return new BeanMap(obj);
     }
+
 }
