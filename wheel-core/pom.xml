@@ -2,15 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>rebue.common-pom</groupId>
-		<artifactId>common-dependencies</artifactId>
+		<groupId>rebue.wheel</groupId>
+		<artifactId>wheel</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
-		<relativePath />
 	</parent>
 
-	<groupId>${wheel.groupId}</groupId>
 	<artifactId>wheel-core</artifactId>
-	<version>${wheel-core.version}</version>
 
 	<dependencies>
 		<dependency>

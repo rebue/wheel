@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>${wheel.groupId}</groupId>
-	<artifactId>wheel-aggregator</artifactId>
+	<artifactId>wheel</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>

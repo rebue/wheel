@@ -39,7 +39,7 @@ public class OkhttpUtils {
         Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             String msg = response.body().string();
-            _log.info("接收到response的消息：{}", msg);
+            _log.info("接收到response的信息：{}", msg);
             return msg;
         } else {
             _log.error("服务器返回错误: " + response);
@@ -91,7 +91,7 @@ public class OkhttpUtils {
         Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             String msg = response.body().string();
-            _log.debug("接收到response的消息：{}", msg);
+            _log.debug("接收到response的信息：{}", msg);
             return msg;
         } else {
             _log.error("服务器返回错误: " + response);

@@ -3,15 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>rebue.common-pom</groupId>
-		<artifactId>common-dependencies</artifactId>
+		<groupId>rebue.wheel</groupId>
+		<artifactId>wheel</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
-		<relativePath />
 	</parent>
 
-	<groupId>${wheel.groupId}</groupId>
 	<artifactId>wheel-protostuff</artifactId>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>io.protostuff</groupId>
