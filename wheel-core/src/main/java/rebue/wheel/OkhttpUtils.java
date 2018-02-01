@@ -152,4 +152,31 @@ public class OkhttpUtils {
         }
     }
 
+    /**
+     * 发出PUT请求(将Map对象转为请求的FORM参数)
+     * 
+     * @param url
+     *            请求的地址
+     * @param requestParams
+     *            请求的参数(请求的地址)
+     * @return 响应的字符串
+     * @throws IOException
+     */
+    public static String putByFormParams(String url, Map<String, Object> requestParams) throws IOException {
+        _log.debug("发送请求：{}", url);
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        for (Map.Entry<String, Object> item : requestParams.entrySet()) {
+            formBodyBuilder.add(item.getKey(), item.getValue().toString());
+        }
+        Request request = new Request.Builder().url(url).put(formBodyBuilder.build()).build();
+        Response response = _client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            String msg = response.body().string();
+            _log.debug(msg);
+            return msg;
+        } else {
+            _log.error("服务器返回错误: " + response);
+            throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
+        }
+    }
 }
