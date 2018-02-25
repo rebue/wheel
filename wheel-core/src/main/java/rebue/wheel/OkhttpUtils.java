@@ -75,12 +75,35 @@ public class OkhttpUtils {
     }
 
     /**
+     * 发出POST请求
+     * 
+     * @param url
+     *            请求的地址
+     * @return 响应的字符串
+     * @throws IOException
+     */
+    public static String post(String url) throws IOException {
+        _log.debug("发送请求：{}", url);
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        Request request = new Request.Builder().url(url).post(formBodyBuilder.build()).build();
+        Response response = _client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            String msg = response.body().string();
+            _log.debug(msg);
+            return msg;
+        } else {
+            _log.error("服务器返回错误: " + response);
+            throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
+        }
+    }
+
+    /**
      * 发出POST请求(参数为json形式的字符串)
      * 
      * @param url
      *            请求的地址
      * @param jsonParams
-     *            请求的参数(请求的地址)
+     *            请求的参数
      * @return 响应的字符串
      * @throws IOException
      */
@@ -105,7 +128,7 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      * @param requestParams
-     *            请求的参数(请求的地址)
+     *            请求的参数
      * @return 响应的字符串
      * @throws IOException
      */
@@ -133,7 +156,7 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      * @param requestParams
-     *            请求的参数(请求的地址)
+     *            请求的参数
      * @return 响应的字符串
      * @throws DocumentException
      */
@@ -153,12 +176,35 @@ public class OkhttpUtils {
     }
 
     /**
+     * 发出PUT请求
+     * 
+     * @param url
+     *            请求的地址
+     * @return 响应的字符串
+     * @throws IOException
+     */
+    public static String put(String url) throws IOException {
+        _log.debug("发送请求：{}", url);
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        Request request = new Request.Builder().url(url).put(formBodyBuilder.build()).build();
+        Response response = _client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            String msg = response.body().string();
+            _log.debug(msg);
+            return msg;
+        } else {
+            _log.error("服务器返回错误: " + response);
+            throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
+        }
+    }
+
+    /**
      * 发出PUT请求(将Map对象转为请求的FORM参数)
      * 
      * @param url
      *            请求的地址
      * @param requestParams
-     *            请求的参数(请求的地址)
+     *            请求的参数
      * @return 响应的字符串
      * @throws IOException
      */
