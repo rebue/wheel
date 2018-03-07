@@ -4,16 +4,21 @@
 	<parent>
 		<groupId>rebue.wheel</groupId>
 		<artifactId>wheel</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.5</version>
 	</parent>
 
 	<artifactId>wheel-core</artifactId>
+
+	<properties>
+		<wheel.groupId>rebue.wheel</wheel.groupId>
+		<wheel.version>1.0.5</wheel.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>${wheel.groupId}</groupId>
 			<artifactId>wheel-test</artifactId>
-			<version>${wheel-test.version}</version>
+			<version>${wheel.version}</version>
 			<scope>test</scope>
 		</dependency>
 

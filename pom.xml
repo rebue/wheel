@@ -6,10 +6,10 @@
 	<parent>
 		<groupId>rebue.common-pom</groupId>
 		<artifactId>common-dependencies</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.5</version>
 	</parent>
 
-	<groupId>${wheel.groupId}</groupId>
+	<groupId>rebue.wheel</groupId>
 	<artifactId>wheel</artifactId>
 	<packaging>pom</packaging>
 
