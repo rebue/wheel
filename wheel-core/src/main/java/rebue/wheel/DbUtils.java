@@ -68,9 +68,33 @@ public class DbUtils {
                 keys += item.getKey() + ",";
             }
         }
+        // 去掉最后一个逗号
         keys = StringUtils.left(keys, keys.length() - 1);
         values = StringUtils.left(values, values.length() - 1);
+        // 拼接SQL语句
         return "insert into " + tableName + " (" + keys + ")values(" + values + ")";
+    }
+
+    public static String getUpdateSql(String tableName, Map<String, Object> fields) {
+        String sSet = "";
+        for (Entry<String, Object> item : fields.entrySet()) {
+            String key = item.getKey();
+            String value = "";
+            if (item.getValue() == null) {
+                value = "null";
+            } else {
+                if (item.getValue() instanceof String) {
+                    value += "'" + item.getValue() + "'";
+                } else {
+                    value += item.getValue();
+                }
+            }
+            sSet += key + "=" + value + ",";
+        }
+        // 去掉最后一个逗号
+        sSet = StringUtils.left(sSet, sSet.length() - 1);
+        // 拼接SQL语句
+        return "update " + tableName + " set " + sSet;
     }
 
 }
