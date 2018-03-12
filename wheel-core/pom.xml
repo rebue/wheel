@@ -9,16 +9,11 @@
 
 	<artifactId>wheel-core</artifactId>
 
-	<properties>
-		<wheel.groupId>rebue.wheel</wheel.groupId>
-		<wheel.version>1.0.5</wheel.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
-			<groupId>${wheel.groupId}</groupId>
+			<groupId>rebue.wheel</groupId>
 			<artifactId>wheel-test</artifactId>
-			<version>${wheel.version}</version>
+			<version>1.0.5</version>
 			<scope>test</scope>
 		</dependency>
 
