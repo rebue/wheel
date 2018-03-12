@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author 张柏子
- * @creation 2013-5-4
  */
 public final class StrUtils {
 

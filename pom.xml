@@ -4,14 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>rebue.common-pom</groupId>
+		<groupId>com.github.rebue.common-pom</groupId>
 		<artifactId>common-dependencies</artifactId>
 		<version>1.0.5</version>
 	</parent>
 
-	<groupId>rebue.wheel</groupId>
+	<groupId>com.github.rebue.wheel</groupId>
 	<artifactId>wheel</artifactId>
 	<packaging>pom</packaging>
+	<description>基础函数和工具库</description>
 
 	<modules>
 		<module>wheel-test</module>

@@ -12,7 +12,7 @@ import java.util.Set;
  * 按put放入顺序排列的Properties
  * 
  * @author Unmi
- * @date 2012-12-07
+ * 2012-12-07
  */
 public class OrderedProperties extends Properties {
 

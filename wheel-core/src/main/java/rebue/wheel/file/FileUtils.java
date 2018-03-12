@@ -100,26 +100,26 @@ public class FileUtils {
         return dir.delete();
     }
 
-    /**
-     * 查找文件的匹配器
-     */
+//    /**
+//     * 查找文件的匹配器
+//     */
 //	public interface FileMatcher {
 //		void matched(File file, Matcher matcher);
 //	}
 
-    /**
-     * 递归查找文件
-     *
-     * @param sSearchDir
-     *            查找的文件夹路径
-     * @param fileComparer
-     *            文件比较接口
-     * @param patten
-     *            匹配文件名的正则表达式
-     * 
-     *            XXX 与new File(dir).listFiles(new
-     *            FileFilter(){....有区别，这个是递归查找文件的
-     */
+//    /**
+//     * 递归查找文件
+//     *
+//     * @param sSearchDir
+//     *            查找的文件夹路径
+//     * @param fileComparer
+//     *            文件比较接口
+//     * @param patten
+//     *            匹配文件名的正则表达式
+//     * 
+//     *            XXX 与new File(dir).listFiles(new
+//     *            FileFilter(){....有区别，这个是递归查找文件的
+//     */
 //	public static void searchFiles(String sSearchDir, Pattern pattern, FileMatcher fileComparer) {
 //		File searchDir = new File(sSearchDir);
 //		if (!searchDir.exists())

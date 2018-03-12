@@ -5,7 +5,7 @@ package rebue.wheel;
 
 /**
  * @author 张柏子
- * @creation 2013-5-4
+ * 2013-5-4
  */
 public final class EnumUtils {
 

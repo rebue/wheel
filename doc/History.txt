@@ -1,3 +1,6 @@
+1.0.5
++ 正式迁移到github
+
 1.0.3-SNAPSHOT
 * 将wheel-core/wheel-test/wheel-turing/wheel-protostuff项目统一整合到wheel的子项目
 * IdWorker3和IdWorker3Helper类

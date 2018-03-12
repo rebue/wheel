@@ -13,7 +13,7 @@ public class SignUtils {
     /**
      * 签名2-微信签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
-     * 签名算法: 将所有参数排序生成新的Map->拼接成key1=value2&key2=value2....的字符串->md5hex->大写
+     * 签名算法: 将所有参数排序生成新的Map-》拼接成key1=value2&amp;key2=value2....的字符串-》md5hex-》大写
      */
     public static void sign2(Map<String, String> requestParams, String signKey) {
         // 排序生成新的Map

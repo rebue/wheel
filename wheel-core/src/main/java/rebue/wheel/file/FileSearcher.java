@@ -24,7 +24,7 @@ public final class FileSearcher {
      *
      * @param sSearchRootDir
      *            查找的文件夹路径
-     * @param patten
+     * @param regex
      *            匹配文件名的正则表达式
      * @param onMatched
      *            文件匹配事件
@@ -81,10 +81,8 @@ public final class FileSearcher {
      *
      * @param sSearchRootDir
      *            查找的文件夹路径
-     * @param patten
+     * @param pattern
      *            匹配文件名的正则表达式
-     * @param onMatched
-     *            文件匹配事件
      * 
      * @throws IOException
      */

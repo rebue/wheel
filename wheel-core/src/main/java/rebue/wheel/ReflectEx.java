@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author ZBZ
  * 
- * @description 反射帮助类
+ * 反射帮助类
  * 
  */
 public class ReflectEx {
@@ -44,7 +44,6 @@ public class ReflectEx {
 	 * 
 	 * @param obj
 	 * @param field
-	 * @return
 	 */
 	public static void setFieldValue(Object obj, Field field, Object value) {
 		field.setAccessible(true);

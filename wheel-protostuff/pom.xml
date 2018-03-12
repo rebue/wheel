@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>rebue.wheel</groupId>
+		<groupId>com.github.rebue.wheel</groupId>
 		<artifactId>wheel</artifactId>
 		<version>1.0.5</version>
 	</parent>
