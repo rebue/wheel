@@ -56,11 +56,11 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String get(String url, Map<String, String> requestParams) throws IOException {
+    public static String get(String url, Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-        for (Map.Entry<String, String> item : requestParams.entrySet()) {
-            urlBuilder.addQueryParameter(item.getKey(), item.getValue());
+        for (Map.Entry<String, Object> item : requestParams.entrySet()) {
+            urlBuilder.addQueryParameter(item.getKey(), item.getValue().toString());
         }
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Response response = _client.newCall(request).execute();
@@ -160,7 +160,7 @@ public class OkhttpUtils {
      * @return 响应的字符串
      * @throws DocumentException
      */
-    public static Map<String, String> postByXmlParams(String url, Map<String, String> requestParams)
+    public static Map<String, Object> postByXmlParams(String url, Map<String, Object> requestParams)
             throws IOException, DocumentException {
         _log.debug("发送请求：{}", url);
         Request request = new Request.Builder().url(url)
@@ -225,7 +225,7 @@ public class OkhttpUtils {
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
     }
-    
+
     /**
      * 发出DELETE请求
      * 
@@ -248,7 +248,7 @@ public class OkhttpUtils {
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
     }
-    
+
     /**
      * 发出DELETE请求(将Map对象转为请求的FORM参数)
      * 

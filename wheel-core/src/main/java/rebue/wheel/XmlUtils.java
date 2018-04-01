@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);
 
-    public static Map<String, String> xmlToMap(InputStream inputStream) throws IOException, DocumentException {
+    public static Map<String, Object> xmlToMap(InputStream inputStream) throws IOException, DocumentException {
         // 将解析结果存储在HashMap中
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<>();
 
         // 读取输入流
         SAXReader reader = new SAXReader();
@@ -40,7 +40,7 @@ public class XmlUtils {
         return map;
     }
 
-    public static String mapToXml(Map<String, String> map) {
+    public static String mapToXml(Map<String, Object> map) {
         String xmlResult = "";
 
         StringBuilder sb = new StringBuilder();

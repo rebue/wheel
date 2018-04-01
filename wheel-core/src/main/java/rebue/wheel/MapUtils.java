@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 import org.apache.commons.beanutils.BeanMap;
 
 public class MapUtils {
-    public static String map2Str(Map<String, String> map) {
+    public static String map2Str(Map<String, Object> map) {
         StringBuilder sb = new StringBuilder();
-        for (Entry<String, String> item : map.entrySet()) {
+        for (Entry<String, Object> item : map.entrySet()) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
