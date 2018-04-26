@@ -21,4 +21,13 @@
 		<module>wheel-protostuff</module>
 	</modules>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.github.rebue.wheel</groupId>
+				<artifactId>wheel-core</artifactId>
+				<version>1.0.7</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
