@@ -1,6 +1,7 @@
 package rebue.wheel;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -60,7 +61,7 @@ public class OkhttpUtils {
         _log.debug("发送请求：{}", url);
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
         for (Map.Entry<String, Object> item : requestParams.entrySet()) {
-            urlBuilder.addQueryParameter(item.getKey(), item.getValue().toString());
+            urlBuilder.addQueryParameter(item.getKey(), URLEncoder.encode(item.getValue().toString(), "utf-8"));
         }
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Response response = _client.newCall(request).execute();
@@ -109,8 +110,7 @@ public class OkhttpUtils {
      */
     public static String postByJsonParams(String url, String jsonParams) throws IOException {
         _log.debug("发送请求：{}: {}", url, jsonParams);
-        Request request = new Request.Builder().url(url)
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams)).build();
+        Request request = new Request.Builder().url(url).post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams)).build();
         Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             String msg = response.body().string();
@@ -160,12 +160,9 @@ public class OkhttpUtils {
      * @return 响应的字符串
      * @throws DocumentException
      */
-    public static Map<String, Object> postByXmlParams(String url, Map<String, Object> requestParams)
-            throws IOException, DocumentException {
+    public static Map<String, Object> postByXmlParams(String url, Map<String, Object> requestParams) throws IOException, DocumentException {
         _log.debug("发送请求：{}", url);
-        Request request = new Request.Builder().url(url)
-                .post(RequestBody.create(MediaType.parse("text/xml; charset=utf-8"), XmlUtils.mapToXml(requestParams)))
-                .build();
+        Request request = new Request.Builder().url(url).post(RequestBody.create(MediaType.parse("text/xml; charset=utf-8"), XmlUtils.mapToXml(requestParams))).build();
         Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             return XmlUtils.xmlToMap(response.body().byteStream());

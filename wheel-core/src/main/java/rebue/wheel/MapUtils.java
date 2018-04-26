@@ -1,6 +1,7 @@
 package rebue.wheel;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +9,12 @@ import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MapUtils {
+    private static final Logger _log = LoggerFactory.getLogger(MapUtils.class);
+
     /**
      * 将map转换为string(a:1,b:2,c:3)
      */
@@ -77,6 +82,24 @@ public class MapUtils {
             s = StringUtils.substringBeforeLast(s, "&");
         }
         return s;
+    }
+
+    /**
+     * 对map中的第一项的值进行url解码(一般用map接收请求参数时要用到)
+     */
+    public static void decodeUrl(Map<String, Object> map) {
+        _log.info("将请求参数进行url解码");
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                try {
+                    _log.debug("解码前:{}", entry.getValue());
+                    entry.setValue(URLDecoder.decode((String) entry.getValue(), "utf-8"));
+                    _log.debug("解码后:{}", entry.getValue());
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("不支持utf-8编码(不可能的)");
+                }
+            }
+        }
     }
 
 }
