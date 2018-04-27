@@ -18,13 +18,24 @@ public class MapUtils {
     /**
      * 将map转换为string(a:1,b:2,c:3)
      */
-    public static String map2Str(Map<String, Object> map) {
+    public static String map2Str(Map<String, ?> map) {
         StringBuilder sb = new StringBuilder();
-        for (Entry<String, Object> item : map.entrySet()) {
+        for (Entry<String, ?> item : map.entrySet()) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
-            sb.append(item.getKey() + ":" + item.getValue());
+            String value = "";
+            // request.getParameterMap()的返回值类型是Map<String,String[]>，因为像checkbox这样的组件会有一个name对应对个value的时候
+            if (item.getValue().getClass().getName().equals("[Ljava.lang.String;")) {
+                String[] values = (String[]) item.getValue();
+                for (String val : values) {
+                    value += val + ",";
+                }
+                value = "[" + StrUtils.left(value, value.length() - 1) + "]";
+            } else {
+                value = item.getValue().toString();
+            }
+            sb.append(item.getKey() + ":" + value);
         }
         return sb.toString();
     }
@@ -40,7 +51,7 @@ public class MapUtils {
     }
 
     /**
-     * 将url参数(a=1&b=2&c=3)转换成map
+     * 将url参数("a=111&amp;b=222&amp;c=333")转换成map
      */
     public static Map<String, Object> urlParams2Map(String param) {
         Map<String, Object> map = new HashMap<String, Object>(0);
@@ -58,7 +69,7 @@ public class MapUtils {
     }
 
     /**
-     * 将map转换成url参数(a=1&b=2&c=3)
+     * 将map转换成url参数("a=111&amp;b=222&amp;c=333")
      * 所有参数的值都进行URLEncoder的UTF-8编码
      * 
      */
@@ -93,7 +104,7 @@ public class MapUtils {
             if (entry.getValue() instanceof String) {
                 try {
                     _log.debug("解码前:{}", entry.getValue());
-                    entry.setValue(URLDecoder.decode((String) entry.getValue(), "utf-8"));
+                    entry.setValue(URLDecoder.decode(entry.getValue().toString(), "utf-8"));
                     _log.debug("解码后:{}", entry.getValue());
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("不支持utf-8编码(不可能的)");
