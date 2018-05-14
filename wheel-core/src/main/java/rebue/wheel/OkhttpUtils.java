@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -20,12 +22,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class OkhttpUtils {
-    private final static Logger _log    = LoggerFactory.getLogger(OkhttpUtils.class);
+    private final static Logger _log           = LoggerFactory.getLogger(OkhttpUtils.class);
 
-    private static OkHttpClient _client = new OkHttpClient();
+    private static OkHttpClient _client        = new OkHttpClient();
+
+    private static ObjectMapper _objejctMapper = new ObjectMapper();
 
     /**
      * 设置读数据的超时时间（目前专门给微信沙箱测试用）
+     * 
+     * @param minutes
+     *            超时时间(分钟)
      */
     public static void setReadTimeout(int minutes) {
         _client = new OkHttpClient.Builder().readTimeout(minutes, TimeUnit.MINUTES).build();
@@ -33,6 +40,9 @@ public class OkhttpUtils {
 
     /**
      * 发出GET请求
+     * 
+     * @param url
+     *            请求的地址
      */
     public static String get(String url) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -81,7 +91,6 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String post(String url) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -106,7 +115,6 @@ public class OkhttpUtils {
      * @param jsonParams
      *            请求的参数
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String postByJsonParams(String url, String jsonParams) throws IOException {
         _log.debug("发送请求：{}: {}", url, jsonParams);
@@ -123,6 +131,19 @@ public class OkhttpUtils {
     }
 
     /**
+     * 发出POST请求(参数为json形式的字符串)
+     * 
+     * @param url
+     *            请求的地址
+     * @param requestParams
+     *            请求的参数(一个Bean或Map<String,Object>)
+     * @return 响应的字符串
+     */
+    public static String postByJsonParams(String url, Object requestParams) throws IOException {
+        return postByJsonParams(url, _objejctMapper.writeValueAsString(requestParams));
+    }
+
+    /**
      * 发出POST请求(将Map对象转为请求的FORM参数)
      * 
      * @param url
@@ -130,7 +151,6 @@ public class OkhttpUtils {
      * @param requestParams
      *            请求的参数
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String postByFormParams(String url, Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -158,7 +178,6 @@ public class OkhttpUtils {
      * @param requestParams
      *            请求的参数
      * @return 响应的字符串
-     * @throws DocumentException
      */
     public static Map<String, Object> postByXmlParams(String url, Map<String, Object> requestParams) throws IOException, DocumentException {
         _log.debug("发送请求：{}", url);
@@ -178,7 +197,6 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String put(String url) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -203,7 +221,6 @@ public class OkhttpUtils {
      * @param requestParams
      *            请求的参数
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String putByFormParams(String url, Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -229,7 +246,6 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String delete(String url) throws IOException {
         _log.debug("发送请求：{}", url);
@@ -254,7 +270,6 @@ public class OkhttpUtils {
      * @param requestParams
      *            请求的参数
      * @return 响应的字符串
-     * @throws IOException
      */
     public static String deleteByFormParams(String url, Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
