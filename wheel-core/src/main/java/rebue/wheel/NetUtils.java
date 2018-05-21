@@ -44,7 +44,7 @@ public class NetUtils {
                         String networkInterfaceName = networkInterface.getName();
                         // 获取网卡的所有IP地址
                         Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                        String ip = null;
+                        String ip = null, firstIp = null;
                         if (inetAddresses != null) {
                             while (inetAddresses.hasMoreElements()) {
                                 InetAddress address = inetAddresses.nextElement();
@@ -53,7 +53,7 @@ public class NetUtils {
                                 if (_firstIp == null) {
                                     if (isValidAddress(address)) {
                                         if (isValidNetworkInterface(networkInterfaceName)) {
-                                            _firstIp = ip;
+                                            _firstIp = firstIp = ip;
                                         }
                                     }
                                 }
@@ -79,7 +79,7 @@ public class NetUtils {
                             }
                             mac = sb.toString().toUpperCase();
                             _macs.add(mac);
-                            if (_firstMac == null && ip != null) {
+                            if (_firstMac == null && firstIp != null) {
                                 _firstMac = mac;
                             }
                         } else {
