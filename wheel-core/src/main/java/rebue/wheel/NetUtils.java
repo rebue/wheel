@@ -12,8 +12,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NetUtils {
-    private final static Logger  _log                     = LoggerFactory.getLogger(NetUtils.class);
+    private final static Logger _log = LoggerFactory.getLogger(NetUtils.class);
 
+    /**
+     * 指定第一网卡的名称
+     */
+    private static String       _firstNetworkInterfaceName;
+
+    /**
+     * 指定第一网卡的名称
+     * 
+     * @param name
+     *            网卡名称
+     */
+    public static void setFirstNetworkInterface(String name) {
+        _firstNetworkInterfaceName = name;
+    }
+
+    /**
+     * 忽略的网卡
+     */
     private static List<Pattern> _ignoreNetworkInterfaces = new LinkedList<>();
     static {
         _ignoreNetworkInterfaces.add(Pattern.compile("docker\\d{1,2}"));
@@ -50,8 +68,12 @@ public class NetUtils {
                                 InetAddress address = inetAddresses.nextElement();
                                 ip = address.getHostAddress();
                                 _ips.add(ip);
-                                if (_firstIp == null) {
-                                    if (isValidAddress(address)) {
+                                if (_firstIp == null && isValidAddress(address)) {
+                                    if (_firstNetworkInterfaceName != null) {
+                                        if (networkInterfaceName.equals(_firstNetworkInterfaceName)) {
+                                            _firstIp = firstIp = ip;
+                                        }
+                                    } else {
                                         if (isValidNetworkInterface(networkInterfaceName)) {
                                             _firstIp = firstIp = ip;
                                         }
@@ -101,6 +123,7 @@ public class NetUtils {
                 throw new RuntimeException(msg, e);
             }
         }
+
     }
 
     /**
