@@ -9,11 +9,11 @@ public class RegexUtils {
     /**
      * IP:port地址(包括IPv4和IPv6)
      */
-    private static final Pattern IP_PORT = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3,5}\\:\\d{1,5}$");
+    private static final Pattern IPv4_PORT = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}\\:\\d{1,5}$");
     /**
      * IP地址(包括IPv4和IPv6)
      */
-    private static final Pattern IP      = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
+    private static final Pattern IPv4      = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3}$");
 
     /**
      * 判断是否匹配手机号码的格式
@@ -54,22 +54,22 @@ public class RegexUtils {
     }
 
     /**
-     * 判断是否匹配ip:port的格式(包括IPv4和IPv6)
+     * 判断是否匹配IPv4:port的格式
      * 
      * @param text
      *            判断是否匹配的文本
      */
-    public static boolean matchIpPort(String text) {
-        return IP_PORT.matcher(text).matches();
+    public static boolean matchIpv4Port(String text) {
+        return IPv4_PORT.matcher(text).matches();
     }
 
     /**
-     * 判断是否匹配ip的格式(包括IPv4和IPv6)
+     * 判断是否匹配IPv4的格式
      * 
      * @param text
      *            判断是否匹配的文本
      */
-    public static boolean matchIp(String text) {
-        return IP.matcher(text).matches();
+    public static boolean matchIpv4(String text) {
+        return IPv4.matcher(text).matches();
     }
 }

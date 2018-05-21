@@ -19,7 +19,7 @@ public class NetUtilsTests {
         _log.info(NetUtils.getFirstMacAddrOfLocalHost());
     }
 
-    @Test
+//    @Test
     public void test02() {
         ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
         final int iTaskCount = 1000;
