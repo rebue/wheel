@@ -1,5 +1,8 @@
 package rebue.wheel;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -162,6 +165,32 @@ public class NetUtils {
             return false;
         String name = inetAddress.getHostAddress();
         return (name != null && !ANYHOST.equals(name) && !LOCALHOST.equals(name) && RegexUtils.matchIpv4(name));
+    }
+
+    public static String getMacAddressOfAgent(String ip) {
+        String str = "";
+        String macAddress = "";
+        try {
+            Process p = Runtime.getRuntime().exec("nbtstat -A " + ip);
+            InputStreamReader ir = new InputStreamReader(p.getInputStream());
+            LineNumberReader input = new LineNumberReader(ir);
+            for (int i = 1; i < 100; i++) {
+                str = input.readLine();
+                if (str != null) {
+                    if (str.indexOf("MAC 地址") > 1) {
+                        // 客户端使用的是中文版操作系统
+                        macAddress = str.substring(str.indexOf("MAC 地址") + 9, str.length());
+                        break;
+                    } else if (str.indexOf("MAC Address") > 1) {// 客户端使用的是英文版操作系统
+                        macAddress = str.substring(str.indexOf("MAC Address") + 14, str.length());
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
+        return macAddress;
     }
 
 }
