@@ -9,7 +9,13 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AgentUtils {
+    private final static Logger _log = LoggerFactory.getLogger(AgentUtils.class);
+
     /**
      * 获取访问者IP
      * 在一般情况下使用Request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
@@ -21,6 +27,7 @@ public class AgentUtils {
      * @return
      */
     public static String getIpAddr(HttpServletRequest request) {
+        _log.info("获取访问者IP");
         String ip = request.getHeader("X-Real-IP");
         if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
             return ip;
@@ -30,13 +37,13 @@ public class AgentUtils {
             // 多次反向代理后会有多个IP值，第一个为真实IP。
             int index = ip.indexOf(',');
             if (index != -1) {
-                return ip.substring(0, index);
-            } else {
-                return ip;
+                ip = ip.substring(0, index);
             }
         } else {
-            return request.getRemoteAddr();
+            ip = request.getRemoteAddr();
         }
+        _log.info("访问者的IP是: {}", ip);
+        return ip;
     }
 
     /**
@@ -231,6 +238,10 @@ public class AgentUtils {
         String[] cmd = { "cmd", "/c", "ping " + ip };
         String[] another = { "cmd", "/c", "arp -a" };
         String cmdResult = callCmd(cmd, another);
+        _log.info("ping的结果: {}", cmdResult);
+        if (StringUtils.isBlank(cmdResult)) {
+            return null;
+        }
         result = filterMacAddress(ip, cmdResult, "-");
         return result;
     }
@@ -246,6 +257,10 @@ public class AgentUtils {
         String result = "";
         String[] cmd = { "/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a" };
         String cmdResult = callCmd(cmd);
+        _log.info("ping的结果: {}", cmdResult);
+        if (StringUtils.isBlank(cmdResult)) {
+            return null;
+        }
         result = filterMacAddress(ip, cmdResult, ":");
         return result;
     }
@@ -256,11 +271,14 @@ public class AgentUtils {
      * @return 返回MAC地址
      */
     public static String getMacAddress(String ip) {
+        _log.info("通过IP({})获取MAC地址", ip);
         String macAddress = "";
-        macAddress = getMacInWindows(ip).trim();
-        if (macAddress == null || "".equals(macAddress)) {
-            macAddress = getMacInLinux(ip).trim();
-        }
+        if (OsUtils.isWin())
+            macAddress = getMacInWindows(ip);
+        else
+            macAddress = getMacInLinux(ip);
+        if (StringUtils.isBlank(macAddress))
+            macAddress = "未获取到MAC地址";
         return macAddress;
     }
 }

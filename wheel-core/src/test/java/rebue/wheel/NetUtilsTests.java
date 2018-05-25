@@ -19,7 +19,7 @@ public class NetUtilsTests {
         NetUtils.setFirstNetworkInterface("en0");
     }
 
-    @Test
+//    @Test
     public void test01() {
         _log.info(NetUtils.getFirstIpOfLocalHost());
         _log.info(NetUtils.getFirstMacAddrOfLocalHost());
@@ -28,7 +28,7 @@ public class NetUtilsTests {
     @Test
     public void test02() {
         ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
-        final int iTaskCount = 100;
+        final int iTaskCount = 1;
         for (int i = 0; i < iTaskCount; i++) {
             executorService.execute(() -> {
                 _log.info(NetUtils.getFirstIpOfLocalHost());

@@ -50,6 +50,10 @@ public class NetUtils {
         _ignoreNetworkInterfaces.add(Pattern.compile(regex));
     }
 
+    /**
+     * FIXME 解决并发问题
+     *
+     */
     private static class NetUtilsSingletonHolder {
         private static List<String> _macs = new LinkedList<>();
         private static List<String> _ips  = new LinkedList<>();
