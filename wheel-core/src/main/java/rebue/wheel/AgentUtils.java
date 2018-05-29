@@ -17,44 +17,124 @@ public class AgentUtils {
     private final static Logger _log = LoggerFactory.getLogger(AgentUtils.class);
 
     /**
-     * 获取访问者IP
-     * 在一般情况下使用Request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
+     * 获取浏览器客户端IP
      * 
-     * 本方法先从Header中获取X-Real-IP，如果不存在再从X-Forwarded-For获得第一个IP(用,分割)，
-     * 如果还不存在则调用Request .getRemoteAddr()。
-     * 
-     * @param request
-     * @return
+     * @param passProxy
+     *            指出之前经过什么反向代理(只能设置为noproxy/nginx/apache/weblogic其中之一)
      */
-    public static String getIpAddr(HttpServletRequest request) {
-        _log.info("获取访问者IP");
-        String ip = request.getHeader("X-Real-IP");
-        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+    public static String getIpAddr(HttpServletRequest req, String passProxy) {
+        _log.info("获取浏览器客户端IP");
+        String ip;
+        if ("noproxy".equalsIgnoreCase(passProxy)) {
+            ip = AgentUtils.getIpAddrNoPassProxy(req);
+        } else {
+            if ("nginx".equalsIgnoreCase(passProxy)) {
+                ip = AgentUtils.getIpAddrPassNginx(req);
+            } else if ("apache".equalsIgnoreCase(passProxy)) {
+                ip = AgentUtils.getIpAddrPassApache(req);
+            } else if ("weblogic".equalsIgnoreCase(passProxy)) {
+                ip = AgentUtils.getIpAddrPassWebLogic(req);
+            } else {
+                throw new IllegalArgumentException("zuul.passProxy配置错误，只能设置为noproxy/nginx/apache/weblogic其中之一");
+            }
+            if (ip == null) {
+                _log.info("如果没取到IP，说明没经过代理，直接按没有代理的方式取IP");
+                ip = AgentUtils.getIpAddrNoPassProxy(req);
+            }
+        }
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+            _log.info("发现以上得到的是lo的IP，那就再去获取本机第一个有效的IP");
+            ip = NetUtils.getFirstIpOfLocalHost();
+        }
+        return ip;
+    }
+
+    /**
+     * 获取浏览器客户端IP(在没有经过反向代理的情况下)
+     */
+    public static String getIpAddrNoPassProxy(HttpServletRequest request) {
+        _log.info("获取浏览器客户端IP(在没有经过反向代理的情况下)");
+        String ip = request.getRemoteAddr();
+        _log.info("从request.getRemoteAddr()中获取到IP: {}", ip);
+        return ip;
+    }
+
+    /**
+     * 获取浏览器客户端IP(在经过Nginx反向代理的情况下)
+     * 在一般情况下使用request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
+     * 
+     * 本方法先从Header中获取X-Real-IP，如果不存在再从X-Forwarded-For获得第一个IP(用,分割)，如果还不存在则返回null
+     * 
+     */
+    public static String getIpAddrPassNginx(HttpServletRequest req) {
+        _log.info("从Nginx反向代理后的请求头中获取X-Real-IP");
+        String ip = req.getHeader("X-Real-IP");
+        if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+            _log.info("从X-Real-IP中获取到ip: {}", ip);
             return ip;
         }
-        ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
-            // 多次反向代理后会有多个IP值，第一个为真实IP。
-            int index = ip.indexOf(',');
-            if (index != -1) {
-                ip = ip.substring(0, index);
+
+        _log.info("从Nginx反向代理后的请求头中获取x-forwarded-for");
+        ip = req.getHeader("x-forwarded-for");
+        if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+            int index = ip.indexOf(",");
+            if (index > 0) {
+                ip = ip.substring(0, ip.indexOf(","));
             }
-        } else {
-            ip = request.getRemoteAddr();
+            _log.info("从x-forwarded-for中获取到ip: {}", ip);
+            return ip;
         }
-        _log.info("访问者的IP是: {}", ip);
-        return ip;
+
+        return null;
+    }
+
+    /**
+     * 获取浏览器客户端IP(在经过Apache反向代理的情况下)
+     * 在一般情况下使用request.getRemoteAddr()即可，但是经过Apache等反向代理软件后，这个方法会失效。
+     * 
+     * 本方法先从Header中获取Proxy-Client-IP，如果还不存在则返回null
+     * 
+     * 
+     */
+    public static String getIpAddrPassApache(HttpServletRequest req) {
+        _log.info("从Apache反向代理后的请求头中获取Proxy-Client-IP");
+        String ip = req.getHeader("Proxy-Client-IP");
+        if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+            _log.info("从Proxy-Client-IP中获取到ip: {}", ip);
+            return ip;
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取浏览器客户端IP(在经过WebLogic反向代理的情况下)
+     * 在一般情况下使用request.getRemoteAddr()即可，但是经过WebLogic等反向代理软件后，这个方法会失效。
+     * 
+     * 本方法先从Header中获取WL-Proxy-Client-IP，如果还不存在则返回null
+     * 
+     */
+    public static String getIpAddrPassWebLogic(HttpServletRequest req) {
+        _log.info("从WebLogic反向代理后的请求头中获取WL-Proxy-Client-IP");
+        String ip = req.getHeader("WL-Proxy-Client-IP");
+        if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+            _log.info("从WL-Proxy-Client-IP中获取到ip: {}", ip);
+            return ip;
+        }
+
+        return null;
     }
 
     /**
      * 获取来访者的浏览器版本
      * 
-     * @param request
+     * @param req
      * @return
      */
-    public static String getRequestBrowserInfo(HttpServletRequest request) {
+    public static String getRequestBrowserInfo(HttpServletRequest req) {
         String browserVersion = null;
-        String header = request.getHeader("user-agent");
+        String header = req.getHeader("user-agent");
         if (header == null || header.equals("")) {
             return "";
         }
@@ -77,12 +157,12 @@ public class AgentUtils {
     /**
      * 获取系统版本信息
      * 
-     * @param request
+     * @param req
      * @return
      */
-    public static String getRequestSystemInfo(HttpServletRequest request) {
+    public static String getRequestSystemInfo(HttpServletRequest req) {
         String systenInfo = null;
-        String header = request.getHeader("user-agent");
+        String header = req.getHeader("user-agent");
         if (header == null || header.equals("")) {
             return "";
         }
