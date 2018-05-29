@@ -13,8 +13,6 @@
 		<dependency>
 			<groupId>com.github.rebue.wheel</groupId>
 			<artifactId>wheel-test</artifactId>
-			<version>1.0.6</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
