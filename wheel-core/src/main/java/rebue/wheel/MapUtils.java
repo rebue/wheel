@@ -3,7 +3,9 @@ package rebue.wheel;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,8 +55,8 @@ public class MapUtils {
     /**
      * 将url参数("a=111&amp;b=222&amp;c=333")转换成map
      */
-    public static Map<String, Object> urlParams2Map(String param) {
-        Map<String, Object> map = new HashMap<String, Object>(0);
+    public static Map<String, List<Object>> urlParams2Map(String param) {
+        Map<String, List<Object>> map = new HashMap<String, List<Object>>();
         if (StringUtils.isBlank(param)) {
             return map;
         }
@@ -62,7 +64,12 @@ public class MapUtils {
         for (int i = 0; i < params.length; i++) {
             String[] p = params[i].split("=");
             if (p.length == 2) {
-                map.put(p[0], p[1]);
+                List<Object> list = map.get(p[0]);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                list.add(p[1]);
+                map.put(p[0], list);
             }
         }
         return map;
@@ -73,24 +80,28 @@ public class MapUtils {
      * 所有参数的值都进行URLEncoder的UTF-8编码
      * 
      */
-    public static String map2UrlParams(Map<String, Object> map) {
+    public static String map2UrlParams(Map<String, List<Object>> map) {
         if (map == null) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            sb.append(entry.getKey());
-            sb.append("=");
-            try {
-                sb.append(URLEncoder.encode(entry.getValue().toString(), "utf-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("不支持utf-8编码(不可能的)");
+        for (Entry<String, List<Object>> entry : map.entrySet()) {
+            for (Object value : entry.getValue()) {
+                sb.append(entry.getKey());
+                sb.append("=");
+                try {
+                    if (value instanceof String) {
+                        sb.append(URLEncoder.encode(String.valueOf(value), "utf-8"));
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("不支持utf-8编码(不可能的)");
+                }
+                sb.append("&");
             }
-            sb.append("&");
         }
         String s = sb.toString();
         if (s.endsWith("&")) {
-            s = StringUtils.substringBeforeLast(s, "&");
+            s = StrUtils.delRight(s, 1);
         }
         return s;
     }
