@@ -63,11 +63,10 @@ public class JwtUtils {
      * @param expirationTime
      *            JWT签名的过期时间
      */
-    public static void addCookie(String sign, Date expirationTime, HttpServletRequest req, HttpServletResponse resp) {
+    public static void addCookie(String sign, Date expirationTime, HttpServletResponse resp) {
         _log.info("将JWT签名添加到Cookie中");
         Cookie cookie = new Cookie(JWT_TOKEN_NAME, sign);
         cookie.setMaxAge((int) ((expirationTime.getTime() - System.currentTimeMillis()) / 1000));
-        _log.info("ContextPath: {}", req.getContextPath());
         cookie.setPath("/");
         resp.addCookie(cookie);
     }
