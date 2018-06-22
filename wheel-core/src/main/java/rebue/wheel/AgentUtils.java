@@ -127,6 +127,21 @@ public class AgentUtils {
     }
 
     /**
+     * 获取到用户浏览器的信息
+     */
+    public static String getUserAgent(HttpServletRequest req) {
+        _log.info("获取到用户浏览器的信息");
+        String userAgent = req.getHeader("user-agent");
+        if (StringUtils.isBlank(userAgent)) {
+            _log.info("没有获取到用户浏览器的信息");
+            return "";
+        } else {
+            _log.info("用户浏览器的信息: {}", userAgent);
+            return userAgent;
+        }
+    }
+
+    /**
      * 获取来访者的浏览器版本
      * 
      * @param req

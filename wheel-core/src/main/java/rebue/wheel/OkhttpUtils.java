@@ -5,6 +5,9 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +27,14 @@ import okhttp3.Response;
 public class OkhttpUtils {
     private final static Logger _log           = LoggerFactory.getLogger(OkhttpUtils.class);
 
-    private static OkHttpClient _client        = new OkHttpClient();
+    private static OkHttpClient _client        = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
+
+                                                   @Override
+                                                   public boolean verify(String hostname, SSLSession session) {
+                                                       // 强行返回true 即验证成功
+                                                       return true;
+                                                   }
+                                               }).build();
 
     private static ObjectMapper _objejctMapper = new ObjectMapper();
 
