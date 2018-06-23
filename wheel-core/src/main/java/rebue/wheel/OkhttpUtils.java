@@ -25,13 +25,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class OkhttpUtils {
-    private final static Logger _log           = LoggerFactory.getLogger(OkhttpUtils.class);
+    private final static Logger _log = LoggerFactory.getLogger(OkhttpUtils.class);
 
+//    private static OkHttpClient _client = new OkHttpClient();
     private static OkHttpClient _client        = new OkHttpClient().newBuilder().hostnameVerifier(new HostnameVerifier() {
-
                                                    @Override
                                                    public boolean verify(String hostname, SSLSession session) {
-                                                       // 强行返回true 即验证成功
+                                                       _log.debug("强行返回true 即验证成功");
                                                        return true;
                                                    }
                                                }).build();
