@@ -12,12 +12,17 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);
 
-    public static Map<String, Object> xmlToMap(InputStream inputStream) throws DocumentException {
-        return xmlToMap(new SAXReader().read(inputStream));
+    public static Map<String, Object> xmlToMap(InputStream inputStream) throws DocumentException, SAXException {
+        SAXReader saxReader = new SAXReader();
+        saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        return xmlToMap(saxReader.read(inputStream));
     }
 
     public static Map<String, Object> xmlToMap(String xmlText) throws DocumentException {
