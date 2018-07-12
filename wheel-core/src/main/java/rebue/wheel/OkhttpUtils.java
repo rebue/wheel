@@ -252,6 +252,42 @@ public class OkhttpUtils {
     }
 
     /**
+     * 发出PUT请求(参数为json形式的字符串)
+     * 
+     * @param url
+     *            请求的地址
+     * @param jsonParams
+     *            请求的参数
+     * @return 响应的字符串
+     */
+    public static String putByJsonParams(String url, String jsonParams) throws IOException {
+        _log.debug("发送请求：{}: {}", url, jsonParams);
+        Request request = new Request.Builder().url(url).put(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams)).build();
+        Response response = _client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            String msg = response.body().string();
+            _log.debug("接收到response的信息：{}", msg);
+            return msg;
+        } else {
+            _log.error("服务器返回错误: " + response);
+            throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
+        }
+    }
+
+    /**
+     * 发出PUT请求(参数为json形式的字符串)
+     * 
+     * @param url
+     *            请求的地址
+     * @param requestParams
+     *            请求的参数(一个Bean或Map<String,Object>)
+     * @return 响应的字符串
+     */
+    public static String putByJsonParams(String url, Object requestParams) throws IOException {
+        return putByJsonParams(url, _objejctMapper.writeValueAsString(requestParams));
+    }
+
+    /**
      * 发出DELETE请求
      * 
      * @param url

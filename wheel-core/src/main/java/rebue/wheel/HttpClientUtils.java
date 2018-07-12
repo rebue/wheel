@@ -225,6 +225,40 @@ public class HttpClientUtils {
     }
 
     /**
+     * 发出PUT请求(参数为json形式的字符串)
+     * 
+     * @param url
+     *            请求的地址
+     * @param jsonParams
+     *            请求的参数
+     * @return 响应的字符串
+     */
+    public static String putByJsonParams(String url, String jsonParams) throws IOException {
+        _log.info("准备发出带json参数的PUT请求: {} {}", url, jsonParams);
+        try {
+            String result = Request.Put(url).bodyString(jsonParams, ContentType.APPLICATION_JSON).execute().returnContent().asString();
+            _log.info("接收到response的信息: {}", result);
+            return result;
+        } catch (IOException e) {
+            _log.error("HTTP请求出现异常:" + e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
+     * 发出PUT请求(参数为json形式的字符串)
+     * 
+     * @param url
+     *            请求的地址
+     * @param requestParams
+     *            请求的参数(一个Bean或Map<String,Object>)
+     * @return 响应的字符串
+     */
+    public static String putByJsonParams(String url, Object requestParams) throws IOException {
+        return putByJsonParams(url, _objejctMapper.writeValueAsString(requestParams));
+    }
+
+    /**
      * 发出DELETE请求
      * 
      * @param url
