@@ -35,7 +35,7 @@ public class AgentUtils {
             } else if ("weblogic".equalsIgnoreCase(passProxy)) {
                 ip = AgentUtils.getIpAddrPassWebLogic(req);
             } else {
-                throw new IllegalArgumentException("zuul.passProxy配置错误，只能设置为noproxy/nginx/apache/weblogic其中之一");
+                throw new IllegalArgumentException("passProxy配置错误，只能设置为noproxy/nginx/apache/weblogic其中之一");
             }
             if (ip == null) {
                 _log.info("如果没取到IP，说明没经过代理，直接按没有代理的方式取IP");
