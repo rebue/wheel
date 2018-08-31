@@ -125,4 +125,30 @@ public class JwtUtils {
         return result;
     }
 
+    /**
+     * 从请求的Cookie中获取JWT项的集合
+     */
+    public static JWTClaimsSet getJwtItemsInCookie(HttpServletRequest req) throws ParseException {
+        // 从请求的Cookie中获取JWT签名信息
+        String sign = JwtUtils.getSignInCookies(req);
+        // 解析签名
+        SignedJWT signedJWT = JwtUtils.parse(sign);
+        // 从签名中获取JWT项的集合
+        return signedJWT.getJWTClaimsSet();
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT的指定项
+     */
+    public static Object getJwtItemInCookie(HttpServletRequest req, String key) throws ParseException {
+        return getJwtItemsInCookie(req).getClaim(key);
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT信息中的用户ID
+     */
+    public static Long getJwtUserIdInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+        return Long.valueOf((String) getJwtItemInCookie(req, "userId"));
+    }
+
 }
