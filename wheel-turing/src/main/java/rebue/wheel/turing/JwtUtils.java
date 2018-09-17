@@ -151,4 +151,11 @@ public class JwtUtils {
         return Long.valueOf((String) getJwtItemInCookie(req, "userId"));
     }
 
+    /**
+     * 从请求的Cookie中获取JWT信息中的系统ID
+     */
+    public static String getJwtSysIdInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+        return (String) getJwtItemInCookie(req, "sysId");
+    }
+
 }

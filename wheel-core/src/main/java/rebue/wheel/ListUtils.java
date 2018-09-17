@@ -11,7 +11,8 @@ public class ListUtils {
         for (Object object : list) {
             result += object + ",";
         }
-        result = StrUtils.delRight(result, 1);
+        if (result.length() > 0)
+            result = StrUtils.delRight(result, 1);
         return result;
     }
 }
