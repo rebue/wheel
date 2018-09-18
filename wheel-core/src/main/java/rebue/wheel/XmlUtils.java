@@ -1,9 +1,12 @@
 package rebue.wheel;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletRequest;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -17,12 +20,21 @@ import org.xml.sax.SAXException;
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);
 
-    public static Map<String, Object> xmlToMap(InputStream inputStream) throws DocumentException, SAXException {
+    public static Document getDocumentFromInputStream(InputStream inputStream) throws DocumentException, SAXException {
         SAXReader saxReader = new SAXReader();
         saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
         saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        return xmlToMap(saxReader.read(inputStream));
+        return saxReader.read(inputStream);
+    }
+
+    public static String getXmlFromRequest(ServletRequest servletRequest) throws DocumentException, SAXException, IOException {
+        Document document = getDocumentFromInputStream(servletRequest.getInputStream());
+        return document.asXML();
+    }
+
+    public static Map<String, Object> xmlToMap(InputStream inputStream) throws DocumentException, SAXException {
+        return xmlToMap(getDocumentFromInputStream(inputStream));
     }
 
     public static Map<String, Object> xmlToMap(String xmlText) throws DocumentException {
