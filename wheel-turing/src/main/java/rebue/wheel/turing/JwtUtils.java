@@ -2,6 +2,7 @@ package rebue.wheel.turing;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -156,6 +157,14 @@ public class JwtUtils {
      */
     public static String getJwtSysIdInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
         return (String) getJwtItemInCookie(req, "sysId");
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT信息中的附加信息
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getJwtAdditionInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+        return (Map<String, Object>) getJwtItemInCookie(req, "addition");
     }
 
 }
