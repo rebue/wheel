@@ -107,6 +107,35 @@ public class MapUtils {
     }
 
     /**
+     * 将map转换成url参数("a=111&amp;b=222&amp;c=333")
+     * 所有参数的值都进行URLEncoder的UTF-8编码
+     * 
+     */
+    public static String map2UrlParams2(Map<String, Object> map) {
+        if (map == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, Object> entry : map.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append("=");
+            try {
+                if (entry.getValue() instanceof String) {
+                    sb.append(URLEncoder.encode(String.valueOf(entry.getValue()), "utf-8"));
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("不支持utf-8编码(不可能的)");
+            }
+            sb.append("&");
+        }
+        String s = sb.toString();
+        if (s.endsWith("&")) {
+            s = StrUtils.delRight(s, 1);
+        }
+        return s;
+    }
+
+    /**
      * 对map中的第一项的值进行url解码(一般用map接收请求参数时要用到)
      */
     public static void decodeUrl(Map<String, Object> map) {
