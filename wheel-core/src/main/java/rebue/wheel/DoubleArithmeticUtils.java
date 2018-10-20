@@ -1,7 +1,6 @@
 package rebue.wheel;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 /**
  * 浮点运算(主要是对BigDecimal类的使用提供示范)
@@ -26,7 +25,7 @@ public class DoubleArithmeticUtils {
     public static double add(Double value1, Double value2, int scale) {
         BigDecimal b1 = BigDecimal.valueOf(value1);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
         BigDecimal b2 = BigDecimal.valueOf(value2);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
-        return b1.add(b2, new MathContext(scale)).doubleValue();
+        return b1.add(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
@@ -44,7 +43,7 @@ public class DoubleArithmeticUtils {
     public static double sub(Double value1, Double value2, int scale) {
         BigDecimal b1 = BigDecimal.valueOf(value1);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
         BigDecimal b2 = BigDecimal.valueOf(value2);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
-        return b1.subtract(b2, new MathContext(scale)).doubleValue();
+        return b1.subtract(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
@@ -62,7 +61,7 @@ public class DoubleArithmeticUtils {
     public static double mul(Double value1, Double value2, int scale) {
         BigDecimal b1 = BigDecimal.valueOf(value1);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
         BigDecimal b2 = BigDecimal.valueOf(value2);    // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
-        return b1.multiply(b2, new MathContext(scale)).doubleValue();
+        return b1.multiply(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
@@ -83,7 +82,7 @@ public class DoubleArithmeticUtils {
         }
         BigDecimal b1 = BigDecimal.valueOf(dividend);  // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
         BigDecimal b2 = BigDecimal.valueOf(divisor);   // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
-        return b1.divide(b2, new MathContext(scale)).doubleValue();
+        return b1.divide(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 }
