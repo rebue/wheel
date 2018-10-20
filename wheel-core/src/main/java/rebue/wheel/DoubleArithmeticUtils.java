@@ -82,7 +82,7 @@ public class DoubleArithmeticUtils {
         }
         BigDecimal b1 = BigDecimal.valueOf(dividend);  // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
         BigDecimal b2 = BigDecimal.valueOf(divisor);   // 注意: 在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
-        return b1.divide(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 }
