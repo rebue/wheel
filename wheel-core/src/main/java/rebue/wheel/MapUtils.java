@@ -68,7 +68,11 @@ public class MapUtils {
                 if (list == null) {
                     list = new ArrayList<>();
                 }
-                list.add(p[1]);
+                try {
+                    list.add(URLDecoder.decode(p[1], "utf-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // 不会报的异常
+                }
                 map.put(p[0], list);
             }
         }
