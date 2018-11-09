@@ -36,22 +36,22 @@ public class JwtUtils {
      * @throws JOSEException
      *             签名失败
      */
-    public static String sign(byte[] key, JWTClaimsSet claimsSet) throws JOSEException {
+    public static String sign(final byte[] key, final JWTClaimsSet claimsSet) throws JOSEException {
         _log.info("开始计算JWT签名");
 
         // Prepare JWT with claims set
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
+        final SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
 
         // Create HMAC signer
-        JWSSigner signer = new MACSigner(key);
+        final JWSSigner signer = new MACSigner(key);
 
         // Apply the HMAC protection
         signedJWT.sign(signer);
 
         // Serialize to compact form, produces something like
         // eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
-        String sign = signedJWT.serialize();
-        String msg = "JWT签名成功";
+        final String sign = signedJWT.serialize();
+        final String msg = "JWT签名成功";
         _log.info("{}: {}", msg, sign);
         return sign;
     }
@@ -64,9 +64,9 @@ public class JwtUtils {
      * @param expirationTime
      *            JWT签名的过期时间
      */
-    public static void addCookie(String sign, Date expirationTime, HttpServletResponse resp) {
+    public static void addCookie(final String sign, final Date expirationTime, final HttpServletResponse resp) {
         _log.info("将JWT签名添加到Cookie中");
-        Cookie cookie = new Cookie(JWT_TOKEN_NAME, sign);
+        final Cookie cookie = new Cookie(JWT_TOKEN_NAME, sign);
         cookie.setMaxAge((int) ((expirationTime.getTime() - System.currentTimeMillis()) / 1000));
         cookie.setPath("/");
         resp.addCookie(cookie);
@@ -77,11 +77,11 @@ public class JwtUtils {
      * 
      * @return JWT的签名
      */
-    public static String getSignInCookies(HttpServletRequest req) {
+    public static String getSignInCookies(final HttpServletRequest req) {
         _log.info("从请求的Cookie中获取JWT签名信息");
-        Cookie[] cookies = req.getCookies();
+        final Cookie[] cookies = req.getCookies();
         if (cookies != null) {
-            for (Cookie cookie : cookies) {
+            for (final Cookie cookie : cookies) {
                 if (JWT_TOKEN_NAME.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
@@ -115,25 +115,26 @@ public class JwtUtils {
      * @throws JOSEException
      *             校验失败
      */
-    public static boolean verify(byte[] key, SignedJWT signedJWT) throws JOSEException {
+    public static boolean verify(final byte[] key, final SignedJWT signedJWT) throws JOSEException {
         _log.info("校验签名是否正确");
-        JWSVerifier verifier = new MACVerifier(key);
-        boolean result = signedJWT.verify(verifier);
-        if (result)
+        final JWSVerifier verifier = new MACVerifier(key);
+        final boolean result = signedJWT.verify(verifier);
+        if (result) {
             _log.info("JWT的签名正确");
-        else
+        } else {
             _log.info("JWT的签名不正确");
+        }
         return result;
     }
 
     /**
      * 从请求的Cookie中获取JWT项的集合
      */
-    public static JWTClaimsSet getJwtItemsInCookie(HttpServletRequest req) throws ParseException {
+    public static JWTClaimsSet getJwtItemsInCookie(final HttpServletRequest req) throws ParseException {
         // 从请求的Cookie中获取JWT签名信息
-        String sign = JwtUtils.getSignInCookies(req);
+        final String sign = JwtUtils.getSignInCookies(req);
         // 解析签名
-        SignedJWT signedJWT = JwtUtils.parse(sign);
+        final SignedJWT signedJWT = JwtUtils.parse(sign);
         // 从签名中获取JWT项的集合
         return signedJWT.getJWTClaimsSet();
     }
@@ -141,29 +142,31 @@ public class JwtUtils {
     /**
      * 从请求的Cookie中获取JWT的指定项
      */
-    public static Object getJwtItemInCookie(HttpServletRequest req, String key) throws ParseException {
+    public static Object getJwtItemInCookie(final HttpServletRequest req, final String key) throws ParseException {
         return getJwtItemsInCookie(req).getClaim(key);
     }
 
     /**
      * 从请求的Cookie中获取JWT信息中的用户ID
      */
-    public static Long getJwtUserIdInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+    public static Long getJwtUserIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
         return Long.valueOf((String) getJwtItemInCookie(req, "userId"));
     }
 
     /**
      * 从请求的Cookie中获取JWT信息中的系统ID
      */
-    public static String getJwtSysIdInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+    public static String getJwtSysIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
         return (String) getJwtItemInCookie(req, "sysId");
     }
 
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息
+     * 
+     * @return 返回Map<String, Object>，再通过key可获得里面的项，如result.get("orgId")可获得当前用户的组织ID
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getJwtAdditionInCookie(HttpServletRequest req) throws NumberFormatException, ParseException {
+    public static Map<String, Object> getJwtAdditionInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
         return (Map<String, Object>) getJwtItemInCookie(req, "addition");
     }
 
