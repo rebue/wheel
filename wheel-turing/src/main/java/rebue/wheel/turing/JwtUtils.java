@@ -166,8 +166,18 @@ public class JwtUtils {
      * @return 返回Map<String, Object>，再通过key可获得里面的项，如result.get("orgId")可获得当前用户的组织ID
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getJwtAdditionInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
+    public static Map<String, Object> getJwtAdditionInCookie(final HttpServletRequest req) throws ParseException {
         return (Map<String, Object>) getJwtItemInCookie(req, "addition");
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT信息中的附加信息中的项
+     * 
+     * @return 返回Map<String, Object>，再通过key可获得里面的项，如result.get("orgId")可获得当前用户的组织ID
+     */
+    public static Object getJwtAdditionItemInCookie(final HttpServletRequest req, final String key) throws ParseException {
+        final Map<String, Object> additions = getJwtAdditionInCookie(req);
+        return additions == null ? null : additions.get(key);
     }
 
 }
