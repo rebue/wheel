@@ -148,6 +148,8 @@ public class JwtUtils {
 
     /**
      * 从请求的Cookie中获取JWT信息中的用户ID
+     * 
+     * @return 如果没有此项，会抛出NumberFormatException异常
      */
     public static Long getJwtUserIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
         return Long.valueOf((String) getJwtItemInCookie(req, "userId"));
