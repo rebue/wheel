@@ -5,35 +5,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.dozer.DozerConverter;
-import org.dozer.Mapper;
-import org.dozer.MapperAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dozermapper.core.DozerConverter;
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.core.MapperAware;
+
 public class MapConverter extends DozerConverter<Map<String, Object>, Object> implements MapperAware {
 
-    private final static Logger _log    = LoggerFactory.getLogger(MapConverter.class);
+    private final static Logger      _log    = LoggerFactory.getLogger(MapConverter.class);
 
-    private Map<String, Field>  _fields = new HashMap<>();
+    private final Map<String, Field> _fields = new HashMap<>();
 
-    public MapConverter(Class<Map<String, Object>> prototypeA, Class<Object> prototypeB) {
+    public MapConverter(final Class<Map<String, Object>> prototypeA, final Class<Object> prototypeB) {
         super(prototypeA, prototypeB);
-        for (Field field : prototypeB.getDeclaredFields()) {
+        for (final Field field : prototypeB.getDeclaredFields()) {
             field.setAccessible(true);       // 因为字段是private的，要设置为可访问
             _fields.put(field.getName(), field);
         }
     }
 
     @Override
-    public void setMapper(Mapper mapper) {
+    public void setMapper(final Mapper mapper) {
     }
 
     @Override
-    public Object convertTo(Map<String, Object> source, Object destination) {
-        if (source == null || source.isEmpty())
+    public Object convertTo(final Map<String, Object> source, final Object destination) {
+        if (source == null || source.isEmpty()) {
             return null;
-        for (Entry<String, Object> entry : source.entrySet()) {
+        }
+        for (final Entry<String, Object> entry : source.entrySet()) {
             try {
                 _fields.get(entry.getKey()).set(destination, entry.getValue());
             } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -45,10 +47,11 @@ public class MapConverter extends DozerConverter<Map<String, Object>, Object> im
     }
 
     @Override
-    public Map<String, Object> convertFrom(Object source, Map<String, Object> destination) {
-        if (source == null)
+    public Map<String, Object> convertFrom(final Object source, final Map<String, Object> destination) {
+        if (source == null) {
             return null;
-        for (Entry<String, Field> field : _fields.entrySet()) {
+        }
+        for (final Entry<String, Field> field : _fields.entrySet()) {
             try {
                 destination.put(field.getKey(), field.getValue().get(source));
             } catch (IllegalArgumentException | IllegalAccessException e) {
