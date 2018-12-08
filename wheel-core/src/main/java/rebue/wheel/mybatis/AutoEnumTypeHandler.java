@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.EnumTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rebue.wheel.baseintf.EnumBase;
 
@@ -15,21 +16,28 @@ import rebue.wheel.baseintf.EnumBase;
  * mybatis自动处理枚举类型的转换
  * 启用方法: 在spring boot使用
  * 1. 依赖mybatis-spring-boot-starter
- * 2. 配置文件中配置 mybatis.default-enum-type-handler=rebue.wheel.mybatis.AutoEnumTypeHandler
+ * 2. 配置文件中配置
+ * mybatis.configuration.default-enum-type-handler=rebue.wheel.mybatis.AutoEnumTypeHandler
  */
-public class AutoEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
-    private BaseTypeHandler<E> typeHandler = null;
+public class AutoEnumTypeHandler<E extends Enum<E> & EnumBase> extends BaseTypeHandler<E> {
+    private final static Logger _log        = LoggerFactory.getLogger(AutoEnumTypeHandler.class);
 
+    private BaseTypeHandler<E>  typeHandler = null;
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public AutoEnumTypeHandler(final Class<E> type) {
+        _log.info("构造mybatis自动处理枚举类型的转换类");
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
+        // 如果实现了EnumBase则使用我们自定义的转换器
         if (EnumBase.class.isAssignableFrom(type)) {
-            // 如果实现了BaseCodeEnum则使用我们自定义的转换器
-            typeHandler = new EnumTypeHandler<>(type);
-        } else {
-            // 默认转换器也可换成EnumOrdinalTypeHandler
-            typeHandler = new EnumTypeHandler<>(type);
+            // TODO 去除泛型警告及优化基于EnumBase查找的代码
+            typeHandler = new rebue.wheel.mybatis.EnumTypeHandler(type);
+        }
+        // 默认转换器也可换成EnumOrdinalTypeHandler
+        else {
+            typeHandler = new org.apache.ibatis.type.EnumTypeHandler<>(type);
         }
     }
 

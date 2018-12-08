@@ -83,4 +83,5 @@ public class EnumTypeHandler<E extends Enum<?> & EnumBase> extends BaseTypeHandl
             throw new IllegalArgumentException("Cannot convert " + code + " to " + type.getSimpleName() + " by code value.", e);
         }
     }
+
 }
