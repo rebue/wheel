@@ -54,7 +54,9 @@ public class MockDataUtils {
 			if (type.equals("class java.lang.Long")) {
 				// 如果type是类类型，则前面包含"class "，后面跟类名
 				Method m = clazz.getMethod("set" + name, Long.class);
-				m.invoke(model, random.nextLong());
+				if (!name.equals("Id")) {
+					m.invoke(model, random.nextLong());
+				}
 			}
 			if (type.equals("class java.lang.Integer")) {
 				// 如果type是类类型，则前面包含"class "，后面跟类名

@@ -11,6 +11,7 @@ public class MockDataUtilsTest {
 
 	@Test
 	public void test() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException {
-		System.out.println(MockDataUtils.newRandomPojo(new PojoEntity().getClass()));
+		PojoEntity entity = (PojoEntity) MockDataUtils.newRandomPojo(new PojoEntity().getClass());
+		System.out.println(entity);
 	}
 }
