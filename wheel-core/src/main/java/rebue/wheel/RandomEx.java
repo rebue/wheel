@@ -132,41 +132,78 @@ public class RandomEx {
                 // 将属性的首字母大写
                 name = name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toUpperCase());
                 if (type.equals("class java.lang.String")) {
+                    if (name.equalsIgnoreCase("id")) {
+                        final Method m = clazz.getMethod("set" + name, String.class);
+                        m.invoke(model, random1(10));
+                        continue;
+                    }
+                    if (name.toLowerCase().endsWith("code")) {
+                        final Method m = clazz.getMethod("set" + name, String.class);
+                        m.invoke(model, random1(10));
+                        continue;
+                    }
+                    if (name.toLowerCase().contains("phone") || name.contains("mobile") || name.contains("tel")) {
+                        final Method m = clazz.getMethod("set" + name, String.class);
+                        m.invoke(model, random2(11));
+                        continue;
+                    }
+                    if (name.equalsIgnoreCase("idcard")) {
+                        final Method m = clazz.getMethod("set" + name, String.class);
+                        m.invoke(model, random2(18));
+                        continue;
+                    }
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, String.class);
                     m.invoke(model, randomCnStr(20));
-                } else if (type.equals("class java.lang.Long")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Long")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Long.class);
                     m.invoke(model, random.nextLong());
-                } else if (type.equals("class java.lang.Integer")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Integer")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Integer.class);
                     m.invoke(model, random.nextInt());
-                } else if (type.equals("class java.lang.Short")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Short")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Short.class);
                     m.invoke(model, (short) 1);
-                } else if (type.equals("class java.lang.Byte")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Byte")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Byte.class);
                     m.invoke(model, (byte) 1);
-                } else if (type.equals("class java.lang.Double")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Double")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Double.class);
                     m.invoke(model, random.nextDouble());
-                } else if (type.equals("class java.math.BigDecimal")) {
+                    continue;
+                }
+                if (type.equals("class java.math.BigDecimal")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, BigDecimal.class);
                     m.invoke(model, BigDecimal.valueOf(random.nextDouble()));
-                } else if (type.equals("class java.lang.Boolean")) {
+                    continue;
+                }
+                if (type.equals("class java.lang.Boolean")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Boolean.class);
                     m.invoke(model, random.nextBoolean());
-                } else if (type.equals("class java.util.Date")) {
+                    continue;
+                }
+                if (type.equals("class java.util.Date")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Date.class);
                     m.invoke(model, new Date());
+                    continue;
                 }
             }
             return model;
