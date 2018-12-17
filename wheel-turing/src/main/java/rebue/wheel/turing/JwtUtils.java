@@ -165,7 +165,10 @@ public class JwtUtils {
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息
      * 
-     * @return 返回Map<String, Object>，再通过key可获得里面的项，如result.get("orgId")可获得当前用户的组织ID
+     * @return 返回Map<String, Object>，再通过key可获得里面的项
+     *         例如:
+     *         result.get("orgId")可获得当前用户的组织ID
+     *         result.get("isTester")可获得当前用户是否是测试者
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getJwtAdditionInCookie(final HttpServletRequest req) throws ParseException {
@@ -175,7 +178,10 @@ public class JwtUtils {
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息中的项
      * 
-     * @return 返回Map<String, Object>，再通过key可获得里面的项，如result.get("orgId")可获得当前用户的组织ID
+     * @return 返回通过key可获得里面的项
+     *         例如:
+     *         "orgId"可获得当前用户的组织ID
+     *         "isTester"可获得当前用户是否是测试者
      */
     public static Object getJwtAdditionItemInCookie(final HttpServletRequest req, final String key) throws ParseException {
         final Map<String, Object> additions = getJwtAdditionInCookie(req);
