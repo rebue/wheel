@@ -12,6 +12,11 @@ public class RuntimeExceptionX extends RuntimeException {
 
     private static Logger     _log             = LoggerFactory.getLogger(RuntimeExceptionX.class);
 
+    public RuntimeExceptionX(final String msg) {
+        super(msg);
+        _log.error(msg);
+    }
+
     public RuntimeExceptionX(final String msg, final Throwable t) {
         super(msg, t);
         _log.error(msg, t);
