@@ -138,7 +138,7 @@ public class HttpClientUtils {
      * @param url
      *            请求的地址
      * @param requestParams
-     *            请求的参数(一个Bean或Map<String,Object>)
+     *            请求的参数(一个Bean或Map&lt;String,Object&gt;)
      * @return 响应的字符串
      */
     public static String postByJsonParams(String url, Object requestParams) throws IOException {
@@ -251,7 +251,7 @@ public class HttpClientUtils {
      * @param url
      *            请求的地址
      * @param requestParams
-     *            请求的参数(一个Bean或Map<String,Object>)
+     *            请求的参数(一个Bean或Map&lt;String,Object&gt;)
      * @return 响应的字符串
      */
     public static String putByJsonParams(String url, Object requestParams) throws IOException {

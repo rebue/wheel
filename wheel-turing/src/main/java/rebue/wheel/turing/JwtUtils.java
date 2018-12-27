@@ -165,7 +165,7 @@ public class JwtUtils {
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息
      * 
-     * @return 返回Map<String, Object>，再通过key可获得里面的项
+     * @return 返回Map&lt;String, Object&gt;，再通过key可获得里面的项
      *         例如:
      *         result.get("orgId")可获得当前用户的组织ID
      *         result.get("isTester")可获得当前用户是否是测试者
