@@ -13,4 +13,6 @@ public interface EnumBase {
     @JsonValue
     int getCode();
 
+    String getName();
+
 }
