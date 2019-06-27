@@ -13,6 +13,28 @@
 	<packaging>pom</packaging>
 	<description>基础函数和工具库</description>
 
+	<url>https://github.com/rebue/wheel</url>
+
+	<developers>
+		<developer>
+			<name>zhangbaizi</name>
+			<email>nnzbz@163.com</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/rebue/wheel</connection>
+		<developerConnection>scm:git:https://github.com/rebue/wheel.git</developerConnection>
+		<url>https://github.com/rebue/wheel.git</url>
+	</scm>
+
 	<modules>
 		<module>wheel-test</module>
 		<module>wheel-core</module>
@@ -35,4 +57,89 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>deploy-private</id>
+			<!-- 部署私服 -->
+			<distributionManagement>
+				<snapshotRepository>
+					<id>my-snapshots</id>
+					<name>my-snapshots</name>
+					<url>${my-snapshots.url}</url>
+					<uniqueVersion>true</uniqueVersion>
+				</snapshotRepository>
+				<repository>
+					<id>my-releases</id>
+					<name>my-releases</name>
+					<url>${my-releases.url}</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+
+		<profile>
+			<id>deploy-public</id>
+			<!-- 部署中央仓库 -->
+			<distributionManagement>
+				<snapshotRepository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+
+			<build>
+				<plugins>
+					<!-- 创建源码包 -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- 创建文档包 -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.0.1</version>
+						<configuration>
+							<!-- 不检查JavaDoc规范 -->
+							<!-- <doclint>none</doclint> -->
+							<!-- <additionalparam>-Xdoclint:none</additionalparam> -->
+							<tags>
+								<tag>
+									<name>mbg.generated</name>
+									<!-- todo tag for all places -->
+									<placement>a</placement>
+									<head>mybatis自动生成的代码</head>
+								</tag>
+							</tags>
+						</configuration>
+					</plugin>
+					<!-- 部署时用GPG数字签名 -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

@@ -132,22 +132,22 @@ public class RandomEx {
                 // 将属性的首字母大写
                 name = name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toUpperCase());
                 if (type.equals("class java.lang.String")) {
-                    if (name.equalsIgnoreCase("id")) {
+                    if (name.endsWith("Id")) {
                         final Method m = clazz.getMethod("set" + name, String.class);
                         m.invoke(model, random1(10));
                         continue;
                     }
-                    if (name.toLowerCase().endsWith("code")) {
+                    if (name.endsWith("Code")) {
                         final Method m = clazz.getMethod("set" + name, String.class);
                         m.invoke(model, random1(10));
                         continue;
                     }
-                    if (name.toLowerCase().contains("phone") || name.contains("mobile") || name.contains("tel")) {
+                    if (name.contains("Phone") || name.contains("Mobile") || name.contains("Tel")) {
                         final Method m = clazz.getMethod("set" + name, String.class);
                         m.invoke(model, random2(11));
                         continue;
                     }
-                    if (name.equalsIgnoreCase("idcard")) {
+                    if (name.equals("IdCard") || name.equals("Idcard")) {
                         final Method m = clazz.getMethod("set" + name, String.class);
                         m.invoke(model, random2(18));
                         continue;
