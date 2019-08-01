@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.github.rebue.wheel</groupId>
 		<artifactId>wheel</artifactId>
-		<version>1.0.8</version>
+		<version>1.1.0</version>
 	</parent>
 
 	<artifactId>wheel-turing</artifactId>
