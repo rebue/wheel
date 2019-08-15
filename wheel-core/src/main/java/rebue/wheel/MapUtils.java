@@ -20,17 +20,17 @@ public class MapUtils {
     /**
      * 将map转换为string(a:1,b:2,c:3)
      */
-    public static String map2Str(Map<String, ?> map) {
-        StringBuilder sb = new StringBuilder();
-        for (Entry<String, ?> item : map.entrySet()) {
+    public static String map2Str(final Map<String, ?> map) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Entry<String, ?> item : map.entrySet()) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
             String value = "";
             // request.getParameterMap()的返回值类型是Map<String,String[]>，因为像checkbox这样的组件会有一个name对应对个value的时候
             if (item.getValue().getClass().getName().equals("[Ljava.lang.String;")) {
-                String[] values = (String[]) item.getValue();
-                for (String val : values) {
+                final String[] values = (String[]) item.getValue();
+                for (final String val : values) {
                     value += val + ",";
                 }
                 value = "[" + StrUtils.left(value, value.length() - 1) + "]";
@@ -45,9 +45,10 @@ public class MapUtils {
     /**
      * 将对象的属性和值转成map
      */
-    public static Map<?, ?> obj2Map(Object obj) {
-        if (obj == null)
+    public static Map<?, ?> obj2Map(final Object obj) {
+        if (obj == null) {
             return null;
+        }
 
         return new BeanMap(obj);
     }
@@ -55,14 +56,14 @@ public class MapUtils {
     /**
      * 将url参数("a=111&amp;b=222&amp;c=333")转换成map
      */
-    public static Map<String, List<Object>> urlParams2Map(String param) {
-        Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+    public static Map<String, List<Object>> urlParams2Map(final String param) {
+        final Map<String, List<Object>> map = new HashMap<>();
         if (StringUtils.isBlank(param)) {
             return map;
         }
-        String[] params = param.split("&");
-        for (int i = 0; i < params.length; i++) {
-            String[] p = params[i].split("=");
+        final String[] params = param.split("&");
+        for (final String param2 : params) {
+            final String[] p = param2.split("=");
             if (p.length == 2) {
                 List<Object> list = map.get(p[0]);
                 if (list == null) {
@@ -70,7 +71,7 @@ public class MapUtils {
                 }
                 try {
                     list.add(URLDecoder.decode(p[1], "utf-8"));
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     // 不会报的异常
                 }
                 map.put(p[0], list);
@@ -84,20 +85,20 @@ public class MapUtils {
      * 所有参数的值都进行URLEncoder的UTF-8编码
      * 
      */
-    public static String map2UrlParams(Map<String, List<Object>> map) {
+    public static String map2UrlParams(final Map<String, List<Object>> map) {
         if (map == null) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (Entry<String, List<Object>> entry : map.entrySet()) {
-            for (Object value : entry.getValue()) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Entry<String, List<Object>> entry : map.entrySet()) {
+            for (final Object value : entry.getValue()) {
                 sb.append(entry.getKey());
                 sb.append("=");
                 try {
                     if (value instanceof String) {
                         sb.append(URLEncoder.encode(String.valueOf(value), "utf-8"));
                     }
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     throw new RuntimeException("不支持utf-8编码(不可能的)");
                 }
                 sb.append("&");
@@ -115,19 +116,19 @@ public class MapUtils {
      * 所有参数的值都进行URLEncoder的UTF-8编码
      * 
      */
-    public static String map2UrlParams2(Map<String, Object> map) {
+    public static String map2UrlParams2(final Map<String, Object> map) {
         if (map == null) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        for (Entry<String, Object> entry : map.entrySet()) {
+        final StringBuilder sb = new StringBuilder();
+        for (final Entry<String, Object> entry : map.entrySet()) {
             sb.append(entry.getKey());
             sb.append("=");
             try {
                 if (entry.getValue() instanceof String) {
                     sb.append(URLEncoder.encode(String.valueOf(entry.getValue()), "utf-8"));
                 }
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 throw new RuntimeException("不支持utf-8编码(不可能的)");
             }
             sb.append("&");
@@ -142,15 +143,15 @@ public class MapUtils {
     /**
      * 对map中的第一项的值进行url解码(一般用map接收请求参数时要用到)
      */
-    public static void decodeUrl(Map<String, Object> map) {
+    public static void decodeUrl(final Map<String, Object> map) {
         _log.info("将请求参数进行url解码");
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof String) {
                 try {
                     _log.debug("解码前:{}", entry.getValue());
                     entry.setValue(URLDecoder.decode(entry.getValue().toString(), "utf-8"));
                     _log.debug("解码后:{}", entry.getValue());
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     throw new RuntimeException("不支持utf-8编码(不可能的)");
                 }
             }

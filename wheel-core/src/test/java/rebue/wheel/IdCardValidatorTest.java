@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +27,9 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
 
     protected static Logger     _logger            = LoggerFactory.getLogger(IdCardValidatorTest.class);
 
-    private char getVerifyCode(String sNumber) {
+    private char getVerifyCode(final String sNumber) {
         int sum = 0;
-        int iNumberLength = sNumber.length() - 1;
+        final int iNumberLength = sNumber.length() - 1;
         for (int i = 0; i < iNumberLength; i++) {
             sum += (sNumber.charAt(i) - '0') * VERIFY_CODE_WEIGHT[i];
         }
@@ -39,56 +39,50 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
     /**
      * 单线程测试
      */
-//    @Test
+    @Test
     public void test01() {
         // 号码为空
-        Assert.assertFalse(IdCardValidator.validate(null));
-        Assert.assertFalse(IdCardValidator.validate(""));
-        Assert.assertFalse(IdCardValidator.validate(" "));
+        Assertions.assertFalse(IdCardValidator.validate(null));
+        Assertions.assertFalse(IdCardValidator.validate(""));
+        Assertions.assertFalse(IdCardValidator.validate(" "));
         // 号码长度不对
-        Assert.assertFalse(IdCardValidator.validate("111"));
-        Assert.assertFalse(IdCardValidator.validate("1111111111111111111"));
+        Assertions.assertFalse(IdCardValidator.validate("111"));
+        Assertions.assertFalse(IdCardValidator.validate("1111111111111111111"));
         // 号码有其它字符
-        Assert.assertFalse(IdCardValidator.validate("111a11111111111111"));
-        Assert.assertFalse(IdCardValidator.validate("11111111111111111d"));
-        Assert.assertFalse(IdCardValidator.validate("11111111111111111X"));
-        Assert.assertFalse(IdCardValidator.validate("11111111111111111x"));
+        Assertions.assertFalse(IdCardValidator.validate("111a11111111111111"));
+        Assertions.assertFalse(IdCardValidator.validate("11111111111111111d"));
+        Assertions.assertFalse(IdCardValidator.validate("11111111111111111X"));
+        Assertions.assertFalse(IdCardValidator.validate("11111111111111111x"));
         // 日期格式不对
-        Assert.assertFalse(IdCardValidator.validate("45010420150229101x"));
-        Assert.assertFalse(IdCardValidator.validate("45010420140432101x"));
+        Assertions.assertFalse(IdCardValidator.validate("45010420150229101x"));
+        Assertions.assertFalse(IdCardValidator.validate("45010420140432101x"));
         // 日期超出范围
-        Assert.assertFalse(IdCardValidator.validate("45010418991225101x"));
-        LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
-        String sDate = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        Assertions.assertFalse(IdCardValidator.validate("45010418991225101x"));
+        final LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
+        final String sDate = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String sNumber = "450106" + sDate + "052";
         sNumber += getVerifyCode(sNumber);
-        Assert.assertFalse(IdCardValidator.validate(sNumber));
+        Assertions.assertFalse(IdCardValidator.validate(sNumber));
         // 校验和不对
-        Assert.assertFalse(IdCardValidator.validate("45010419770425101x"));
-        Assert.assertFalse(IdCardValidator.validate("450106197707210526"));
+        Assertions.assertFalse(IdCardValidator.validate("45010419770425101x"));
+        Assertions.assertFalse(IdCardValidator.validate("450106197707210526"));
         // 正确的身份证
-        Assert.assertTrue(IdCardValidator.validate("450104190001011014"));
-        Assert.assertTrue(IdCardValidator.validate("450104201504011017"));
-        Assert.assertTrue(IdCardValidator.validate("450104197704251016"));
-        Assert.assertTrue(IdCardValidator.validate("45010619770721052X"));
-        Assert.assertTrue(IdCardValidator.validate("45010619770721052x"));
+        Assertions.assertTrue(IdCardValidator.validate("450104190001011014"));
+        Assertions.assertTrue(IdCardValidator.validate("450104201504011017"));
+        Assertions.assertTrue(IdCardValidator.validate("450104197704251016"));
+        Assertions.assertTrue(IdCardValidator.validate("45010619770721052X"));
+        Assertions.assertTrue(IdCardValidator.validate("45010619770721052x"));
     }// test01
 
     /**
      * 多线程测试10万次test01
      */
-    // @Test
+    @Test
     public void test02() {
-        ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
+        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
         final int iTaskCount = 100000;
         for (int i = 0; i < iTaskCount; i++) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    test01();
-                }
-            });
+            executorService.execute(() -> test01());
         }
     }
 
@@ -97,9 +91,9 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
         testFile("idcard4.txt");
     }
 
-    private void testFile(String sFileName) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(sFileName).getFile());
+    private void testFile(final String sFileName) throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource(sFileName).getFile());
         String sIdCardNo;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while ((sIdCardNo = reader.readLine()) != null) {

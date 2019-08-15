@@ -7,14 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import entity.PojoEntity;
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.test.AbstractSpringContextTest;
 
+@Slf4j
 public class RandomExTest extends AbstractSpringContextTest {
 
-//	@Test
+    @Test
+    @Disabled
     public void test01() throws NoSuchAlgorithmException, NoSuchProviderException {
         Random random;
         final long start = System.currentTimeMillis();
@@ -23,11 +27,11 @@ public class RandomExTest extends AbstractSpringContextTest {
         for (int i = 0; i < 10; i++) {
             random = RandomEx.getRandom();
             id = random.nextInt(Integer.MAX_VALUE);
-            // System.out.println(random.nextInt(Integer.MAX_VALUE));
+            // log.info(random.nextInt(Integer.MAX_VALUE));
             randoms.add(id);
         }
         final long end = System.currentTimeMillis();
-        System.out.println(String.format("耗时%d毫秒", end - start));
+        log.info(String.format("耗时%d毫秒", end - start));
         printDistribution("Random", randoms);
     }// test01
 
@@ -44,16 +48,74 @@ public class RandomExTest extends AbstractSpringContextTest {
      * 测试随机生成汉字
      */
     @Test
+    @Disabled
     public void testRandomCn() {
-        System.out.println(RandomEx.randomCnChar());
-        System.out.println(RandomEx.randomCnStr(1000));
+        log.info(String.valueOf(RandomEx.randomCnChar()));
+        log.info(RandomEx.randomCnStr(1000));
+    }
+
+    @Test
+    @Disabled
+    public void testRandomBoolean() {
+        for (int i = 0; i < 100; i++) {
+            log.info(String.valueOf(RandomEx.randomBoolean()));
+        }
+    }
+
+    @Test
+    @Disabled
+    public void testRandomDate() {
+        for (int i = 0; i < 100; i++) {
+            log.info(String.valueOf(RandomEx.randomDate()));
+        }
+    }
+
+    @Test
+    @Disabled
+    public void testRandomMobile() {
+        for (int i = 0; i < 100; i++) {
+            log.info(RandomEx.randomMobile());
+        }
+    }
+
+    @Test
+    @Disabled
+    public void testRandomEmail() {
+        for (int i = 0; i < 100; i++) {
+            log.info(RandomEx.randomEmail());
+        }
+    }
+
+    @Test
+//    @Disabled
+    public void testRandomIdCard() {
+        for (int i = 0; i < 100; i++) {
+            log.info(RandomEx.randomIdCard());
+        }
+    }
+
+    @Test
+    @Disabled
+    public void testRandomAddress() {
+        for (int i = 0; i < 100; i++) {
+            log.info(RandomEx.randomAddress());
+        }
+    }
+
+    @Test
+    @Disabled
+    public void testRandomChineseName() {
+        for (int i = 0; i < 100; i++) {
+            log.info(RandomEx.randomChineseName());
+        }
     }
 
     /**
      * 测试生成随机属性值的对象
      */
     @Test
+    @Disabled
     public void testRandomPojo() throws ReflectiveOperationException {
-        System.out.println(RandomEx.randomPojo(new PojoEntity().getClass()));
+        log.info(RandomEx.randomPojo(new PojoEntity().getClass()).toString());
     }
 }
