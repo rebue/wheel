@@ -55,7 +55,7 @@ public class MapConverter extends DozerConverter<Map<String, Object>, Object> im
             try {
                 destination.put(field.getKey(), field.getValue().get(source));
             } catch (IllegalArgumentException | IllegalAccessException e) {
-                _log.error("在利用dozer将实例的字段转成Map中的每一项时出现不应该的异常", e);
+                _log.error("在利用dozer将实例的字段转成Map中的某一项时出现不应该的异常", e);
                 e.printStackTrace();
             }
         }

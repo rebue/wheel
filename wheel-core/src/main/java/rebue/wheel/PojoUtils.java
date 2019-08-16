@@ -28,7 +28,7 @@ public class PojoUtils {
                         throw new RuntimeException("Map转POJO对象时出错", e);
                     }
                 }
-                return null;
+                throw new RuntimeException("不支持" + value.getClass().getName() + "类型转换为java.util.Date类型");
             }
 
         }, Date.class);
