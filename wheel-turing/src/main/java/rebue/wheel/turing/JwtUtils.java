@@ -39,6 +39,10 @@ public class JwtUtils {
     public static String sign(final byte[] key, final JWTClaimsSet claimsSet) throws JOSEException {
         _log.info("开始计算JWT签名");
 
+        if (key.length < 64) {
+            throw new IllegalArgumentException("密钥的字节长度不能小于64个Byte，目前是" + key.length + "个Byte");
+        }
+
         // Prepare JWT with claims set
         final SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
 

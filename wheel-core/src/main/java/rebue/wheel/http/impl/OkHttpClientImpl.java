@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.http.impl;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,20 +22,26 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import rebue.wheel.XmlUtils;
+import rebue.wheel.http.HttpClient;
 
-public class OkhttpUtils {
-    private final static Logger    _log            = LoggerFactory.getLogger(OkhttpUtils.class);
+public class OkHttpClientImpl implements HttpClient {
+    private final static Logger    _log            = LoggerFactory.getLogger(OkHttpClientImpl.class);
 
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
     private static final MediaType XML_MEDIA_TYPE  = MediaType.get("text/xml; charset=utf-8");
 
 //    private static OkHttpClient _client = new OkHttpClient();
-    private static OkHttpClient _client        = new OkHttpClient().newBuilder().hostnameVerifier((hostname, session) -> {
-                                                   _log.debug("强行返回true 即验证成功");
-                                                   return true;
-                                               }).build();
+    private final OkHttpClient _client;
 
-    private static ObjectMapper _objejctMapper = new ObjectMapper();
+    private final ObjectMapper _objejctMapper = new ObjectMapper();
+
+    public OkHttpClientImpl() {
+        _client = new OkHttpClient().newBuilder().hostnameVerifier((hostname, session) -> {
+            _log.debug("强行返回true 即验证成功");
+            return true;
+        }).build();
+    }
 
     /**
      * 设置读数据的超时时间（目前专门给微信沙箱测试用）
@@ -44,7 +49,7 @@ public class OkhttpUtils {
      * @param minutes
      *            超时时间(分钟)
      */
-    public static void setReadTimeout(final int minutes) {
+    public OkHttpClientImpl(final int minutes) {
         _client = new OkHttpClient.Builder().readTimeout(minutes, TimeUnit.MINUTES).build();
     }
 
@@ -54,7 +59,8 @@ public class OkhttpUtils {
      * @param url
      *            请求的地址
      */
-    public static String get(final String url) throws IOException {
+    @Override
+    public String get(final String url) throws IOException {
         _log.debug("发送请求：{}", url);
         final Request request = new Request.Builder().url(url).build();
         final Response response = _client.newCall(request).execute();
@@ -77,7 +83,7 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String get(final String url, final Map<String, Object> requestParams) throws IOException {
+    public String get(final String url, final Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
         final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
         final SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -115,7 +121,8 @@ public class OkhttpUtils {
      *            请求的地址
      * @return 响应的字符串
      */
-    public static String post(final String url) throws IOException {
+    @Override
+    public String post(final String url) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         final Request request = new Request.Builder().url(url).post(formBodyBuilder.build()).build();
@@ -139,9 +146,11 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String postByJsonParams(final String url, final String jsonParams) throws IOException {
+    @Override
+    public String postByJsonParams(final String url, final String jsonParams) throws IOException {
         _log.debug("发送请求：{}: {}", url, jsonParams);
-        final Request request = new Request.Builder().url(url).post(RequestBody.Companion.create(jsonParams, JSON_MEDIA_TYPE)).build();
+        final RequestBody body = RequestBody.create(jsonParams, JSON_MEDIA_TYPE);
+        final Request request = new Request.Builder().url(url).post(body).build();
         final Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             final String msg = response.body().string();
@@ -162,7 +171,8 @@ public class OkhttpUtils {
      *            请求的参数(一个Bean或Map&lt;String,Object$gt;)
      * @return 响应的字符串
      */
-    public static String postByJsonParams(final String url, final Object requestParams) throws IOException {
+    @Override
+    public String postByJsonParams(final String url, final Object requestParams) throws IOException {
         return postByJsonParams(url, _objejctMapper.writeValueAsString(requestParams));
     }
 
@@ -175,7 +185,8 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String postByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
+    @Override
+    public String postByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         for (final Map.Entry<String, Object> item : requestParams.entrySet()) {
@@ -198,16 +209,18 @@ public class OkhttpUtils {
      * 
      * @param url
      *            请求的地址
-     * @param requestParams
+     * @param xmlParams
      *            请求的参数
      * @return 响应的字符串
      */
-    public static Map<String, Object> postByXmlParams(final String url, final Map<String, Object> requestParams) throws IOException, DocumentException, SAXException {
+    @Override
+    public Map<String, Object> postByXmlParams(final String url, final String xmlParams) throws IOException, DocumentException {
         _log.debug("发送请求：{}", url);
-        final Request request = new Request.Builder().url(url).post(RequestBody.Companion.create(XmlUtils.mapToXml(requestParams), XML_MEDIA_TYPE)).build();
+        final RequestBody body = RequestBody.create(xmlParams, XML_MEDIA_TYPE);
+        final Request request = new Request.Builder().url(url).post(body).build();
         final Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
-            return XmlUtils.xmlToMap(response.body().byteStream());
+            return XmlUtils.xmlToMap(response.body().string());
         } else {
             _log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
@@ -221,7 +234,8 @@ public class OkhttpUtils {
      *            请求的地址
      * @return 响应的字符串
      */
-    public static String put(final String url) throws IOException {
+    @Override
+    public String put(final String url) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         final Request request = new Request.Builder().url(url).put(formBodyBuilder.build()).build();
@@ -245,7 +259,8 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String putByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
+    @Override
+    public String putByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         for (final Map.Entry<String, Object> item : requestParams.entrySet()) {
@@ -272,9 +287,11 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String putByJsonParams(final String url, final String jsonParams) throws IOException {
+    @Override
+    public String putByJsonParams(final String url, final String jsonParams) throws IOException {
         _log.debug("发送请求：{}: {}", url, jsonParams);
-        final Request request = new Request.Builder().url(url).put(RequestBody.Companion.create(jsonParams, JSON_MEDIA_TYPE)).build();
+        final RequestBody body = RequestBody.create(jsonParams, JSON_MEDIA_TYPE);
+        final Request request = new Request.Builder().url(url).put(body).build();
         final Response response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             final String msg = response.body().string();
@@ -295,7 +312,8 @@ public class OkhttpUtils {
      *            请求的参数(一个Bean或Map&lt;String,Object&gt;)
      * @return 响应的字符串
      */
-    public static String putByJsonParams(final String url, final Object requestParams) throws IOException {
+    @Override
+    public String putByJsonParams(final String url, final Object requestParams) throws IOException {
         return putByJsonParams(url, _objejctMapper.writeValueAsString(requestParams));
     }
 
@@ -306,7 +324,8 @@ public class OkhttpUtils {
      *            请求的地址
      * @return 响应的字符串
      */
-    public static String delete(final String url) throws IOException {
+    @Override
+    public String delete(final String url) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         final Request request = new Request.Builder().url(url).delete(formBodyBuilder.build()).build();
@@ -330,7 +349,8 @@ public class OkhttpUtils {
      *            请求的参数
      * @return 响应的字符串
      */
-    public static String deleteByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
+    @Override
+    public String deleteByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
         _log.debug("发送请求：{}", url);
         final FormBody.Builder formBodyBuilder = new FormBody.Builder();
         for (final Map.Entry<String, Object> item : requestParams.entrySet()) {
