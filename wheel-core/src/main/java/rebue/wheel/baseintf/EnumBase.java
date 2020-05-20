@@ -10,9 +10,11 @@ public interface EnumBase {
     /**
      * @return jackson序列化的值
      */
-    @JsonValue
+    @JsonValue // Jackson在序列化时，只序列化 @JsonValue 标注的值
     int getCode();
 
     String getName();
+
+    String getDesc();
 
 }
