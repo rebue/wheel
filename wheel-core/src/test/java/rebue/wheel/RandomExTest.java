@@ -9,24 +9,25 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import entity.PojoEntity;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.test.AbstractSpringContextTest;
 
 @Slf4j
-public class RandomExTest extends AbstractSpringContextTest {
+@SpringBootTest
+public class RandomExTest {
 
     @Test
     @Disabled
     public void test01() throws NoSuchAlgorithmException, NoSuchProviderException {
-        Random random;
-        final long start = System.currentTimeMillis();
+        Random              random;
+        final long          start   = System.currentTimeMillis();
         final List<Integer> randoms = new ArrayList<>();
-        int id;
+        int                 id;
         for (int i = 0; i < 10; i++) {
             random = RandomEx.getRandom();
-            id = random.nextInt(Integer.MAX_VALUE);
+            id     = random.nextInt(Integer.MAX_VALUE);
             // log.info(random.nextInt(Integer.MAX_VALUE));
             randoms.add(id);
         }

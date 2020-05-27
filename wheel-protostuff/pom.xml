@@ -25,11 +25,13 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-	
+
 		<dependency>
-			<groupId>com.github.rebue.wheel</groupId>
-			<artifactId>wheel-test</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 </project>

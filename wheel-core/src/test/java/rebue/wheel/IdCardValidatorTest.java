@@ -16,19 +16,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import rebue.wheel.test.AbstractSpringContextTest;
-
-public class IdCardValidatorTest extends AbstractSpringContextTest {
+@SpringBootTest
+public class IdCardValidatorTest {
     // 18位身份证中，各个数字的生成校验码时的权值
-    private final static int[]  VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+    private final static int[] VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
     // 18位身份证中最后一位校验码
-    private final static char[] VERIFY_CODE        = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
+    private final static char[] VERIFY_CODE = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
 
-    protected static Logger     _logger            = LoggerFactory.getLogger(IdCardValidatorTest.class);
+    protected static Logger _logger = LoggerFactory.getLogger(IdCardValidatorTest.class);
 
     private char getVerifyCode(final String sNumber) {
-        int sum = 0;
+        int       sum           = 0;
         final int iNumberLength = sNumber.length() - 1;
         for (int i = 0; i < iNumberLength; i++) {
             sum += (sNumber.charAt(i) - '0') * VERIFY_CODE_WEIGHT[i];
@@ -59,8 +59,8 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
         // 日期超出范围
         Assertions.assertFalse(IdCardValidator.validate("45010418991225101x"));
         final LocalDateTime dateTime = LocalDateTime.now().plusDays(1);
-        final String sDate = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String sNumber = "450106" + sDate + "052";
+        final String        sDate    = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String              sNumber  = "450106" + sDate + "052";
         sNumber += getVerifyCode(sNumber);
         Assertions.assertFalse(IdCardValidator.validate(sNumber));
         // 校验和不对
@@ -79,8 +79,9 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
      */
     @Test
     public void test02() {
-        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
-        final int iTaskCount = 100000;
+        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
+        final int             iTaskCount      = 100000;
         for (int i = 0; i < iTaskCount; i++) {
             executorService.execute(() -> test01());
         }
@@ -93,8 +94,8 @@ public class IdCardValidatorTest extends AbstractSpringContextTest {
 
     private void testFile(final String sFileName) throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final File file = new File(classLoader.getResource(sFileName).getFile());
-        String sIdCardNo;
+        final File        file        = new File(classLoader.getResource(sFileName).getFile());
+        String            sIdCardNo;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while ((sIdCardNo = reader.readLine()) != null) {
                 IdCardValidator.validate(sIdCardNo);
