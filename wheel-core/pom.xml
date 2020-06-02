@@ -76,6 +76,13 @@
 			<artifactId>xstream</artifactId>
 		</dependency>
 
+		<!-- 测试Reactor编程 -->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
