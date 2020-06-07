@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rebue.wheel.exception.RuntimeExceptionX;
+import rebue.wheel.idworker.IdWorker3Helper;
 
 /**
  * @since 1.7
@@ -317,21 +318,37 @@ public class RandomEx {
                         m.invoke(model, random2(18));
                         continue;
                     }
+                    if (name.equals("Salt")) {
+                        final Method m = clazz.getMethod("set" + name, String.class);
+                        m.invoke(model, random1(6));
+                        continue;
+                    }
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, String.class);
                     m.invoke(model, randomCnStr(20));
                     continue;
                 }
                 if (type.equals("class java.lang.Long")) {
+                    if (name.endsWith("Id")) {
+                        final Method m = clazz.getMethod("set" + name, Long.class);
+                        m.invoke(model, IdWorker3Helper.getId());
+                        continue;
+                    }
+                    if (name.endsWith("Timestamp")) {
+                        final Method m = clazz.getMethod("set" + name, Long.class);
+                        m.invoke(model, System.currentTimeMillis());
+                        continue;
+                    }
+
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Long.class);
-                    m.invoke(model, random.nextLong());
+                    m.invoke(model, Math.abs(random.nextLong()));
                     continue;
                 }
                 if (type.equals("class java.lang.Integer")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Integer.class);
-                    m.invoke(model, random.nextInt());
+                    m.invoke(model, Math.abs(random.nextInt()));
                     continue;
                 }
                 if (type.equals("class java.lang.Short")) {
