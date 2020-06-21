@@ -48,11 +48,6 @@
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
-		<!-- BaseEnum用@JsonValue注解来自定义序列化 -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
 
 		<!-- 解析Json格式 -->
 		<dependency>
