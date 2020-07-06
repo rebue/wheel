@@ -46,23 +46,23 @@
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-test</artifactId>
-				<version>${project.version}</version>
+				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-core</artifactId>
-				<version>${project.version}</version>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-turing</artifactId>
-				<version>${project.version}</version>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-protostuff</artifactId>
-				<version>${project.version}</version>
+				<version>1.2.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
