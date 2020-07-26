@@ -37,26 +37,27 @@ public final class IdWorker3 {
         return _maxAppid;
     }
 
-    private final long    _sequenceMask       = -1L ^ -1L << _sequenceBits;
+    private final long          _sequenceMask       = -1L ^ -1L << _sequenceBits;
 
-    private final long    _appidShift         = _sequenceBits;
-    private final long    _timestampLeftShift = _sequenceBits + _appidBits;
+    private final long          _appidShift         = _sequenceBits;
+    private final long          _timestampLeftShift = _sequenceBits + _appidBits;
 
-    private AtomicInteger _sequence           = new AtomicInteger(-1);
-    private AtomicLong    _lastTimestamp      = new AtomicLong(-1L);
+    private final AtomicInteger _sequence           = new AtomicInteger(-1);
+    private final AtomicLong    _lastTimestamp      = new AtomicLong(-1L);
 
     /**
      * @see #_appid appId
      */
     public IdWorker3(final int appid) {
         _log.info("开始创建IdWorker3的对象，传入的appid为{}", appid);
-        if (appid == 0)
+        if (appid == 0) {
             _log.warn("appid默认为0，如果在分布式环境中可能会造成生成的id重复，请按规范做好规划");
-        if (appid < 0 || appid > _maxAppid)
+        }
+        if (appid < 0 || appid > _maxAppid) {
             throw new IllegalArgumentException(String.format("appid不能大于%d或小于0", _maxAppid));
-        this._appid = appid;
-        _log.info("创建IdWorker3的实例开始工作，appid {}, timestamp bits {}, worker id bits {}, sequence bits {}", appid,
-                64 - _appidBits - _sequenceBits, _appidBits, _sequenceBits);
+        }
+        _appid = appid;
+        _log.info("创建IdWorker3的实例开始工作，appid {}, timestamp bits {}, worker id bits {}, sequence bits {}", appid, 64 - _appidBits - _sequenceBits, _appidBits, _sequenceBits);
     }
 
     public IdWorker3() {
@@ -69,19 +70,18 @@ public final class IdWorker3 {
      * @return 当前时间差(42bit)+appId(5bit)+顺序号(17bit)
      * @throws ClockBackwardsException
      */
-    public long getId() throws ClockBackwardsException {
-        long lastTimestamp = _lastTimestamp.get();
-        long timestamp = System.currentTimeMillis();
+    public Long getId() throws ClockBackwardsException {
+        final long lastTimestamp = _lastTimestamp.get();
+        final long timestamp = System.currentTimeMillis();
 
         if (timestamp == lastTimestamp) {
-        } else if (timestamp > lastTimestamp)
+        } else if (timestamp > lastTimestamp) {
             _lastTimestamp.compareAndSet(lastTimestamp, timestamp);
-        // 系统时钟被倒退了
-        else if (timestamp < lastTimestamp)
+        } else if (timestamp < lastTimestamp) {
             throw new ClockBackwardsException(_lastTimestamp.get() - timestamp);
+        }
 
-        return (timestamp - _twepoch) << _timestampLeftShift | _appid << _appidShift
-                | _sequence.incrementAndGet() & _sequenceMask;
+        return (timestamp - _twepoch) << _timestampLeftShift | _appid << _appidShift | _sequence.incrementAndGet() & _sequenceMask;
     }
 
     /**
