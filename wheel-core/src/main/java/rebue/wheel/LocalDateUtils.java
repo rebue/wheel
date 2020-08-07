@@ -27,4 +27,12 @@ public class LocalDateUtils {
 
     }
 
+    /**
+     * 获取LocalDateTime的毫秒数
+     */
+    public static Long getMillis(final LocalDateTime localDateTime) {
+        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+    }
+
 }
