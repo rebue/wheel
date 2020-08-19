@@ -13,6 +13,7 @@ import org.dom4j.DocumentException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.JacksonUtils;
 import rebue.wheel.XmlUtils;
 import rebue.wheel.http.HttpClient;
 
@@ -30,7 +31,7 @@ import rebue.wheel.http.HttpClient;
  */
 @Slf4j
 public class ApacheHttpClientImpl implements HttpClient {
-    private static ObjectMapper _objejctMapper = new ObjectMapper();
+    private static ObjectMapper _objejctMapper = JacksonUtils.getObjectMapper();
 
     /*
      * (non-Javadoc)

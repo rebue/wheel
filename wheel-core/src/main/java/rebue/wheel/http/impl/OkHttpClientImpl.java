@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import rebue.wheel.JacksonUtils;
 import rebue.wheel.XmlUtils;
 import rebue.wheel.http.HttpClient;
 
@@ -29,7 +30,7 @@ public class OkHttpClientImpl implements HttpClient {
 //    private static OkHttpClient _client = new OkHttpClient();
     private final OkHttpClient _client;
 
-    private final ObjectMapper _objejctMapper = new ObjectMapper();
+    private final ObjectMapper _objejctMapper = JacksonUtils.getObjectMapper();
 
     public OkHttpClientImpl() {
         _client = new OkHttpClient().newBuilder().hostnameVerifier((hostname, session) -> {
