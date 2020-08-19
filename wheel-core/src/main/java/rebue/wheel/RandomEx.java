@@ -8,6 +8,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -154,7 +156,7 @@ public class RandomEx {
         try {
             final Date start = sdf.parse("1970-01-01");
             // 构造开始日期
-            final Date end = new Date();                     // 构造结束日期
+            final Date end   = new Date();                     // 构造结束日期
             // getTime()表示返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
             if (start.getTime() >= end.getTime()) {
                 return null;
@@ -186,7 +188,7 @@ public class RandomEx {
      * 随机生成手机号码
      */
     public static String randomMobile() {
-        final int index = random.nextInt(telFirst.length);
+        final int    index = random.nextInt(telFirst.length);
         final String first = telFirst[index];
         return first + random2(8);
     }
@@ -242,9 +244,9 @@ public class RandomEx {
      * 随机生成地址
      */
     public static String randomAddress() {
-        final String first = road[random.nextInt(road.length)];
+        final String first  = road[random.nextInt(road.length)];
         final String second = String.valueOf(random.nextInt(139) + 11) + "号";
-        final String third = (random.nextInt(20) + 1) + "栋" + (random.nextInt(3) + 1) + "单元" + (random.nextInt(9) + 1) + "0" + (random.nextInt(6) + 1) + "室";
+        final String third  = random.nextInt(20) + 1 + "栋" + (random.nextInt(3) + 1) + "单元" + (random.nextInt(9) + 1) + "0" + (random.nextInt(6) + 1) + "室";
         return area[random.nextInt(area.length)] + region[random.nextInt(region.length)] + first + second + third;
     }
 
@@ -256,20 +258,20 @@ public class RandomEx {
     private static String boy       = "伟刚勇毅俊峰强军平保东文辉力明永健世广志义兴良海山仁波宁贵福生龙元全国胜学祥才发武新利清飞彬富顺信子杰涛昌成康星光天达安岩中茂进林有坚和彪博诚先敬震振壮会思群豪心邦承乐绍功松善厚庆磊民友裕河哲江超浩亮政谦亨奇固之轮翰朗伯宏言若鸣朋斌梁栋维启克伦翔旭鹏泽晨辰士以建家致树炎德行时泰盛雄琛钧冠策腾楠榕风航弘";
 
     public static String randomChineseName() {
-        int index = random.nextInt(firstName.length());
-        final String first = firstName.substring(index, index + 1);
-        final int sex = random.nextInt(2);
-        String str = boy;
-        int length = boy.length();
+        int          index  = random.nextInt(firstName.length());
+        final String first  = firstName.substring(index, index + 1);
+        final int    sex    = random.nextInt(2);
+        String       str    = boy;
+        int          length = boy.length();
         if (sex == 0) {
-            str = girl;
+            str    = girl;
             length = girl.length();
         } else {
         }
         index = random.nextInt(length);
-        final String second = str.substring(index, index + 1);
-        final int hasThird = random.nextInt(2);
-        String third = "";
+        final String second   = str.substring(index, index + 1);
+        final int    hasThird = random.nextInt(2);
+        String       third    = "";
         if (hasThird == 1) {
             index = random.nextInt(length);
             third = str.substring(index, index + 1);
@@ -290,7 +292,7 @@ public class RandomEx {
             // 获取属性的名字
             for (final Field element : field) {
                 // 获取属性的名字
-                String name = element.getName();
+                String       name = element.getName();
                 // 获取属性类型
                 final String type = element.getGenericType().toString();
                 // 关键。。。可访问私有变量
@@ -385,6 +387,18 @@ public class RandomEx {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Date.class);
                     m.invoke(model, new Date());
+                    continue;
+                }
+                if (type.equals("class java.time.LocalDateTime")) {
+                    // 如果type是类类型，则前面包含"class "，后面跟类名
+                    final Method m = clazz.getMethod("set" + name, LocalDateTime.class);
+                    m.invoke(model, LocalDateTime.now());
+                    continue;
+                }
+                if (type.equals("class java.time.LocalDate")) {
+                    // 如果type是类类型，则前面包含"class "，后面跟类名
+                    final Method m = clazz.getMethod("set" + name, LocalDate.class);
+                    m.invoke(model, LocalDate.now());
                     continue;
                 }
             }
