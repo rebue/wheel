@@ -1,10 +1,11 @@
 package rebue.wheel;
 
-import java.io.IOException;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -42,20 +43,44 @@ public class JacksonUtils {
         return _objectMapper;
     }
 
-    public static String bean2Json(final Object obj) throws IOException {
+    /**
+     * 序列化
+     *
+     * @param obj 要序列化的对象
+     * @return 序列化后的字符串
+     * @throws JsonProcessingException
+     */
+    public static String serialize(final Object obj) throws JsonProcessingException {
         return _objectMapper.writeValueAsString(obj);
     }
 
     /**
-     * 演示如何反序列化泛型类
+     * 反序列化泛型类
+     *
+     * @param <T>     泛型
+     * @param jsonStr JSON字符串
+     * @param tr      泛型的引用
+     * @return 反序列化生成的对象
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
      */
     @SuppressWarnings("unchecked")
-    public static <T> T json2BeanByType(final String jsonStr, @SuppressWarnings("rawtypes") final TypeReference tr)
-            throws IOException {
+    public static <T> T deserialize(final String jsonStr, @SuppressWarnings("rawtypes") final TypeReference tr)
+            throws JsonProcessingException, JsonMappingException {
         return (T) _objectMapper.readValue(jsonStr, tr);
     }
 
-    public static <T> T json2Bean(final String jsonStr, final Class<T> clazz) throws IOException {
+    /**
+     * 反序列化类
+     *
+     * @param <T>     泛型
+     * @param jsonStr JSON字符串
+     * @param clazz   类的引用
+     * @return 反序列化生成的对象
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
+     */
+    public static <T> T deserialize(final String jsonStr, final Class<T> clazz) throws JsonProcessingException, JsonMappingException {
         return _objectMapper.readValue(jsonStr, clazz);
     }
 }
