@@ -3,7 +3,7 @@ package rebue.wheel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XmlUtilsTest {
 
@@ -20,11 +20,11 @@ public class XmlUtilsTest {
 //        String text = "transaction_id=4200000167201809186476001168, nonce_str=540645B2EC814CE9825B659FD7A48497, bank_type=CFT, openid=onCVJv9BS0LaDCAemoFk4ZnRc_JE, sign=97914525FEBDD25ADA567314DE41A4F9, fee_type=CNY, mch_id=1444599902, cash_fee=600, out_trade_no=383148453493000218, appid=wx9e24a0de9e3e136c, total_fee=600, trade_type=JSAPI, result_code=SUCCESS, attach=517218165734769303, time_end=20180918154245, is_subscribe=N, return_code=SUCCESS";
 //        String text = "transaction_id=4200000183201809184194144181, nonce_str=E15A96B170D54A54AC36481EF0459540, bank_type=CFT, openid=onCVJvzUpk_hxAe2_PZPoUzv1QX8, sign=D52B2EA03EB6E6713C9A539F600ED53D, fee_type=CNY, mch_id=1444599902, cash_fee=300, out_trade_no=386554316602000751, appid=wx9e24a0de9e3e136c, total_fee=300, trade_type=JSAPI, result_code=SUCCESS, attach=93126, time_end=20180918162527, is_subscribe=Y, return_code=SUCCESS";
 //        String text = "transaction_id=4200000184201809181331530557, nonce_str=96A17FA67C2B42D28915E6D812F494E1, bank_type=ABC_DEBIT, openid=onCVJv6sk8Lye7ycrgFsYzb6FULE, sign=63B9A3E4A8DA58368AEAC6F3159430DD, fee_type=CNY, mch_id=1444599902, cash_fee=700, out_trade_no=380047785024000767, appid=wx9e24a0de9e3e136c, total_fee=700, trade_type=JSAPI, result_code=SUCCESS, attach=503006616900075722, time_end=20180918162748, is_subscribe=Y, return_code=SUCCESS";
-        String text = "transaction_id=4200000186201809183104700168, nonce_str=EC12F2695A8C43F4B751112E1FF1B7F6, bank_type=ICBC_DEBIT, openid=onCVJvxC56pwHxEDKOKdp_4GDSNY, sign=BFBFA1A0523C397FA815CCFDE665AAF1, fee_type=CNY, mch_id=1444599902, cash_fee=300, out_trade_no=388168756993000016, appid=wx9e24a0de9e3e136c, total_fee=300, trade_type=JSAPI, result_code=SUCCESS, attach=193201, time_end=20180918165005, is_subscribe=Y, return_code=SUCCESS";
-        String[] split = text.split(",");
-        Map<String, Object> map = new LinkedHashMap<>();
-        for (String item : split) {
-            String[] kv = item.split("=");
+        final String              text  = "transaction_id=4200000186201809183104700168, nonce_str=EC12F2695A8C43F4B751112E1FF1B7F6, bank_type=ICBC_DEBIT, openid=onCVJvxC56pwHxEDKOKdp_4GDSNY, sign=BFBFA1A0523C397FA815CCFDE665AAF1, fee_type=CNY, mch_id=1444599902, cash_fee=300, out_trade_no=388168756993000016, appid=wx9e24a0de9e3e136c, total_fee=300, trade_type=JSAPI, result_code=SUCCESS, attach=193201, time_end=20180918165005, is_subscribe=Y, return_code=SUCCESS";
+        final String[]            split = text.split(",");
+        final Map<String, Object> map   = new LinkedHashMap<>();
+        for (final String item : split) {
+            final String[] kv = item.split("=");
             map.put(kv[0].trim(), kv[1].trim());
         }
         System.out.println(XmlUtils.mapToXml(map));

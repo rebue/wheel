@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,9 +24,9 @@ import rebue.wheel.idworker.IdWorker3;
 @SpringBootTest
 public class IdWorkerTest {
 
-    protected static Logger _logger = LoggerFactory.getLogger(IdWorkerTest.class);
+    protected static Logger _logger       = LoggerFactory.getLogger(IdWorkerTest.class);
 
-    private final String PRINT_RUNTIME = "%s:%dms(%s)";
+    private final String    PRINT_RUNTIME = "%s:%dms(%s)";
 
     /**
      * 测试IdWorker1单线程循环1百万次的时间

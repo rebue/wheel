@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MapUtilsTest {
     public class Student {
@@ -17,7 +17,7 @@ public class MapUtilsTest {
             return id;
         }
 
-        public void setId(Long id) {
+        public void setId(final Long id) {
             this.id = id;
         }
 
@@ -25,7 +25,7 @@ public class MapUtilsTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
 
@@ -33,7 +33,7 @@ public class MapUtilsTest {
             return age;
         }
 
-        public void setAge(Short age) {
+        public void setAge(final Short age) {
             this.age = age;
         }
 
@@ -41,7 +41,7 @@ public class MapUtilsTest {
             return birthday;
         }
 
-        public void setBirthday(Date birthday) {
+        public void setBirthday(final Date birthday) {
             this.birthday = birthday;
         }
 
@@ -54,12 +54,12 @@ public class MapUtilsTest {
 
     @Test
     public void test01() {
-        Student zs = new Student();
+        final Student zs = new Student();
         zs.setId(1L);
         zs.setName("张三");
 
-        Map<?, ?> map = MapUtils.obj2Map(zs);
-        for (Entry<?, ?> item : map.entrySet()) {
+        final Map<?, ?> map = MapUtils.obj2Map(zs);
+        for (final Entry<?, ?> item : map.entrySet()) {
             System.out.println(item.getKey() + ":" + item.getValue());
         }
     }

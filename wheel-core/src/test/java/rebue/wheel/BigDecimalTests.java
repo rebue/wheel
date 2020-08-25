@@ -2,8 +2,8 @@ package rebue.wheel;
 
 import java.math.BigDecimal;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BigDecimalTests {
     /**
@@ -32,12 +32,12 @@ public class BigDecimalTests {
     public void test02() {
         BigDecimal one = BigDecimal.valueOf(11);
         BigDecimal two = BigDecimal.valueOf(11.00);
-        Assert.assertNotEquals(one, two);
-        Assert.assertNotEquals(true, one.equals(two));
+        Assertions.assertNotEquals(one, two);
+        Assertions.assertNotEquals(true, one.equals(two));
         one = BigDecimal.valueOf(223.0).add(BigDecimal.ZERO);
         two = BigDecimal.valueOf(223.0000).add(BigDecimal.ZERO);
-        Assert.assertEquals(one, two);
-        Assert.assertEquals(true, one.equals(two));
+        Assertions.assertEquals(one, two);
+        Assertions.assertEquals(true, one.equals(two));
 
         final BigDecimal x = new BigDecimal("1");
         final BigDecimal y = new BigDecimal("1.00");

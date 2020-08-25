@@ -3,7 +3,7 @@ package rebue.wheel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StrUitlsTests {
     final String str = "含中英文及     符号 ,，ABC abc 123    ??？.。…………";

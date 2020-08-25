@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class NetUtilsTests {
 
     @Test
     public void test02() {
-        ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
-        final int iTaskCount = 1;
+        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
+        final int             iTaskCount      = 1;
         for (int i = 0; i < iTaskCount; i++) {
             executorService.execute(() -> {
                 _log.info(NetUtils.getFirstIpOfLocalHost());
