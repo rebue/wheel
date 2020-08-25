@@ -12,6 +12,7 @@ import com.github.dozermapper.core.DozerConverter;
 import com.github.dozermapper.core.Mapper;
 import com.github.dozermapper.core.MapperAware;
 
+@Deprecated
 public class MapConverter extends DozerConverter<Map<String, Object>, Object> implements MapperAware {
 
     private final static Logger      _log    = LoggerFactory.getLogger(MapConverter.class);
