@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.github.rebue.common-pom</groupId>
 		<artifactId>common-pom</artifactId>
-		<version>1.2.0</version>
+		<version>1.2.1</version>
 	</parent>
 
 	<groupId>com.github.rebue.wheel</groupId>
@@ -46,23 +46,23 @@
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-test</artifactId>
-				<version>1.2.0</version>
+				<version>1.2.1</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-core</artifactId>
-				<version>1.2.0</version>
+				<version>1.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-turing</artifactId>
-				<version>1.2.0</version>
+				<version>1.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-protostuff</artifactId>
-				<version>1.2.0</version>
+				<version>1.2.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
