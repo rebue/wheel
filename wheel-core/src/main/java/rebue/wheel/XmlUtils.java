@@ -1,5 +1,6 @@
 package rebue.wheel;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -20,21 +21,28 @@ import org.xml.sax.SAXException;
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);
 
-    public static Document getDocumentFromInputStream(final InputStream inputStream) throws DocumentException, SAXException {
+    private static SAXReader getReader() throws SAXException {
         final SAXReader saxReader = new SAXReader();
         saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
         saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        return saxReader.read(inputStream);
+        return saxReader;
+    }
+
+    public static Document getDocument(final File file) throws DocumentException, SAXException {
+        return getReader().read(file);
+    }
+
+    public static Document getDocument(final InputStream inputStream) throws DocumentException, SAXException {
+        return getReader().read(inputStream);
     }
 
     public static String getXmlFromRequest(final ServletRequest servletRequest) throws DocumentException, SAXException, IOException {
-        final Document document = getDocumentFromInputStream(servletRequest.getInputStream());
-        return document.asXML();
+        return getDocument(servletRequest.getInputStream()).asXML();
     }
 
     public static Map<String, Object> xmlToMap(final InputStream inputStream) throws DocumentException, SAXException {
-        return xmlToMap(getDocumentFromInputStream(inputStream));
+        return xmlToMap(getDocument(inputStream));
     }
 
     public static Map<String, Object> xmlToMap(final String xmlText) throws DocumentException {
