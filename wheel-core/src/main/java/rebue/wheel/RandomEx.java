@@ -10,7 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -122,7 +125,7 @@ public class RandomEx {
      * 随机生成汉字字符
      */
     public static char randomCnChar() {
-//        return (char) (random.nextInt(300) + 19968);
+        // return (char) (random.nextInt(300) + 19968);
         return COMMON_CN_CHARS.charAt(random.nextInt(COMMON_CN_CHARS.length()));
     }
 
@@ -208,7 +211,8 @@ public class RandomEx {
 
     // 随机生成省、自治区、直辖市代码 1-2
     private static String[] provinces = { "11", "12", "13", "14", "15", "21", "22", "23", "31", "32", "33", "34", "35", "36", "37", "41", "42", "43", "44", "45", "46", "50", "51",
-            "52", "53", "54", "61", "62", "63", "64", "65", "71", "81", "82" };
+            "52", "53", "54", "61", "62", "63", "64", "65", "71", "81", "82"
+    };
 
     /**
      * 随机生成两位数的字符串（01-max）,不足两位的前面补0
@@ -266,7 +270,8 @@ public class RandomEx {
         if (sex == 0) {
             str    = girl;
             length = girl.length();
-        } else {
+        }
+        else {
         }
         index = random.nextInt(length);
         final String second   = str.substring(index, index + 1);
@@ -288,9 +293,15 @@ public class RandomEx {
             final Object model = clazz.newInstance();
 
             // 获取实体类的所有属性，返回Field数组
-            final Field[] field = clazz.getDeclaredFields();
+            final List<Field> fields    = new ArrayList<>();
+            @SuppressWarnings("rawtypes")
+            Class             tempClass = clazz;
+            while (tempClass != null) {// 当父类为null的时候说明到达了最上层的父类(Object类).
+                fields.addAll(Arrays.asList(tempClass.getDeclaredFields()));
+                tempClass = tempClass.getSuperclass(); // 得到父类,然后赋给自己
+            }
             // 获取属性的名字
-            for (final Field element : field) {
+            for (final Field element : fields) {
                 // 获取属性的名字
                 String       name = element.getName();
                 // 获取属性类型

@@ -1,5 +1,7 @@
 package rebue.wheel;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,12 +55,12 @@ public class MapUtilsTest {
     }
 
     @Test
-    public void test01() {
+    public void test01() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         final Student zs = new Student();
         zs.setId(1L);
         zs.setName("张三");
 
-        final Map<?, ?> map = MapUtils.obj2Map(zs);
+        final Map<?, ?> map = MapUtils.bean2Map(zs);
         for (final Entry<?, ?> item : map.entrySet()) {
             System.out.println(item.getKey() + ":" + item.getValue());
         }
