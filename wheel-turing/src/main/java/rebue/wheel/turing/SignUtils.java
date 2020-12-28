@@ -144,6 +144,16 @@ public class SignUtils {
                 log.warn("验证签名失败: 没有时间戳");
                 return false;
             }
+            final long longSignTimestamp = Long.parseLong(signTimestamp.toString());
+            final long now               = System.currentTimeMillis();
+            if (longSignTimestamp < now - 5 * 60 * 1000) {
+                log.warn("验证签名失败: 时间戳太旧");
+                return false;
+            }
+            if (longSignTimestamp > now + 1 * 60 * 1000) {
+                log.warn("验证签名失败: 时间戳太新");
+                return false;
+            }
         }
 
         final String correctSignResult = getSignValue(requestParams, signKeyParamName, signKey, signResultParamName, isAddTimeStamp);
