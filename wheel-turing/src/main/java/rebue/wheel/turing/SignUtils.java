@@ -20,12 +20,12 @@ public class SignUtils {
 
     /**
      * 签名-获取签名的结果
-     * 
+     *
      * 签名算法步骤:
      * 1. 将所有参数排序生成新的Map
      * 2. 参数列表添加key后，一起拼接成name1=value1&amp;name2=value2....&amp;key=xxx的字符串
      * 3. 将字符串md5hex并大写生成签名
-     * 
+     *
      * @param requestParams
      *                            请求的参数map
      * @param signKeyParamName
@@ -38,7 +38,7 @@ public class SignUtils {
      *                            是否添加时间戳增加破解难度
      */
     public static String getSignValue(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey, final String signResultParamName,
-            final boolean isAddTimeStamp) {
+        final boolean isAddTimeStamp) {
         final StringBuilder sb1 = new StringBuilder();
         try {
             sb1.append("\r\n----------------------- 签名 -----------------------\r\n");
@@ -92,7 +92,7 @@ public class SignUtils {
     /**
      * 签名-签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
-     * 
+     *
      * @param requestParams
      *                            请求的参数map
      * @param signKeyParamName
@@ -105,7 +105,7 @@ public class SignUtils {
      *                            是否添加时间戳增加破解难度
      */
     public static void sign(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey, final String signResultParamName,
-            final boolean isAddTimeStamp) {
+        final boolean isAddTimeStamp) {
         final String signResult = getSignValue(requestParams, signKeyParamName, signKey, signResultParamName, isAddTimeStamp);
         // 将生成的签名添加入参数map中
         requestParams.put(signResultParamName, signResult);
@@ -114,7 +114,7 @@ public class SignUtils {
     /**
      * 签名-验证签名
      * 接收到的请求时，对请求的参数进行签名校验
-     * 
+     *
      * @param requestParams
      *                            接收到的请求参数map
      * @param signKeyParamName
@@ -127,7 +127,7 @@ public class SignUtils {
      *                            是否添加时间戳增加破解难度
      */
     public static boolean verify(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey, final String signResultParamName,
-            final boolean isAddTimeStamp) {
+        final boolean isAddTimeStamp) {
         if (requestParams == null || requestParams.isEmpty()) {
             log.warn("验证签名失败: 没有参数");
             return false;
@@ -157,7 +157,7 @@ public class SignUtils {
         }
 
         final String correctSignResult = getSignValue(requestParams, signKeyParamName, signKey, signResultParamName, isAddTimeStamp);
-        log.debug("计算出正确的签名: {}", correctSignResult);
+        log.debug("原始签名: {}，正确签名: {}", originSignResult, correctSignResult);
         if (correctSignResult.equals(originSignResult.toString())) {
             log.debug("签名正确");
             return true;
@@ -171,7 +171,7 @@ public class SignUtils {
     /**
      * 签名1-通用签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
-     * 
+     *
      * @param requestParams
      *                      请求的参数map
      * @param signKey
@@ -184,7 +184,7 @@ public class SignUtils {
     /**
      * 签名1-验证通用签名
      * 接收到的请求时，对请求的参数进行签名验证
-     * 
+     *
      * @param requestParams
      *                      接收到的请求参数map
      * @param signKey
@@ -197,7 +197,7 @@ public class SignUtils {
     /**
      * 签名2-微信支付签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
-     * 
+     *
      * @param requestParams
      *                      请求的参数map
      * @param signKey
@@ -210,7 +210,7 @@ public class SignUtils {
     /**
      * 签名2-验证微信支付签名
      * 接收到的请求时，对请求的参数进行签名验证
-     * 
+     *
      * @param requestParams
      *                      接收到的请求参数map
      * @param signKey
