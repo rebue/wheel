@@ -8,14 +8,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -30,11 +27,12 @@ public class JwtUtils {
      * JWT签名
      * 
      * @param key
-     *            签名的密钥
+     *                  签名的密钥
      * @param claimsSet
-     *            JWT中payload部分的内容
+     *                  JWT中payload部分的内容
+     * 
      * @throws JOSEException
-     *             签名失败
+     *                       签名失败
      */
     public static String sign(final byte[] key, final JWTClaimsSet claimsSet) throws JOSEException {
         _log.info("开始计算JWT签名");
@@ -55,7 +53,7 @@ public class JwtUtils {
         // Serialize to compact form, produces something like
         // eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
         final String sign = signedJWT.serialize();
-        final String msg = "JWT签名成功";
+        final String msg  = "JWT签名成功";
         _log.info("{}: {}", msg, sign);
         return sign;
     }
@@ -64,9 +62,9 @@ public class JwtUtils {
      * 将JWT签名添加到Cookie中
      * 
      * @param sign
-     *            JWT的签名
+     *                       JWT的签名
      * @param expirationTime
-     *            JWT签名的过期时间
+     *                       JWT签名的过期时间
      */
     public static void addCookie(final String sign, final Date expirationTime, final HttpServletResponse resp) {
         _log.info("将JWT签名添加到Cookie中");
@@ -98,13 +96,16 @@ public class JwtUtils {
      * 解析要验证的签名(因为签名的几部分是用base64编码的，先解析出来)
      * 
      * @param toVerifySign
-     *            要验证的签名
+     *                     要验证的签名
+     * 
      * @return 返回SignedJWT的实体(可从中取出head和payload部分进行验证，再校验签名是否正确)
+     * 
      * @throws ParseException
-     *             解析失败
+     *                        解析失败
      */
     public static SignedJWT parse(final String toVerifySign) throws ParseException {
         _log.info("解析JWT签名: {}", toVerifySign);
+        if (StringUtils.isBlank(toVerifySign)) throw new IllegalArgumentException("JWT签名不能为空");
         return SignedJWT.parse(toVerifySign);
     }
 
@@ -112,20 +113,23 @@ public class JwtUtils {
      * 校验签名是否正确
      * 
      * @param key
-     *            签名的密钥
+     *                  签名的密钥
      * @param signedJWT
-     *            签名的实体
+     *                  签名的实体
+     * 
      * @return 校验是否正确
+     * 
      * @throws JOSEException
-     *             校验失败
+     *                       校验失败
      */
     public static boolean verify(final byte[] key, final SignedJWT signedJWT) throws JOSEException {
         _log.info("校验签名是否正确");
         final JWSVerifier verifier = new MACVerifier(key);
-        final boolean result = signedJWT.verify(verifier);
+        final boolean     result   = signedJWT.verify(verifier);
         if (result) {
             _log.info("JWT的签名正确");
-        } else {
+        }
+        else {
             _log.info("JWT的签名不正确");
         }
         return result;
