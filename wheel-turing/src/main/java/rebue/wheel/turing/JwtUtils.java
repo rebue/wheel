@@ -1,6 +1,7 @@
 package rebue.wheel.turing;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -9,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -18,9 +17,11 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
-public class JwtUtils {
-    private final static Logger _log           = LoggerFactory.getLogger(JwtUtils.class);
+import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.LocalDateUtils;
 
+@Slf4j
+public class JwtUtils {
     private final static String JWT_TOKEN_NAME = "jwt_token";
 
     /**
@@ -35,7 +36,7 @@ public class JwtUtils {
      *                       签名失败
      */
     public static String sign(final byte[] key, final JWTClaimsSet claimsSet) throws JOSEException {
-        _log.info("开始计算JWT签名");
+        log.info("开始计算JWT签名");
 
         if (key.length < 64) {
             throw new IllegalArgumentException("密钥的字节长度不能小于64个Byte，目前是" + key.length + "个Byte");
@@ -54,7 +55,7 @@ public class JwtUtils {
         // eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
         final String sign = signedJWT.serialize();
         final String msg  = "JWT签名成功";
-        _log.info("{}: {}", msg, sign);
+        log.info("{}: {}", msg, sign);
         return sign;
     }
 
@@ -67,9 +68,33 @@ public class JwtUtils {
      *                       JWT签名的过期时间
      */
     public static void addCookie(final String sign, final Date expirationTime, final HttpServletResponse resp) {
-        _log.info("将JWT签名添加到Cookie中");
+        addCookie(sign, expirationTime.getTime(), resp);
+    }
+
+    /**
+     * 将JWT签名添加到Cookie中
+     * 
+     * @param sign
+     *                       JWT的签名
+     * @param expirationTime
+     *                       JWT签名的过期时间
+     */
+    public static void addCookie(final String sign, final LocalDateTime expirationTime, final HttpServletResponse resp) {
+        addCookie(sign, LocalDateUtils.getMillis(expirationTime), resp);
+    }
+
+    /**
+     * 将JWT签名添加到Cookie中
+     *
+     * @param sign
+     *                       JWT的签名
+     * @param expirationTime
+     *                       JWT签名的过期时间(1970年1月1日零时至此的毫秒数)
+     */
+    public static void addCookie(final String sign, final Long expirationTime, final HttpServletResponse resp) {
+        log.info("将JWT签名添加到Cookie中");
         final Cookie cookie = new Cookie(JWT_TOKEN_NAME, sign);
-        cookie.setMaxAge((int) ((expirationTime.getTime() - System.currentTimeMillis()) / 1000));
+        cookie.setMaxAge((int) ((expirationTime - System.currentTimeMillis()) / 1000));
         cookie.setPath("/");
         resp.addCookie(cookie);
     }
@@ -80,7 +105,7 @@ public class JwtUtils {
      * @return JWT的签名
      */
     public static String getSignInCookies(final HttpServletRequest req) {
-        _log.info("从请求的Cookie中获取JWT签名信息");
+        log.info("从请求的Cookie中获取JWT签名信息");
         final Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
@@ -104,7 +129,7 @@ public class JwtUtils {
      *                        解析失败
      */
     public static SignedJWT parse(final String toVerifySign) throws ParseException {
-        _log.info("解析JWT签名: {}", toVerifySign);
+        log.info("解析JWT签名: {}", toVerifySign);
         if (StringUtils.isBlank(toVerifySign)) throw new IllegalArgumentException("JWT签名不能为空");
         return SignedJWT.parse(toVerifySign);
     }
@@ -123,14 +148,14 @@ public class JwtUtils {
      *                       校验失败
      */
     public static boolean verify(final byte[] key, final SignedJWT signedJWT) throws JOSEException {
-        _log.info("校验签名是否正确");
+        log.info("校验签名是否正确");
         final JWSVerifier verifier = new MACVerifier(key);
         final boolean     result   = signedJWT.verify(verifier);
         if (result) {
-            _log.info("JWT的签名正确");
+            log.info("JWT的签名正确");
         }
         else {
-            _log.info("JWT的签名不正确");
+            log.info("JWT的签名不正确");
         }
         return result;
     }
