@@ -11,7 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -130,7 +134,9 @@ public class JwtUtils {
      */
     public static SignedJWT parse(final String toVerifySign) throws ParseException {
         log.info("解析JWT签名: {}", toVerifySign);
-        if (StringUtils.isBlank(toVerifySign)) throw new IllegalArgumentException("JWT签名不能为空");
+        if (StringUtils.isBlank(toVerifySign)) {
+            throw new IllegalArgumentException("JWT签名不能为空");
+        }
         return SignedJWT.parse(toVerifySign);
     }
 
