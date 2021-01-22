@@ -30,12 +30,12 @@ public class JwtUtils {
 
     /**
      * JWT签名
-     * 
+     *
      * @param key
      *                  签名的密钥
      * @param claimsSet
      *                  JWT中payload部分的内容
-     * 
+     *
      * @throws JOSEException
      *                       签名失败
      */
@@ -65,7 +65,7 @@ public class JwtUtils {
 
     /**
      * 将JWT签名添加到Cookie中
-     * 
+     *
      * @param sign
      *                       JWT的签名
      * @param expirationTime
@@ -77,7 +77,7 @@ public class JwtUtils {
 
     /**
      * 将JWT签名添加到Cookie中
-     * 
+     *
      * @param sign
      *                       JWT的签名
      * @param expirationTime
@@ -105,7 +105,7 @@ public class JwtUtils {
 
     /**
      * 从请求的Cookie中获取JWT签名信息
-     * 
+     *
      * @return JWT的签名
      */
     public static String getSignInCookies(final HttpServletRequest req) {
@@ -123,12 +123,12 @@ public class JwtUtils {
 
     /**
      * 解析要验证的签名(因为签名的几部分是用base64编码的，先解析出来)
-     * 
+     *
      * @param toVerifySign
      *                     要验证的签名
-     * 
+     *
      * @return 返回SignedJWT的实体(可从中取出head和payload部分进行验证，再校验签名是否正确)
-     * 
+     *
      * @throws ParseException
      *                        解析失败
      */
@@ -142,14 +142,14 @@ public class JwtUtils {
 
     /**
      * 校验签名是否正确
-     * 
+     *
      * @param key
      *                  签名的密钥
      * @param signedJWT
      *                  签名的实体
-     * 
+     *
      * @return 校验是否正确
-     * 
+     *
      * @throws JOSEException
      *                       校验失败
      */
@@ -187,11 +187,11 @@ public class JwtUtils {
 
     /**
      * 从请求的Cookie中获取JWT信息中的用户ID
-     * 
+     *
      * @return 如果没有此项，会抛出NumberFormatException异常
      */
-    public static Long getJwtUserIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
-        return Long.valueOf((String) getJwtItemInCookie(req, "userId"));
+    public static Long getJwtAccountIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
+        return Long.valueOf((String) getJwtItemInCookie(req, "accountId"));
     }
 
     /**
@@ -203,7 +203,7 @@ public class JwtUtils {
 
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息
-     * 
+     *
      * @return 返回Map&lt;String, Object&gt;，再通过key可获得里面的项
      *         例如:
      *         result.get("orgId")可获得当前用户的组织ID
@@ -216,7 +216,7 @@ public class JwtUtils {
 
     /**
      * 从请求的Cookie中获取JWT信息中的附加信息中的项
-     * 
+     *
      * @return 返回通过key可获得里面的项
      *         例如:
      *         "orgId"可获得当前用户的组织ID
