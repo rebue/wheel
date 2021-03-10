@@ -1,28 +1,21 @@
 package rebue.wheel.turing;
 
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import rebue.wheel.LocalDateUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 public class JwtUtils {
@@ -190,15 +183,23 @@ public class JwtUtils {
      *
      * @return 如果没有此项，会抛出NumberFormatException异常
      */
-    public static Long getJwtAccountIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
-        return Long.valueOf((String) getJwtItemInCookie(req, "accountId"));
+    public static Long getJwtAccountIdInCookie(final HttpServletRequest req) {
+        try {
+            return Long.valueOf((String) getJwtItemInCookie(req, "accountId"));
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     /**
      * 从请求的Cookie中获取JWT信息中的系统ID
      */
-    public static String getJwtSysIdInCookie(final HttpServletRequest req) throws NumberFormatException, ParseException {
-        return (String) getJwtItemInCookie(req, "sysId");
+    public static String getJwtSysIdInCookie(final HttpServletRequest req) {
+        try {
+            return (String) getJwtItemInCookie(req, "sysId");
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     /**
