@@ -1,10 +1,5 @@
 package rebue.wheel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rebue.wheel.exception.RuntimeExceptionX;
-import rebue.wheel.idworker.IdWorker3Helper;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -15,7 +10,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rebue.wheel.exception.RuntimeExceptionX;
+import rebue.wheel.idworker.IdWorker3Helper;
 
 /**
  * @since 1.7
@@ -367,7 +373,7 @@ public class RandomEx {
                 if (type.equals("class java.lang.Byte")) {
                     // 如果type是类类型，则前面包含"class "，后面跟类名
                     final Method m = clazz.getMethod("set" + name, Byte.class);
-                    m.invoke(model, (byte) random.nextInt(2));
+                    m.invoke(model, (byte) (random.nextInt(2) + 1));
                     continue;
                 }
                 if (type.equals("class java.lang.Double")) {
