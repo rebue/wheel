@@ -1,7 +1,8 @@
 package rebue.wheel.turing;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
@@ -22,18 +23,44 @@ public class SignUtils {
     private final static String SIGN_TIMESTAMP_KEY_PARAM_NAME = "signTimestamp";
 
     /**
+     * 算法是否是非对称加密
+     *
+     * @param signAlgorithm 签名算法
+     *
+     * @return 返回算法是否是非对称加密，如果否则说明是对称加密
+     */
+    public static boolean isAsymmetricEncryption(final String signAlgorithm) {
+        boolean isAsymmetricEncryption;
+        switch (signAlgorithm) {
+        case "MD5":
+            isAsymmetricEncryption = false;
+            break;
+        case "SM3_WITH_SM2":
+            isAsymmetricEncryption = true;
+            break;
+        default:
+            throw new RuntimeException("不支持的签名算法");
+        }
+        return isAsymmetricEncryption;
+    }
+
+    /**
      * 拼接请求参数
-     * 
+     *
      * 拼接步骤:
      * 1. 将所有参数排序生成新的Map
      * 2. 如果参数的值为空不参与签名
      * 3. 拼接成类似 name1=value1&amp;name2=value2....&amp;nameN=valueN 的字符串
-     * 
-     * @param requestParams 请求的参数map
-     * 
+     *
+     * @param signAlgorithm    签名算法
+     * @param requestParams    请求的参数map
+     * @param signKeyParamName 记录签名key的参数的名称(对称加密才需要此参数，非对称加密不需要)
+     * @param signKey          签名key的值(对称加密才需要此参数，非对称加密不需要；非对称加密须传私钥)
+     *
      * @return 拼接完成后的字符串
      */
-    public static StringJoiner concatRequestParams(final Map<String, Object> requestParams) {
+    public static String concatRequestParams(final String signAlgorithm, final Map<String, Object> requestParams,
+                                             final String signKeyParamName, final String signKey) {
         final StringBuilder sb1 = new StringBuilder();
         try {
             sb1.append("拼接请求参数:");
@@ -49,7 +76,8 @@ public class SignUtils {
                 }
                 sj.add(item.getKey() + "=" + item.getValue());
             }
-            return sj;
+            // 对称加密须将key放入字符串中来签名，非对称加密则不用
+            return isAsymmetricEncryption(signAlgorithm) ? sj.toString() : sj.add(signKeyParamName + "=" + signKey).toString();
         } finally {
             log.debug(sb1.toString());
         }
@@ -69,9 +97,10 @@ public class SignUtils {
      * @param signResultParamName 记录签名结果的参数的名称
      * @param isAddTimeStamp      是否添加时间戳增加破解难度
      */
+    @Deprecated
     public static String getSignValue(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey,
-            final String signResultParamName,
-            final boolean isAddTimeStamp) {
+                                      final String signResultParamName,
+                                      final boolean isAddTimeStamp) {
         final StringBuilder sb1 = new StringBuilder();
         try {
             sb1.append("\r\n----------------------- 签名 -----------------------\r\n");
@@ -125,39 +154,48 @@ public class SignUtils {
     /**
      * 签名-签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
+     * 最后会以signResultParamName为key，生成的签名为value添加到requestParams中
      *
      * @param signAlgorithm       签名算法
      * @param requestParams       请求的参数map
-     * @param signKeyParamName    记录签名key的参数的名称(对称加密才需要此参数，非对称加密不需要)
-     * @param signKey             签名key的值(非对称加密须传私钥)
+     * @param keyParamName        请求参数中key的参数名(对称加密需要此参数，非对称加密不需要)
+     * @param key                 签名key的值(对称加密需要此参数，非对称加密不需要)
+     * @param privateKey          私钥(非对称加密需要此参数，对称加密不需要)
      * @param signResultParamName 记录签名结果的参数的名称
      * @param isAddTimeStamp      是否添加时间戳增加破解难度
-     * @param userId              用户ID(SM3_WITH_SM2需要此参数)
+     * @param userIdParamName     请求参数中用户ID的参数名(SM3_WITH_SM2需要此参数)
+     *
      */
-    public static void sign(final String signAlgorithm, final Map<String, Object> requestParams, final String signKeyParamName,
-            final String signKey, final String signResultParamName, final boolean isAddTimeStamp, final Long userId) {
+    public static void sign(final String signAlgorithm, final Map<String, Object> requestParams, final String keyParamName,
+                            final String key, final PrivateKey privateKey, final String signResultParamName,
+                            final boolean isAddTimeStamp, final String userIdParamName) {
+        if (requestParams == null) {
+            log.warn("签名失败: requestParams不能为空");
+            throw new RuntimeException("签名失败: requestParams不能为空");
+        }
+
+        // 从请求参数中获取userId并检查是否为空
+        String userId = null;
+        if ("SM3_WITH_SM2".equals(signAlgorithm)) {
+            final Object value = requestParams.get(userIdParamName);
+            if (value == null) {
+                log.warn("签名失败: requestParams中没有{}", userIdParamName);
+                throw new RuntimeException("签名失败: requestParams没有" + userIdParamName);
+            }
+            userId = value.toString();
+            if (StringUtils.isBlank(userId)) {
+                log.warn("签名失败: requestParams中{}为空值", userIdParamName);
+                throw new RuntimeException("签名失败: requestParams中" + userIdParamName + "为空值");
+            }
+        }
+
         // 是否增加时间戳
         if (isAddTimeStamp) {
             requestParams.put(SIGN_TIMESTAMP_KEY_PARAM_NAME, Long.valueOf(System.currentTimeMillis()));
         }
 
-        // 是否非对称加密(如果不是，则为对称加密)
-        boolean isAsymmetricEncryption;
-        switch (signAlgorithm) {
-        case "MD5":
-            isAsymmetricEncryption = false;
-            break;
-        case "SM3_WITH_SM2":
-            isAsymmetricEncryption = true;
-            break;
-        default:
-            throw new RuntimeException("不支持的签名算法");
-        }
-
         // 拼接参数
-        final StringJoiner sj                 = concatRequestParams(requestParams);
-        // 对称加密须将key放入字符串中来签名，非对称加密则不用
-        final String       concatenatedString = isAsymmetricEncryption ? sj.toString() : sj.add(signKeyParamName + "=" + signKey).toString();
+        final String concatenatedString = concatRequestParams(signAlgorithm, requestParams, keyParamName, key);
 
         // 签名
         String signResult = null;
@@ -166,15 +204,13 @@ public class SignUtils {
                 signResult = DigestUtils.md5AsHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
-                signResult = new String(Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8),
-                        userId.toString().getBytes(), Sm2Utils.getPrivateKeyFromString(signKey)),
-                        StandardCharsets.UTF_8);
+                signResult = new String(
+                    Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8), userId.toString().getBytes(), privateKey),
+                    StandardCharsets.UTF_8);
             }
             else {
                 throw new RuntimeException("不支持的签名算法");
             }
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("不支持的字符编码格式");
         } catch (final Exception e) {
             throw new RuntimeException("签名计算错误");
         }
@@ -186,28 +222,50 @@ public class SignUtils {
      * 签名-验证签名
      * 接收到的请求时，对请求的参数进行签名校验
      *
-     * @param requestParams
-     *                            接收到的请求参数map
-     * @param signKeyParamName
-     *                            记录签名key的参数名称
-     * @param signKey
-     *                            签名key的值
-     * @param signResultParamName
-     *                            记录签名结果的参数名称
-     * @param isAddTimeStamp
-     *                            是否添加时间戳增加破解难度
+     * @param signAlgorithm       签名算法
+     * @param requestParams       请求的参数map
+     * @param keyParamName        请求参数中key的参数名(对称加密需要此参数，非对称加密不需要)
+     * @param key                 签名key的值(对称加密需要此参数，非对称加密不需要)
+     * @param publicKey           公钥(非对称加密需要此参数，对称加密不需要)
+     * @param signResultParamName 记录签名结果的参数的名称
+     * @param isAddTimeStamp      是否添加时间戳增加破解难度
+     * @param userIdParamName     请求参数中用户ID的参数名(SM3_WITH_SM2需要此参数)
+     *
+     * @return 返回签名是否正确
      */
-    public static boolean verify(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey, final String signResultParamName,
-            final boolean isAddTimeStamp) {
+    public static boolean verify(final String signAlgorithm, final Map<String, Object> requestParams, final String keyParamName,
+                                 final String key, final PublicKey publicKey, final String signResultParamName,
+                                 final boolean isAddTimeStamp, final String userIdParamName) {
+        boolean result = false;
+
         if (requestParams == null || requestParams.isEmpty()) {
             log.warn("验证签名失败: 没有参数");
             return false;
         }
-        final Object originSignResult = requestParams.get(signResultParamName);
+
+        // 从请求参数中获取userId并检查是否为空
+        String userId = null;
+        if ("SM3_WITH_SM2".equals(signAlgorithm)) {
+            final Object value = requestParams.get(userIdParamName);
+            if (value == null) {
+                log.warn("验证签名失败: requestParams中没有{}", userIdParamName);
+                throw new RuntimeException("验证签名失败: requestParams没有" + userIdParamName);
+            }
+            userId = value.toString();
+            if (StringUtils.isBlank(userId)) {
+                log.warn("验证签名失败: requestParams中{}为空值", userIdParamName);
+                throw new RuntimeException("验证签名失败: requestParams中" + userIdParamName + "为空值");
+            }
+        }
+
+        // 移除并获取原始的签名
+        final Object originSignResult = requestParams.remove(signResultParamName);
         if (originSignResult == null || StringUtils.isBlank(originSignResult.toString())) {
             log.warn("验证签名失败: 没有签名参数");
             return false;
         }
+        log.debug("原始签名: {}", originSignResult);
+
         // 要求有时间戳时判断有没有收到此参数
         if (isAddTimeStamp) {
             final Object signTimestamp = requestParams.get(SIGN_TIMESTAMP_KEY_PARAM_NAME);
@@ -227,16 +285,34 @@ public class SignUtils {
             }
         }
 
-        final String correctSignResult = getSignValue(requestParams, signKeyParamName, signKey, signResultParamName, isAddTimeStamp);
-        log.debug("原始签名: {}，正确签名: {}", originSignResult, correctSignResult);
-        if (correctSignResult.equals(originSignResult.toString())) {
+        // 拼接参数
+        final String concatenatedString = concatRequestParams(signAlgorithm, requestParams, keyParamName, key);
+
+        String       correctSignResult  = null;
+        try {
+            if ("MD5".equals(signAlgorithm)) {
+                correctSignResult = DigestUtils.md5AsHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
+                log.debug("正确签名: {}", correctSignResult);
+                result = correctSignResult.equals(originSignResult.toString());
+            }
+            else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
+                result = Sm2Utils.verifySm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8),
+                    userId.toString().getBytes(), originSignResult.toString().getBytes(StandardCharsets.UTF_8), publicKey);
+            }
+            else {
+                throw new RuntimeException("不支持的签名算法");
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException("签名计算错误");
+        }
+
+        if (result) {
             log.debug("签名正确");
-            return true;
         }
         else {
             log.warn("签名不正确: {}", originSignResult);
-            return false;
         }
+        return result;
     }
 
     /**
@@ -249,7 +325,7 @@ public class SignUtils {
      *                      签名key的值
      */
     public static void sign1(final Map<String, Object> requestParams, final String signKey) {
-        sign("MD5", requestParams, "signKey", signKey, "signResult", true, null);
+        sign("MD5", requestParams, "signKey", signKey, null, "signResult", true, null);
     }
 
     /**
@@ -262,20 +338,18 @@ public class SignUtils {
      *                      签名key的值
      */
     public static boolean verify1(final Map<String, Object> requestParams, final String signKey) {
-        return verify(requestParams, "signKey", signKey, "signResult", true);
+        return verify("MD5", requestParams, "signKey", signKey, null, "signResult", true, null);
     }
 
     /**
      * 签名2-微信支付签名
      * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
      *
-     * @param requestParams
-     *                      请求的参数map
-     * @param signKey
-     *                      签名key的值
+     * @param requestParams 请求的参数map
+     * @param signKey       签名key的值
      */
     public static void sign2(final Map<String, Object> requestParams, final String signKey, final Long userId) {
-        sign("MD5", requestParams, "key", signKey, "sign", false, null);
+        sign("MD5", requestParams, "key", signKey, null, "sign", false, null);
     }
 
     /**
@@ -288,11 +362,31 @@ public class SignUtils {
      *                      签名key的值
      */
     public static boolean verify2(final Map<String, Object> requestParams, final String signKey) {
-        return verify(requestParams, "key", signKey, "sign", false);
+        return verify("MD5", requestParams, "key", signKey, null, "sign", false, null);
     }
 
-    public static void sign3(final Map<String, Object> requestParams, final String signKey, final Long userId) {
-        sign("SM3_WITH_SM2", requestParams, "key", signKey, "sign", false, userId);
+    /**
+     * 签名3-国密签名
+     * 在请求时，通过签名算法算出签名，并将其放入请求的Map中
+     *
+     * @param requestParams 请求的参数map
+     * @param privateKey    私钥
+     * @param userId        用户ID
+     */
+    public static void sign3(final Map<String, Object> requestParams, final PrivateKey privateKey) {
+        sign("SM3_WITH_SM2", requestParams, null, null, privateKey, "signResult", true, "signId");
+    }
+
+    /**
+     * 签名3-验证国密签名
+     * 接收到的请求时，对请求的参数进行签名验证
+     *
+     * @param requestParams 接收到的请求参数map
+     * @param publicKey     公钥
+     * @param userId        用户ID
+     */
+    public static boolean verify3(final Map<String, Object> requestParams, final PublicKey publicKey) {
+        return verify("SM3_WITH_SM2", requestParams, null, null, publicKey, "signResult", true, "signId");
     }
 
 }
