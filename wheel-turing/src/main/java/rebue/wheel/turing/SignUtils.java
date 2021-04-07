@@ -212,7 +212,7 @@ public class SignUtils {
                 throw new RuntimeException("不支持的签名算法");
             }
         } catch (final Exception e) {
-            throw new RuntimeException("签名计算错误");
+            throw new RuntimeException("签名计算错误", e);
         }
         // 将生成的签名添加入参数map中
         requestParams.put(signResultParamName, signResult);
@@ -303,7 +303,7 @@ public class SignUtils {
                 throw new RuntimeException("不支持的签名算法");
             }
         } catch (final Exception e) {
-            throw new RuntimeException("签名计算错误");
+            throw new RuntimeException("签名计算错误", e);
         }
 
         if (result) {
