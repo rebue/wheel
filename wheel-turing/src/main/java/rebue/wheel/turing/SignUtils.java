@@ -3,6 +3,7 @@ package rebue.wheel.turing;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
@@ -204,9 +205,8 @@ public class SignUtils {
                 signResult = DigestUtils.md5AsHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
-                signResult = new String(
-                    Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8), userId.toString().getBytes(), privateKey),
-                    StandardCharsets.UTF_8);
+                signResult = Base64.getUrlEncoder().encodeToString(
+                    Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8), userId.toString().getBytes(), privateKey));
             }
             else {
                 throw new RuntimeException("不支持的签名算法");
@@ -297,7 +297,7 @@ public class SignUtils {
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
                 result = Sm2Utils.verifySm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8),
-                    userId.toString().getBytes(), originSignResult.toString().getBytes(StandardCharsets.UTF_8), publicKey);
+                    userId.toString().getBytes(), Base64.getUrlDecoder().decode(originSignResult.toString()), publicKey);
             }
             else {
                 throw new RuntimeException("不支持的签名算法");
