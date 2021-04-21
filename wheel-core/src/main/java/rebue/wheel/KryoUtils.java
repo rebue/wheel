@@ -14,6 +14,7 @@ public class KryoUtils {
     public static byte[] writeObject(final Object obj) throws IOException {
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(); final Output output = new Output(baos)) {
             _kryo.writeClassAndObject(output, obj);
+            output.flush();
             return baos.toByteArray();
         }
     }
