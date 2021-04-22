@@ -38,10 +38,6 @@
 	<modules>
 		<module>wheel-core</module>
 		<module>wheel-turing</module>
-<<<<<<< HEAD
-=======
-		<module>wheel-protostuff</module>
->>>>>>> branch '1.2.2' of git@github.com:rebue/wheel.git
 		<module>wheel-serialization</module>
 	</modules>
 
