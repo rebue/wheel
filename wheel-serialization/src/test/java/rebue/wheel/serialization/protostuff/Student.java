@@ -1,4 +1,4 @@
-package rebue.wheel.protostuff;
+package rebue.wheel.serialization.protostuff;
 
 import java.io.Serializable;
 import java.util.Date;

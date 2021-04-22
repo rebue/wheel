@@ -1,4 +1,4 @@
-package rebue.wheel.protostuff;
+package rebue.wheel.serialization.protostuff;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

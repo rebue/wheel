@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.serialization.kryo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

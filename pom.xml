@@ -38,18 +38,11 @@
 	<modules>
 		<module>wheel-core</module>
 		<module>wheel-turing</module>
-		<module>wheel-protostuff</module>
 		<module>wheel-serialization</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.github.rebue.wheel</groupId>
-				<artifactId>wheel-test</artifactId>
-				<version>1.2.2</version>
-				<scope>test</scope>
-			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-core</artifactId>
@@ -62,7 +55,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
-				<artifactId>wheel-protostuff</artifactId>
+				<artifactId>wheel-serialization</artifactId>
 				<version>1.2.2</version>
 			</dependency>
 		</dependencies>

@@ -1,4 +1,4 @@
-package rebue.wheel.amqp;
+package rebue.wheel.serialization.kryo;
 
 import java.io.IOException;
 
@@ -8,7 +8,6 @@ import org.springframework.amqp.support.converter.AbstractMessageConverter;
 import org.springframework.amqp.support.converter.MessageConversionException;
 
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.KryoUtils;
 
 @Slf4j
 public class KryoAmqpMessageConverter extends AbstractMessageConverter {

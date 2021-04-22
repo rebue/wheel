@@ -1,4 +1,4 @@
-package rebue.wheel.protostuff;
+package rebue.wheel.serialization.protostuff;
 
 import java.util.Map;
 
