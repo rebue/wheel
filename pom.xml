@@ -39,6 +39,7 @@
 		<module>wheel-core</module>
 		<module>wheel-turing</module>
 		<module>wheel-protostuff</module>
+		<module>wheel-serialization</module>
 	</modules>
 
 	<dependencyManagement>
