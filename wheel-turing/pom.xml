@@ -35,7 +35,10 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+<<<<<<< HEAD
 			<optional>true</optional>
+=======
+>>>>>>> branch '1.2.2' of git@github.com:rebue/wheel.git
 		</dependency>
 
 		<!-- 使用字符串的一些帮助库 -->
