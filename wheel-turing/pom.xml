@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>wheel-turing</artifactId>
+	<name>wheel-turing</name>
+	<description>对算法、加解密的应用提供支持</description>
 
 	<dependencies>
 		<dependency>

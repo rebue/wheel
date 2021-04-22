@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>wheel-core</artifactId>
+	<name>wheel-core</name>
+	<description>对一些基础函数的应用提供支持</description>
 
 	<dependencies>
 		<!-- <dependency> -->
