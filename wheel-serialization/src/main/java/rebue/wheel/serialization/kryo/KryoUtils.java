@@ -5,17 +5,14 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 public class KryoUtils {
-    /**
-     * FIXME kryo非线程安全
-     */
-    private static Kryo _kryo = new Kryo();
+    static private final ThreadLocal<Kryo> kryos = ThreadLocal.withInitial(Kryo::new);
 
     public static byte[] writeObject(final Object obj) {
         if (obj == null) {
             return null;
         }
         try (final Output output = new Output()) {
-            _kryo.writeClassAndObject(output, obj);
+            kryos.get().writeClassAndObject(output, obj);
             return output.toBytes();
         }
 
@@ -31,7 +28,7 @@ public class KryoUtils {
             return null;
         }
         try (Input input = new Input()) {
-            return _kryo.readClassAndObject(input);
+            return kryos.get().readClassAndObject(input);
         }
         // try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes); Input input = new Input(bais)) {
         // return _kryo.readClassAndObject(input);
