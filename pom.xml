@@ -39,6 +39,7 @@
 		<module>wheel-core</module>
 		<module>wheel-turing</module>
 		<module>wheel-serialization</module>
+		<module>wheel-net</module>
 	</modules>
 
 	<dependencyManagement>
@@ -50,12 +51,17 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
-				<artifactId>wheel-turing</artifactId>
+				<artifactId>wheel-net</artifactId>
 				<version>1.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-serialization</artifactId>
+				<version>1.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.rebue.wheel</groupId>
+				<artifactId>wheel-turing</artifactId>
 				<version>1.2.2</version>
 			</dependency>
 		</dependencies>

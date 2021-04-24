@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.serialization.jackson;
 
 import java.util.TimeZone;
 
@@ -47,7 +47,9 @@ public class JacksonUtils {
      * 序列化
      *
      * @param obj 要序列化的对象
+     * 
      * @return 序列化后的字符串
+     * 
      * @throws JsonProcessingException
      */
     public static String serialize(final Object obj) throws JsonProcessingException {
@@ -60,7 +62,9 @@ public class JacksonUtils {
      * @param <T>     泛型
      * @param jsonStr JSON字符串
      * @param tr      泛型的引用
+     * 
      * @return 反序列化生成的对象
+     * 
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
@@ -76,7 +80,9 @@ public class JacksonUtils {
      * @param <T>     泛型
      * @param jsonStr JSON字符串
      * @param clazz   类的引用
+     * 
      * @return 反序列化生成的对象
+     * 
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */

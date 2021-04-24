@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.serialization.xml;
 
 import java.io.File;
 import java.io.IOException;

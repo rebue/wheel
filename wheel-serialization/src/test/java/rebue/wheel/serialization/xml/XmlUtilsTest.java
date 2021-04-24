@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.serialization.xml;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

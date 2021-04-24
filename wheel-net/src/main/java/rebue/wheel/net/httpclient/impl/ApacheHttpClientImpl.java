@@ -1,4 +1,4 @@
-package rebue.wheel.http.impl;
+package rebue.wheel.net.httpclient.impl;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,9 +13,9 @@ import org.dom4j.DocumentException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.JacksonUtils;
-import rebue.wheel.XmlUtils;
-import rebue.wheel.http.HttpClient;
+import rebue.wheel.net.httpclient.HttpClient;
+import rebue.wheel.serialization.jackson.JacksonUtils;
+import rebue.wheel.serialization.xml.XmlUtils;
 
 /**
  * <pre>
@@ -51,30 +51,30 @@ public class ApacheHttpClientImpl implements HttpClient {
         }
     }
 
-//    /**
-//     * 发出带参数的GET请求
-//     *
-//     * @param url           请求的地址
-//     * @param requestParams 请求的参数
-//     * @return 响应的字符串
-//     */
-//    @Override
-//    public String get(final String url, final Map<String, Object> requestParams) throws IOException {
-//        _log.info("准备发出带参数的GET请求: {} {}", url, requestParams);
-//        final Form form = Form.form();
-//        for (final Entry<String, Object> requestParam : requestParams.entrySet()) {
-//            form.add(requestParam.getKey(), requestParam.getValue().toString());
-//        }
-//        try {
-//            final String result = Request.Get(url).bodyForm(form.build()).execute().returnContent().asString();
-//            _log.info("接收到response的信息: {}", result);
-//            return result;
-//        } catch (final IOException e) {
-//            _log.error("HTTP请求出现异常:" + e.getMessage(), e);
-//            throw e;
-//        }
-//
-//    }
+    // /**
+    // * 发出带参数的GET请求
+    // *
+    // * @param url 请求的地址
+    // * @param requestParams 请求的参数
+    // * @return 响应的字符串
+    // */
+    // @Override
+    // public String get(final String url, final Map<String, Object> requestParams) throws IOException {
+    // _log.info("准备发出带参数的GET请求: {} {}", url, requestParams);
+    // final Form form = Form.form();
+    // for (final Entry<String, Object> requestParam : requestParams.entrySet()) {
+    // form.add(requestParam.getKey(), requestParam.getValue().toString());
+    // }
+    // try {
+    // final String result = Request.Get(url).bodyForm(form.build()).execute().returnContent().asString();
+    // _log.info("接收到response的信息: {}", result);
+    // return result;
+    // } catch (final IOException e) {
+    // _log.error("HTTP请求出现异常:" + e.getMessage(), e);
+    // throw e;
+    // }
+    //
+    // }
 
     /*
      * (non-Javadoc)
