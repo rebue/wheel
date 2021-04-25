@@ -28,6 +28,15 @@ public class LocalDateUtils {
     }
 
     /**
+     * 将long类型的timestamp转为LocalDateTime
+     */
+    public static LocalDateTime getDateTimeOfTimestamp(final long timestamp) {
+        final Instant instant = Instant.ofEpochMilli(timestamp);
+        final ZoneId  zone    = ZoneId.systemDefault();
+        return LocalDateTime.ofInstant(instant, zone);
+    }
+
+    /**
      * 获取LocalDateTime的毫秒数
      */
     public static Long getMillis(final LocalDateTime localDateTime) {
