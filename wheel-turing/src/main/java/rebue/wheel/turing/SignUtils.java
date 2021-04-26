@@ -61,7 +61,7 @@ public class SignUtils {
      * @return 拼接完成后的字符串
      */
     public static String concatRequestParams(final String signAlgorithm, final Map<String, Object> requestParams,
-                                             final String signKeyParamName, final String signKey) {
+            final String signKeyParamName, final String signKey) {
         final StringBuilder sb1 = new StringBuilder();
         try {
             sb1.append("拼接请求参数:");
@@ -72,7 +72,7 @@ public class SignUtils {
             final StringJoiner        sj      = new StringJoiner("&");
             for (final Entry<String, Object> item : sortMap.entrySet()) {
                 // 排除值为null或为空字符串的参数
-                if (item.getValue() == null && StringUtils.isBlank(item.getValue().toString())) {
+                if (item.getValue() == null || StringUtils.isBlank(item.getValue().toString())) {
                     continue;
                 }
                 sj.add(item.getKey() + "=" + item.getValue());
@@ -100,8 +100,8 @@ public class SignUtils {
      */
     @Deprecated
     public static String getSignValue(final Map<String, Object> requestParams, final String signKeyParamName, final String signKey,
-                                      final String signResultParamName,
-                                      final boolean isAddTimeStamp) {
+            final String signResultParamName,
+            final boolean isAddTimeStamp) {
         final StringBuilder sb1 = new StringBuilder();
         try {
             sb1.append("\r\n----------------------- 签名 -----------------------\r\n");
@@ -168,8 +168,8 @@ public class SignUtils {
      *
      */
     public static void sign(final String signAlgorithm, final Map<String, Object> requestParams, final String keyParamName,
-                            final String key, final PrivateKey privateKey, final String signResultParamName,
-                            final boolean isAddTimeStamp, final String userIdParamName) {
+            final String key, final PrivateKey privateKey, final String signResultParamName,
+            final boolean isAddTimeStamp, final String userIdParamName) {
         if (requestParams == null) {
             log.warn("签名失败: requestParams不能为空");
             throw new RuntimeException("签名失败: requestParams不能为空");
@@ -206,7 +206,7 @@ public class SignUtils {
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
                 signResult = Base64.getUrlEncoder().encodeToString(
-                    Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8), userId.toString().getBytes(), privateKey));
+                        Sm2Utils.signSm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8), userId.toString().getBytes(), privateKey));
             }
             else {
                 throw new RuntimeException("不支持的签名算法");
@@ -234,8 +234,8 @@ public class SignUtils {
      * @return 返回签名是否正确
      */
     public static boolean verify(final String signAlgorithm, final Map<String, Object> requestParams, final String keyParamName,
-                                 final String key, final PublicKey publicKey, final String signResultParamName,
-                                 final boolean isAddTimeStamp, final String userIdParamName) {
+            final String key, final PublicKey publicKey, final String signResultParamName,
+            final boolean isAddTimeStamp, final String userIdParamName) {
         boolean result = false;
 
         if (requestParams == null || requestParams.isEmpty()) {
@@ -297,7 +297,7 @@ public class SignUtils {
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
                 result = Sm2Utils.verifySm3WithSm2(concatenatedString.getBytes(StandardCharsets.UTF_8),
-                    userId.toString().getBytes(), Base64.getUrlDecoder().decode(originSignResult.toString()), publicKey);
+                        userId.toString().getBytes(), Base64.getUrlDecoder().decode(originSignResult.toString()), publicKey);
             }
             else {
                 throw new RuntimeException("不支持的签名算法");
