@@ -22,7 +22,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.core.LocalDateUtils;
+import rebue.wheel.core.LocalDateTimeUtils;
 
 @Slf4j
 public class JwtUtils {
@@ -84,7 +84,7 @@ public class JwtUtils {
      *                       JWT签名的过期时间
      */
     public static void addCookie(final String sign, final LocalDateTime expirationTime, final HttpServletResponse resp) {
-        addCookie(sign, LocalDateUtils.getMillis(expirationTime), resp);
+        addCookie(sign, LocalDateTimeUtils.getMillis(expirationTime), resp);
     }
 
     /**

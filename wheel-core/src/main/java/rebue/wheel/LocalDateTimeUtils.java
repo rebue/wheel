@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
-public class LocalDateUtils {
+public class LocalDateTimeUtils {
 
     /**
      * Date转换为LocalDateTime
@@ -43,4 +45,21 @@ public class LocalDateUtils {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
+    /**
+     * 判断字符串是否有效的日期格式
+     *
+     * @param dateTimeString 要判断的字符串
+     * @param pattern        指定的日期格式
+     *
+     * @return 返回字符串是否有效的日期格式
+     */
+    public static boolean isValid(final String dateTimeString, final String pattern) {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
+        try {
+            LocalDateTime.parse(dateTimeString, dtf);
+            return true;
+        } catch (final DateTimeParseException e) {
+            return false;
+        }
+    }
 }
