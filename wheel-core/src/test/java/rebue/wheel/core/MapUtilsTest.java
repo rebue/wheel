@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.jupiter.api.Test;
-
-import rebue.wheel.core.MapUtils;
 
 public class MapUtilsTest {
     public class Student {

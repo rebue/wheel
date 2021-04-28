@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,16 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import rebue.wheel.core.IdCardValidator;
-
 @SpringBootTest
 public class IdCardValidatorTest {
     // 18位身份证中，各个数字的生成校验码时的权值
-    private final static int[] VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+    private final static int[]  VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2
+    };
     // 18位身份证中最后一位校验码
-    private final static char[] VERIFY_CODE = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
+    private final static char[] VERIFY_CODE        = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'
+    };
 
-    protected static Logger _logger = LoggerFactory.getLogger(IdCardValidatorTest.class);
+    protected static Logger     _logger            = LoggerFactory.getLogger(IdCardValidatorTest.class);
 
     private char getVerifyCode(final String sNumber) {
         int       sum           = 0;
@@ -82,10 +82,10 @@ public class IdCardValidatorTest {
     @Test
     public void test02() {
         final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
+            new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
         final int             iTaskCount      = 100000;
         for (int i = 0; i < iTaskCount; i++) {
-            executorService.execute(() -> test01());
+            executorService.execute(this::test01);
         }
     }
 

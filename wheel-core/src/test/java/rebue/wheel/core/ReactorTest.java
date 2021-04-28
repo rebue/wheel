@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

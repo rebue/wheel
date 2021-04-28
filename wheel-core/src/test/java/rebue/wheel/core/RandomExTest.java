@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -11,9 +11,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import entity.PojoEntity;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.core.RandomEx;
+import rebue.wheel.core.entity.PojoEntity;
 
 @Slf4j
 @SpringBootTest
@@ -89,7 +88,7 @@ public class RandomExTest {
     }
 
     @Test
-//    @Disabled
+    // @Disabled
     public void testRandomIdCard() {
         for (int i = 0; i < 100; i++) {
             log.info(RandomEx.randomIdCard());

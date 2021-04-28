@@ -1,4 +1,4 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.core.DateUtils;
 
 @Slf4j
 public class DateTests {
@@ -23,7 +22,7 @@ public class DateTests {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         // 添加小时
-        final Date now = new Date();
+        final Date     now      = new Date();
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.HOUR_OF_DAY, 169);    // 添加169个小时
@@ -42,8 +41,8 @@ public class DateTests {
 
     @Test
     public void testStringToDate() throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String sDate = "1981-05-22";
+        final SimpleDateFormat sdf   = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String                 sDate = "1981-05-22";
         log.info(sdf.format(DateUtils.stringToDate(sDate)));
         sDate = "1981-05-22 16:15:12";
         log.info(sdf.format(DateUtils.stringToDate(sDate)));

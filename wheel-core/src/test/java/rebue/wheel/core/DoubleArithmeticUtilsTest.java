@@ -1,9 +1,7 @@
-package rebue.wheel;
+package rebue.wheel.core;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import rebue.wheel.core.DoubleArithmeticUtils;
 
 public class DoubleArithmeticUtilsTest {
     @Test
