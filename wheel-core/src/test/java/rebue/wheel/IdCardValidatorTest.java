@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import rebue.wheel.core.IdCardValidator;
+
 @SpringBootTest
 public class IdCardValidatorTest {
     // 18位身份证中，各个数字的生成校验码时的权值

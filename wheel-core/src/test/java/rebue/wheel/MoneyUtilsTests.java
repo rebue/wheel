@@ -3,6 +3,8 @@ package rebue.wheel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import rebue.wheel.core.MoneyUtils;
+
 public class MoneyUtilsTests {
 
     @Test

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import entity.PojoEntity;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.core.RandomEx;
 
 @Slf4j
 @SpringBootTest

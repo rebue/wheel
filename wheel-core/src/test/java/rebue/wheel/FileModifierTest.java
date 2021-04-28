@@ -5,9 +5,9 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import rebue.wheel.file.FileModifier;
-import rebue.wheel.file.FileModifier.AddPosition;
-import rebue.wheel.file.FileUtils;
+import rebue.wheel.core.file.FileModifier;
+import rebue.wheel.core.file.FileUtils;
+import rebue.wheel.core.file.FileModifier.AddPosition;
 
 public class FileModifierTest {
 

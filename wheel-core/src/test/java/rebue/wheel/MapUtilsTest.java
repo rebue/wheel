@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 
 import org.junit.jupiter.api.Test;
 
+import rebue.wheel.core.MapUtils;
+
 public class MapUtilsTest {
     public class Student {
         private Long   id;

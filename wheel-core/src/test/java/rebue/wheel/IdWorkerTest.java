@@ -16,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import rebue.wheel.idworker.ClockBackwardsException;
-import rebue.wheel.idworker.IdWorker1;
-import rebue.wheel.idworker.IdWorker2;
-import rebue.wheel.idworker.IdWorker3;
+import rebue.wheel.core.idworker.ClockBackwardsException;
+import rebue.wheel.core.idworker.IdWorker1;
+import rebue.wheel.core.idworker.IdWorker2;
+import rebue.wheel.core.idworker.IdWorker3;
 
 @SpringBootTest
 public class IdWorkerTest {

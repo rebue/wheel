@@ -3,6 +3,8 @@ package rebue.wheel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import rebue.wheel.core.DoubleArithmeticUtils;
+
 public class DoubleArithmeticUtilsTest {
     @Test
     public void test01() {

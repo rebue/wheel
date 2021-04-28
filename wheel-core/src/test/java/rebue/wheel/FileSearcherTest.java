@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import rebue.wheel.file.FileSearcher;
-import rebue.wheel.file.FileUtils;
+import rebue.wheel.core.file.FileSearcher;
+import rebue.wheel.core.file.FileUtils;
 
 public class FileSearcherTest {
 
