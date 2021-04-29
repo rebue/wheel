@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>wheel-net</artifactId>
 	<name>wheel-net</name>
-	<description>对Http的应用提供支持</description>
+	<description>对网络传输相关的应用提供支持</description>
 
 	<dependencies>
 		<dependency>
@@ -59,22 +59,24 @@
 		<dependency>
 			<groupId>org.dom4j</groupId>
 			<artifactId>dom4j</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<!-- dom4j依赖jaxen项目以提供对XPath的支持 -->
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
