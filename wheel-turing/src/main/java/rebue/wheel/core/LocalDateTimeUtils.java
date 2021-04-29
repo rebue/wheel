@@ -1,6 +1,7 @@
 package rebue.wheel.core;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -48,9 +49,13 @@ public class LocalDateTimeUtils {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
         try {
             LocalDateTime.parse(dateTimeString, dtf);
-            return true;
-        } catch (final DateTimeParseException e) {
-            return false;
+        } catch (final DateTimeParseException e1) {
+            try {
+                LocalDate.parse(dateTimeString, dtf);
+            } catch (final DateTimeParseException e2) {
+                return false;
+            }
         }
+        return true;
     }
 }
