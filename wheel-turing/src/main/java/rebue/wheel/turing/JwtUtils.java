@@ -26,7 +26,7 @@ import rebue.wheel.core.LocalDateTimeUtils;
 
 @Slf4j
 public class JwtUtils {
-    private final static String JWT_TOKEN_NAME = "jwt_token";
+    public final static String JWT_TOKEN_NAME = "jwt_token";
 
     /**
      * JWT签名
@@ -167,11 +167,9 @@ public class JwtUtils {
     }
 
     /**
-     * 从请求的Cookie中获取JWT项的集合
+     * 从签名中获取JWT项的集合
      */
-    public static JWTClaimsSet getJwtItemsInCookie(final HttpServletRequest req) throws ParseException {
-        // 从请求的Cookie中获取JWT签名信息
-        final String sign = JwtUtils.getSignInCookies(req);
+    public static JWTClaimsSet getJwtItemsInSign(final String sign) throws ParseException {
         // 解析签名
         final SignedJWT signedJWT = JwtUtils.parse(sign);
         // 从签名中获取JWT项的集合
@@ -179,31 +177,20 @@ public class JwtUtils {
     }
 
     /**
-     * 从请求的Cookie中获取JWT的指定项
+     * 从签名中获取JWT的指定项
      */
-    public static Object getJwtItemInCookie(final HttpServletRequest req, final String key) throws ParseException {
-        return getJwtItemsInCookie(req).getClaim(key);
+    public static Object getJwtItemInSign(final String sign, final String key) throws ParseException {
+        return getJwtItemsInSign(sign).getClaim(key);
     }
 
     /**
-     * 从请求的Cookie中获取JWT信息中的用户ID
+     * 从签名中获取JWT信息中的账户ID
      *
      * @return 如果没有此项，会抛出NumberFormatException异常
      */
-    public static Long getJwtAccountIdInCookie(final HttpServletRequest req) {
+    public static Long getJwtAccountIdInSign(final String sign) {
         try {
-            return Long.valueOf((String) getJwtItemInCookie(req, "accountId"));
-        } catch (final ParseException e) {
-            return null;
-        }
-    }
-
-    /**
-     * 从请求的Cookie中获取JWT信息中的系统ID
-     */
-    public static String getJwtSysIdInCookie(final HttpServletRequest req) {
-        try {
-            return (String) getJwtItemInCookie(req, "sysId");
+            return Long.valueOf((String) getJwtItemInSign(sign, "accountId"));
         } catch (final ParseException e) {
             return null;
         }
@@ -218,8 +205,8 @@ public class JwtUtils {
      *         result.get("isTester")可获得当前用户是否是测试者
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getJwtAdditionInCookie(final HttpServletRequest req) throws ParseException {
-        return (Map<String, Object>) getJwtItemInCookie(req, "addition");
+    public static Map<String, Object> getJwtAdditionInSign(final String sign) throws ParseException {
+        return (Map<String, Object>) getJwtItemInSign(sign, "addition");
     }
 
     /**
@@ -230,8 +217,8 @@ public class JwtUtils {
      *         "orgId"可获得当前用户的组织ID
      *         "isTester"可获得当前用户是否是测试者
      */
-    public static Object getJwtAdditionItemInCookie(final HttpServletRequest req, final String key) throws ParseException {
-        final Map<String, Object> additions = getJwtAdditionInCookie(req);
+    public static Object getJwtAdditionItemInSign(final String sign, final String key) throws ParseException {
+        final Map<String, Object> additions = getJwtAdditionInSign(sign);
         return additions == null ? null : additions.get(key);
     }
 
