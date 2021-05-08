@@ -3,6 +3,7 @@ package rebue.wheel.turing;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -10,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.util.MultiValueMap;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -116,6 +120,23 @@ public class JwtUtils {
                 if (JWT_TOKEN_NAME.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT签名信息
+     *
+     * @return JWT的签名
+     */
+    public static String getSignInCookies(final ServerHttpRequest req) {
+        log.info("从请求的Cookie中获取JWT签名信息");
+        final MultiValueMap<String, HttpCookie> cookies = req.getCookies();
+        if (cookies != null && !cookies.isEmpty()) {
+            final List<HttpCookie> cookieList = cookies.get(JWT_TOKEN_NAME);
+            if (cookieList != null && !cookieList.isEmpty()) {
+                return cookieList.get(0).getValue();
             }
         }
         return null;
