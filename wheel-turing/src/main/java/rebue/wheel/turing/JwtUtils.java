@@ -8,11 +8,12 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
 
 import com.nimbusds.jose.JOSEException;
@@ -75,7 +76,7 @@ public class JwtUtils {
      * @param expirationTime
      *                       JWT签名的过期时间
      */
-    public static void addCookie(final String sign, final Date expirationTime, final HttpServletResponse resp) {
+    public static void addCookie(final String sign, final Date expirationTime, final ServerHttpResponse resp) {
         addCookie(sign, expirationTime.getTime(), resp);
     }
 
@@ -87,7 +88,7 @@ public class JwtUtils {
      * @param expirationTime
      *                       JWT签名的过期时间
      */
-    public static void addCookie(final String sign, final LocalDateTime expirationTime, final HttpServletResponse resp) {
+    public static void addCookie(final String sign, final LocalDateTime expirationTime, final ServerHttpResponse resp) {
         addCookie(sign, LocalDateTimeUtils.getMillis(expirationTime), resp);
     }
 
@@ -99,12 +100,10 @@ public class JwtUtils {
      * @param expirationTime
      *                       JWT签名的过期时间(1970年1月1日零时至此的毫秒数)
      */
-    public static void addCookie(final String sign, final Long expirationTime, final HttpServletResponse resp) {
+    public static void addCookie(final String sign, final Long expirationTime, final ServerHttpResponse resp) {
         log.info("将JWT签名添加到Cookie中");
-        final Cookie cookie = new Cookie(JWT_TOKEN_NAME, sign);
-        cookie.setMaxAge((int) ((expirationTime - System.currentTimeMillis()) / 1000));
-        cookie.setPath("/");
-        resp.addCookie(cookie);
+        final ResponseCookie responseCookie = ResponseCookie.from(JWT_TOKEN_NAME, sign).maxAge((int) ((expirationTime - System.currentTimeMillis()) / 1000)).path("/").build();
+        resp.addCookie(responseCookie);
     }
 
     /**
