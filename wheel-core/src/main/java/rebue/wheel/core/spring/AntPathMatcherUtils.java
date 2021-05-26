@@ -36,7 +36,7 @@ public class AntPathMatcherUtils {
         return patterns.stream().noneMatch(pattern -> match(requestMethod, path, pattern));
     }
 
-    private static boolean match(final String requestMethod, final String path, final String pattern) {
+    public static boolean match(final String requestMethod, final String path, final String pattern) {
         final String[] split = pattern.split(":");
         if (split.length == 1) {
             return _matcher.match(pattern, path);
