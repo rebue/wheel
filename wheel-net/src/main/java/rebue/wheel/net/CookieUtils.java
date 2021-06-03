@@ -6,7 +6,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
 
 public class CookieUtils {
@@ -26,6 +28,17 @@ public class CookieUtils {
         final MultiValueMap<String, HttpCookie> cookies = req.getCookies();
         if (cookies != null && !cookies.isEmpty()) {
             final List<HttpCookie> cookieList = cookies.get(key);
+            if (cookieList != null && !cookieList.isEmpty()) {
+                return cookieList.get(0).getValue();
+            }
+        }
+        return null;
+    }
+
+    public final static String getValue(final ServerHttpResponse req, final String key) {
+        final MultiValueMap<String, ResponseCookie> cookies = req.getCookies();
+        if (cookies != null && !cookies.isEmpty()) {
+            final List<ResponseCookie> cookieList = cookies.get(key);
             if (cookieList != null && !cookieList.isEmpty()) {
                 return cookieList.get(0).getValue();
             }

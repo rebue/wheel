@@ -111,7 +111,7 @@ public class JwtUtils {
      *
      * @return JWT的签名
      */
-    public static String getSignInCookies(final HttpServletRequest req) {
+    public static String getSignFromCookies(final HttpServletRequest req) {
         log.info("从请求的Cookie中获取JWT签名信息");
         final Cookie[] cookies = req.getCookies();
         if (cookies != null) {
@@ -129,7 +129,7 @@ public class JwtUtils {
      *
      * @return JWT的签名
      */
-    public static String getSignInCookies(final ServerHttpRequest req) {
+    public static String getSignFromCookies(final ServerHttpRequest req) {
         log.info("从请求的Cookie中获取JWT签名信息");
         final MultiValueMap<String, HttpCookie> cookies = req.getCookies();
         if (cookies != null && !cookies.isEmpty()) {
@@ -189,7 +189,7 @@ public class JwtUtils {
     /**
      * 从签名中获取JWT项的集合
      */
-    public static JWTClaimsSet getJwtItemsInSign(final String sign) throws ParseException {
+    public static JWTClaimsSet getJwtItemsFromSign(final String sign) throws ParseException {
         // 解析签名
         final SignedJWT signedJWT = JwtUtils.parse(sign);
         // 从签名中获取JWT项的集合
@@ -199,8 +199,8 @@ public class JwtUtils {
     /**
      * 从签名中获取JWT的指定项
      */
-    public static Object getJwtItemInSign(final String sign, final String key) throws ParseException {
-        return getJwtItemsInSign(sign).getClaim(key);
+    public static Object getJwtItemFromSign(final String sign, final String key) throws ParseException {
+        return getJwtItemsFromSign(sign).getClaim(key);
     }
 
     /**
@@ -208,16 +208,16 @@ public class JwtUtils {
      *
      * @return 如果没有此项，会抛出NumberFormatException异常
      */
-    public static Long getJwtAccountIdInSign(final String sign) {
+    public static Long getJwtAccountIdFromSign(final String sign) {
         try {
-            return Long.valueOf((String) getJwtItemInSign(sign, "accountId"));
+            return Long.valueOf((String) getJwtItemFromSign(sign, "accountId"));
         } catch (final ParseException e) {
             return null;
         }
     }
 
     /**
-     * 从请求的Cookie中获取JWT信息中的附加信息
+     * 从签名中获取JWT信息中的附加信息
      *
      * @return 返回Map&lt;String, Object&gt;，再通过key可获得里面的项
      *         例如:
@@ -225,20 +225,20 @@ public class JwtUtils {
      *         result.get("isTester")可获得当前用户是否是测试者
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getJwtAdditionInSign(final String sign) throws ParseException {
-        return (Map<String, Object>) getJwtItemInSign(sign, "addition");
+    public static Map<String, Object> getJwtAdditionFromSign(final String sign) throws ParseException {
+        return (Map<String, Object>) getJwtItemFromSign(sign, "addition");
     }
 
     /**
-     * 从请求的Cookie中获取JWT信息中的附加信息中的项
+     * 从签名中获取JWT信息中的附加信息中的项
      *
      * @return 返回通过key可获得里面的项
      *         例如:
      *         "orgId"可获得当前用户的组织ID
      *         "isTester"可获得当前用户是否是测试者
      */
-    public static Object getJwtAdditionItemInSign(final String sign, final String key) throws ParseException {
-        final Map<String, Object> additions = getJwtAdditionInSign(sign);
+    public static Object getJwtAdditionItemFromSign(final String sign, final String key) throws ParseException {
+        final Map<String, Object> additions = getJwtAdditionFromSign(sign);
         return additions == null ? null : additions.get(key);
     }
 
