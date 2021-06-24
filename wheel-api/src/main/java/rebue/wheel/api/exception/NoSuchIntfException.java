@@ -1,4 +1,4 @@
-package rebue.wheel.core.exception;
+package rebue.wheel.api.exception;
 
 
 public class NoSuchIntfException extends ExceptionX {

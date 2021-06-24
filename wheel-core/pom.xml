@@ -13,14 +13,9 @@
 	<description>对一些基础函数的应用提供支持</description>
 
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.github.rebue.wheel</groupId> -->
-		<!-- <artifactId>wheel-test</artifactId> -->
-		<!-- </dependency> -->
-
 		<dependency>
-			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>orika-core</artifactId>
+			<groupId>com.github.rebue.wheel</groupId>
+			<artifactId>wheel-api</artifactId>
 		</dependency>
 
 		<dependency>

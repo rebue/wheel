@@ -1,4 +1,4 @@
-package rebue.wheel.core.eo;
+package rebue.wheel.api.eo;
 
 /**
  * 网络地址(格式为host:port)

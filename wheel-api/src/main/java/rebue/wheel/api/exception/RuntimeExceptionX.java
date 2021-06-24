@@ -1,4 +1,4 @@
-package rebue.wheel.core.exception;
+package rebue.wheel.api.exception;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -20,7 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rebue.wheel.core.exception.RuntimeExceptionX;
+import rebue.wheel.api.exception.RuntimeExceptionX;
 import rebue.wheel.core.idworker.IdWorker3Helper;
 
 /**

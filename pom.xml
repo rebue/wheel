@@ -37,6 +37,7 @@
 	</scm>
 
 	<modules>
+		<module>wheel-api</module>
 		<module>wheel-core</module>
 		<module>wheel-turing</module>
 		<module>wheel-serialization</module>
@@ -45,6 +46,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.github.rebue.wheel</groupId>
+				<artifactId>wheel-api</artifactId>
+				<version>1.2.3</version>
+			</dependency>
 			<dependency>
 				<groupId>com.github.rebue.wheel</groupId>
 				<artifactId>wheel-core</artifactId>

@@ -1,4 +1,4 @@
-package rebue.wheel.core.exception;
+package rebue.wheel.api.exception;
 
 /**
  * 未捕获异常的处理器(全部打印异常的栈信息，否则JVM会省略显示部分栈信息)

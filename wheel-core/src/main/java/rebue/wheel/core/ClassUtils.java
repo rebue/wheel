@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import rebue.wheel.core.exception.NoSuchIntfException;
+import rebue.wheel.api.exception.NoSuchIntfException;
 
 public class ClassUtils {
     /**

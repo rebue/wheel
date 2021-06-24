@@ -1,4 +1,4 @@
-package rebue.wheel.core;
+package rebue.wheel.api;
 
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
