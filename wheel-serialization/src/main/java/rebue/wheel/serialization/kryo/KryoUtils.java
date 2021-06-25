@@ -2,14 +2,17 @@ package rebue.wheel.serialization.kryo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 public class KryoUtils {
-    static private final ThreadLocal<Kryo> kryos = ThreadLocal.withInitial(Kryo::new);
+    static private final ThreadLocal<Kryo> kryos = ThreadLocal.withInitial(() -> {
+        final Kryo kryo = new Kryo();
+        kryo.setRegistrationRequired(false);
+        return kryo;
+    });
 
     public static byte[] writeObject(final Object obj) {
         if (obj == null) {
@@ -19,7 +22,7 @@ public class KryoUtils {
             kryos.get().writeClassAndObject(output, obj);
             output.flush();
             return baos.toByteArray();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Kryo序列化出现异常", e);
         }
     }
@@ -30,7 +33,7 @@ public class KryoUtils {
         }
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes); Input input = new Input(bais)) {
             return kryos.get().readClassAndObject(input);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Kryo反序列化出现异常", e);
         }
     }
