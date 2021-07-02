@@ -1,4 +1,4 @@
-package rebue.wheel.core.entity;
+package rebue.wheel.api.entity;
 
 import java.math.BigDecimal;
 
