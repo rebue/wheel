@@ -1,4 +1,4 @@
-package rebue.wheel.api;
+package rebue.wheel.core.util;
 
 import java.math.BigDecimal;
 import java.util.Map;
