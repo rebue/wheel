@@ -24,28 +24,28 @@ public class AuthcAccount implements java.io.Serializable {
 	private String			code;
 	private String			password;
 	private boolean			enabled;
-	private boolean			sys;
+	private boolean			app;
 	private Set<AuthcRole>	authcRoles	= new HashSet<AuthcRole>(0);
 
 	public AuthcAccount() {
 	}
 
-	public AuthcAccount(long id, String name, String code, String password, boolean enabled, boolean sys) {
+	public AuthcAccount(long id, String name, String code, String password, boolean enabled, boolean app) {
 		this.id = id;
 		this.name = name;
 		this.code = code;
 		this.password = password;
 		this.enabled = enabled;
-		this.sys = sys;
+		this.app = app;
 	}
 
-	public AuthcAccount(long id, String name, String code, String password, boolean enabled, boolean sys, Set<AuthcRole> authcRoles) {
+	public AuthcAccount(long id, String name, String code, String password, boolean enabled, boolean app, Set<AuthcRole> authcRoles) {
 		this.id = id;
 		this.name = name;
 		this.code = code;
 		this.password = password;
 		this.enabled = enabled;
-		this.sys = sys;
+		this.app = app;
 		this.authcRoles = authcRoles;
 	}
 
@@ -96,13 +96,13 @@ public class AuthcAccount implements java.io.Serializable {
 		this.enabled = enabled;
 	}
 
-	@Column(name = "SYS", nullable = false)
-	public boolean isSys() {
-		return this.sys;
+	@Column(name = "APP", nullable = false)
+	public boolean isApp() {
+		return this.app;
 	}
 
-	public void setSys(boolean sys) {
-		this.sys = sys;
+	public void setApp(boolean app) {
+		this.app = app;
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY)
