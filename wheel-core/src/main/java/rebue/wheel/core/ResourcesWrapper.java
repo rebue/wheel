@@ -4,24 +4,38 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ResourcesWrapper {
 
-    public static InputStream getInputStream(String fileName) throws Exception
+    public static InputStream getInputStream(String fileName, Class<?> clazz) throws IOException
     {
+        InputStream in;
         try {
-            return ResourcesWrapper.class.getClassLoader().getResourceAsStream(fileName);
-        } catch (Exception e) {
+            in = clazz.getClassLoader().getResourceAsStream(fileName);
+            if (in == null) {
+                throw new RuntimeException();
+            }
+            return in;
+        } catch (Exception ignore) {
+        }
+        try {
+            in = clazz.getResourceAsStream(fileName);
+            if (in == null) {
+                throw new RuntimeException();
+            }
+            return in;
+        } catch (Exception ignore) {
             return new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + fileName));
         }
     }
 
-    public static String fileStr(String fileName) throws Exception
+    public static String fileStr(String fileName, Class<?> clazz) throws IOException
     {
         try (
-                InputStream in = getInputStream(fileName);
+                InputStream in = getInputStream(fileName, clazz);
                 ByteArrayOutputStream o = new ByteArrayOutputStream()
         ) {
             int r;
