@@ -23,7 +23,7 @@ public class OrikaUtilsTests {
         pojoEntity.setPrice(BigDecimal.valueOf(11111111.111));
         pojoEntity.setStudentCode("sadfasdfsdaf");
 
-        final Map<String, Object> map = OrikaUtils.mapAsMap(pojoEntity);
+        final Map<String, Object> map = OrikaUtils.mapToMap(pojoEntity);
         log.info("map: {}", map);
     }
 

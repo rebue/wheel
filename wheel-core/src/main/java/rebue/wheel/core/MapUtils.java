@@ -1,27 +1,21 @@
 package rebue.wheel.core;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import rebue.wheel.core.util.OrikaUtils;
+
 import java.beans.IntrospectionException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.StringJoiner;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MapUtils {
-    private static Mapper _dozerMapper = DozerBeanMapperBuilder.buildDefault();
 
     /**
      * 将map转换为string(a:1,b:2,c:3)
@@ -62,8 +56,11 @@ public class MapUtils {
         // BeanUtils.populate(bean, map);
 
         // 利用Dozer转换
-        final Object bean = _dozerMapper.map(map, beanClass);
-        return bean;
+        // final Object bean = _dozerMapper.map(map, beanClass);
+        // return bean;
+        //
+
+        return OrikaUtils.map(map, beanClass);
     }
 
     /**
@@ -78,7 +75,9 @@ public class MapUtils {
         // return new BeanMap(bean);
 
         // 利用dozer转换
-        return _dozerMapper.map(bean, Map.class);
+        // return _dozerMapper.map(bean, Map.class);
+
+        return OrikaUtils.map(bean, Map.class);
 
         // final Map<String, Object> map = new HashMap<>();
         //
@@ -135,24 +134,45 @@ public class MapUtils {
         }
         final StringJoiner sj = new StringJoiner("&");
         map.forEach((key, value) -> {
+            if (value == null) return;
             if (value instanceof List) {
                 ((List<?>) value).forEach(item -> {
-                    try {
-                        sj.add(key + "=" + URLEncoder.encode(item.toString(), "utf-8"));
-                    } catch (final UnsupportedEncodingException e) {
-                        throw new RuntimeException("不支持utf-8编码(不可能的)");
-                    }
+                    String valueStr = valueToString(item);
+                    if (valueStr == null) return;
+                    sj.add(key + "=" + valueStr);
                 });
             }
             else {
-                try {
-                    sj.add(key + "=" + URLEncoder.encode(value.toString(), "utf-8"));
-                } catch (final UnsupportedEncodingException e) {
-                    throw new RuntimeException("不支持utf-8编码(不可能的)");
-                }
+                String valueStr = valueToString(value);
+                if (valueStr == null) return;
+                sj.add(key + "=" + valueStr);
             }
         });
         return sj.toString();
+
+    }
+
+    /**
+     * 将参数的值转换为字符串
+     */
+    private static String valueToString(Object value) {
+        if (value == null) return null;
+        String valueStr = null;
+        if (value instanceof LocalDate) {
+            valueStr = LocalDateTimeUtils.formatDate((LocalDate) value);
+        }
+        else if (value instanceof LocalDateTime) {
+            valueStr = LocalDateTimeUtils.formatDateTime((LocalDateTime) value);
+        }
+        else {
+            valueStr = value.toString();
+        }
+        if (StringUtils.isBlank(valueStr)) return null;
+        try {
+            return URLEncoder.encode(valueStr, "utf-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException("不支持utf-8编码(不可能的)");
+        }
     }
 
     /**

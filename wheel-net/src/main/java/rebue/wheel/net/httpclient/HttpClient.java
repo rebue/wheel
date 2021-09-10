@@ -1,14 +1,16 @@
 package rebue.wheel.net.httpclient;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentException;
-
+import rebue.wheel.core.MapUtils;
+import rebue.wheel.core.util.OrikaUtils;
+import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
+
+import java.io.IOException;
+import java.util.Map;
 
 public interface HttpClient {
 
@@ -28,31 +30,70 @@ public interface HttpClient {
      * @return 响应的字符串
      */
     default String get(final String url, final Map<String, Object> requestParams) throws IOException {
-        final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-        final SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        final StringBuilder    sb      = new StringBuilder();
-        sb.append(url);
-        sb.append("?");
-        for (final Map.Entry<String, Object> item : requestParams.entrySet()) {
-            String value = null;
-            if (item.getValue() instanceof Date) {
-                if (item.getKey().endsWith("Date")) {
-                    value = sdfDate.format((Date) item.getValue());
-                }
-                else if (item.getKey().endsWith("Time")) {
-                    value = sdfTime.format((Date) item.getValue());
-                }
+        String requestParamsStr = MapUtils.map2UrlParams(requestParams);
+        String fullUrl;
+        if (url.contains("%s")) {
+            fullUrl = String.format(url, requestParamsStr);
+        }
+        else {
+            final StringBuilder sb = new StringBuilder(url);
+            if (StringUtils.isBlank(requestParamsStr)) {
+                fullUrl = url;
             }
             else {
-                value = item.getValue().toString();
+                if (url.contains("?")) {
+                    sb.append("&");
+                }
+                else {
+                    sb.append("?");
+                }
+                sb.append(requestParamsStr);
+                fullUrl = sb.substring(0, sb.length() - 1);
             }
-            sb.append(item.getKey());
-            sb.append("=");
-            sb.append(URLEncoder.encode(value, "utf-8"));
-            sb.append("&");
         }
-        return get(sb.substring(0, sb.length() - 1));
+        return get(fullUrl);
+    }
+
+    /**
+     * 发出带参数的GET请求
+     *
+     * @param url           请求的地址
+     * @param requestParams 请求的参数
+     *
+     * @return 响应的字符串
+     */
+    default String get(final String url, final Object requestParams) throws IOException {
+        return get(url, OrikaUtils.mapToMap(requestParams));
+    }
+
+    /**
+     * 发出带参数的GET请求，并将JSON格式的响应转成对象
+     * 
+     * @param url           请求的地址
+     * @param requestParams 请求的参数
+     * @param valueTypeRef  要转换对象的泛型引用
+     * @param <T>           要转换对象的泛型
+     * 
+     */
+    @SneakyThrows
+    default <T> T getWithJsonResponse(String url, Map<String, Object> requestParams, TypeReference<T> valueTypeRef) {
+        String resp = get(url, requestParams);
+        return JacksonUtils.deserialize(resp, valueTypeRef);
+    }
+
+    /**
+     * 发出带参数的GET请求，并将JSON格式的响应转成对象
+     *
+     * @param url           请求的地址
+     * @param requestParams 请求的参数
+     * @param valueTypeRef  要转换对象的泛型引用
+     * @param <T>           要转换对象的泛型
+     *
+     */
+    @SneakyThrows
+    default <T> T getWithJsonResponse(String url, Map<String, Object> requestParams, Class<T> clazz) {
+        String resp = get(url, requestParams);
+        return JacksonUtils.deserialize(resp, clazz);
     }
 
     /**

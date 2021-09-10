@@ -1,25 +1,18 @@
 package rebue.wheel.net.httpclient.impl;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.dom4j.DocumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import rebue.wheel.net.httpclient.HttpClient;
 import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class OkHttpClientImpl implements HttpClient {
@@ -68,45 +61,6 @@ public class OkHttpClientImpl implements HttpClient {
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
     }
-
-    // /**
-    // * 发出带参数的GET请求
-    // *
-    // * @param url 请求的地址
-    // * @param requestParams 请求的参数
-    // * @return 响应的字符串
-    // */
-    // @Override
-    // public String get(final String url, final Map<String, Object> requestParams) throws IOException {
-    // _log.debug("发送请求：{}", url);
-    // final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-    // final SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    // final HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-    // for (final Map.Entry<String, Object> item : requestParams.entrySet()) {
-    // String value = null;
-    // if (item.getValue() instanceof Date) {
-    // if (item.getKey().endsWith("Date")) {
-    // value = sdfDate.format((Date) item.getValue());
-    // } else if (item.getKey().endsWith("Time")) {
-    // value = sdfTime.format((Date) item.getValue());
-    // }
-    // } else {
-    // value = item.getValue().toString();
-    // }
-    // urlBuilder.addQueryParameter(item.getKey(), URLEncoder.encode(value, "utf-8"));
-    //// urlBuilder.addQueryParameter(item.getKey(), value);
-    // }
-    // final Request request = new Request.Builder().url(urlBuilder.build()).build();
-    // final Response response = _client.newCall(request).execute();
-    // if (response.isSuccessful()) {
-    // final String msg = response.body().string();
-    // _log.debug(msg);
-    // return msg;
-    // } else {
-    // _log.error("服务器返回错误: " + response);
-    // throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
-    // }
-    // }
 
     /**
      * 发出POST请求

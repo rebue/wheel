@@ -1,15 +1,34 @@
 package rebue.wheel.core;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class LocalDateTimeUtils {
+
+    /**
+     * 默认的日期格式化工具(例如: 2021-09-09)
+     */
+    public static DateTimeFormatter dtfDefaultDate     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /**
+     * 默认的日期时间格式化工具(例如: 2021-09-09 09:45:23)
+     */
+    public static DateTimeFormatter dtfDefaultDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 格式化日期(例如: 2021-09-09)
+     */
+    public static String formatDate(LocalDate date) {
+        return dtfDefaultDate.format(date);
+    }
+
+    /**
+     * 格式化日期时间(例如: 2021-09-09 09:45:23)
+     */
+    public static String formatDateTime(LocalDateTime dateTime) {
+        return dtfDefaultDateTime.format(dateTime);
+    }
 
     /**
      * Date转换为LocalDateTime

@@ -68,10 +68,9 @@ public class JacksonUtils {
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T deserialize(final String jsonStr, @SuppressWarnings("rawtypes") final TypeReference tr)
+    public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef)
             throws JsonProcessingException, JsonMappingException {
-        return (T) _objectMapper.readValue(jsonStr, tr);
+        return _objectMapper.readValue(jsonStr, valueTypeRef);
     }
 
     /**
