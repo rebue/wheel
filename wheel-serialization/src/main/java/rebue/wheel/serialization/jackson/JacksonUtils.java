@@ -5,6 +5,7 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +32,7 @@ public class JacksonUtils {
                     SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             // 不转换值为null的项
             .serializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .defaultTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
             // 全局支持Java8的时间格式化
             .addModule(new ParameterNamesModule())
@@ -59,14 +61,11 @@ public class JacksonUtils {
     /**
      * 反序列化泛型类
      *
-     * @param <T>     泛型
-     * @param jsonStr JSON字符串
-     * @param tr      泛型的引用
+     * @param jsonStr      JSON字符串
+     * @param valueTypeRef 泛型的引用
+     * @param <T>          反序列化的泛型
      * 
      * @return 反序列化生成的对象
-     * 
-     * @throws JsonProcessingException
-     * @throws JsonMappingException
      */
     public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef)
             throws JsonProcessingException, JsonMappingException {

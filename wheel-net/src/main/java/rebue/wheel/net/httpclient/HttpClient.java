@@ -1,16 +1,18 @@
 package rebue.wheel.net.httpclient;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.SneakyThrows;
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import lombok.SneakyThrows;
 import rebue.wheel.core.MapUtils;
 import rebue.wheel.core.util.OrikaUtils;
 import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
-
-import java.io.IOException;
-import java.util.Map;
 
 public interface HttpClient {
 
@@ -30,8 +32,8 @@ public interface HttpClient {
      * @return 响应的字符串
      */
     default String get(final String url, final Map<String, Object> requestParams) throws IOException {
-        String requestParamsStr = MapUtils.map2UrlParams(requestParams);
-        String fullUrl;
+        final String requestParamsStr = MapUtils.map2UrlParams(requestParams);
+        String       fullUrl;
         if (url.contains("%s")) {
             fullUrl = String.format(url, requestParamsStr);
         }
@@ -76,7 +78,7 @@ public interface HttpClient {
      * 
      */
     @SneakyThrows
-    default <T> T getWithJsonResponse(String url, Map<String, Object> requestParams, TypeReference<T> valueTypeRef) {
+    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final TypeReference<T> valueTypeRef) {
         String resp = get(url, requestParams);
         return JacksonUtils.deserialize(resp, valueTypeRef);
     }
@@ -91,8 +93,26 @@ public interface HttpClient {
      *
      */
     @SneakyThrows
-    default <T> T getWithJsonResponse(String url, Map<String, Object> requestParams, Class<T> clazz) {
+    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final Class<T> clazz) {
         String resp = get(url, requestParams);
+        return JacksonUtils.deserialize(resp, clazz);
+    }
+
+    /**
+     * 
+     * 发出带参数的GET请求，并将JSON格式的响应转成对象(主要解决微信乱码的问题)
+     *
+     * @param url           请求的地址
+     * @param requestParams 请求的参数
+     * @param valueTypeRef  要转换对象的泛型引用
+     * @param <T>           要转换对象的泛型
+     * @param encoding      转码
+     */
+    @SneakyThrows
+    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final Class<T> clazz, final String encoding) {
+        String resp = get(url, requestParams);
+        // 转码
+        resp = new String(resp.getBytes(encoding), "UTF-8");
         return JacksonUtils.deserialize(resp, clazz);
     }
 
