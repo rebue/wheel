@@ -134,7 +134,7 @@ public class JdbcUtils {
      * @param url       数据库连接url
      * @param userName  用户名
      * @param password  密码
-     * @param TableName 表的名称
+     * @param tableName 表的名称
      * 
      * @return 返回Map<字段名, 字段类型>
      */
@@ -247,15 +247,15 @@ public class JdbcUtils {
     }
 
     public static void main(String[] args) {
-        List<String>        tables             = new ArrayList<String>();
+        List<String>        tables                = new ArrayList<String>();
         Map<String, String> columnsByTableNameMap = new HashedMap();
-        List<String>        columnTypes        = new ArrayList<String>();
+        List<String>        columnTypes           = new ArrayList<String>();
         try {
             Class.forName(MYSQL_JDBC_DRIVER);
-            connection         = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
-            tables             = getTables(connection);
+            connection            = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
+            tables                = getTables(connection);
             columnsByTableNameMap = getColumnsByTableName(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
-            columnTypes        = getColumnTypes(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
+            columnTypes           = getColumnTypes(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
             // Class.forName(ORACLE_JDBC_DRIVER);
             // connection = DriverManager.getConnection(oracleUrl, oracleUsername, oraclePassword);
             // tables = getTables(connection);
