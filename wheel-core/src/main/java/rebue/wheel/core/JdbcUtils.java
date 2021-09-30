@@ -238,7 +238,9 @@ public class JdbcUtils {
         Connection connection = getConnection(url, userName, userPswd);
         Boolean    boo        = connection == null ? false : true;
         try {
-            connection.close();
+            if (boo) {
+                connection.close();
+            }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
