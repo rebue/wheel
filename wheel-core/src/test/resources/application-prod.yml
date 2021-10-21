@@ -1,0 +1,50 @@
+# 配置中心中的配置
+oidc:
+  client-id: unixdfied-auth
+  client-secret: 123456
+  token-endpoint: http://10.200.101.16:3456/oap-svr/oap/token
+  redirect-uri: https://auth.nnxy.edu.cn/orp-svr/orp/callback
+  public-key: MIIBIjANBgi3BOKV9k5h1ricIZta6KD7krxZk60o70fWDF+0DQVQD5upWEeRLdQIDAQAB
+  login-url: https://auth.nnxy.edu.cn/admin-web/unified-auth/#sign-in/unified
+
+orp:
+  state-cache-expiration: PT5M
+  strategies:
+    ding-talk:
+      is-check-state: true
+      clients:
+        - id: sdafsdfsdfsdf34324
+          secret: hWt9A-sdf3rsd-5xczbahLr0yf7plEO7ewm80kjh
+        - id: sdfsdf234sdf34324
+          secret: hWt9A-sdfsd3sfdf-5xczbahLr0yf7plEO7ewm803w4
+        - id: sdfsdfsadfsdf234324
+          secret: hWt9A-sdf3sdfsf-5xczbahLr0yf7plEO7ewm80saf
+        - id: sdfsdfsdf34324vsd24
+          secret: hWt9A-sdf3sff-5xczbahLr0yf7plEO7ewm80df
+    wechat-open:
+      is-check-state: true
+      clients:
+        - id: wer2dfsfsdf23234ffd
+          secret: 4a215sdfsdfw4sdfsdf234ea2af12a57e93
+# 生成workid使用
+curator:
+  connect-string: zookeeper_zoo1:2181,zookeeper_zoo2:2181,zookeeper_zoo3:2181
+
+spring:
+  redis:
+    password: Redis@dsfwersf2021
+    sentinel:
+      master: mymaster
+      nodes:
+        - redis_sentinel1:26379
+        - redis_sentinel2:26379
+        - redis_sentinel3:26379
+  # 链路追踪采集器
+  sleuth:
+    sampler:
+      # 将采样比例设置为 1.0，也就是全部都需要。默认是 0.1
+      probability: 1
+  # 链路追踪可视化服务器
+  zipkin:
+    # 服务器地址
+    base-url: http://zipkin:9411
