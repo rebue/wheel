@@ -247,7 +247,7 @@ public class YamlUtils {
             value.put(left, right);
             while (true) {
                 curLineIndex++;
-                if (curLineIndex == line.length()) {
+                if (curLineIndex == lines.length) {
                     break;
                 }
                 line = lines[curLineIndex];
@@ -334,6 +334,9 @@ public class YamlUtils {
                 length--;
                 lineIndex--;
             }
+            else {
+                break;
+            }
         }
 
         // 添加新行
@@ -370,6 +373,9 @@ public class YamlUtils {
                 lines.remove(lineIndex);
                 length--;
                 lineIndex--;
+            }
+            else {
+                break;
             }
         }
 
