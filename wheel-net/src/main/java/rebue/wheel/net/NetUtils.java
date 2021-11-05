@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rebue.wheel.core.RegexUtils;
+import rebue.wheel.core.util.RegexUtils;
 
 public class NetUtils {
     private final static Logger _log = LoggerFactory.getLogger(NetUtils.class);

@@ -18,6 +18,12 @@ public class DesensitizeStrategyTests {
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13276494937"));
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13933253233"));
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13832733403"));
+        log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("aqq.com"));
+        log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("a@qq.com"));
+        log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("13832733403@qq.com"));
+        log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("a3kd9d@163.com"));
+        log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("a3kd9d@126.com"));
+        log.info(DesensitizeStrategy.ID_CARD.getDesensitizer().apply("450104198709272096"));
         log.info(DesensitizeStrategy.ID_CARD.getDesensitizer().apply("450104198709372096"));
         log.info(DesensitizeStrategy.ADDRESS.getDesensitizer().apply("广西壮族自治区南宁市五象新区新湖街道38-3号1栋2单元303号房"));
     }

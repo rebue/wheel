@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rebue.wheel.core.util.RegexUtils;
 
 public class IdCardValidator {
     private static Logger _log = LoggerFactory.getLogger(IdCardValidator.class);
@@ -51,7 +52,7 @@ public class IdCardValidator {
         }
 
         // 正则验证
-        if (!RegexUtils.matchIdcard(sNumber)) {
+        if (!RegexUtils.matchIdCard(sNumber)) {
             _log.error("身份证号码格式不正确：{}", sNumber);
             return false;
         }
