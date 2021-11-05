@@ -20,15 +20,15 @@ public @interface Desensitize {
      * @return 脱敏策略
      *         如果要自定义策略，则不要设置此属性，且填写regex和replacement属性
      */
-    DesensitizeStrategy value();
+    DesensitizeStrategy value() default DesensitizeStrategy.CUSTOM;
 
     /**
      * @return 匹配的正则表达式
      */
-    String regex();
+    String regex() default "";
 
     /**
      * @return 要替换的表达式
      */
-    String replacement();
+    String replacement() default "";
 }

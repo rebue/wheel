@@ -11,10 +11,14 @@ import rebue.wheel.core.util.RegexUtils;
  */
 public enum DesensitizeStrategy {
     /**
+     * 自定义
+     */
+    CUSTOM(str -> null),
+    /**
      * Username sensitive strategy.
      */
     USERNAME(str -> {
-        if (StringUtils.isBlank(str)) return "";
+        if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
         return str.replaceAll("(\\S)\\S*", "$1*");
     }),
@@ -23,7 +27,7 @@ public enum DesensitizeStrategy {
      * Telephone sensitive type.
      */
     TEL(str -> {
-        if (StringUtils.isBlank(str)) return "";
+        if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
         return str.replaceAll("\\S*(\\d{3})", "****$1");
     }),
@@ -31,15 +35,18 @@ public enum DesensitizeStrategy {
      * Mobile sensitive type.
      */
     MOBILE(str -> {
-        if (StringUtils.isBlank(str)) return "";
+        if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
-        return str.replaceAll("(\\d{3})\\d{5}(\\d{3})", "$1*****$2");
+        if (str.length() > 8)
+            return str.replaceAll("(\\d{3})\\d*(\\d{3})", "$1*****$2");
+        else
+            return str.replaceAll("(\\d{2})\\d*(\\d{2})", "$1*****$2");
     }),
     /**
      * Email sensitive type.
      */
     EMAIL(str -> {
-        if (StringUtils.isBlank(str)) return "";
+        if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
         if (!RegexUtils.matchEmail(str)) return "*";
         return str.replaceAll("(\\S)\\S*@(\\S*)", "$1***@$2");
@@ -48,7 +55,7 @@ public enum DesensitizeStrategy {
      * Id card sensitive type.
      */
     ID_CARD(str -> {
-        if (StringUtils.isBlank(str)) return "";
+        if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
         if (!RegexUtils.matchIdCard(str)) return "*";
         return str.replaceAll("(\\d{3})\\d{12}(\\w{3})", "$1****$2");

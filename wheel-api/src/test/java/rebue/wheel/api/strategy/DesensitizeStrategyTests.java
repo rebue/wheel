@@ -16,6 +16,7 @@ public class DesensitizeStrategyTests {
         log.info(DesensitizeStrategy.USERNAME.getDesensitizer().apply("吴六六六"));
         log.info(DesensitizeStrategy.TEL.getDesensitizer().apply("3284773"));
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13276494937"));
+        log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("3829828"));
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13933253233"));
         log.info(DesensitizeStrategy.MOBILE.getDesensitizer().apply("13832733403"));
         log.info(DesensitizeStrategy.EMAIL.getDesensitizer().apply("aqq.com"));
