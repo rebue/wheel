@@ -8,10 +8,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections.map.HashedMap;
 
 import rebue.wheel.api.exception.RuntimeExceptionX;
 
@@ -142,7 +141,7 @@ public class JdbcUtils {
         Connection          connection = getConnection(url, userName, password);
         // List<String> list = new ArrayList<String>();
         // List<String> columnTypes = new ArrayList<String>();
-        Map<String, String> map        = new HashedMap();
+        Map<String, String> map        = new HashMap<String, String>();
         // 根据表名 拼接成SQL语句 查询到某个表的所有列
         PreparedStatement   prep       = null;
         try {
@@ -250,7 +249,7 @@ public class JdbcUtils {
 
     public static void main(String[] args) {
         List<String>        tables                = new ArrayList<String>();
-        Map<String, String> columnsByTableNameMap = new HashedMap();
+        Map<String, String> columnsByTableNameMap = new HashMap<String, String>();
         List<String>        columnTypes           = new ArrayList<String>();
         try {
             Class.forName(MYSQL_JDBC_DRIVER);
