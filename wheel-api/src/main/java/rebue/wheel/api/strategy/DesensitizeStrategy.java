@@ -49,7 +49,7 @@ public enum DesensitizeStrategy {
         if (StringUtils.isBlank(str)) return "*";
         str = str.trim();
         if (!RegexUtils.matchEmail(str)) return "*";
-        return str.replaceAll("(\\S)\\S*@(\\S*)", "$1***@$2");
+        return str.replaceAll("(\\S{3})\\S*@(\\S*)", "$1***@$2");
     }),
     /**
      * Id card sensitive type.
