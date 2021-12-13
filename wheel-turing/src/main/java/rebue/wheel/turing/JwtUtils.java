@@ -29,7 +29,7 @@ public class JwtUtils {
      */
     public static void addCookie(final String sign, final LocalDateTime expirationTime, final ServerHttpResponse resp) {
         log.info("将JWT签名添加到Cookie中");
-        final ResponseCookie responseCookie = ResponseCookie.from(JWT_TOKEN_NAME, sign).sameSite("None")
+        final ResponseCookie responseCookie = ResponseCookie.from(JWT_TOKEN_NAME, sign).sameSite("None").secure(true)
                 .maxAge((int) ((LocalDateTimeUtils.getMillis(expirationTime) - System.currentTimeMillis()) / 1000)).path("/").build();
         resp.addCookie(responseCookie);
     }
