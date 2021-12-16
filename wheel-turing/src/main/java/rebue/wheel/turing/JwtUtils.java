@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
@@ -15,6 +14,7 @@ import com.nimbusds.jwt.SignedJWT;
 
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.core.LocalDateTimeUtils;
+import rebue.wheel.net.CookieUtils;
 
 @Slf4j
 public class JwtUtils {
@@ -29,9 +29,10 @@ public class JwtUtils {
      */
     public static void addCookie(final String sign, final LocalDateTime expirationTime, final ServerHttpResponse resp) {
         log.info("将JWT签名添加到Cookie中");
-        final ResponseCookie responseCookie = ResponseCookie.from(JWT_TOKEN_NAME, sign).sameSite("None").secure(true)
-                .maxAge((int) ((LocalDateTimeUtils.getMillis(expirationTime) - System.currentTimeMillis()) / 1000)).path("/").build();
-        resp.addCookie(responseCookie);
+        CookieUtils.setCookie(resp, JWT_TOKEN_NAME, sign, (int) ((LocalDateTimeUtils.getMillis(expirationTime) - System.currentTimeMillis()) / 1000));
+        // final ResponseCookie responseCookie = ResponseCookie.from(JWT_TOKEN_NAME, sign).sameSite("None").secure(true)
+        // .maxAge((int) ((LocalDateTimeUtils.getMillis(expirationTime) - System.currentTimeMillis()) / 1000)).path("/").build();
+        // resp.addCookie(responseCookie);
     }
 
     /**
