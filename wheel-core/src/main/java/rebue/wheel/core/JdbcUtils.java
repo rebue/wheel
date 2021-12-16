@@ -33,9 +33,6 @@ public class JdbcUtils {
     private static String       mysqlUsername          = "etl";
     private static String       mysqlPassword          = "etl";
     private static String       mysqlUrl               = "jdbc:mysql://127.0.0.1:3306/etl?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true";
-    private static String       oracleUsername         = "magic";
-    private static String       oraclePassword         = "maiyue123+";
-    private static String       oracleUrl              = "jdbc:oracle:thin:@116.63.72.107:1521/dbsrv2";
 
     /**
      * 
