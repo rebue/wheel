@@ -30,8 +30,11 @@ public class JdbcUtils {
     // serverTimezone=Shanghai&?
     private static final String MYSQL_JDBC_URL_SUFFIX  = "?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true";
     private static Connection   connection             = null;
+    @SuppressWarnings("unused")
     private static String       mysqlUsername          = "etl";
+    @SuppressWarnings("unused")
     private static String       mysqlPassword          = "etl";
+    @SuppressWarnings("unused")
     private static String       mysqlUrl               = "jdbc:mysql://127.0.0.1:3306/etl?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true";
 
     /**
@@ -244,27 +247,27 @@ public class JdbcUtils {
         return boo;
     }
 
-    public static void main(String[] args) {
-        List<String>        tables                = new ArrayList<String>();
-        Map<String, String> columnsByTableNameMap = new HashMap<String, String>();
-        List<String>        columnTypes           = new ArrayList<String>();
-        try {
-            Class.forName(MYSQL_JDBC_DRIVER);
-            connection            = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
-            tables                = getTables(connection);
-            columnsByTableNameMap = getColumnsByTableName(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
-            columnTypes           = getColumnTypes(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
-            // Class.forName(ORACLE_JDBC_DRIVER);
-            // connection = DriverManager.getConnection(oracleUrl, oracleUsername, oraclePassword);
-            // tables = getTables(connection);
-            // columnsByTableName = getColumnsByTableName(oracleUrl, oracleUsername, oraclePassword, tables.get(0));
-
-        } catch (SQLException | ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println("数据库表名称" + tables);
-        System.out.println(tables.get(0) + "表的字段列名:" + columnsByTableNameMap);
-        System.out.println(tables.get(0) + "表的字段类型:" + columnTypes);
-    }
+    // public static void main(String[] args) {
+    // List<String> tables = new ArrayList<String>();
+    // Map<String, String> columnsByTableNameMap = new HashMap<String, String>();
+    // List<String> columnTypes = new ArrayList<String>();
+    // try {
+    // Class.forName(MYSQL_JDBC_DRIVER);
+    // connection = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
+    // tables = getTables(connection);
+    // columnsByTableNameMap = getColumnsByTableName(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
+    // columnTypes = getColumnTypes(mysqlUrl, mysqlUsername, mysqlPassword, tables.get(0));
+    // // Class.forName(ORACLE_JDBC_DRIVER);
+    // // connection = DriverManager.getConnection(oracleUrl, oracleUsername, oraclePassword);
+    // // tables = getTables(connection);
+    // // columnsByTableName = getColumnsByTableName(oracleUrl, oracleUsername, oraclePassword, tables.get(0));
+    //
+    // } catch (SQLException | ClassNotFoundException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // System.out.println("数据库表名称" + tables);
+    // System.out.println(tables.get(0) + "表的字段列名:" + columnsByTableNameMap);
+    // System.out.println(tables.get(0) + "表的字段类型:" + columnTypes);
+    // }
 }
