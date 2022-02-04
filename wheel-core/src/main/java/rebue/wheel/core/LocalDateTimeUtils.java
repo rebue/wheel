@@ -1,6 +1,10 @@
 package rebue.wheel.core;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -19,14 +23,14 @@ public class LocalDateTimeUtils {
     /**
      * 格式化日期(例如: 2021-09-09)
      */
-    public static String formatDate(LocalDate date) {
+    public static String formatDate(final LocalDate date) {
         return dtfDefaultDate.format(date);
     }
 
     /**
      * 格式化日期时间(例如: 2021-09-09 09:45:23)
      */
-    public static String formatDateTime(LocalDateTime dateTime) {
+    public static String formatDateTime(final LocalDateTime dateTime) {
         return dtfDefaultDateTime.format(dateTime);
     }
 
@@ -47,6 +51,13 @@ public class LocalDateTimeUtils {
         final ZonedDateTime zdt    = localDateTime.atZone(zoneId);// Combines this date-time with a time-zone to create a ZonedDateTime.
         return Date.from(zdt.toInstant());
 
+    }
+
+    /**
+     * 将long类型的timestamp转为LocalDate
+     */
+    public static LocalDate getDateOfTimestamp(final long timestamp) {
+        return getDateTimeOfTimestamp(timestamp).toLocalDate();
     }
 
     /**
