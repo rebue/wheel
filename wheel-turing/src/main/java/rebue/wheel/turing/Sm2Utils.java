@@ -44,9 +44,9 @@ public class Sm2Utils {
 
     public static KeyPair generateKeyPair() {
         try {
-            final KeyPairGenerator kpGen = KeyPairGenerator.getInstance("EC", "BC");
-            kpGen.initialize(ecParameterSpec, new SecureRandom());
-            final KeyPair kp = kpGen.generateKeyPair();
+            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
+            keyPairGenerator.initialize(ecParameterSpec, new SecureRandom());
+            final KeyPair kp = keyPairGenerator.generateKeyPair();
             return kp;
         } catch (final Exception e) {
             throw new RuntimeException(e);
