@@ -23,16 +23,16 @@ public class FileUtils {
      */
     public static String getClassesPath() {
         String result;
-//		String result = FileUtils.class.getResource(File.separator).getPath();
-//		// 把windows系统中取得路径的第一个字母是'/'的去掉
-//		if (result.charAt(0) == '/' && result.charAt(2) == ':') {
-//			result = result.substring(1);
-//		}
-//		return result;
+        // String result = FileUtils.class.getResource(File.separator).getPath();
+        // // 把windows系统中取得路径的第一个字母是'/'的去掉
+        // if (result.charAt(0) == '/' && result.charAt(2) == ':') {
+        // result = result.substring(1);
+        // }
+        // return result;
 
-//		return FileUtils.class.getClassLoader().getResource("").getPath();
-//        return FileUtils.class.getResource("/").getPath();
-//        result = Thread.currentThread().getContextClassLoader().getResource("/").getPath();
+        // return FileUtils.class.getClassLoader().getResource("").getPath();
+        // return FileUtils.class.getResource("/").getPath();
+        // result = Thread.currentThread().getContextClassLoader().getResource("/").getPath();
         result = FileUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         _logger.info("得到类路径:" + result);
         return result;
@@ -70,9 +70,9 @@ public class FileUtils {
      * 替换目录末尾最后那个目录的名字，然后返回整个路径
      * 
      * @param dirPath
-     *            要改的目录的全路径名
+     *                要改的目录的全路径名
      * @param suffix
-     *            末尾要改成的后缀
+     *                末尾要改成的后缀
      */
     public static String replaceDirSuffix(String dirPath, String suffix) {
         return dirPath.replaceAll("/\\w+$", File.separator + suffix);
@@ -100,60 +100,60 @@ public class FileUtils {
         return dir.delete();
     }
 
-//    /**
-//     * 查找文件的匹配器
-//     */
-//	public interface FileMatcher {
-//		void matched(File file, Matcher matcher);
-//	}
+    // /**
+    // * 查找文件的匹配器
+    // */
+    // public interface FileMatcher {
+    // void matched(File file, Matcher matcher);
+    // }
 
-//    /**
-//     * 递归查找文件
-//     *
-//     * @param sSearchDir
-//     *            查找的文件夹路径
-//     * @param fileComparer
-//     *            文件比较接口
-//     * @param patten
-//     *            匹配文件名的正则表达式
-//     * 
-//     *            XXX 与new File(dir).listFiles(new
-//     *            FileFilter(){....有区别，这个是递归查找文件的
-//     */
-//	public static void searchFiles(String sSearchDir, Pattern pattern, FileMatcher fileComparer) {
-//		File searchDir = new File(sSearchDir);
-//		if (!searchDir.exists())
-//			_logger.error("文件查找失败：不存在" + sSearchDir + "这个路径");
-//		else if (!searchDir.isDirectory())
-//			_logger.error("文件查找失败：" + sSearchDir + "不是一个目录！");
-//		else
-//			searchFiles(new File(sSearchDir), pattern, fileComparer);
-//	}
-//
-//	private static void searchFiles(File searchDir, final Pattern pattern, final FileMatcher fileMatcher) {
-//		searchDir.listFiles(new FileFilter() {
-//			@Override
-//			public boolean accept(File file) {
-//				if (file.isDirectory())
-//					searchFiles(file, pattern, fileMatcher);
-//				else {
-//					try {
-//						Matcher matcher = pattern.matcher(file.getCanonicalPath());
-//						if (matcher.find())
-//							fileMatcher.matched(file, matcher);
-//					} catch (IOException e) {
-//						_logger.error("不应该的异常：是在查找到文件后再取的路径信息", e);
-//					}
-//				}
-//				return false;
-//			}
-//		});
-//	}
+    // /**
+    // * 递归查找文件
+    // *
+    // * @param sSearchDir
+    // * 查找的文件夹路径
+    // * @param fileComparer
+    // * 文件比较接口
+    // * @param patten
+    // * 匹配文件名的正则表达式
+    // *
+    // * XXX 与new File(dir).listFiles(new
+    // * FileFilter(){....有区别，这个是递归查找文件的
+    // */
+    // public static void searchFiles(String sSearchDir, Pattern pattern, FileMatcher fileComparer) {
+    // File searchDir = new File(sSearchDir);
+    // if (!searchDir.exists())
+    // _logger.error("文件查找失败：不存在" + sSearchDir + "这个路径");
+    // else if (!searchDir.isDirectory())
+    // _logger.error("文件查找失败：" + sSearchDir + "不是一个目录！");
+    // else
+    // searchFiles(new File(sSearchDir), pattern, fileComparer);
+    // }
+    //
+    // private static void searchFiles(File searchDir, final Pattern pattern, final FileMatcher fileMatcher) {
+    // searchDir.listFiles(new FileFilter() {
+    // @Override
+    // public boolean accept(File file) {
+    // if (file.isDirectory())
+    // searchFiles(file, pattern, fileMatcher);
+    // else {
+    // try {
+    // Matcher matcher = pattern.matcher(file.getCanonicalPath());
+    // if (matcher.find())
+    // fileMatcher.matched(file, matcher);
+    // } catch (IOException e) {
+    // _logger.error("不应该的异常：是在查找到文件后再取的路径信息", e);
+    // }
+    // }
+    // return false;
+    // }
+    // });
+    // }
 
     public static byte[] getBytesFromFile(String filePath) throws IOException {
-        File file = new File(filePath);
+        File            file            = new File(filePath);
         FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
+        byte[]          data            = new byte[(int) file.length()];
         try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
             dataInputStream.readFully(data);
         }

@@ -10,8 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ResourcesWrapper {
 
-    public static InputStream getInputStream(String fileName, Class<?> clazz) throws IOException
-    {
+    public static InputStream getInputStream(String fileName, Class<?> clazz) throws IOException {
         InputStream in;
         try {
             in = clazz.getClassLoader().getResourceAsStream(fileName);
@@ -32,13 +31,11 @@ public class ResourcesWrapper {
         }
     }
 
-    public static String fileStr(String fileName, Class<?> clazz) throws IOException
-    {
+    public static String fileStr(String fileName, Class<?> clazz) throws IOException {
         try (
                 InputStream in = getInputStream(fileName, clazz);
-                ByteArrayOutputStream o = new ByteArrayOutputStream()
-        ) {
-            int r;
+                ByteArrayOutputStream o = new ByteArrayOutputStream()) {
+            int    r;
             byte[] buffer = new byte[2048];
             while ((r = in.read(buffer)) != -1) {
                 o.write(buffer, 0, r);

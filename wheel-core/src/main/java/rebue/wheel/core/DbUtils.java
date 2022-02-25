@@ -24,10 +24,10 @@ public class DbUtils {
         try {
             Properties properties = new Properties();
             properties.load(DbUtils.class.getResourceAsStream("/db.properties"));
-            mssqlUrl = properties.getProperty("mssql.url");
+            mssqlUrl      = properties.getProperty("mssql.url");
             mssqlUsername = properties.getProperty("mssql.username");
             mssqlPassword = properties.getProperty("mssql.password");
-            mysqlUrl = properties.getProperty("mysql.url");
+            mysqlUrl      = properties.getProperty("mysql.url");
             mysqlUsername = properties.getProperty("mysql.username");
             mysqlPassword = properties.getProperty("mysql.password");
 
@@ -52,7 +52,7 @@ public class DbUtils {
     }
 
     public static String getInsertSql(String tableName, Map<String, Object> fields) {
-        String keys = "";
+        String keys   = "";
         String values = "";
         for (Entry<String, Object> item : fields.entrySet()) {
             if (item.getValue() != null) {
@@ -62,14 +62,15 @@ public class DbUtils {
                         continue;
                     }
                     values += "'" + temp.trim() + "',";
-                } else {
+                }
+                else {
                     values += item.getValue() + ",";
                 }
                 keys += item.getKey() + ",";
             }
         }
         // 去掉最后一个逗号
-        keys = StringUtils.left(keys, keys.length() - 1);
+        keys   = StringUtils.left(keys, keys.length() - 1);
         values = StringUtils.left(values, values.length() - 1);
         // 拼接SQL语句
         return "insert into " + tableName + " (" + keys + ")values(" + values + ")";
@@ -78,14 +79,16 @@ public class DbUtils {
     public static String getUpdateSql(String tableName, Map<String, Object> fields) {
         String sSet = "";
         for (Entry<String, Object> item : fields.entrySet()) {
-            String key = item.getKey();
+            String key   = item.getKey();
             String value = "";
             if (item.getValue() == null) {
                 value = "null";
-            } else {
+            }
+            else {
                 if (item.getValue() instanceof String) {
                     value += "'" + item.getValue() + "'";
-                } else {
+                }
+                else {
                     value += item.getValue();
                 }
             }

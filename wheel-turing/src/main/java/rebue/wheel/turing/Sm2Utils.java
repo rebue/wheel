@@ -67,7 +67,7 @@ public class Sm2Utils {
         return privateKeyBase64;
     }
 
-    public static BCECPublicKey getPublicKeyFromString(final String publicKeyStrBase64) throws Exception {
+    public static BCECPublicKey getPublicKeyFromString(final String publicKeyStrBase64) {
         final String          publicKeyString = new String(Base64.getDecoder().decode(publicKeyStrBase64.getBytes(DEFAULT_CHARSET)), DEFAULT_CHARSET);
         final byte[]          publicKey       = Hex.decode(publicKeyString);
         final int             SM2_KEY_LEN     = 32;
@@ -78,7 +78,7 @@ public class Sm2Utils {
         return new BCECPublicKey("EC", ecPublicKeySpec, BouncyCastleProvider.CONFIGURATION);
     }
 
-    public static BCECPrivateKey getPrivateKeyFromString(final String privateKeyStrBase64) throws Exception {
+    public static BCECPrivateKey getPrivateKeyFromString(final String privateKeyStrBase64) {
         final String           privateKeyString = new String(Base64.getDecoder().decode(privateKeyStrBase64.getBytes(DEFAULT_CHARSET)), DEFAULT_CHARSET);
         final byte[]           privateKey       = Hex.decode(privateKeyString);
         final ECPrivateKeySpec ecPrivateKeySpec = new ECPrivateKeySpec(new BigInteger(1, privateKey), ecParameterSpec);
@@ -121,16 +121,17 @@ public class Sm2Utils {
     }
 
     /**
-     *
-     * @param msg
-     * @param userId
-     * @param rs        r||s，直接拼接byte数组的rs
-     * @param publicKey
+     * 校验签名
      * 
-     * @return
+     * @param msg       明文的内容
+     * @param userId    签名需要用到的userId
+     * @param sign      要验证的签名
+     * @param publicKey 公钥
+     * 
+     * @return 签名是否正确
      */
-    public static boolean verifySm3WithSm2(final byte[] msg, final byte[] userId, final byte[] rs, final PublicKey publicKey) {
-        return verifySm3WithSm2Asn1Rs(msg, userId, rsPlainByteArrayToAsn1(rs), publicKey);
+    public static boolean verifySm3WithSm2(final byte[] msg, final byte[] userId, final byte[] sign, final PublicKey publicKey) {
+        return verifySm3WithSm2Asn1Rs(msg, userId, rsPlainByteArrayToAsn1(sign), publicKey);
     }
 
     /**

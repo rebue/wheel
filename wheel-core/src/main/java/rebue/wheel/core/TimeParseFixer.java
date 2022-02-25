@@ -13,28 +13,28 @@ import java.util.Date;
  */
 public class TimeParseFixer {
 
-	private String					_sPattern;
-	private ThreadLocal<DateFormat>	_threadLocal	= new ThreadLocal<DateFormat>();
+    private String                  _sPattern;
+    private ThreadLocal<DateFormat> _threadLocal = new ThreadLocal<DateFormat>();
 
-	public TimeParseFixer(String sPattern) {
-		_sPattern = sPattern;
-	}
+    public TimeParseFixer(String sPattern) {
+        _sPattern = sPattern;
+    }
 
-	private DateFormat getDateFormat() {
-		DateFormat df = _threadLocal.get();
-		if (df == null) {
-			df = new SimpleDateFormat(_sPattern);
-			_threadLocal.set(df);
-		}
-		return df;
-	}
+    private DateFormat getDateFormat() {
+        DateFormat df = _threadLocal.get();
+        if (df == null) {
+            df = new SimpleDateFormat(_sPattern);
+            _threadLocal.set(df);
+        }
+        return df;
+    }
 
-	public String formatDate(Date date) throws ParseException {
-		return getDateFormat().format(date);
-	}
+    public String formatDate(Date date) throws ParseException {
+        return getDateFormat().format(date);
+    }
 
-	public Date parse(String sDate) throws ParseException {
-		return getDateFormat().parse(sDate);
-	}
+    public Date parse(String sDate) throws ParseException {
+        return getDateFormat().parse(sDate);
+    }
 
 }

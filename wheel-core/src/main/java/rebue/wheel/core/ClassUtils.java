@@ -19,6 +19,7 @@ public class ClassUtils {
      * 得到不包含package的类名
      * 
      * @param sClassName
+     * 
      * @return
      */
     public static String getSimpleName(String sClassName) {
@@ -29,6 +30,7 @@ public class ClassUtils {
      * 通过Get方法得到属性的field字段名
      * 
      * @param methodName
+     * 
      * @return
      */
     public static String getFieldNameByGetMethod(String methodName) {
@@ -55,9 +57,9 @@ public class ClassUtils {
      * 替换包末尾最后那个包的名字，然后返回整个包名
      * 
      * @param packageName
-     *            要修改的包的全名
+     *                    要修改的包的全名
      * @param suffix
-     *            末尾要改成的后缀
+     *                    末尾要改成的后缀
      */
     public static String replacePackageSuffix(String packageName, String suffix) {
         return packageName.replaceAll("\\.\\w+$", "." + suffix);
@@ -75,21 +77,22 @@ public class ClassUtils {
     public static List<Class<?>> getClassList(String pkgName, boolean isRecursive,
             Class<? extends Annotation> annotation) {
         List<Class<?>> classList = new ArrayList<>();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader    loader    = Thread.currentThread().getContextClassLoader();
         try {
             // 按文件的形式去查找
-            String strFile = pkgName.replaceAll("\\.", File.separator);
-            Enumeration<URL> urls = loader.getResources(strFile);
+            String           strFile = pkgName.replaceAll("\\.", File.separator);
+            Enumeration<URL> urls    = loader.getResources(strFile);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url != null) {
                     String protocol = url.getProtocol();
-                    String pkgPath = url.getPath();
+                    String pkgPath  = url.getPath();
                     System.out.println("protocol:" + protocol + " path:" + pkgPath);
                     if ("file".equals(protocol)) {
                         // 本地自己可见的代码
                         findClassName(classList, pkgName, pkgPath, isRecursive, annotation);
-                    } else if ("jar".equals(protocol)) {
+                    }
+                    else if ("jar".equals(protocol)) {
                         // 引用第三方jar的代码
                         findClassName(classList, pkgName, url, isRecursive, annotation);
                     }
@@ -125,7 +128,8 @@ public class ClassUtils {
                     // .class 文件的情况
                     String clazzName = getClassName(pkgName, fileName);
                     addClassName(clazzList, clazzName, annotation);
-                } else {
+                }
+                else {
                     // 文件夹的情况
                     if (isRecursive) {
                         // 需要继续查找该文件夹/包名下的类
@@ -144,28 +148,29 @@ public class ClassUtils {
     public static void findClassName(List<Class<?>> clazzList, String pkgName, URL url, boolean isRecursive,
             Class<? extends Annotation> annotation) throws IOException {
         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-        JarFile jarFile = jarURLConnection.getJarFile();
+        JarFile          jarFile          = jarURLConnection.getJarFile();
         System.out.println("jarFile:" + jarFile.getName());
         Enumeration<JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
-            JarEntry jarEntry = jarEntries.nextElement();
-            String jarEntryName = jarEntry.getName(); // 类似：sun/security/internal/interfaces/TlsMasterSecret.class
-            String clazzName = jarEntryName.replace(File.separator, ".");
-            int endIndex = clazzName.lastIndexOf(".");
-            String prefix = null;
+            JarEntry jarEntry     = jarEntries.nextElement();
+            String   jarEntryName = jarEntry.getName(); // 类似：sun/security/internal/interfaces/TlsMasterSecret.class
+            String   clazzName    = jarEntryName.replace(File.separator, ".");
+            int      endIndex     = clazzName.lastIndexOf(".");
+            String   prefix       = null;
             if (endIndex > 0) {
                 clazzName = clazzName.substring(0, endIndex);
-                endIndex = clazzName.lastIndexOf(".");
+                endIndex  = clazzName.lastIndexOf(".");
                 if (endIndex > 0) {
                     prefix = clazzName.substring(0, endIndex);
                 }
             }
             if (prefix != null && jarEntryName.endsWith(".class")) {
-//              System.out.println("prefix:" + prefix +" pkgName:" + pkgName);  
+                // System.out.println("prefix:" + prefix +" pkgName:" + pkgName);
                 if (prefix.equals(pkgName)) {
                     System.out.println("jar entryName:" + jarEntryName);
                     addClassName(clazzList, clazzName, annotation);
-                } else if (isRecursive && prefix.startsWith(pkgName)) {
+                }
+                else if (isRecursive && prefix.startsWith(pkgName)) {
                     // 遍历子包名：子类
                     System.out.println("jar entryName:" + jarEntryName + " isRecursive:" + isRecursive);
                     addClassName(clazzList, clazzName, annotation);
@@ -188,8 +193,8 @@ public class ClassUtils {
     }
 
     private static String getClassName(String pkgName, String fileName) {
-        int endIndex = fileName.lastIndexOf(".");
-        String clazz = null;
+        int    endIndex = fileName.lastIndexOf(".");
+        String clazz    = null;
         if (endIndex >= 0) {
             clazz = fileName.substring(0, endIndex);
         }
@@ -210,13 +215,14 @@ public class ClassUtils {
                 System.out.println("class name:" + clazzName);
                 e.printStackTrace();
             }
-//          System.out.println("isAnnotation=" + clazz.isAnnotation() +" author:" + clazz.isAnnotationPresent(author.class));  
+            // System.out.println("isAnnotation=" + clazz.isAnnotation() +" author:" + clazz.isAnnotationPresent(author.class));
 
             if (clazz != null) {
                 if (annotation == null) {
                     clazzList.add(clazz);
                     System.out.println("find:" + clazz);
-                } else if (clazz.isAnnotationPresent(annotation)) {
+                }
+                else if (clazz.isAnnotationPresent(annotation)) {
                     clazzList.add(clazz);
                     System.out.println("find annotation:" + clazz);
                 }
@@ -228,7 +234,7 @@ public class ClassUtils {
      * 得到对象的含有指定注解的接口的名称
      * 
      * @throws NoSuchIntfException
-     *             没有这样的接口
+     *                             没有这样的接口
      */
     public static Class<?> getIntfNameWithAnnotationOfObject(Class<? extends Annotation> annotationType, Object obj)
             throws NoSuchIntfException {

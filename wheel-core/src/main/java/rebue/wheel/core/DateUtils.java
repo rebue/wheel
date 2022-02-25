@@ -15,7 +15,8 @@ public class DateUtils {
     public static java.sql.Date toSqlDate(final java.util.Date date) {
         if (date != null) {
             return new java.sql.Date(date.getTime());
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -65,15 +66,20 @@ public class DateUtils {
         try {
             if (DATE_PATTERN.matcher(sDate).matches()) {
                 format = "yyyy-MM-dd";
-            } else if (TIME_PATTERN.matcher(sDate).matches()) {
+            }
+            else if (TIME_PATTERN.matcher(sDate).matches()) {
                 format = "yyyy-MM-dd HH:mm:ss";
-            } else if (MSTIME_PATTERN.matcher(sDate).matches()) {
+            }
+            else if (MSTIME_PATTERN.matcher(sDate).matches()) {
                 format = "yyyy-MM-dd HH:mm:ss.SSS";
-            } else if (ZDATE_PATTERN.matcher(sDate).matches()) {
+            }
+            else if (ZDATE_PATTERN.matcher(sDate).matches()) {
                 format = "yyyy-MM-dd";
-            } else if (ZTIME_PATTERN.matcher(sDate).matches()) {
+            }
+            else if (ZTIME_PATTERN.matcher(sDate).matches()) {
                 format = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-            } else {
+            }
+            else {
                 throw new ParseException(errmsg + sDate, 0);
             }
             final SimpleDateFormat sdf = new SimpleDateFormat(format);

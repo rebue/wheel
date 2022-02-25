@@ -27,7 +27,8 @@ public class ReactorTest {
     @Disabled
     public void test01() throws InterruptedException {
         Flux.just("Hello", "World").subscribe(System.out::println);
-        Flux.fromArray(new Integer[] { 1, 2, 3 }).subscribe(System.out::println);
+        Flux.fromArray(new Integer[] { 1, 2, 3
+        }).subscribe(System.out::println);
         Flux.empty().subscribe(System.out::println);
         Flux.range(1, 10).subscribe(System.out::println);
         Flux.interval(Duration.of(10, ChronoUnit.SECONDS)).subscribe(System.out::println);
@@ -217,7 +218,8 @@ public class ReactorTest {
         Flux.just(1, 2).concatWith(Mono.error(new IllegalArgumentException())).onErrorResume(e -> {
             if (e instanceof IllegalStateException) {
                 return Mono.just(0);
-            } else if (e instanceof IllegalArgumentException) {
+            }
+            else if (e instanceof IllegalArgumentException) {
                 return Mono.just(-1);
             }
             return Mono.empty();
@@ -238,7 +240,7 @@ public class ReactorTest {
      * 使用调度器切换操作符执行方式
      */
     @Test
-//    @Disabled
+    // @Disabled
     public void test19() {
         Flux.create(sink -> {
             sink.next(Thread.currentThread().getName());

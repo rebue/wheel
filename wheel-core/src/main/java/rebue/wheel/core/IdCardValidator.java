@@ -12,9 +12,11 @@ public class IdCardValidator {
     private static Logger _log = LoggerFactory.getLogger(IdCardValidator.class);
 
     // 18位身份证中，各个数字的生成校验码时的权值
-    private final static int[]  VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+    private final static int[]  VERIFY_CODE_WEIGHT = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2
+    };
     // 18位身份证中最后一位校验码
-    private final static char[] VERIFY_CODE        = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
+    private final static char[] VERIFY_CODE        = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'
+    };
 
     // private static Map<Integer, String> _addresses = new HashMap<Integer, String>();
 
@@ -43,7 +45,7 @@ public class IdCardValidator {
      * 验证身份证号码是否正确
      * 
      * @param sNumber
-     *            要验证的身份证号码
+     *                要验证的身份证号码
      */
     public static boolean validate(final String sNumber) {
         if (StringUtils.isBlank(sNumber)) {
@@ -71,7 +73,7 @@ public class IdCardValidator {
         // _logger.error("身份证号码中的日期小于" + new DateTime(MINIMAL_BORN_DATE) + "或者大于当前时间：" + sNumber);
         // return false;
         // }
-        Date birthday;
+        Date         birthday;
         try {
             birthday = _timeParseFixer.parse(sBirthday);
         } catch (final ParseException e) {
@@ -104,7 +106,7 @@ public class IdCardValidator {
      * 计算校验位
      */
     public static char calcCheckBit(final String idCardNumber) {
-        int sum = 0;
+        int       sum           = 0;
         final int iNumberLength = 17;
         for (int i = 0; i < iNumberLength; i++) {
             sum += (idCardNumber.charAt(i) - '0') * VERIFY_CODE_WEIGHT[i];

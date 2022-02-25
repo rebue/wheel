@@ -78,7 +78,7 @@ public final class FileModifier {
             for (Modifier modifier : mModifiers) {
                 if (line.matches(modifier.getMatcher())) {
                     mIsModified = true;
-                    line = line.replaceAll(modifier.getOlder(), modifier.getNewer());
+                    line        = line.replaceAll(modifier.getOlder(), modifier.getNewer());
                     break;
                 }
             }

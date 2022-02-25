@@ -1,9 +1,5 @@
 package rebue.wheel.turing;
 
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-import org.junit.jupiter.api.Test;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +8,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.junit.jupiter.api.Test;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Sm2Test {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -23,6 +26,24 @@ public class Sm2Test {
     private static final String privateKey = "MTliNDAyMzBmNDM3ZWEzOTg4NjM1YmUyNmIxMGFiNTdiY2Q2YzQ0YzYzOTYwYjAyNzIwMTc3Yzk2YTUxNWE5Zg==";
     private static final String publicKey  = "MDQ1NGFjNWYyZTc0YmZlOWQzMjZkMTJiY2RiZDg5ODdhNzM2MzBmNTg2OGJjNjQxNGY2OTQzNjE0YWUwNDE1N2UzYjAyOWMwNWUwMDY5YTUxMWQ3YzVhZTdhZmExN2I4NmM0ZmQ4ODc4YzE2Y2MyNWRkMjRjZDY0NDA2MDk3MjQ4Yg==";
     private static final String plainText  = "authCode=auth0000001&requestTime=1482809327714&bizParam=eyJwYXlDb2RlIjoiMTgxMTA0MTU0NzExMTEwMSJ9";
+
+    /**
+     * 测试生成公私钥对
+     */
+    @Test
+    public void testGenKeyPair() throws Exception {
+        // 生成公私钥对
+        final KeyPair keyPair = Sm2Utils.generateKeyPair();
+
+        // 生成私钥Base64编码字符串，各自系统保存好自己的私钥，不外泄
+        final String privateKeyStr = Sm2Utils.getPrivateKeyString(keyPair);
+        log.info("私钥: {}", privateKeyStr);
+
+        // 生成公钥Base64编码字符串，该公钥字符串提供给其他系统
+        // 广西统一公共收付系统提供的测试环境公钥是（生产环境另外提供）：MDRhNzg4ZmU1NWRmZjYxN2Y3NTI2M2EyMjVjZWU5NzljODdkYzVkYjQ4ZDllOTljNTc3MTdmZWY0YzZlMmY1ZGMzNmQ0MTRjMzJjMjRlZjE4NTM0MGUwZTg2YjlkYjA1NzBhNzIxNzRiZTQ0OTgyNmQ5MmM3NDEwYzFkMzFiMGYxZQ==
+        final String publicKeyStr = Sm2Utils.getPublicKeyString(keyPair);
+        log.info("公钥: {}", publicKeyStr);
+    }
 
     @Test
     public void test01() throws Exception {

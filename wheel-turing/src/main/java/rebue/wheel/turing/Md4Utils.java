@@ -45,71 +45,71 @@ public class Md4Utils {
             X[j] = M[j];
         }
 
-        AA = A;
-        BB = B;
-        CC = C;
-        DD = D;
+        AA  = A;
+        BB  = B;
+        CC  = C;
+        DD  = D;
 
-        A = ROUND1(A, B, C, D, 0, 3);
-        D = ROUND1(D, A, B, C, 1, 7);
-        C = ROUND1(C, D, A, B, 2, 11);
-        B = ROUND1(B, C, D, A, 3, 19);
-        A = ROUND1(A, B, C, D, 4, 3);
-        D = ROUND1(D, A, B, C, 5, 7);
-        C = ROUND1(C, D, A, B, 6, 11);
-        B = ROUND1(B, C, D, A, 7, 19);
-        A = ROUND1(A, B, C, D, 8, 3);
-        D = ROUND1(D, A, B, C, 9, 7);
-        C = ROUND1(C, D, A, B, 10, 11);
-        B = ROUND1(B, C, D, A, 11, 19);
-        A = ROUND1(A, B, C, D, 12, 3);
-        D = ROUND1(D, A, B, C, 13, 7);
-        C = ROUND1(C, D, A, B, 14, 11);
-        B = ROUND1(B, C, D, A, 15, 19);
+        A   = ROUND1(A, B, C, D, 0, 3);
+        D   = ROUND1(D, A, B, C, 1, 7);
+        C   = ROUND1(C, D, A, B, 2, 11);
+        B   = ROUND1(B, C, D, A, 3, 19);
+        A   = ROUND1(A, B, C, D, 4, 3);
+        D   = ROUND1(D, A, B, C, 5, 7);
+        C   = ROUND1(C, D, A, B, 6, 11);
+        B   = ROUND1(B, C, D, A, 7, 19);
+        A   = ROUND1(A, B, C, D, 8, 3);
+        D   = ROUND1(D, A, B, C, 9, 7);
+        C   = ROUND1(C, D, A, B, 10, 11);
+        B   = ROUND1(B, C, D, A, 11, 19);
+        A   = ROUND1(A, B, C, D, 12, 3);
+        D   = ROUND1(D, A, B, C, 13, 7);
+        C   = ROUND1(C, D, A, B, 14, 11);
+        B   = ROUND1(B, C, D, A, 15, 19);
 
-        A = ROUND2(A, B, C, D, 0, 3);
-        D = ROUND2(D, A, B, C, 4, 5);
-        C = ROUND2(C, D, A, B, 8, 9);
-        B = ROUND2(B, C, D, A, 12, 13);
-        A = ROUND2(A, B, C, D, 1, 3);
-        D = ROUND2(D, A, B, C, 5, 5);
-        C = ROUND2(C, D, A, B, 9, 9);
-        B = ROUND2(B, C, D, A, 13, 13);
-        A = ROUND2(A, B, C, D, 2, 3);
-        D = ROUND2(D, A, B, C, 6, 5);
-        C = ROUND2(C, D, A, B, 10, 9);
-        B = ROUND2(B, C, D, A, 14, 13);
-        A = ROUND2(A, B, C, D, 3, 3);
-        D = ROUND2(D, A, B, C, 7, 5);
-        C = ROUND2(C, D, A, B, 11, 9);
-        B = ROUND2(B, C, D, A, 15, 13);
+        A   = ROUND2(A, B, C, D, 0, 3);
+        D   = ROUND2(D, A, B, C, 4, 5);
+        C   = ROUND2(C, D, A, B, 8, 9);
+        B   = ROUND2(B, C, D, A, 12, 13);
+        A   = ROUND2(A, B, C, D, 1, 3);
+        D   = ROUND2(D, A, B, C, 5, 5);
+        C   = ROUND2(C, D, A, B, 9, 9);
+        B   = ROUND2(B, C, D, A, 13, 13);
+        A   = ROUND2(A, B, C, D, 2, 3);
+        D   = ROUND2(D, A, B, C, 6, 5);
+        C   = ROUND2(C, D, A, B, 10, 9);
+        B   = ROUND2(B, C, D, A, 14, 13);
+        A   = ROUND2(A, B, C, D, 3, 3);
+        D   = ROUND2(D, A, B, C, 7, 5);
+        C   = ROUND2(C, D, A, B, 11, 9);
+        B   = ROUND2(B, C, D, A, 15, 13);
 
-        A = ROUND3(A, B, C, D, 0, 3);
-        D = ROUND3(D, A, B, C, 8, 9);
-        C = ROUND3(C, D, A, B, 4, 11);
-        B = ROUND3(B, C, D, A, 12, 15);
-        A = ROUND3(A, B, C, D, 2, 3);
-        D = ROUND3(D, A, B, C, 10, 9);
-        C = ROUND3(C, D, A, B, 6, 11);
-        B = ROUND3(B, C, D, A, 14, 15);
-        A = ROUND3(A, B, C, D, 1, 3);
-        D = ROUND3(D, A, B, C, 9, 9);
-        C = ROUND3(C, D, A, B, 5, 11);
-        B = ROUND3(B, C, D, A, 13, 15);
-        A = ROUND3(A, B, C, D, 3, 3);
-        D = ROUND3(D, A, B, C, 11, 9);
-        C = ROUND3(C, D, A, B, 7, 11);
-        B = ROUND3(B, C, D, A, 15, 15);
+        A   = ROUND3(A, B, C, D, 0, 3);
+        D   = ROUND3(D, A, B, C, 8, 9);
+        C   = ROUND3(C, D, A, B, 4, 11);
+        B   = ROUND3(B, C, D, A, 12, 15);
+        A   = ROUND3(A, B, C, D, 2, 3);
+        D   = ROUND3(D, A, B, C, 10, 9);
+        C   = ROUND3(C, D, A, B, 6, 11);
+        B   = ROUND3(B, C, D, A, 14, 15);
+        A   = ROUND3(A, B, C, D, 1, 3);
+        D   = ROUND3(D, A, B, C, 9, 9);
+        C   = ROUND3(C, D, A, B, 5, 11);
+        B   = ROUND3(B, C, D, A, 13, 15);
+        A   = ROUND3(A, B, C, D, 3, 3);
+        D   = ROUND3(D, A, B, C, 11, 9);
+        C   = ROUND3(C, D, A, B, 7, 11);
+        B   = ROUND3(B, C, D, A, 15, 15);
 
-        A += AA;
-        B += BB;
-        C += CC;
-        D += DD;
+        A  += AA;
+        B  += BB;
+        C  += CC;
+        D  += DD;
 
-        A &= 0xFFFFFFFF;
-        B &= 0xFFFFFFFF;
-        C &= 0xFFFFFFFF;
-        D &= 0xFFFFFFFF;
+        A  &= 0xFFFFFFFF;
+        B  &= 0xFFFFFFFF;
+        C  &= 0xFFFFFFFF;
+        D  &= 0xFFFFFFFF;
     }
 
     public static void copy64(int M[], byte in[], int offset) {
@@ -125,7 +125,7 @@ public class Md4Utils {
     }
 
     public static void copy4(byte out[], int offset, int x) {
-        out[offset] = (byte) (x & 0xFF);
+        out[offset]     = (byte) (x & 0xFF);
         out[1 + offset] = (byte) ((x >> 8) & 0xFF);
         out[2 + offset] = (byte) ((x >> 16) & 0xFF);
         out[3 + offset] = (byte) ((x >> 24) & 0xFF);
@@ -134,23 +134,23 @@ public class Md4Utils {
     public static byte[] digest(byte data[]) {
         byte out[] = new byte[16];
         byte buf[] = new byte[128];
-        int n = data.length;
-        int M[] = new int[16];
-        int b = n * 8;
-        int i;
-        int offset;
+        int  n     = data.length;
+        int  M[]   = new int[16];
+        int  b     = n * 8;
+        int  i;
+        int  offset;
 
-        A = 0x67452301;
-        B = 0xefcdab89;
-        C = 0x98badcfe;
-        D = 0x10325476;
+        A      = 0x67452301;
+        B      = 0xefcdab89;
+        C      = 0x98badcfe;
+        D      = 0x10325476;
 
         offset = 0;
         while (n > 64) {
             copy64(M, data, offset);
             mdfour64(M);
             offset += 64;
-            n -= 64;
+            n      -= 64;
         }
 
         for (i = 0; i < 128; i++) {
@@ -162,7 +162,8 @@ public class Md4Utils {
             copy4(buf, 56, b);
             copy64(M, buf);
             mdfour64(M);
-        } else {
+        }
+        else {
             copy4(buf, 120, b);
             copy64(M, buf);
             mdfour64(M);

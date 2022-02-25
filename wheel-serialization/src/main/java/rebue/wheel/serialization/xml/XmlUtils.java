@@ -54,7 +54,7 @@ public class XmlUtils {
         final Map<String, Object> map = new HashMap<>();
 
         // 得到xml根元素
-        final Element root = document.getRootElement();
+        final Element       root        = document.getRootElement();
         // 得到根元素的所有子节点
         final List<Element> elementList = root.elements();
 
@@ -67,9 +67,9 @@ public class XmlUtils {
     }
 
     public static String mapToXml(final Map<String, Object> map) {
-        String xmlResult = "";
+        String              xmlResult = "";
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb        = new StringBuilder();
         sb.append("<xml>");
         for (final String key : map.keySet()) {
             sb.append("<" + key + ">" + "<![CDATA[" + map.get(key) + "]]>" + "</" + key + ">");

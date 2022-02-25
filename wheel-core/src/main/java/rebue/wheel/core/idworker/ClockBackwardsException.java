@@ -5,14 +5,14 @@ package rebue.wheel.core.idworker;
  */
 public class ClockBackwardsException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param backwords
-	 *            时钟倒退多少毫秒
-	 */
-	public ClockBackwardsException(Long backwords) {
-		super(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", backwords));
-	}
+    /**
+     * @param backwords
+     *                  时钟倒退多少毫秒
+     */
+    public ClockBackwardsException(Long backwords) {
+        super(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", backwords));
+    }
 
 }

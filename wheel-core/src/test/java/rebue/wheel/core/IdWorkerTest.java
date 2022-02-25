@@ -45,7 +45,7 @@ public class IdWorkerTest {
     /**
      * 测试IdWorker2单线程循环1千万次的时间
      */
-//	@Test
+    // @Test
     public void test02() {
         final IdWorker2 idWorker = new IdWorker2(2, 1);
         final Date      dtStart  = new Date();
@@ -68,7 +68,7 @@ public class IdWorkerTest {
     /**
      * 测试IdWorker3单线程循环1千万次的时间
      */
-//	@Test
+    // @Test
     public void test03() {
         final IdWorker3 idWorker = new IdWorker3(2);
         final Date      dtStart  = new Date();
@@ -101,7 +101,7 @@ public class IdWorkerTest {
     /**
      * 测试IdWorker2多线程生成1千万次Id的时间
      */
-//	@Test
+    // @Test
     public void test05() {
         final IdWorker2       idWorker        = new IdWorker2(2, 1);
         final Date            dtStart         = new Date();
@@ -139,7 +139,7 @@ public class IdWorkerTest {
     /**
      * 测试IdWorker3多线程生成1千万次Id的时间
      */
-//	@Test
+    // @Test
     public void test06() {
         final IdWorker3       idWorker        = new IdWorker3(2);
         final Date            dtStart         = new Date();

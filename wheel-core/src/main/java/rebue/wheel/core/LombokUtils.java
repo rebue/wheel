@@ -16,7 +16,7 @@ public class LombokUtils {
     public static String removeToStringNullValues(final String lombokToString) {
         // Pattern
         return lombokToString != null ? lombokToString
-            .replaceAll("(?<=(, |\\())[^\\s(]+?=null(?:, )?", "")
-            .replaceFirst(", \\)$", ")") : null;
+                .replaceAll("(?<=(, |\\())[^\\s(]+?=null(?:, )?", "")
+                .replaceFirst(", \\)$", ")") : null;
     }
 }

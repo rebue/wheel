@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2011 Alibaba Group.
- *  
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,47 +24,41 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qian.lei
  */
 
-public class NamedThreadFactory implements ThreadFactory
-{
-	private static final AtomicInteger	POOL_SEQ	= new AtomicInteger(0);
+public class NamedThreadFactory implements ThreadFactory {
+    private static final AtomicInteger POOL_SEQ   = new AtomicInteger(0);
 
-	private final AtomicInteger			mThreadNum	= new AtomicInteger(0);
+    private final AtomicInteger        mThreadNum = new AtomicInteger(0);
 
-	private final String				mPrefix;
+    private final String               mPrefix;
 
-	private final boolean				mDaemon;
+    private final boolean              mDaemon;
 
-	private final ThreadGroup			mGroup;
+    private final ThreadGroup          mGroup;
 
-	public NamedThreadFactory()
-	{
-		this("pool-" + POOL_SEQ.getAndIncrement(), false);
-	}
+    public NamedThreadFactory() {
+        this("pool-" + POOL_SEQ.getAndIncrement(), false);
+    }
 
-	public NamedThreadFactory(String prefix)
-	{
-		this(prefix, false);
-	}
+    public NamedThreadFactory(String prefix) {
+        this(prefix, false);
+    }
 
-	public NamedThreadFactory(String prefix, boolean daemon)
-	{
-		mPrefix = prefix + "-";
-		mDaemon = daemon;
-		SecurityManager s = System.getSecurityManager();
-		mGroup = (s == null) ? Thread.currentThread().getThreadGroup() : s.getThreadGroup();
-	}
+    public NamedThreadFactory(String prefix, boolean daemon) {
+        mPrefix = prefix + "-";
+        mDaemon = daemon;
+        SecurityManager s = System.getSecurityManager();
+        mGroup = (s == null) ? Thread.currentThread().getThreadGroup() : s.getThreadGroup();
+    }
 
-	@Override
-	public Thread newThread(Runnable runnable)
-	{
-		String name = mPrefix + mThreadNum.getAndIncrement();
-		Thread ret = new Thread(mGroup, runnable, name, 0);
-		ret.setDaemon(mDaemon);
-		return ret;
-	}
+    @Override
+    public Thread newThread(Runnable runnable) {
+        String name = mPrefix + mThreadNum.getAndIncrement();
+        Thread ret  = new Thread(mGroup, runnable, name, 0);
+        ret.setDaemon(mDaemon);
+        return ret;
+    }
 
-	public ThreadGroup getThreadGroup()
-	{
-		return mGroup;
-	}
+    public ThreadGroup getThreadGroup() {
+        return mGroup;
+    }
 }
