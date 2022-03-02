@@ -1,7 +1,6 @@
 package rebue.wheel.turing;
 
-import java.io.IOException;
-import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -10,28 +9,36 @@ import java.util.Base64;
  * @since 1.8
  */
 public class Base64Utils {
-    public static byte[] encode(final byte[] data) throws IOException {
+    public static byte[] encode(final String data) {
+        return encode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static byte[] encode(final byte[] data) {
         return Base64.getEncoder().encode(data);
     }
 
-    public static byte[] decode(final String sData) throws IOException {
-        return Base64.getDecoder().decode(sData);
+    public static String encodeStr(final byte[] data) {
+        return new String(encode(data), StandardCharsets.UTF_8);
     }
 
-    public static byte[] decode(final byte[] data) throws IOException {
+    public static String encodeStr(final String data) {
+        return new String(encode(data), StandardCharsets.UTF_8);
+    }
+
+    public static byte[] decode(final String data) {
+        return decode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static byte[] decode(final byte[] data) {
         return Base64.getDecoder().decode(data);
     }
 
-    public static String encodeStr(final byte[] data) throws IOException {
-        return new String(encode(data));
+    public static String decodeStr(final String data) {
+        return decodeStr(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String decodeStr(final String sData) throws IOException {
-        return new String(decode(sData));
-    }
-
-    public static String encodeUrl(final byte[] data) throws IOException {
-        return URLEncoder.encode(new String(encode(data)), "utf-8");
+    public static String decodeStr(final byte[] data) {
+        return new String(decode(data), StandardCharsets.UTF_8);
     }
 
 }
