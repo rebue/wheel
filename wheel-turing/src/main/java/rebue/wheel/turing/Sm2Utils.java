@@ -205,7 +205,7 @@ public class Sm2Utils {
      */
     private static byte[] rsPlainByteArrayToAsn1(final byte[] sign) {
         if (sign.length != RS_LEN * 2) {
-            throw new RuntimeException("err rs. ");
+            throw new RuntimeException("err sign. ");
         }
         final BigInteger          r = new BigInteger(1, Arrays.copyOfRange(sign, 0, RS_LEN));
         final BigInteger          s = new BigInteger(1, Arrays.copyOfRange(sign, RS_LEN, RS_LEN * 2));
@@ -218,4 +218,5 @@ public class Sm2Utils {
             throw new RuntimeException(e);
         }
     }
+
 }
