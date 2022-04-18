@@ -86,10 +86,11 @@ public class Sm2Utils {
     }
 
     /**
-     *
-     * @param msg
-     * @param userId
-     * @param privateKey
+     * 签名
+     * 
+     * @param msg        需要签名的内容
+     * @param userId     签名需要用到的用户ID
+     * @param privateKey 签名需要用到私钥
      * 
      * @return r||s，直接拼接byte数组的rs
      */
@@ -98,10 +99,11 @@ public class Sm2Utils {
     }
 
     /**
-     *
-     * @param msg
-     * @param userId
-     * @param privateKey
+     * 签名
+     * 
+     * @param msg        需要签名的内容
+     * @param userId     签名需要用到的用户ID
+     * @param privateKey 签名需要用到私钥
      * 
      * @return rs in <b>asn1 format</b>
      */
@@ -135,11 +137,12 @@ public class Sm2Utils {
     }
 
     /**
-     *
-     * @param msg
-     * @param userId
+     * 校验签名
+     * 
+     * @param msg       明文的内容
+     * @param userId    签名需要用到的userId
      * @param rs        in <b>asn1 format</b>
-     * @param publicKey
+     * @param publicKey 公钥
      * 
      * @return
      */
