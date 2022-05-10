@@ -30,21 +30,22 @@ import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.util.encoders.Hex;
 
 public class Sm2Utils {
-    private static X9ECParameters  x9ECParameters  = GMNamedCurves.getByName("sm2p256v1");
-
-    private static ECParameterSpec ecParameterSpec = new ECParameterSpec(x9ECParameters.getCurve(), x9ECParameters.getG(), x9ECParameters.getN());
-
-    private static final Charset   DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
     static {
-        if (Security.getProvider("BC") == null) {
-            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        }
+        // 使用BouncyCastle实现
+        Security.addProvider(new BouncyCastleProvider());
     }
+
+    private static final SecureRandom secureRandom    = new SecureRandom();
+
+    private static X9ECParameters     x9ECParameters  = GMNamedCurves.getByName("sm2p256v1");
+
+    private static ECParameterSpec    ecParameterSpec = new ECParameterSpec(x9ECParameters.getCurve(), x9ECParameters.getG(), x9ECParameters.getN());
+
+    private static final Charset      DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     public static KeyPair generateKeyPair() {
         try {
-            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
+            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
             keyPairGenerator.initialize(ecParameterSpec, new SecureRandom());
             final KeyPair kp = keyPairGenerator.generateKeyPair();
             return kp;
@@ -87,11 +88,11 @@ public class Sm2Utils {
 
     /**
      * 签名
-     * 
+     *
      * @param msg        需要签名的内容
      * @param userId     签名需要用到的用户ID
      * @param privateKey 签名需要用到私钥
-     * 
+     *
      * @return r||s，直接拼接byte数组的rs
      */
     public static byte[] signSm3WithSm2(final byte[] msg, final byte[] userId, final PrivateKey privateKey) {
@@ -100,20 +101,20 @@ public class Sm2Utils {
 
     /**
      * 签名
-     * 
+     *
      * @param msg        需要签名的内容
      * @param userId     签名需要用到的用户ID
      * @param privateKey 签名需要用到私钥
-     * 
+     *
      * @return rs in <b>asn1 format</b>
      */
     public static byte[] signSm3WithSm2Asn1Rs(final byte[] msg, final byte[] userId, final PrivateKey privateKey) {
         try {
             final SM2ParameterSpec parameterSpec = new SM2ParameterSpec(userId);
-            final Signature        signer        = Signature.getInstance("SM3withSM2", "BC");
+            final Signature        signer        = Signature.getInstance("SM3withSM2");
             signer.setParameter(parameterSpec);
 
-            signer.initSign(privateKey, new SecureRandom());
+            signer.initSign(privateKey, secureRandom);
             signer.update(msg, 0, msg.length);
             final byte[] sig = signer.sign();
             return sig;
@@ -124,12 +125,12 @@ public class Sm2Utils {
 
     /**
      * 校验签名
-     * 
+     *
      * @param msg       明文的内容
      * @param userId    签名需要用到的userId
      * @param sign      要验证的签名
      * @param publicKey 公钥
-     * 
+     *
      * @return 签名是否正确
      */
     public static boolean verifySm3WithSm2(final byte[] msg, final byte[] userId, final byte[] sign, final PublicKey publicKey) {
@@ -138,18 +139,18 @@ public class Sm2Utils {
 
     /**
      * 校验签名
-     * 
+     *
      * @param msg       明文的内容
      * @param userId    签名需要用到的userId
      * @param rs        in <b>asn1 format</b>
      * @param publicKey 公钥
-     * 
+     *
      * @return
      */
     public static boolean verifySm3WithSm2Asn1Rs(final byte[] msg, final byte[] userId, final byte[] rs, final PublicKey publicKey) {
         try {
             final SM2ParameterSpec parameterSpec = new SM2ParameterSpec(userId);
-            final Signature        verifier      = Signature.getInstance("SM3withSM2", "BC");
+            final Signature        verifier      = Signature.getInstance("SM3withSM2");
             verifier.setParameter(parameterSpec);
             verifier.initVerify(publicKey);
             verifier.update(msg, 0, msg.length);
@@ -168,25 +169,23 @@ public class Sm2Utils {
         if (rs.length == RS_LEN) {
             return rs;
         }
-        else if (rs.length == RS_LEN + 1 && rs[0] == 0) {
+        if (rs.length == RS_LEN + 1 && rs[0] == 0) {
             return Arrays.copyOfRange(rs, 1, RS_LEN + 1);
         }
-        else if (rs.length < RS_LEN) {
+        if (rs.length < RS_LEN) {
             final byte[] result = new byte[RS_LEN];
             Arrays.fill(result, (byte) 0);
             System.arraycopy(rs, 0, result, RS_LEN - rs.length, rs.length);
             return result;
         }
-        else {
-            throw new RuntimeException("err rs: " + Hex.toHexString(rs));
-        }
+        throw new RuntimeException("err rs: " + Hex.toHexString(rs));
     }
 
     /**
      * BC的SM3withSM2签名得到的结果的rs是asn1格式的，这个方法转化成直接拼接r||s
-     * 
+     *
      * @param rsDer rs in asn1 format
-     * 
+     *
      * @return sign result in plain byte array
      */
     private static byte[] rsAsn1ToPlainByteArray(final byte[] rsDer) {
@@ -201,9 +200,9 @@ public class Sm2Utils {
 
     /**
      * BC的SM3withSM2验签需要的rs是asn1格式的，这个方法将直接拼接r||s的字节数组转化成asn1格式
-     * 
+     *
      * @param sign in plain byte array
-     * 
+     *
      * @return rs result in asn1 format
      */
     private static byte[] rsPlainByteArrayToAsn1(final byte[] sign) {
