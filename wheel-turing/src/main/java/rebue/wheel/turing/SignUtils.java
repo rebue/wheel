@@ -142,7 +142,7 @@ public class SignUtils {
             sb1.append("\r\n*    需要签名的字符串:");
             sb1.append(src);
             // 3. 将字符串md5hex并大写生成签名
-            final String signResult = DigestUtils.md5AsHexStr(src.getBytes()).toUpperCase();
+            final String signResult = DigestUtils.md5ToHexStr(src.getBytes()).toUpperCase();
             sb1.append("\r\n*    生成的签名:");
             sb1.append(signResult);
             sb1.append(StringUtils.rightPad("\r\n---------------------------------------------------", 100));
@@ -202,7 +202,7 @@ public class SignUtils {
         String signResult = null;
         try {
             if ("MD5".equals(signAlgorithm)) {
-                signResult = DigestUtils.md5AsHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
+                signResult = DigestUtils.md5ToHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
             }
             else if ("SM3_WITH_SM2".equals(signAlgorithm)) {
                 signResult = Base64.getUrlEncoder().encodeToString(
@@ -291,7 +291,7 @@ public class SignUtils {
         String       correctSignResult  = null;
         try {
             if ("MD5".equals(signAlgorithm)) {
-                correctSignResult = DigestUtils.md5AsHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
+                correctSignResult = DigestUtils.md5ToHexStr(concatenatedString.getBytes(StandardCharsets.UTF_8)).toUpperCase();
                 log.debug("正确签名: {}", correctSignResult);
                 result = correctSignResult.equals(originSignResult.toString());
             }
