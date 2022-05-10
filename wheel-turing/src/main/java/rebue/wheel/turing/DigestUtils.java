@@ -4,8 +4,16 @@ import java.security.MessageDigest;
 import java.security.Security;
 import java.util.Arrays;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
+
 public class DigestUtils {
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     // 各种摘要的算法名称
+    public static final String ALGORITHM_MD4    = "MD4";
     public static final String ALGORITHM_MD5    = "MD5";
     public static final String ALGORITHM_SHA1   = "SHA-1";
     public static final String ALGORITHM_SHA224 = "SHA-224";
@@ -21,10 +29,10 @@ public class DigestUtils {
             return null;
         }
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+            final MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
             messageDigest.update(data);
             return messageDigest.digest();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -33,18 +41,18 @@ public class DigestUtils {
      * 将摘要的结果(byte[])转成16进制的字符串
      */
     public static String digestAsHexStr(String algorithm, byte[] data) {
-        return BytesUtils.toHexString(digest(algorithm, data));
+        return Hex.toHexString(digest(algorithm, data));
     }
 
     /**
      * MD4
      */
     public static byte[] md4(byte[] data) {
-        return Md4Utils.digest(data);
+        return digest(ALGORITHM_MD4, data);
     }
 
     public static String md4AsHexStr(byte[] data) {
-        return Md4Utils.digestAsHexStr(data);
+        return digestAsHexStr(ALGORITHM_MD4, data);
     }
 
     /**
