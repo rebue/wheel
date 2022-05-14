@@ -1,10 +1,16 @@
 package rebue.wheel.core;
 
-import java.util.Map;
-
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
+import java.util.Map;
+
+/**
+ * Orika的工具类
+ *
+ * @deprecated Orika不支持java17，并已停止更新，建议使用MapStruct
+ */
+@Deprecated
 public class OrikaUtils {
     /**
      * 克隆工具，可以进行复杂和深度的克隆
@@ -19,7 +25,7 @@ public class OrikaUtils {
      * @param sourceObject     源对象
      * @param destinationClass 目的对象类型
      */
-    public final static <S, D> D map(final S sourceObject, final Class<D> destinationClass) {
+    public static <S, D> D map(final S sourceObject, final Class<D> destinationClass) {
         return OrikaUtils.mapperFactory.getMapperFacade().map(sourceObject, destinationClass);
     }
 
@@ -31,17 +37,17 @@ public class OrikaUtils {
      * @param sourceObject      源对象
      * @param destinationObject 目的对象
      */
-    public final static <S, D> void map(final S sourceObject, final D destinationObject) {
+    public static <S, D> void map(final S sourceObject, final D destinationObject) {
         OrikaUtils.mapperFactory.getMapperFacade().map(sourceObject, destinationObject);
     }
 
     /**
      * 映射到map
      *
-     * @param source 源对象
+     * @param sourceObject 源对象
      */
     @SuppressWarnings("unchecked")
-    public final static Map<String, Object> mapToMap(final Object sourceObject) {
+    public static Map<String, Object> mapToMap(final Object sourceObject) {
         return OrikaUtils.mapperFactory.getMapperFacade().map(sourceObject, Map.class);
     }
 }
