@@ -9,11 +9,13 @@ import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.api.dic.ResultDic;
 
 /**
  * Vert.x的返回结果
  */
+@Slf4j
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -160,6 +162,7 @@ public class Vro implements Serializable {
     }
 
     public Vro(final JsonObject jsonObject) {
+        log.debug("Vro constructor: {}", jsonObject);
         this.result = ResultDic.getItem(jsonObject.getInteger("result"));
         this.msg    = jsonObject.getString("msg");
         this.detail = jsonObject.getString("detail");
