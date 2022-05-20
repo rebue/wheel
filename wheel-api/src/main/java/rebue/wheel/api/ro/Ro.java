@@ -154,4 +154,14 @@ public class Ro implements Serializable {
         return ResultDic.SUCCESS.equals(this.result);
     }
 
+    /**
+     * 判断是否出错
+     *
+     * @return 是否错误
+     */
+    @JsonIgnore
+    public boolean isError() {
+        return !ResultDic.SUCCESS.equals(this.result);
+    }
+
 }
