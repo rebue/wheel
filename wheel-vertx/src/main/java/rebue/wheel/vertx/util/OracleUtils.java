@@ -11,8 +11,7 @@ public class OracleUtils {
     /**
      * 创建客户端
      */
-    public static OraclePool createClient(Vertx vertx, JsonObject config) {
-        final JsonObject           oracleConfig   = config.getJsonObject("oracle");
+    public static OraclePool createClient(final Vertx vertx, final JsonObject oracleConfig) {
         final OracleConnectOptions connectOptions = oracleConfig.getJsonObject(OracleConfig.CONNECT_PREFIX).mapTo(OracleConnectOptions.class);
         final PoolOptions          poolOptions    = oracleConfig.getJsonObject(OracleConfig.POOL_PREFIX).mapTo(PoolOptions.class);
         return OraclePool.pool(vertx, connectOptions, poolOptions.setShared(true));

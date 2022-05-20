@@ -12,8 +12,7 @@ public class RedisUtils {
      * Will create a redis client and setup a reconnect handler when there is
      * an exception in the connection.
      */
-    public static RedisAPI createRedisClient(final Vertx vertx, final JsonObject config) {
-        final JsonObject   redisConfig  = config.getJsonObject("redis");
+    public static RedisAPI createRedisClient(final Vertx vertx, final JsonObject redisConfig) {
         final RedisOptions redisOptions = new RedisOptions(redisConfig);
         return RedisAPI.api(Redis.createClient(vertx, redisOptions));
     }
