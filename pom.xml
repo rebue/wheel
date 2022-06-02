@@ -42,10 +42,11 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<bouncycastle.version>1.70</bouncycastle.version>
+		<dagger.version>2.42</dagger.version>
 		<jackson.version>2.13.2</jackson.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
 		<log4j.version>2.17.2</log4j.version>
-		<vertx.version>4.3.0</vertx.version>
+		<vertx.version>4.3.1</vertx.version>
 		<lombok.version>1.18.24</lombok.version>
 		<junit.version>5.8.2</junit.version>
 
@@ -97,6 +98,18 @@
 				<version>${vertx.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.dagger</groupId>
+				<artifactId>dagger</artifactId>
+				<version>${dagger.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.dagger</groupId>
+				<artifactId>dagger-compiler</artifactId>
+				<version>${dagger.version}</version>
+				<optional>true</optional>
 			</dependency>
 
 			<dependency>
