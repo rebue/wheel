@@ -42,6 +42,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<bouncycastle.version>1.70</bouncycastle.version>
+		<guice.version>5.1.0</guice.version>
 		<dagger.version>2.42</dagger.version>
 		<jackson.version>2.13.2</jackson.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -98,6 +99,12 @@
 				<version>${vertx.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${guice.version}</version>
 			</dependency>
 
 			<dependency>
