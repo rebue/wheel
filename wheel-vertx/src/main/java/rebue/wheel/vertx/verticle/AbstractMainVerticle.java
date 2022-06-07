@@ -66,9 +66,13 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             guiceModules.add(new VertxGuiceModule(this.vertx, config));
             addGuiceModules(guiceModules);
             final Injector injector = Guice.createInjector(guiceModules);
+            // 注入自己
+            injector.injectMembers(this);
 
             log.info("注册GuiceVerticleFactory工厂");
             this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
+
+            beforeDeploy(config);
 
             log.info("部署verticle");
             final Map<String, Class<? extends Verticle>> verticleClasses = getVerticleClasses();
@@ -100,6 +104,13 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * @param guiceModules 添加guice模块到此列表
      */
     protected abstract void addGuiceModules(List<Module> guiceModules);
+
+    /**
+     * 部署前
+     */
+    protected void beforeDeploy(final JsonObject config) {
+
+    }
 
     /**
      * 初始化要部署的Verticle类列表
