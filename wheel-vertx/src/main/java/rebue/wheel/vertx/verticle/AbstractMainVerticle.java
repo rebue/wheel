@@ -1,5 +1,6 @@
 package rebue.wheel.vertx.verticle;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +73,13 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             log.info("注册GuiceVerticleFactory工厂");
             this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
 
-            beforeDeploy(config);
+            beforeDeploy();
 
             log.info("部署verticle");
-            final Map<String, Class<? extends Verticle>> verticleClasses = getVerticleClasses();
+            final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
+            addVerticleClasses(verticleClasses);
             @SuppressWarnings("rawtypes")
-            final List<Future>                           deployFutures   = new LinkedList<>();
+            final List<Future> deployFutures = new LinkedList<>();
             for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
                 deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(config.getJsonObject(entry.getKey()))));
             }
@@ -108,13 +110,15 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     /**
      * 部署前
      */
-    protected void beforeDeploy(final JsonObject config) {
+    protected void beforeDeploy() {
 
     }
 
     /**
-     * 初始化要部署的Verticle类列表
+     * 添加要部署的Verticle类列表
+     *
+     * @param verticleClasses 添加Verticle类到此列表
      */
-    protected abstract Map<String, Class<? extends Verticle>> getVerticleClasses();
+    protected abstract void addVerticleClasses(Map<String, Class<? extends Verticle>> verticleClasses);
 
 }
