@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GuiceVerticleFactory implements VerticleFactory {
 
-    private List<Module> modules;
-    private JsonObject   config;
+    private JsonObject config;
+    private Injector   injector;
 
     public GuiceVerticleFactory(final JsonObject config) {
         this.config = config;
@@ -35,8 +35,9 @@ public class GuiceVerticleFactory implements VerticleFactory {
 
     @Override
     public void init(final Vertx vertx) {
-        this.modules = Lists.<Module>newLinkedList(ServiceLoader.load(Module.class));
-        this.modules.add(new VertxGuiceModule(vertx, this.config));
+        final List<Module> modules = Lists.<Module>newLinkedList(ServiceLoader.load(Module.class));
+        modules.add(new VertxGuiceModule(vertx, this.config));
+        this.injector = Guice.createInjector(modules);
     }
 
     @Override
@@ -53,8 +54,7 @@ public class GuiceVerticleFactory implements VerticleFactory {
                 verticleClassLoader = compilingLoader;
             }
             clazz = (Class<Verticle>) verticleClassLoader.loadClass(verticleClassName);
-            final Injector injector = Guice.createInjector(this.modules);
-            promise.complete(() -> injector.getInstance(clazz));
+            promise.complete(() -> this.injector.getInstance(clazz));
         } catch (final ClassNotFoundException e) {
             promise.fail(e);
             return;

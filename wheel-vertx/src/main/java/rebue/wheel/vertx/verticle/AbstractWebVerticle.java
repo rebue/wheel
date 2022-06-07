@@ -40,6 +40,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
             globalRoute.handler(CorsHandler.create("*").allowedMethod(HttpMethod.GET));
         }
 
+        log.info("配置路由");
         configRoute(globalRoute);
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
