@@ -41,7 +41,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         }
 
         log.info("配置路由");
-        configRoute(router);
+        configRouter(router);
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 
@@ -57,7 +57,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
      *
      * @param router 路由器
      */
-    protected abstract void configRoute(Router router);
+    protected abstract void configRouter(Router router);
 
     private void handleStart(final Message<Void> message) {
         this.httpServer.listen(res -> {
