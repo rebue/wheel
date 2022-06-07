@@ -1,5 +1,6 @@
 package rebue.wheel.vertx.guice;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
@@ -14,7 +15,7 @@ public class RedisGuiceModule extends AbstractModule {
 
     @Singleton
     @Provides
-    RedisAPI getRedisAPI(final Vertx vertx, final JsonObject config) {
+    RedisAPI getRedisAPI(final Vertx vertx, @Named("config") final JsonObject config) {
         return RedisUtils.createRedisClient(vertx, config.getJsonObject("redis"));
     }
 
