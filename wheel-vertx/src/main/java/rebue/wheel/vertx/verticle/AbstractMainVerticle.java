@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -44,6 +47,10 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 .setSerializationInclusion(Include.NON_NULL)                // 不序列化值为null的字段
                 .registerModule(new JavaTimeModule());                      // 支持Java8的LocalDate/LocalDateTime类型
     }
+
+    @Inject
+    @Named("mainId")
+    private String mainId;
 
     @Override
     public void start(final Promise<Void> startPromise) {
@@ -88,7 +95,9 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             CompositeFuture.all(deployFutures)
                     .onSuccess(handle -> {
                         log.info("部署Verticle完成，发布部署成功的消息");
-                        this.vertx.eventBus().publish(EVENT_BUS_DEPLOY_SUCCESS, null);
+                        final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+                        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
+                        this.vertx.eventBus().publish(address, null);
                         log.info("启动完成.");
                         startPromise.complete();
                     })

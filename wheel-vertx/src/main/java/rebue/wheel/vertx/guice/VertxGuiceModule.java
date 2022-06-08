@@ -1,7 +1,9 @@
 package rebue.wheel.vertx.guice;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -33,6 +35,13 @@ public class VertxGuiceModule extends AbstractModule {
     @Named("config")
     JsonObject getConfig() {
         return this.config;
+    }
+
+    @Provides
+    @Singleton
+    @Named("mainId")
+    String getMainId() {
+        return NanoIdUtils.randomNanoId();
     }
 
 }

@@ -1,5 +1,8 @@
 package rebue.wheel.vertx.verticle;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
@@ -18,6 +21,10 @@ import rebue.wheel.vertx.config.WebProperties;
 public abstract class AbstractWebVerticle extends AbstractVerticle {
     private WebProperties webProperties;
     private HttpServer    httpServer;
+
+    @Inject
+    @Named("mainId")
+    private String        mainId;
 
     @Override
     public void start() {
@@ -45,8 +52,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 
+        log.info("配置消费EventBus事件-MainVerticle部署成功事件");
+        final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
         this.vertx.eventBus()
-                .consumer(AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS, this::handleStart)
+                .consumer(address, this::handleStart)
                 .completionHandler(this::handleStartCompletion);
 
         log.info("WebVerticle Started");
