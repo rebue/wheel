@@ -42,6 +42,12 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-json-schema</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
 		<!-- 代码生成-->
 		<dependency>
 			<groupId>io.vertx</groupId>
