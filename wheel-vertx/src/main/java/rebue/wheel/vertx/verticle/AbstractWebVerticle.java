@@ -6,6 +6,7 @@ import javax.inject.Named;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -19,12 +20,13 @@ import rebue.wheel.vertx.config.WebProperties;
 
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle {
-    private WebProperties webProperties;
-    private HttpServer    httpServer;
+    private WebProperties         webProperties;
+    private HttpServer            httpServer;
 
     @Inject
     @Named("mainId")
-    private String        mainId;
+    private String                mainId;
+    private MessageConsumer<Void> startConsumer;
 
     @Override
     public void start() {
@@ -55,9 +57,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         log.info("配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
         log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-        this.vertx.eventBus()
-                .consumer(address, this::handleStart)
-                .completionHandler(this::handleStartCompletion);
+        this.startConsumer = this.vertx.eventBus()
+                .consumer(address, this::handleStart);
+        this.startConsumer.completionHandler(this::handleStartCompletion);
 
         log.info("WebVerticle Started");
     }
@@ -70,6 +72,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
     protected abstract void configRouter(Router router);
 
     private void handleStart(final Message<Void> message) {
+        this.startConsumer.unregister();
         this.httpServer.listen(res -> {
             if (res.succeeded()) {
                 log.info("HTTP server started on port " + res.result().actualPort());
