@@ -90,4 +90,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         }
     }
 
+    @Override
+    public void stop() throws Exception {
+        log.info("WebVerticle stop");
+    }
+
 }

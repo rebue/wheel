@@ -133,4 +133,9 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      */
     protected abstract void addVerticleClasses(Map<String, Class<? extends Verticle>> verticleClasses);
 
+    @Override
+    public void stop() throws Exception {
+        log.info("MainVerticle stop");
+    }
+
 }
