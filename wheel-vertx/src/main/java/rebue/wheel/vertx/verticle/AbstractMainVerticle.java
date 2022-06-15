@@ -123,7 +123,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * 部署前
      */
     protected void beforeDeploy() {
-
     }
 
     /**
