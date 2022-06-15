@@ -39,6 +39,7 @@ public class GuiceVerticleFactory implements VerticleFactory {
                 verticleClassLoader = compilingLoader;
             }
             clazz = (Class<Verticle>) verticleClassLoader.loadClass(verticleClassName);
+            // 注入实例
             promise.complete(() -> this.injector.getInstance(clazz));
         } catch (final ClassNotFoundException e) {
             promise.fail(e);
