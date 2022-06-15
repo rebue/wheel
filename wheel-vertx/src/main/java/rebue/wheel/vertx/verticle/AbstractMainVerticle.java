@@ -33,6 +33,9 @@ import rebue.wheel.vertx.guice.VertxGuiceModule;
 @SuppressWarnings("deprecation")
 @Slf4j
 public abstract class AbstractMainVerticle extends AbstractVerticle {
+    /**
+     * 部署成功事件
+     */
     public static final String EVENT_BUS_DEPLOY_SUCCESS = "rebue.wheel.vertx.verticle.main-verticle.deploy-success";
 
     static {
