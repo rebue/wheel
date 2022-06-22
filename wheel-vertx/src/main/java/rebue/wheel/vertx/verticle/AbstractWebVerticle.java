@@ -40,13 +40,19 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         final Route  globalRoute = router.route();
         // 记录日志
         if (this.webProperties.getIsLogging()) {
-            log.info("开启日志记录");
+            log.info("开启Web日志记录");
             globalRoute.handler(LoggerHandler.create(this.webProperties.getLoggerFormat()));
         }
         // CORS
         if (this.webProperties.getIsCors()) {
             log.info("开启CORS");
-            globalRoute.handler(CorsHandler.create("*").allowedMethod(HttpMethod.GET));
+            globalRoute.handler(CorsHandler.create("*")
+                    .allowedMethod(HttpMethod.GET)
+                    .allowedMethod(HttpMethod.POST)
+                    .allowedMethod(HttpMethod.PUT)
+                    .allowedMethod(HttpMethod.DELETE)
+                    .allowedMethod(HttpMethod.PATCH)
+                    .allowedMethod(HttpMethod.OPTIONS));
         }
 
         log.info("配置路由");
