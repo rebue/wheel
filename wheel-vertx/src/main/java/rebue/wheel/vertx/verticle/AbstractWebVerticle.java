@@ -14,7 +14,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.ResponseTimeHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 
@@ -43,6 +46,19 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
             log.info("开启Web日志记录");
             globalRoute.handler(LoggerHandler.create(this.webProperties.getLoggerFormat()));
         }
+        // 返回响应时间
+        if (this.webProperties.getIsResponseTime()) {
+            log.info("开启返回响应时间");
+            globalRoute.handler(ResponseTimeHandler.create());
+        }
+        // 超时时间
+        final Long timeout = this.webProperties.getTimeout();
+        if (timeout != null && timeout != 0) {
+            final Integer timeoutErrorCode = this.webProperties.getTimeoutErrorCode();
+            final int     errorCode        = timeoutErrorCode != null ? timeoutErrorCode : 503;
+            log.info("开启超时返回错误状态码{}", errorCode);
+            globalRoute.handler(TimeoutHandler.create(timeout, errorCode));
+        }
         // CORS
         if (this.webProperties.getIsCors()) {
             log.info("开启CORS");
@@ -54,6 +70,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
                     .allowedMethod(HttpMethod.PATCH)
                     .allowedMethod(HttpMethod.OPTIONS));
         }
+        // 全局路由错误处理
+        final ErrorHandler errorHandler = ErrorHandler.create(this.vertx);
+        globalRoute.failureHandler(ctx -> {
+            log.error("全局路由错误处理: {}", ctx.statusCode());
+            errorHandler.handle(ctx);
+        });
 
         log.info("配置路由");
         configRouter(router);
