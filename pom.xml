@@ -47,7 +47,7 @@
 		<dagger.version>2.42</dagger.version>
 		<jackson.version>2.13.3</jackson.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
-		<log4j.version>2.17.2</log4j.version>
+		<log4j.version>2.18.0</log4j.version>
 		<vertx.version>4.3.1</vertx.version>
 		<protostuff.version>1.8.0</protostuff.version>
 		<spring-amqp.version>2.4.5</spring-amqp.version>
@@ -196,6 +196,12 @@
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-jul</artifactId>
 				<version>${log4j.version}</version>
+			</dependency>
+			<!-- log4j2配置使用异步日志需要 -->
+			<dependency>
+				<groupId>com.lmax</groupId>
+				<artifactId>disruptor</artifactId>
+				<version>3.4.4</version>
 			</dependency>
 
 			<dependency>
