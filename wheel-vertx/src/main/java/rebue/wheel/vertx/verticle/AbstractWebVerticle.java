@@ -77,7 +77,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
             errorHandler.handle(ctx);
         });
 
-        log.info("配置路由");
+        log.info("配置路由器");
         configRouter(router);
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
