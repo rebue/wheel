@@ -16,7 +16,11 @@ public class WebClientGuiceModule extends AbstractModule {
     @Singleton
     @Provides
     WebClient getWebClient(final Vertx vertx, @Named("config") final JsonObject config) {
-        return WebClient.create(vertx, new WebClientOptions(config.getJsonObject("webClient")));
+        final JsonObject webClientConfig = config.getJsonObject("webClient");
+        if (webClientConfig == null) {
+            return WebClient.create(vertx);
+        }
+        return WebClient.create(vertx, new WebClientOptions(webClientConfig));
     }
 
 }

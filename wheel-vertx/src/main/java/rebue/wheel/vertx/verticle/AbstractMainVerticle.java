@@ -83,6 +83,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             log.info("注册GuiceVerticleFactory工厂");
             this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
 
+            log.info("部署前事件");
             beforeDeploy();
 
             log.info("部署verticle");
