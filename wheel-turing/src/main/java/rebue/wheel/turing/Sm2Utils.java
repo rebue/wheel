@@ -41,17 +41,23 @@ public class Sm2Utils {
 
     private static ECParameterSpec    ecParameterSpec = new ECParameterSpec(x9ECParameters.getCurve(), x9ECParameters.getG(), x9ECParameters.getN());
 
-    private static final Charset      DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    // 获取SM2椭圆曲线的参数
+    // private static ECGenParameterSpec sm2Spec = new ECGenParameterSpec("sm2p256v1");
 
-    public static KeyPair generateKeyPair() {
+    private static KeyPairGenerator keyPairGenerator;
+    static {
         try {
-            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
-            keyPairGenerator.initialize(ecParameterSpec, new SecureRandom());
-            final KeyPair kp = keyPairGenerator.generateKeyPair();
-            return kp;
+            keyPairGenerator = KeyPairGenerator.getInstance("EC", new BouncyCastleProvider());
+            keyPairGenerator.initialize(ecParameterSpec, secureRandom);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
+    public static KeyPair generateKeyPair() {
+        return keyPairGenerator.generateKeyPair();
     }
 
     public static String getPublicKeyString(final KeyPair keyPair) {
