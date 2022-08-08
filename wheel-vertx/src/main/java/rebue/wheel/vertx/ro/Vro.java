@@ -173,7 +173,13 @@ public class Vro implements Serializable {
 
     public Vro(final JsonObject jsonObject) {
         log.debug("Vro constructor: {}", jsonObject);
-        this.result = ResultDic.getItem(jsonObject.getInteger("result"));
+        final Integer result = jsonObject.getInteger("result");
+        if (result == null) {
+            this.result = ResultDic.FAIL;
+            this.msg    = "返回结果为空";
+            return;
+        }
+        this.result = ResultDic.getItem(result);
         this.msg    = jsonObject.getString("msg");
         this.detail = jsonObject.getString("detail");
         this.extra  = jsonObject.getString("extra");
