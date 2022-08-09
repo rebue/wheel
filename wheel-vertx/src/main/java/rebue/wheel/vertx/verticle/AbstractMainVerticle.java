@@ -10,8 +10,6 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.jul.Log4jBridgeHandler;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -39,11 +37,6 @@ import rebue.wheel.vertx.guice.VertxGuiceModule;
 @SuppressWarnings("deprecation")
 @Slf4j
 public abstract class AbstractMainVerticle extends AbstractVerticle {
-    static {
-        // log4j支持jul
-        // FIXME 下面这句会导致vertx的服务启动时报“Cannot bind Unsafe.defineAnonymousClass---com.google.inject.internal.aop.UnsafeClassDefiner.log4j”，但是debug级别的，不知道会有什么问题
-        Log4jBridgeHandler.install(true, "log4j", true);
-    }
 
     /**
      * 部署成功事件
