@@ -45,7 +45,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     static {
         // 初始化jackson的功能
         DatabindCodec.mapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .disable(
                         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES   // 忽略没有的字段
                 )
