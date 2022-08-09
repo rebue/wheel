@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,7 +13,10 @@ import javax.inject.Named;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -41,14 +45,21 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     static {
         // 初始化jackson的功能
         DatabindCodec.mapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .disable(
                         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES   // 忽略没有的字段
+                )
+                .disable(
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS      // 按默认的时间格式'yyyy-MM-dd'T'HH:mm:ss.SSS’转换有时会报错
                 )
                 .enable(
                         MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES    // 忽略字段和属性的大小写
                 )
                 .setSerializationInclusion(Include.NON_NULL)                // 不序列化值为null的字段
-                .registerModule(new JavaTimeModule());                      // 支持Java8的LocalDate/LocalDateTime类型
+                .setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
+                .registerModules(new JavaTimeModule(),                      // 支持Java8的LocalDate/LocalDateTime类型
+                        new Jdk8Module(),
+                        new ParameterNamesModule());
     }
 
     @Inject
