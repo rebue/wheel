@@ -36,11 +36,11 @@
 	</Appenders>
 	<Loggers>
 		<!-- 全局配置(配置 includeLocation 为 false，避免每次打印日志需要获取调用堆栈的性能损耗) -->
-		<AsyncRoot level="debug" includeLocation="false">
+		<Root level="debug" includeLocation="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="logfile" />
 			<AppenderRef ref="errfile" />
-		</AsyncRoot>
+		</Root>
 		<Logger name="com.hazelcast" level="info" />
 		<Logger name="io.netty" level="info" />
 		<Logger name="io.netty.handler.logging.LoggingHandler" level="debug" />

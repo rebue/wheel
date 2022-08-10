@@ -50,7 +50,7 @@
 		<jackson.version>2.13.3</jackson.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
 		<log4j.version>2.18.0</log4j.version>
-		<vertx.version>4.3.2</vertx.version>
+		<vertx.version>4.3.3</vertx.version>
 		<protostuff.version>1.8.0</protostuff.version>
 		<spring-amqp.version>2.4.5</spring-amqp.version>
 		<lombok.version>1.18.24</lombok.version>
