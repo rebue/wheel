@@ -70,11 +70,10 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     public void start(final Promise<Void> startPromise) {
         final ConfigRetriever retriever = ConfigRetriever.create(this.vertx);
         retriever.getConfig(configRes -> {
-            log.info("config result: {}", configRes.result());
-
             if (configRes.failed()) {
                 log.warn("Get config failed", configRes.cause());
                 startPromise.fail(configRes.cause());
+                return;
             }
 
             final JsonObject config = configRes.result();
