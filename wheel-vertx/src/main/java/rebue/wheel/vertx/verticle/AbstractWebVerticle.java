@@ -41,11 +41,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         final Router router      = Router.router(this.vertx);
         // 全局route
         final Route  globalRoute = router.route();
-        // 记录日志
-        if (this.webProperties.getIsLogging()) {
-            log.info("开启Web日志记录");
-            globalRoute.handler(LoggerHandler.create(this.webProperties.getLoggerFormat()));
-        }
         // 返回响应时间
         if (this.webProperties.getIsResponseTime()) {
             log.info("开启返回响应时间");
@@ -58,6 +53,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
             final int     errorCode        = timeoutErrorCode != null ? timeoutErrorCode : 503;
             log.info("开启超时返回错误状态码{}", errorCode);
             globalRoute.handler(TimeoutHandler.create(timeout, errorCode));
+        }
+        // 记录日志
+        if (this.webProperties.getIsLogging()) {
+            log.info("开启Web日志记录");
+            globalRoute.handler(LoggerHandler.create(this.webProperties.getLoggerFormat()));
         }
         // CORS
         if (this.webProperties.getIsCors()) {
