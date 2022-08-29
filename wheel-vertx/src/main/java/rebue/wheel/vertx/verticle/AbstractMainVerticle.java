@@ -82,16 +82,19 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 return;
             }
 
-            log.info("创建注入器");
+            log.info("添加注入模块");
             final List<Module> guiceModules = new LinkedList<>();
-            guiceModules.add(new VertxGuiceModule(this.vertx, config));
             addGuiceModules(guiceModules);
-            final Injector injector = Guice.createInjector(guiceModules);
-            // 注入自己
-            injector.injectMembers(this);
-
-            log.info("注册GuiceVerticleFactory工厂");
-            this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
+            if (!guiceModules.isEmpty()) {
+                // 添加默认的注入模块
+                guiceModules.add(new VertxGuiceModule(this.vertx, config));
+                log.info("创建注入器");
+                final Injector injector = Guice.createInjector(guiceModules);
+                // 注入自己
+                injector.injectMembers(this);
+                log.info("注册GuiceVerticleFactory工厂");
+                this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
+            }
 
             log.info("部署前事件");
             beforeDeploy();
