@@ -128,7 +128,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      *
      * @param guiceModules 添加guice模块到此列表
      */
-    protected abstract void addGuiceModules(List<Module> guiceModules);
+    protected void addGuiceModules(List<Module> guiceModules) {
+    };
 
     /**
      * 部署前
