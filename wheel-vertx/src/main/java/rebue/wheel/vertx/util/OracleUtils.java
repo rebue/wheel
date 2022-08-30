@@ -17,7 +17,7 @@ public class OracleUtils {
         final JsonObject           config         = oracleConfig.getJsonObject(OracleConfig.CONNECT_PREFIX);
         final OracleConnectOptions connectOptions = config.mapTo(OracleConnectOptions.class);
         final JsonObject           properties     = config.getJsonObject("properties");
-        if (!properties.isEmpty()) {
+        if (properties != null && !properties.isEmpty()) {
             for (final Entry<String, Object> entry : properties) {
                 connectOptions.addProperty(entry.getKey(), entry.getValue().toString());
             }
