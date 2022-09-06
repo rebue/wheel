@@ -12,6 +12,7 @@
  */
 package rebue.wheel.vertx.httpproxy.impl;
 
+import io.vertx.codegen.annotations.Nullable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -27,33 +28,33 @@ public class BufferingWriteStreamEx implements WriteStream<Buffer> {
     }
 
     public Buffer content() {
-        return this.content;
+        return content;
     }
 
     @Override
-    public WriteStream<Buffer> exceptionHandler(final Handler<Throwable> handler) {
+    public WriteStream<Buffer> exceptionHandler(Handler<Throwable> handler) {
         return this;
     }
 
     @Override
-    public Future<Void> write(final Buffer data) {
-        this.content.appendBuffer(data);
+    public Future<Void> write(Buffer data) {
+        content.appendBuffer(data);
         return Future.succeededFuture();
     }
 
     @Override
-    public void write(final Buffer data, final Handler<AsyncResult<Void>> handler) {
-        this.content.appendBuffer(data);
+    public void write(Buffer data, Handler<AsyncResult<Void>> handler) {
+        content.appendBuffer(data);
         handler.handle(Future.succeededFuture());
     }
 
     @Override
-    public void end(final Handler<AsyncResult<Void>> handler) {
+    public void end(Handler<AsyncResult<Void>> handler) {
         handler.handle(Future.succeededFuture());
     }
 
     @Override
-    public WriteStream<Buffer> setWriteQueueMaxSize(final int maxSize) {
+    public WriteStream<Buffer> setWriteQueueMaxSize(int maxSize) {
         return this;
     }
 
@@ -63,7 +64,7 @@ public class BufferingWriteStreamEx implements WriteStream<Buffer> {
     }
 
     @Override
-    public WriteStream<Buffer> drainHandler(final Handler<Void> handler) {
+    public WriteStream<Buffer> drainHandler(@Nullable Handler<Void> handler) {
         return this;
     }
 }
