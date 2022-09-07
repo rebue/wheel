@@ -30,6 +30,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Verticle;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
 import lombok.extern.slf4j.Slf4j;
@@ -84,17 +85,20 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 return;
             }
 
-            final JsonObject configStore = config.getJsonObject("configStore");
-            if (configStore == null) {
+            final JsonArray stores = config.getJsonArray("stores");
+            if (stores == null) {
                 startWithConfig(startPromise, config);
                 return;
             }
 
-            log.info("配置中心: {}", configStore);
-            final ConfigStoreOptions     configStoreOptions     = new ConfigStoreOptions(configStore);
+            log.info("配置中心列表: {}", stores);
+            final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
+            stores.forEach(store -> {
+                final ConfigStoreOptions storeOptions = new ConfigStoreOptions((JsonObject) store);
+                configRetrieverOptions.addStore(storeOptions);
+            });
 
-            final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions().addStore(configStoreOptions);
-            final ConfigRetriever        configServerRetriever  = ConfigRetriever.create(this.vertx, configRetrieverOptions);
+            final ConfigRetriever configServerRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
             configServerRetriever.getConfig(configServerConfigRes -> {
                 if (configServerConfigRes.failed()) {
                     log.warn("Get server config failed", configServerConfigRes.cause());
