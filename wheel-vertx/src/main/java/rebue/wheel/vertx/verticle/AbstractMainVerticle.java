@@ -22,6 +22,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import io.vertx.config.ConfigRetriever;
+import io.vertx.config.ConfigRetrieverOptions;
+import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
@@ -82,48 +84,83 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 return;
             }
 
-            log.info("添加注入模块");
-            final List<Module> guiceModules = new LinkedList<>();
-            addGuiceModules(guiceModules);
-            if (!guiceModules.isEmpty()) {
-                // 添加默认的注入模块
-                guiceModules.add(new VertxGuiceModule(this.vertx, config));
-                log.info("创建注入器");
-                final Injector injector = Guice.createInjector(guiceModules);
-                // 注入自己
-                injector.injectMembers(this);
-                log.info("注册GuiceVerticleFactory工厂");
-                this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
+            final JsonObject configStore = config.getJsonObject("configStore");
+            if (configStore == null) {
+                startWithConfig(startPromise, config);
+                return;
             }
 
-            log.info("部署前事件");
-            beforeDeploy();
+            log.info("配置中心: {}", configStore);
+            final ConfigStoreOptions     configStoreOptions     = new ConfigStoreOptions(configStore);
 
-            log.info("部署verticle");
-            final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
-            addVerticleClasses(verticleClasses);
-            @SuppressWarnings("rawtypes")
-            final List<Future> deployFutures = new LinkedList<>();
-            for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
-                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(config.getJsonObject(entry.getKey()))));
-            }
+            final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions().addStore(configStoreOptions);
+            final ConfigRetriever        configServerRetriever  = ConfigRetriever.create(this.vertx, configRetrieverOptions);
+            configServerRetriever.getConfig(configServerConfigRes -> {
+                if (configServerConfigRes.failed()) {
+                    log.warn("Get server config failed", configServerConfigRes.cause());
+                    startPromise.fail(configServerConfigRes.cause());
+                    return;
+                }
 
-            // 部署成功或失败事件
-            CompositeFuture.all(deployFutures)
-                    .onSuccess(handle -> {
-                        log.info("部署Verticle完成，发布部署成功的消息");
-                        final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-                        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-                        this.vertx.eventBus().publish(address, null);
-                        log.info("启动完成.");
-                        startPromise.complete();
-                    })
-                    .onFailure(err -> {
-                        log.error("启动失败.", err);
-                        startPromise.fail(err);
-                        this.vertx.close();
-                    });
+                final JsonObject configServerConfig = configServerConfigRes.result();
+                if (configServerConfig == null || configServerConfig.isEmpty()) {
+                    startPromise.fail("Get server config is empty");
+                    return;
+                }
+
+                startWithConfig(startPromise, configServerConfig);
+            });
         });
+    }
+
+    /**
+     * 带配置项运行
+     *
+     * @param startPromise 运行状态控制
+     * @param config       配置项
+     */
+    private void startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
+        log.info("添加注入模块");
+        final List<Module> guiceModules = new LinkedList<>();
+        addGuiceModules(guiceModules);
+        if (!guiceModules.isEmpty()) {
+            // 添加默认的注入模块
+            guiceModules.add(new VertxGuiceModule(this.vertx, config));
+            log.info("创建注入器");
+            final Injector injector = Guice.createInjector(guiceModules);
+            // 注入自己
+            injector.injectMembers(this);
+            log.info("注册GuiceVerticleFactory工厂");
+            this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
+        }
+
+        log.info("部署前事件");
+        beforeDeploy();
+
+        log.info("部署verticle");
+        final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
+        addVerticleClasses(verticleClasses);
+        @SuppressWarnings("rawtypes")
+        final List<Future> deployFutures = new LinkedList<>();
+        for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
+            deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(config.getJsonObject(entry.getKey()))));
+        }
+
+        // 部署成功或失败事件
+        CompositeFuture.all(deployFutures)
+                .onSuccess(handle -> {
+                    log.info("部署Verticle完成，发布部署成功的消息");
+                    final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
+                    this.vertx.eventBus().publish(address, null);
+                    log.info("启动完成.");
+                    startPromise.complete();
+                })
+                .onFailure(err -> {
+                    log.error("启动失败.", err);
+                    startPromise.fail(err);
+                    this.vertx.close();
+                });
     }
 
     /**
