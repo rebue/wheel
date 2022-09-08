@@ -1,7 +1,9 @@
 package rebue.wheel.vertx.to;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * EventBus服务的传递参数
@@ -10,6 +12,8 @@ import lombok.Data;
  *
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class EventBusServiceTo {
 
