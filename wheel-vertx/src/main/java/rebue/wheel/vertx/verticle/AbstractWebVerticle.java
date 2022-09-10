@@ -16,6 +16,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.ResponseContentTypeHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         final Router router      = Router.router(this.vertx);
         // 全局route
         final Route  globalRoute = router.route();
-        // 返回响应时间
+        // 全局响应处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
+        globalRoute.handler(ResponseContentTypeHandler.create());
+        // 全局返回响应时间
         if (this.webProperties.getIsResponseTime()) {
             log.info("开启返回响应时间");
             globalRoute.handler(ResponseTimeHandler.create());
