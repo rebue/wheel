@@ -42,7 +42,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle {
         final Router router      = Router.router(this.vertx);
         // 全局route
         final Route  globalRoute = router.route();
-        // 全局响应处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
+        // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
         globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
         if (this.webProperties.getIsResponseTime()) {
