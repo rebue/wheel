@@ -144,6 +144,18 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.bitsofinfo</groupId>
+				<artifactId>hazelcast-docker-swarm-discovery-spi</artifactId>
+				<version>1.0-RC14-20210205</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.hazelcast</groupId>
+						<artifactId>hazelcast</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
 				<version>${guice.version}</version>
