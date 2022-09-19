@@ -1,5 +1,7 @@
 package rebue.wheel.vertx.to;
 
+import io.vertx.codegen.annotations.DataObject;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
  * @author zbz
  *
  */
+@DataObject
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +35,13 @@ public class EventBusServiceTo {
      */
     private Object body;
 
+    public EventBusServiceTo(final JsonObject jsonObject) {
+        setAddr(jsonObject.getString("addr"));
+        setAction(jsonObject.getString("action"));
+        setBody(jsonObject.getValue("body"));
+    }
+
+    public JsonObject toJson() {
+        return JsonObject.mapFrom(this);
+    }
 }
