@@ -4,7 +4,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.redis.client.Redis;
-import io.vertx.redis.client.RedisAPI;
 import io.vertx.redis.client.RedisClientType;
 import io.vertx.redis.client.RedisOptions;
 import io.vertx.redis.client.RedisReplicas;
@@ -17,7 +16,7 @@ public class RedisUtils {
      * Will create a redis client and setup a reconnect handler when there is
      * an exception in the connection.
      */
-    public static RedisAPI createRedisClient(final Vertx vertx, final JsonObject redisConfig) {
+    public static Redis createRedisClient(final Vertx vertx, final JsonObject redisConfig) {
         final RedisOptions redisOptions      = new RedisOptions(redisConfig);
         final JsonArray    connectionStrings = redisConfig.getJsonArray("connectionStrings");
         if (connectionStrings != null) {
@@ -28,7 +27,7 @@ public class RedisUtils {
                 redisOptions.addConnectionString((String) connectionString);
             }
         }
-        return RedisAPI.api(Redis.createClient(vertx, redisOptions));
+        return Redis.createClient(vertx, redisOptions);
     }
 
 }

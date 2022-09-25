@@ -8,6 +8,7 @@ import com.google.inject.Provides;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.redis.client.Redis;
 import io.vertx.redis.client.RedisAPI;
 import rebue.wheel.vertx.util.RedisUtils;
 
@@ -15,8 +16,13 @@ public class RedisGuiceModule extends AbstractModule {
 
     @Singleton
     @Provides
-    RedisAPI getRedisAPI(final Vertx vertx, @Named("config") final JsonObject config) {
+    Redis getRedis(final Vertx vertx, @Named("config") final JsonObject config) {
         return RedisUtils.createRedisClient(vertx, config.getJsonObject("redis"));
     }
 
+    @Singleton
+    @Provides
+    RedisAPI getRedisAPI(Redis redis) {
+        return RedisAPI.api(redis);
+    }
 }
