@@ -24,7 +24,7 @@ public class OracleGuiceModule extends AbstractModule {
     @Singleton
     @Provides
     Pool getOraclePool(final Vertx vertx, @Named("config") final JsonObject config) {
-        return OracleUtils.createClient(vertx, config.getJsonObject("oracle"));
+        return OracleUtils.createPool(vertx, config.getJsonObject("oracle"));
     }
 
 }
