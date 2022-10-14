@@ -12,6 +12,11 @@
 			<artifactId>wheel-api</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.github.rebue.wheel</groupId>
+			<artifactId>wheel-core</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
