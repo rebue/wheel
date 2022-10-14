@@ -14,8 +14,8 @@ public class PostgreUtils {
     /**
      * 创建客户端
      */
-    public static Pool createPool(final Vertx vertx, final JsonObject oracleConfig) {
-        final JsonObject       config         = oracleConfig.getJsonObject(PostgreConfig.CONNECT_PREFIX);
+    public static Pool createPool(final Vertx vertx, final JsonObject postgreConfig) {
+        final JsonObject       config         = postgreConfig.getJsonObject(PostgreConfig.CONNECT_PREFIX);
         final PgConnectOptions connectOptions = config.mapTo(PgConnectOptions.class);
         final JsonObject       properties     = config.getJsonObject("properties");
         if (properties != null && !properties.isEmpty()) {
@@ -23,7 +23,7 @@ public class PostgreUtils {
                 connectOptions.addProperty(entry.getKey(), entry.getValue().toString());
             }
         }
-        final PoolOptions poolOptions = oracleConfig.getJsonObject(PostgreConfig.POOL_PREFIX).mapTo(PoolOptions.class);
-        return PgPool.pool(connectOptions, poolOptions.setShared(true));
+        final PoolOptions poolOptions = postgreConfig.getJsonObject(PostgreConfig.POOL_PREFIX).mapTo(PoolOptions.class);
+        return PgPool.pool(vertx, connectOptions, poolOptions.setShared(true));
     }
 }
