@@ -1,4 +1,3 @@
-
 package rebue.wheel.vertx.guice;
 
 import java.util.concurrent.Callable;
@@ -14,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GuiceVerticleFactory implements VerticleFactory {
 
-    private Injector injector;
+    private final Injector injector;
 
     public GuiceVerticleFactory(final Injector injector) {
         this.injector = injector;
@@ -39,7 +38,7 @@ public class GuiceVerticleFactory implements VerticleFactory {
                 verticleClassLoader = compilingLoader;
             }
             clazz = (Class<Verticle>) verticleClassLoader.loadClass(verticleClassName);
-            // 注入实例
+            log.info("注入{}实例的属性", verticleClassName);
             promise.complete(() -> this.injector.getInstance(clazz));
         } catch (final ClassNotFoundException e) {
             promise.fail(e);

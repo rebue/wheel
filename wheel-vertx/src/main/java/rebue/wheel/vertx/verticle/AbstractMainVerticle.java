@@ -122,49 +122,53 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      *
      * @param startPromise 运行状态控制
      * @param config       配置项
+     *
      */
     private void startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
-        log.info("添加注入模块");
-        final List<Module> guiceModules = new LinkedList<>();
-        addGuiceModules(guiceModules);
-        if (!guiceModules.isEmpty()) {
+        this.vertx.executeBlocking(promise -> {
+            log.info("添加注入模块");
+            final List<Module> guiceModules = new LinkedList<>();
+            addGuiceModules(guiceModules);
             // 添加默认的注入模块
             guiceModules.add(new VertxGuiceModule(this.vertx, config));
             log.info("创建注入器");
             final Injector injector = Guice.createInjector(guiceModules);
-            // 注入自己
+            log.debug("注入自己(MainVerticle实例)的属性");
             injector.injectMembers(this);
             log.info("注册GuiceVerticleFactory工厂");
             this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
-        }
 
-        log.info("部署前事件");
-        beforeDeploy();
+            log.info("部署前事件");
+            beforeDeploy();
 
-        log.info("部署verticle");
-        final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
-        addVerticleClasses(verticleClasses);
-        @SuppressWarnings("rawtypes")
-        final List<Future> deployFutures = new LinkedList<>();
-        for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
-            deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(config.getJsonObject(entry.getKey()))));
-        }
+            log.info("部署verticle");
+            final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
+            addVerticleClasses(verticleClasses);
+            @SuppressWarnings("rawtypes")
+            final List<Future> deployFutures = new LinkedList<>();
+            for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
+                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(config.getJsonObject(entry.getKey()))));
+            }
 
-        // 部署成功或失败事件
-        CompositeFuture.all(deployFutures)
-                .onSuccess(handle -> {
-                    log.info("部署Verticle完成，发布部署成功的消息");
-                    final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-                    this.vertx.eventBus().publish(address, null);
-                    log.info("启动完成.");
-                    startPromise.complete();
-                })
-                .onFailure(err -> {
-                    log.error("启动失败.", err);
-                    startPromise.fail(err);
-                    this.vertx.close();
-                });
+            // 部署成功或失败事件
+            CompositeFuture.all(deployFutures)
+                    .onSuccess(handle -> {
+                        log.info("部署Verticle完成，发布部署成功的消息");
+                        final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+                        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
+                        this.vertx.eventBus().publish(address, null);
+                        log.info("启动完成.");
+                        promise.complete();
+                        startPromise.complete();
+                    })
+                    .onFailure(err -> {
+                        log.error("启动失败.", err);
+                        promise.fail(err);
+                        startPromise.fail(err);
+                        this.vertx.close();
+                    });
+
+        });
     }
 
     /**

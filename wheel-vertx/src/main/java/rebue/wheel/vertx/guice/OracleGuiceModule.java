@@ -11,8 +11,10 @@ import com.google.inject.Provides;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Pool;
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.util.OracleUtils;
 
+@Slf4j
 public class OracleGuiceModule extends AbstractModule {
 
     static {
@@ -23,7 +25,8 @@ public class OracleGuiceModule extends AbstractModule {
 
     @Singleton
     @Provides
-    Pool getOraclePool(final Vertx vertx, @Named("config") final JsonObject config) {
+    Pool getPool(final Vertx vertx, @Named("config") final JsonObject config) {
+        log.info("OracleGuiceModule.getPool");
         return OracleUtils.createPool(vertx, config.getJsonObject("oracle"));
     }
 

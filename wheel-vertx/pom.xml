@@ -100,6 +100,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-recipes</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
 			<groupId>com.aventrix.jnanoid</groupId>
 			<artifactId>jnanoid</artifactId>
 		</dependency>
