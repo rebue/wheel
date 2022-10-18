@@ -31,7 +31,7 @@ public class ZkClientProperties {
         /**
          * 初始的sleep时间，用于计算之后的每次重试的sleep时间
          */
-        private Integer baseSleepTimeMs = Integer.getInteger("curator-default-retry-policy-base-sleep-time-Ms", 1000);
+        private Integer baseSleepTimeMs = Integer.getInteger("curator-default-retry-policy-base-sleep-time-Ms", 5000);
         /**
          * 最大重试次数(最多只能设置到29)
          */
@@ -39,7 +39,7 @@ public class ZkClientProperties {
         /**
          * 最大sleep时间，如果上述的当前sleep计算出来比这个大，那么sleep用这个时间(这里设为为1小时)
          */
-        private Integer maxSleepMs = Integer.getInteger("curator-default-retry-policy-max-sleep-ms", 60 * 60 * 1000);
+        private Integer maxSleepMs = Integer.getInteger("curator-default-retry-policy-max-sleep-ms", Integer.MAX_VALUE);
     }
 
 }
