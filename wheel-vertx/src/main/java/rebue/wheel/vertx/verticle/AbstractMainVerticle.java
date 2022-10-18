@@ -133,6 +133,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             guiceModules.add(new VertxGuiceModule(this.vertx, config));
             log.info("创建注入器");
             final Injector injector = Guice.createInjector(guiceModules);
+            // 将注入器放入vertx的上下文
+            this.vertx.getOrCreateContext().put("injector", injector);
             log.debug("注入自己(MainVerticle实例)的属性");
             injector.injectMembers(this);
             log.info("注册GuiceVerticleFactory工厂");
