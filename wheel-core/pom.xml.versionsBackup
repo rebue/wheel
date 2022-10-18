@@ -3,27 +3,32 @@
 	<parent>
 		<groupId>com.github.rebue.wheel</groupId>
 		<artifactId>wheel</artifactId>
-		<version>2.0.1</version>
+		<version>2.0.0</version>
 	</parent>
-	<artifactId>wheel-turing</artifactId>
+	<artifactId>wheel-core</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<scope>provided</scope>
+			<groupId>ma.glasnost.orika</groupId>
+			<artifactId>orika-core</artifactId>
 			<optional>true</optional>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<scope>provided</scope>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- 使用字符串的一些帮助库 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 			<optional>true</optional>
 		</dependency>
 
