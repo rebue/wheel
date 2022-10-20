@@ -19,23 +19,27 @@ public class VertxGuiceModule extends AbstractModule {
     private final JsonObject config;
 
     public VertxGuiceModule(final Vertx vertx, final JsonObject config) {
+        log.info("new VertxGuiceModule");
         this.vertx  = vertx;
         this.config = config;
     }
 
     @Provides
+    @Singleton
     Vertx getVertx() {
         log.info("VertxGuiceModule.getVertx");
         return this.vertx;
     }
 
     @Provides
+    @Singleton
     EventBus getEventBus() {
         log.info("VertxGuiceModule.getEventBus");
         return this.vertx.eventBus();
     }
 
     @Provides
+    @Singleton
     @Named("config")
     JsonObject getConfig() {
         log.info("VertxGuiceModule.getConfig");

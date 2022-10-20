@@ -15,6 +15,10 @@ import rebue.wheel.vertx.util.PostgreUtils;
 @Slf4j
 public class PostgreGuiceModule extends AbstractModule {
 
+    public PostgreGuiceModule() {
+        log.info("new PostgreGuiceModule");
+    }
+
     @Singleton
     @Provides
     Pool getPool(final Vertx vertx, @Named("config") final JsonObject config) {

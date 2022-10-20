@@ -16,6 +16,10 @@ import rebue.wheel.vertx.util.RedisUtils;
 @Slf4j
 public class RedisGuiceModule extends AbstractModule {
 
+    public RedisGuiceModule() {
+        log.info("new RedisGuiceModule");
+    }
+
     @Singleton
     @Provides
     Redis getRedis(final Vertx vertx, @Named("config") final JsonObject config) {

@@ -15,6 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebClientGuiceModule extends AbstractModule {
 
+    public WebClientGuiceModule() {
+        log.info("new WebClientGuiceModule");
+    }
+
     @Singleton
     @Provides
     WebClient getWebClient(final Vertx vertx, @Named("config") final JsonObject config) {

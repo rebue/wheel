@@ -1,27 +1,33 @@
 package rebue.wheel.vertx.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import io.vertx.core.json.JsonObject;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
-import rebue.wheel.vertx.config.PulsarClientProperties;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+
+import io.vertx.core.json.JsonObject;
+import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.vertx.config.PulsarClientProperties;
+
 @Slf4j
 public class PulsarGuiceModule extends AbstractModule {
+
+    public PulsarGuiceModule() {
+        log.info("new PulsarGuiceModule");
+    }
 
     @Singleton
     @Provides
     PulsarClient getPulsarClient(@Named("config") final JsonObject config) {
         log.info("PulsarGuiceModule.getPulsarClient");
 
-        JsonObject pulsarClientPropertiesJsonObject = config.getJsonObject("pulsarClient");
+        final JsonObject             pulsarClientPropertiesJsonObject = config.getJsonObject("pulsarClient");
 
-        PulsarClientProperties pulsarClientProperties = pulsarClientPropertiesJsonObject == null
+        final PulsarClientProperties pulsarClientProperties           = pulsarClientPropertiesJsonObject == null
                 ? new PulsarClientProperties()
                 : pulsarClientPropertiesJsonObject.mapTo(PulsarClientProperties.class);
 
@@ -29,7 +35,7 @@ public class PulsarGuiceModule extends AbstractModule {
             return PulsarClient.builder()
                     .serviceUrl(pulsarClientProperties.getServiceUrl())
                     .build();
-        } catch (PulsarClientException e) {
+        } catch (final PulsarClientException e) {
             log.error("构建PulsarClient出现异常", e);
             throw new RuntimeException(e);
         }

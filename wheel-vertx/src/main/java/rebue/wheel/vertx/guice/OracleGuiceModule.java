@@ -23,6 +23,10 @@ public class OracleGuiceModule extends AbstractModule {
         Log4jBridgeHandler.install(true, "log4j", true);
     }
 
+    public OracleGuiceModule() {
+        log.info("new OracleGuiceModule");
+    }
+
     @Singleton
     @Provides
     Pool getPool(final Vertx vertx, @Named("config") final JsonObject config) {
