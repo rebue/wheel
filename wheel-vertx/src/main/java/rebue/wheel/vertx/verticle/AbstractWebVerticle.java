@@ -1,8 +1,6 @@
 package rebue.wheel.vertx.verticle;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.google.inject.Injector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
@@ -13,57 +11,62 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.handler.ErrorHandler;
-import io.vertx.ext.web.handler.LoggerHandler;
-import io.vertx.ext.web.handler.ResponseContentTypeHandler;
-import io.vertx.ext.web.handler.ResponseTimeHandler;
-import io.vertx.ext.web.handler.TimeoutHandler;
+import io.vertx.ext.web.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
+import rebue.wheel.vertx.guice.InjectorVerticle;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Slf4j
-public abstract class AbstractWebVerticle extends AbstractVerticle {
-    private WebProperties         webProperties;
-    private HttpServer            httpServer;
+public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {
+    private HttpServer httpServer;
 
     @Inject
     @Named("mainId")
-    private String                mainId;
+    private String mainId;
+
+    protected Injector injector;
+
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
+
     private MessageConsumer<Void> startConsumer;
 
     @Override
     public void start() {
-        this.webProperties = config().mapTo(WebProperties.class);
-        final HttpServerOptions httpServerOptions = this.webProperties.getServer() == null ? new HttpServerOptions()
-                : new HttpServerOptions(JsonObject.mapFrom(this.webProperties.getServer()));
+        WebProperties webProperties = config().mapTo(WebProperties.class);
+        final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
+                : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
 
         log.info("创建路由");
-        final Router router      = Router.router(this.vertx);
+        final Router router = Router.router(this.vertx);
         // 全局route
-        final Route  globalRoute = router.route();
+        final Route globalRoute = router.route();
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
         globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
-        if (this.webProperties.getIsResponseTime()) {
+        if (webProperties.getIsResponseTime()) {
             log.info("开启返回响应时间");
             globalRoute.handler(ResponseTimeHandler.create());
         }
         // 超时时间
-        final Long timeout = this.webProperties.getTimeout();
+        final Long timeout = webProperties.getTimeout();
         if (timeout != null && timeout != 0) {
-            final Integer timeoutErrorCode = this.webProperties.getTimeoutErrorCode();
+            final Integer timeoutErrorCode = webProperties.getTimeoutErrorCode();
             final int     errorCode        = timeoutErrorCode != null ? timeoutErrorCode : 503;
             log.info("开启超时返回错误状态码{}", errorCode);
             globalRoute.handler(TimeoutHandler.create(timeout, errorCode));
         }
         // 记录日志
-        if (this.webProperties.getIsLogging()) {
+        if (webProperties.getIsLogging()) {
             log.info("开启Web日志记录");
-            globalRoute.handler(LoggerHandler.create(this.webProperties.getLoggerFormat()));
+            globalRoute.handler(LoggerHandler.create(webProperties.getLoggerFormat()));
         }
         // CORS
-        if (this.webProperties.getIsCors()) {
+        if (webProperties.getIsCors()) {
             log.info("开启CORS");
             globalRoute.handler(CorsHandler.create("*")
                     .allowedMethod(HttpMethod.GET)
