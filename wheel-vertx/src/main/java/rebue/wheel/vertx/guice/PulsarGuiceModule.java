@@ -25,7 +25,7 @@ public class PulsarGuiceModule extends AbstractModule {
     PulsarClient getPulsarClient(@Named("config") final JsonObject config) {
         log.info("PulsarGuiceModule.getPulsarClient");
 
-        final JsonObject             pulsarClientPropertiesJsonObject = config.getJsonObject("pulsarClient");
+        final JsonObject             pulsarClientPropertiesJsonObject = config.getJsonObject("pulsar");
 
         final PulsarClientProperties pulsarClientProperties           = pulsarClientPropertiesJsonObject == null
                 ? new PulsarClientProperties()
