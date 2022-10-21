@@ -10,6 +10,7 @@ import org.apache.pulsar.client.api.Schema;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
 
     protected abstract String getSubscriptionName();
 
+    protected abstract Future<Boolean> receivedData(String data);
+
     @Override
     public void start() throws Exception {
         log.info("AbstractPulsarVerticle start");
@@ -42,7 +45,6 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
         this.startConsumer.completionHandler(this::handleStartCompletion);
 
         log.info("AbstractPulsarVerticle Started");
-
     }
 
     @Override
@@ -54,12 +56,24 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
         this.startConsumer.unregister();
 
         final MessageListener<String> messageListener = (consumer, msg) -> {
-            try {
-                log.debug("Message received: " + msg.getValue());
-                consumer.acknowledge(msg);
-            } catch (final Exception e) {
+            final String data = msg.getValue();
+            log.debug("Message received: {}", data);
+            receivedData(data).compose(bool -> {
+                if (bool) {
+                    try {
+                        consumer.acknowledge(msg);
+                    } catch (final PulsarClientException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    consumer.negativeAcknowledge(msg);
+                }
+                return Future.succeededFuture();
+            }).recover(err -> {
+                log.error("接收消息处理数据出现异常", err);
                 consumer.negativeAcknowledge(msg);
-            }
+                return Future.succeededFuture();
+            });
         };
 
         try {
