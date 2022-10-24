@@ -1,7 +1,15 @@
 package rebue.wheel.vertx.verticle;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
 import com.xxl.job.core.handler.IJobHandler;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
@@ -9,23 +17,17 @@ import io.vertx.core.eventbus.MessageConsumer;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.XxlJobProperties;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 @Slf4j
 public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String                mainId;
 
     private MessageConsumer<Void> startConsumer;
 
     @Inject
-    private XxlJobSimpleExecutor xxlJobExecutor;
+    private XxlJobSimpleExecutor  xxlJobExecutor;
 
     @Override
     public void start() throws Exception {
@@ -38,12 +40,17 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
         xxlJobExecutor.setAppname(xxlJobProperties.getExecutor().getAppName());
         xxlJobExecutor.setAddress(xxlJobProperties.getExecutor().getAddress());
         xxlJobExecutor.setIp(xxlJobProperties.getExecutor().getIp());
-        xxlJobExecutor.setPort(xxlJobProperties.getExecutor().getPort());
-        xxlJobExecutor.setLogRetentionDays(xxlJobProperties.getExecutor().getLogRetentionDays());
-        List<IJobHandler> jobs = new LinkedList<>();
+        final Integer port = xxlJobProperties.getExecutor().getPort();
+        if (port != null) {
+            xxlJobExecutor.setPort(port);
+        }
+        final Integer logRetentionDays = xxlJobProperties.getExecutor().getLogRetentionDays();
+        if (logRetentionDays != null) {
+            xxlJobExecutor.setLogRetentionDays(logRetentionDays);
+        }
+        final List<IJobHandler> jobs = new LinkedList<>();
         addJob(jobs);
         xxlJobExecutor.setXxlJobBeanList(Collections.unmodifiableList(jobs));
-
 
         log.info("配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
