@@ -71,6 +71,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 
     @Override
     public void start(final Promise<Void> startPromise) {
+        log.info("MainVerticle start");
+
         final ConfigRetriever retriever = ConfigRetriever.create(this.vertx);
         retriever.getConfig(configRes -> {
             if (configRes.failed()) {

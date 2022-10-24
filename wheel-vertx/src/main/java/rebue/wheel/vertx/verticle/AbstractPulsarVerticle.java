@@ -35,7 +35,7 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        log.info("AbstractPulsarVerticle start");
+        log.info("PulsarVerticle start");
 
         log.info("配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
@@ -44,12 +44,12 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
                 .consumer(address, this::handleStart);
         this.startConsumer.completionHandler(this::handleStartCompletion);
 
-        log.info("AbstractPulsarVerticle Started");
+        log.info("PulsarVerticle Started");
     }
 
     @Override
     public void stop() throws Exception {
-        log.info("AbstractPulsarVerticle stop");
+        log.info("PulsarVerticle stop");
     }
 
     private void handleStart(final Message<Void> message) {

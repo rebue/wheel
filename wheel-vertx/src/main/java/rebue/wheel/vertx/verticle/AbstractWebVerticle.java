@@ -37,6 +37,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     @Override
     public void start() {
+        log.info("WebVerticle start");
+
         WebProperties webProperties = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
                 : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
