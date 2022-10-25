@@ -1,14 +1,14 @@
 package rebue.wheel.vertx.verticle;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
-import com.xxl.job.core.handler.IJobHandler;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
@@ -26,31 +26,16 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
 
     private MessageConsumer<Void> startConsumer;
 
-    @Inject
-    private XxlJobSimpleExecutor  xxlJobExecutor;
+    private XxlJobSimpleExecutor  xxlJobExecutor = null;
 
     @Override
     public void start() throws Exception {
         log.info("XxlJobVerticle start");
 
         final XxlJobProperties xxlJobProperties = config().mapTo(XxlJobProperties.class);
+        log.debug("xxlJobProperties: {}", xxlJobProperties);
 
-        xxlJobExecutor.setAdminAddresses(xxlJobProperties.getAdmin().getAddresses());
-        xxlJobExecutor.setAccessToken(xxlJobProperties.getAdmin().getAccessToken());
-        xxlJobExecutor.setAppname(xxlJobProperties.getExecutor().getAppName());
-        xxlJobExecutor.setAddress(xxlJobProperties.getExecutor().getAddress());
-        xxlJobExecutor.setIp(xxlJobProperties.getExecutor().getIp());
-        final Integer port = xxlJobProperties.getExecutor().getPort();
-        if (port != null) {
-            xxlJobExecutor.setPort(port);
-        }
-        final Integer logRetentionDays = xxlJobProperties.getExecutor().getLogRetentionDays();
-        if (logRetentionDays != null) {
-            xxlJobExecutor.setLogRetentionDays(logRetentionDays);
-        }
-        final List<IJobHandler> jobs = new LinkedList<>();
-        addJob(jobs);
-        xxlJobExecutor.setXxlJobBeanList(Collections.unmodifiableList(jobs));
+        setExecutorProperties(xxlJobProperties);
 
         log.info("配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
@@ -62,7 +47,53 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
         log.info("XxlJobVerticle Started");
     }
 
-    protected abstract void addJob(List<IJobHandler> jobs);
+    /**
+     * 设置执行器属性
+     *
+     * @param xxlJobProperties 属性的配置
+     */
+    private void setExecutorProperties(final XxlJobProperties xxlJobProperties) {
+        xxlJobExecutor = new XxlJobSimpleExecutor();
+
+        xxlJobExecutor.setAdminAddresses(xxlJobProperties.getAdmin().getAddresses());
+        final String accessToken = xxlJobProperties.getAdmin().getAccessToken();
+        if (StringUtils.isNotBlank(accessToken)) {
+            xxlJobExecutor.setAccessToken(accessToken);
+        }
+
+        xxlJobExecutor.setAppname(xxlJobProperties.getExecutor().getAppName());
+
+        final String address = xxlJobProperties.getExecutor().getAddress();
+        if (StringUtils.isNotBlank(address)) {
+            xxlJobExecutor.setAddress(address);
+        }
+
+        final String ip = xxlJobProperties.getExecutor().getIp();
+        if (StringUtils.isNotBlank(ip)) {
+            xxlJobExecutor.setIp(ip);
+        }
+
+        final Integer port = xxlJobProperties.getExecutor().getPort();
+        if (port != null) {
+            xxlJobExecutor.setPort(port);
+        }
+
+        final String logPath = xxlJobProperties.getExecutor().getLogPath();
+        if (logPath != null) {
+            xxlJobExecutor.setLogPath(logPath);
+        }
+
+        final Integer logRetentionDays = xxlJobProperties.getExecutor().getLogRetentionDays();
+        if (logRetentionDays != null) {
+            xxlJobExecutor.setLogRetentionDays(logRetentionDays);
+        }
+
+        final List<Object> jobs = new LinkedList<>();
+        addJob(jobs);
+        xxlJobExecutor.setXxlJobBeanList(jobs);
+    }
+
+    protected abstract void addJob(List<Object> jobs);
 
     @Override
     public void stop() throws Exception {

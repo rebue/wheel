@@ -1,6 +1,7 @@
 package rebue.wheel.vertx.config;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 public class XxlJobProperties {
@@ -16,6 +17,7 @@ public class XxlJobProperties {
      * xxl-job-admin服务器
      */
     @Data
+    @ToString(exclude = "accessToken")
     public static class AdminProperties {
 
         /**
