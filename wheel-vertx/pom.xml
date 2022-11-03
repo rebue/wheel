@@ -80,13 +80,6 @@
 			<artifactId>vertx-kafka-client</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- 代码生成-->
-		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-codegen</artifactId>
-			<classifier>processor</classifier>
-			<optional>true</optional>
-		</dependency>
 
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -162,9 +155,17 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- 代码生成-->
+		<!-- lombok的依赖必须在最前面，否则其它生成器在没有lombok生成代码时，有可能会失效-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-codegen</artifactId>
+			<classifier>processor</classifier>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

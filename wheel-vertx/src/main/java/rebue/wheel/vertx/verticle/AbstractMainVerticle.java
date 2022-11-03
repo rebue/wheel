@@ -58,6 +58,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 .enable(
                         MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES    // 忽略字段和属性的大小写
                 )
+                .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)  // 浮点型用BigDecimal处理
+                // .enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS) // 整型用BigInteger处理
                 .setSerializationInclusion(Include.NON_NULL)                // 不序列化值为null的字段
                 .setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
                 .registerModules(new JavaTimeModule(),                      // 支持Java8的LocalDate/LocalDateTime类型
@@ -179,7 +181,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      *
      * @param guiceModules 添加guice模块到此列表
      */
-    protected void addGuiceModules(List<Module> guiceModules) {
+    protected void addGuiceModules(final List<Module> guiceModules) {
     }
 
     /**

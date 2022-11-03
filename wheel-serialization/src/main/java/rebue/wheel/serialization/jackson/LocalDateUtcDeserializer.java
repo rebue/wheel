@@ -22,8 +22,8 @@ public class LocalDateUtcDeserializer extends JsonDeserializer<LocalDate> {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Override
-    public LocalDate deserialize(final JsonParser jsoParser, final DeserializationContext ctx) throws IOException, JacksonException {
-        final String value = jsoParser.getText();
+    public LocalDate deserialize(final JsonParser jsonParser, final DeserializationContext ctx) throws IOException, JacksonException {
+        final String value = jsonParser.getText();
         return LocalDate.parse(value, formatter);
     }
 
