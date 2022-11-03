@@ -66,13 +66,13 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     private Handler<Buffer> handler;
     private Handler<Void>   endHandler;
 
-    public HttpServerRequestWrapperEx(HttpServerRequest request, AllowForwardHeaders allowForward) {
-        delegate        = (HttpServerRequestInternal) request;
-        forwardedParser = new ForwardedParserEx(delegate, allowForward);
+    public HttpServerRequestWrapperEx(final HttpServerRequest request, final AllowForwardHeaders allowForward) {
+        this.delegate        = (HttpServerRequestInternal) request;
+        this.forwardedParser = new ForwardedParserEx(this.delegate, allowForward);
     }
 
-    public void changeTo(HttpMethod method, String uri) {
-        modified         = true;
+    public void changeTo(final HttpMethod method, final String uri) {
+        this.modified    = true;
         this.method      = method;
         this.uri         = uri;
         // lazy initialization
@@ -85,20 +85,20 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
         // there's a query
         if (queryIndex != -1) {
             final int fragmentIndex = uri.indexOf('#', queryIndex);
-            path = uri.substring(0, queryIndex);
+            this.path = uri.substring(0, queryIndex);
             // there's a fragment
             if (fragmentIndex != -1) {
-                query = uri.substring(queryIndex + 1, fragmentIndex);
+                this.query = uri.substring(queryIndex + 1, fragmentIndex);
             } else {
-                query = uri.substring(queryIndex + 1);
+                this.query = uri.substring(queryIndex + 1);
             }
         } else {
             final int fragmentIndex = uri.indexOf('#');
             // there's a fragment
             if (fragmentIndex != -1) {
-                path = uri.substring(0, fragmentIndex);
+                this.path = uri.substring(0, fragmentIndex);
             } else {
-                path = uri;
+                this.path = uri;
             }
         }
     }
@@ -106,27 +106,27 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     /**
      * XXX 修改body
      */
-    public void changTo(Buffer body) {
-        modifiedBody = true;
-        this.body    = body;
+    public void changTo(final Buffer body) {
+        this.modifiedBody = true;
+        this.body         = body;
     }
 
     @Override
     public Future<Buffer> body() {
-        log.debug("HttpServerRequestWrapperEx.body(): modifiedBody-{}", modifiedBody);
-        if (!modifiedBody) {
-            return delegate.body();
+        log.debug("HttpServerRequestWrapperEx.body(): modifiedBody-{}", this.modifiedBody);
+        if (!this.modifiedBody) {
+            return this.delegate.body();
         }
         return Future.succeededFuture(this.body);
     }
 
     @Override
-    public HttpServerRequest body(Handler<AsyncResult<Buffer>> handler) {
-        log.debug("HttpServerRequestWrapperEx.body(handler): modifiedBody-{}", modifiedBody);
-        if (modifiedBody) {
+    public HttpServerRequest body(final Handler<AsyncResult<Buffer>> handler) {
+        log.debug("HttpServerRequestWrapperEx.body(handler): modifiedBody-{}", this.modifiedBody);
+        if (this.modifiedBody) {
             body().onComplete(handler);
         } else {
-            delegate.body(handler);
+            this.delegate.body(handler);
         }
         return this;
     }
@@ -134,18 +134,18 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public Pipe<Buffer> pipe() {
         log.debug("HttpServerRequestWrapperEx.pipe");
-        if (!modifiedBody) {
-            return delegate.pipe();
+        if (!this.modifiedBody) {
+            return this.delegate.pipe();
         }
         pause();
         return new PipeImplEx<>(this);
     }
 
     @Override
-    public Future<Void> pipeTo(WriteStream<Buffer> dst) {
+    public Future<Void> pipeTo(final WriteStream<Buffer> dst) {
         log.debug("HttpServerRequestWrapperEx.pipeTo");
-        if (!modifiedBody) {
-            return delegate.pipeTo(dst);
+        if (!this.modifiedBody) {
+            return this.delegate.pipeTo(dst);
         }
         final Promise<Void> promise = Promise.promise();
         new PipeImplEx<>(this).to(dst, promise);
@@ -153,10 +153,10 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     }
 
     @Override
-    public void pipeTo(WriteStream<Buffer> dst, Handler<AsyncResult<Void>> handler) {
+    public void pipeTo(final WriteStream<Buffer> dst, final Handler<AsyncResult<Void>> handler) {
         log.debug("HttpServerRequestWrapperEx.pipeTo");
-        if (!modifiedBody) {
-            delegate.pipeTo(dst, handler);
+        if (!this.modifiedBody) {
+            this.delegate.pipeTo(dst, handler);
         } else {
             new PipeImplEx<>(this).to(dst, handler);
         }
@@ -165,27 +165,27 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public DecoderResult decoderResult() {
         log.debug("HttpServerRequestWrapperEx.decoderResult");
-        return delegate.decoderResult();
+        return this.delegate.decoderResult();
     }
 
     @Override
     public long bytesRead() {
         log.debug("HttpServerRequestWrapperEx.bytesRead");
-        return delegate.bytesRead();
+        return this.delegate.bytesRead();
     }
 
     @Override
-    public HttpServerRequest exceptionHandler(Handler<Throwable> handler) {
+    public HttpServerRequest exceptionHandler(final Handler<Throwable> handler) {
         log.debug("HttpServerRequestWrapperEx.exceptionHandler");
-        delegate.exceptionHandler(handler);
+        this.delegate.exceptionHandler(handler);
         return this;
     }
 
     @Override
-    public HttpServerRequest handler(Handler<Buffer> handler) {
+    public HttpServerRequest handler(final Handler<Buffer> handler) {
         log.debug("HttpServerRequestWrapperEx.handler");
-        if (!modifiedBody) {
-            delegate.handler(handler);
+        if (!this.modifiedBody) {
+            this.delegate.handler(handler);
         } else {
             this.handler = handler;
         }
@@ -196,8 +196,8 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public HttpServerRequest pause() {
         log.debug("HttpServerRequestWrapperEx.pause");
-        if (!modifiedBody) {
-            delegate.pause();
+        if (!this.modifiedBody) {
+            this.delegate.pause();
         }
         return this;
     }
@@ -205,8 +205,8 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public HttpServerRequest resume() {
         log.debug("HttpServerRequestWrapperEx.resume");
-        if (!modifiedBody) {
-            delegate.resume();
+        if (!this.modifiedBody) {
+            this.delegate.resume();
         } else {
             fetch(Long.MAX_VALUE);
         }
@@ -214,22 +214,22 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     }
 
     @Override
-    public HttpServerRequest fetch(long amount) {
+    public HttpServerRequest fetch(final long amount) {
         log.debug("HttpServerRequestWrapperEx.fetch");
-        if (!modifiedBody) {
-            delegate.fetch(amount);
+        if (!this.modifiedBody) {
+            this.delegate.fetch(amount);
         } else {
-            this.handler.handle(body);
+            this.handler.handle(this.body);
             this.endHandler.handle(null);
         }
         return this;
     }
 
     @Override
-    public HttpServerRequest endHandler(Handler<Void> handler) {
+    public HttpServerRequest endHandler(final Handler<Void> handler) {
         log.debug("HttpServerRequestWrapperEx.endHandler");
-        if (!modifiedBody) {
-            delegate.endHandler(handler);
+        if (!this.modifiedBody) {
+            this.delegate.endHandler(handler);
         } else {
             this.endHandler = handler;
         }
@@ -239,73 +239,73 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public HttpVersion version() {
         log.debug("HttpServerRequestWrapperEx.version");
-        return delegate.version();
+        return this.delegate.version();
     }
 
     @Override
     public HttpMethod method() {
         log.debug("HttpServerRequestWrapperEx.method");
-        if (!modified) {
-            return delegate.method();
+        if (!this.modified) {
+            return this.delegate.method();
         }
-        return method;
+        return this.method;
     }
 
     @Override
     public String uri() {
         log.debug("HttpServerRequestWrapperEx.uri");
-        if (!modified) {
-            return delegate.uri();
+        if (!this.modified) {
+            return this.delegate.uri();
         }
-        return uri;
+        return this.uri;
     }
 
     @Override
     public String path() {
         log.debug("HttpServerRequestWrapperEx.path");
-        if (!modified) {
-            return delegate.path();
+        if (!this.modified) {
+            return this.delegate.path();
         }
-        return path;
+        return this.path;
     }
 
     @Override
     public String query() {
         log.debug("HttpServerRequestWrapperEx.query");
-        if (!modified) {
-            return delegate.query();
+        if (!this.modified) {
+            return this.delegate.query();
         }
-        return query;
+        return this.query;
     }
 
     @Override
     public MultiMap params() {
         log.debug("HttpServerRequestWrapperEx.params");
-        if (!modified) {
-            return delegate.params();
+        if (!this.modified) {
+            return this.delegate.params();
         }
-        if (params == null) {
-            params = MultiMap.caseInsensitiveMultiMap();
+        if (this.params == null) {
+            this.params = MultiMap.caseInsensitiveMultiMap();
             // if there is no query it's not really needed to parse it
-            if (query != null) {
-                final QueryStringDecoder        queryStringDecoder = new QueryStringDecoder(uri, Charset.forName(delegate.getParamsCharset()));
+            if (this.query != null) {
+                final QueryStringDecoder        queryStringDecoder = new QueryStringDecoder(this.uri, Charset.forName(this.delegate.getParamsCharset()));
                 final Map<String, List<String>> prms               = queryStringDecoder.parameters();
                 if (!prms.isEmpty()) {
                     for (final Map.Entry<String, List<String>> entry : prms.entrySet()) {
-                        params.add(entry.getKey(), entry.getValue());
+                        this.params.add(entry.getKey(), entry.getValue());
                     }
                 }
             }
         }
 
-        return params;
+        return this.params;
     }
 
     @Override
-    public String getParam(String param) {
+    public String getParam(final String param) {
         log.debug("HttpServerRequestWrapperEx.getParam");
-        if (!modified) {
-            return delegate.getParam(param);
+        if (!this.modified) {
+            return this.delegate.getParam(param);
         }
 
         return params().get(param);
@@ -314,34 +314,34 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public HttpServerResponse response() {
         log.debug("HttpServerRequestWrapperEx.response");
-        return delegate.response();
+        return this.delegate.response();
     }
 
     @Override
     public MultiMap headers() {
         log.debug("HttpServerRequestWrapperEx.headers");
-        return delegate.headers();
+        return this.delegate.headers();
     }
 
     @Override
-    public String getHeader(String s) {
+    public String getHeader(final String s) {
         log.debug("HttpServerRequestWrapperEx.getHeader");
-        return delegate.getHeader(s);
+        return this.delegate.getHeader(s);
     }
 
     @Override
-    public String getHeader(CharSequence charSequence) {
+    public String getHeader(final CharSequence charSequence) {
         log.debug("HttpServerRequestWrapperEx.getHeader");
-        return delegate.getHeader(charSequence);
+        return this.delegate.getHeader(charSequence);
     }
 
     @Override
-    public HttpServerRequest setParamsCharset(String s) {
+    public HttpServerRequest setParamsCharset(final String s) {
         log.debug("HttpServerRequestWrapperEx.setParamsCharset");
-        final String old = delegate.getParamsCharset();
-        delegate.setParamsCharset(s);
+        final String old = this.delegate.getParamsCharset();
+        this.delegate.setParamsCharset(s);
         if (!s.equals(old)) {
-            params = null;
+            this.params = null;
         }
         return this;
     }
@@ -349,141 +349,141 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public String getParamsCharset() {
         log.debug("HttpServerRequestWrapperEx.getParamsCharset");
-        return delegate.getParamsCharset();
+        return this.delegate.getParamsCharset();
     }
 
     @Override
     public SocketAddress remoteAddress() {
         log.debug("HttpServerRequestWrapperEx.remoteAddress");
-        return forwardedParser.remoteAddress();
+        return this.forwardedParser.remoteAddress();
     }
 
     @Override
     public SocketAddress localAddress() {
         log.debug("HttpServerRequestWrapperEx.localAddress");
-        return delegate.localAddress();
+        return this.delegate.localAddress();
     }
 
     @Override
     @Deprecated
     public X509Certificate[] peerCertificateChain() throws SSLPeerUnverifiedException {
         log.debug("HttpServerRequestWrapperEx.peerCertificateChain");
-        return delegate.peerCertificateChain();
+        return this.delegate.peerCertificateChain();
     }
 
     @Override
     public SSLSession sslSession() {
         log.debug("HttpServerRequestWrapperEx.sslSession");
-        return delegate.sslSession();
+        return this.delegate.sslSession();
     }
 
     @Override
     public String absoluteURI() {
         log.debug("HttpServerRequestWrapperEx.absoluteURI");
-        if (!modified) {
-            return forwardedParser.absoluteURI();
+        if (!this.modified) {
+            return this.forwardedParser.absoluteURI();
         }
-        if (absoluteURI == null) {
-            final String scheme = forwardedParser.scheme();
-            final String host   = forwardedParser.host();
+        if (this.absoluteURI == null) {
+            final String scheme = this.forwardedParser.scheme();
+            final String host   = this.forwardedParser.host();
 
             // if both are not null we can rebuild the uri
             if (scheme != null && host != null) {
-                absoluteURI = scheme + "://" + host + uri;
+                this.absoluteURI = scheme + "://" + host + this.uri;
             } else {
-                absoluteURI = uri;
+                this.absoluteURI = this.uri;
             }
         }
 
-        return absoluteURI;
+        return this.absoluteURI;
     }
 
     @Override
     public String scheme() {
         log.debug("HttpServerRequestWrapperEx.scheme");
-        return forwardedParser.scheme();
+        return this.forwardedParser.scheme();
     }
 
     @Override
     public String host() {
         log.debug("HttpServerRequestWrapperEx.host");
-        return forwardedParser.host();
+        return this.forwardedParser.host();
     }
 
     @Override
-    public HttpServerRequest customFrameHandler(Handler<HttpFrame> handler) {
+    public HttpServerRequest customFrameHandler(final Handler<HttpFrame> handler) {
         log.debug("HttpServerRequestWrapperEx.customFrameHandler");
-        delegate.customFrameHandler(handler);
+        this.delegate.customFrameHandler(handler);
         return this;
     }
 
     @Override
     public HttpConnection connection() {
         log.debug("HttpServerRequestWrapperEx.connection");
-        return delegate.connection();
+        return this.delegate.connection();
     }
 
     @Override
-    public HttpServerRequest bodyHandler(Handler<Buffer> handler) {
+    public HttpServerRequest bodyHandler(final Handler<Buffer> handler) {
         log.debug("HttpServerRequestWrapperEx.bodyHandler");
-        delegate.bodyHandler(handler);
+        this.delegate.bodyHandler(handler);
         return this;
     }
 
     @Override
-    public void toNetSocket(Handler<AsyncResult<NetSocket>> handler) {
+    public void toNetSocket(final Handler<AsyncResult<NetSocket>> handler) {
         log.debug("HttpServerRequestWrapperEx.toNetSocket");
-        delegate.toNetSocket(handler);
+        this.delegate.toNetSocket(handler);
     }
 
     @Override
     public Future<NetSocket> toNetSocket() {
         log.debug("HttpServerRequestWrapperEx.toNetSocket");
-        return delegate.toNetSocket();
+        return this.delegate.toNetSocket();
     }
 
     @Override
-    public HttpServerRequest setExpectMultipart(boolean b) {
+    public HttpServerRequest setExpectMultipart(final boolean b) {
         log.debug("HttpServerRequestWrapperEx.setExpectMultipart");
-        delegate.setExpectMultipart(b);
+        this.delegate.setExpectMultipart(b);
         return this;
     }
 
     @Override
     public boolean isExpectMultipart() {
         log.debug("HttpServerRequestWrapperEx.isExpectMultipart");
-        return delegate.isExpectMultipart();
+        return this.delegate.isExpectMultipart();
     }
 
     @Override
-    public HttpServerRequest uploadHandler(Handler<HttpServerFileUpload> handler) {
+    public HttpServerRequest uploadHandler(final Handler<HttpServerFileUpload> handler) {
         log.debug("HttpServerRequestWrapperEx.uploadHandler");
-        delegate.uploadHandler(handler);
+        this.delegate.uploadHandler(handler);
         return this;
     }
 
     @Override
     public MultiMap formAttributes() {
         log.debug("HttpServerRequestWrapperEx.formAttributes");
-        return delegate.formAttributes();
+        return this.delegate.formAttributes();
     }
 
     @Override
-    public String getFormAttribute(String s) {
+    public String getFormAttribute(final String s) {
         log.debug("HttpServerRequestWrapperEx.getFormAttribute");
-        return delegate.getFormAttribute(s);
+        return this.delegate.getFormAttribute(s);
     }
 
     @Override
     public int streamId() {
         log.debug("HttpServerRequestWrapperEx.streamId");
-        return delegate.streamId();
+        return this.delegate.streamId();
     }
 
     @Override
-    public void toWebSocket(Handler<AsyncResult<ServerWebSocket>> handler) {
+    public void toWebSocket(final Handler<AsyncResult<ServerWebSocket>> handler) {
         log.debug("HttpServerRequestWrapperEx.toWebSocket");
-        delegate
+        this.delegate
                 .toWebSocket(toWebSocket -> {
                     if (toWebSocket.succeeded()) {
                         handler.handle(Future.succeededFuture(
@@ -497,7 +497,7 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public Future<ServerWebSocket> toWebSocket() {
         log.debug("HttpServerRequestWrapperEx.toWebSocket");
-        return delegate
+        return this.delegate
                 .toWebSocket()
                 .map(ws -> new ServerWebSocketWrapper(ws, host(), scheme(), isSSL(), remoteAddress()));
     }
@@ -505,87 +505,87 @@ public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
     @Override
     public boolean isEnded() {
         log.debug("HttpServerRequestWrapperEx.isEnded");
-        return delegate.isEnded();
+        return this.delegate.isEnded();
     }
 
     @Override
     public boolean isSSL() {
         log.debug("HttpServerRequestWrapperEx.isSSL");
-        return forwardedParser.isSSL();
+        return this.forwardedParser.isSSL();
     }
 
     @Override
-    public HttpServerRequest streamPriorityHandler(Handler<StreamPriority> handler) {
+    public HttpServerRequest streamPriorityHandler(final Handler<StreamPriority> handler) {
         log.debug("HttpServerRequestWrapperEx.streamPriorityHandler");
-        delegate.streamPriorityHandler(handler);
+        this.delegate.streamPriorityHandler(handler);
         return this;
     }
 
     @Override
     public StreamPriority streamPriority() {
         log.debug("HttpServerRequestWrapperEx.streamPriority");
-        return delegate.streamPriority();
+        return this.delegate.streamPriority();
     }
 
     @Override
-    public @Nullable Cookie getCookie(String name) {
+    public @Nullable Cookie getCookie(final String name) {
         log.debug("HttpServerRequestWrapperEx.getCookie");
-        return delegate.getCookie(name);
+        return this.delegate.getCookie(name);
     }
 
     @Override
-    public @Nullable Cookie getCookie(String name, String domain, String path) {
+    public @Nullable Cookie getCookie(final String name, final String domain, final String path) {
         log.debug("HttpServerRequestWrapperEx.getCookie");
-        return delegate.getCookie(name, domain, path);
+        return this.delegate.getCookie(name, domain, path);
     }
 
     @Override
-    public String getParam(String paramName, String defaultValue) {
+    public String getParam(final String paramName, final String defaultValue) {
         log.debug("HttpServerRequestWrapperEx.getParam");
-        return delegate.getParam(paramName, defaultValue);
+        return this.delegate.getParam(paramName, defaultValue);
     }
 
     @Override
-    public Set<Cookie> cookies(String name) {
+    public Set<Cookie> cookies(final String name) {
         log.debug("HttpServerRequestWrapperEx.cookies");
-        return delegate.cookies(name);
+        return this.delegate.cookies(name);
     }
 
     @Override
     public Set<Cookie> cookies() {
         log.debug("HttpServerRequestWrapperEx.cookies");
-        return delegate.cookies();
+        return this.delegate.cookies();
     }
 
     @Override
-    public void end(Handler<AsyncResult<Void>> handler) {
+    public void end(final Handler<AsyncResult<Void>> handler) {
         log.debug("HttpServerRequestWrapperEx.end");
-        delegate.end(handler);
+        this.delegate.end(handler);
     }
 
     @Override
     public Future<Void> end() {
         log.debug("HttpServerRequestWrapperEx.end");
-        return delegate.end();
+        return this.delegate.end();
     }
 
     @Override
-    public HttpServerRequest routed(String route) {
+    public HttpServerRequest routed(final String route) {
         log.debug("HttpServerRequestWrapperEx.routed");
-        delegate.routed(route);
+        this.delegate.routed(route);
         return this;
     }
 
     @Override
     public Context context() {
         log.debug("HttpServerRequestWrapperEx.context");
-        return delegate.context();
+        return this.delegate.context();
     }
 
     @Override
     public Object metric() {
         log.debug("HttpServerRequestWrapperEx.metric");
-        return delegate.metric();
+        return this.delegate.metric();
     }
 
 }
