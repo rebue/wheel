@@ -48,6 +48,15 @@ public class VertxGuiceModule extends AbstractModule {
 
     @Provides
     @Singleton
+    @Named("deliveryOptions")
+    JsonObject getDeliveryOptions(@Named("config") final JsonObject config) {
+        log.info("VertxGuiceModule.getDeliveryOptions");
+        final JsonObject deliveryConfig = config.getJsonObject("delivery");
+        return deliveryConfig == null ? new JsonObject() : deliveryConfig;
+    }
+
+    @Provides
+    @Singleton
     @Named("mainId")
     String getMainId() {
         log.info("VertxGuiceModule.getMainId");
