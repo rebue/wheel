@@ -47,7 +47,7 @@ import rebue.wheel.vertx.stream.impl.PipeImplEx;
  * resumes the request if a caller explicitly sets a handler to any callback that processes the request body.
  */
 @Slf4j
-public class HttpServerRequestWrapperEx implements HttpServerRequestInternal {
+public class HttpServerRequestWrapperEx extends HttpServerRequestInternal {
 
     private final HttpServerRequestInternal delegate;
     private final ForwardedParserEx         forwardedParser;

@@ -1,26 +1,25 @@
 package rebue.wheel.vertx.guice;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 @Slf4j
 public class VertxGuiceModule extends AbstractModule {
 
-    protected Vertx          vertx;
+    protected     Vertx      vertx;
     private final JsonObject config;
 
     public VertxGuiceModule(final Vertx vertx, final JsonObject config) {
         log.info("new VertxGuiceModule");
-        this.vertx  = vertx;
+        this.vertx = vertx;
         this.config = config;
     }
 
@@ -60,7 +59,7 @@ public class VertxGuiceModule extends AbstractModule {
     @Named("mainId")
     String getMainId() {
         log.info("VertxGuiceModule.getMainId");
-        return NanoIdUtils.randomNanoId();
+        return UlidCreator.getUlid().toLowerCase();
     }
 
 }
