@@ -182,8 +182,8 @@ public class Vro implements Serializable {
         this.result = ResultDic.getItem(result);
         this.msg    = jsonObject.getString("msg");
         this.detail = jsonObject.getString("detail");
-        this.extra  = jsonObject.getString("extra");
         this.code   = jsonObject.getString("code");
+        this.extra  = jsonObject.getJsonObject("extra");
     }
 
 }
