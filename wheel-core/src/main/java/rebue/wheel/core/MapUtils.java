@@ -1,5 +1,8 @@
 package rebue.wheel.core;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.beans.IntrospectionException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -7,16 +10,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.StringJoiner;
-
-import org.apache.commons.lang3.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MapUtils {
@@ -128,7 +123,6 @@ public class MapUtils {
     /**
      * 将map转换成url参数("a=111&amp;b=222&amp;c=333")
      * 所有参数的值都进行URLEncoder的UTF-8编码
-     *
      */
     public static String map2UrlParams(final Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
@@ -168,9 +162,9 @@ public class MapUtils {
         }
         String valueStr = null;
         if (value instanceof LocalDate) {
-            valueStr = LocalDateTimeUtils.formatDate((LocalDate) value);
+            valueStr = LocalDateTimeUtils.format((LocalDate) value);
         } else if (value instanceof LocalDateTime) {
-            valueStr = LocalDateTimeUtils.formatDateTime((LocalDateTime) value);
+            valueStr = LocalDateTimeUtils.format((LocalDateTime) value);
         } else {
             valueStr = value.toString();
         }
