@@ -12,11 +12,11 @@ public class LocalDateTimeUtils {
     /**
      * 默认的日期格式化工具(例如: 2021-09-09)
      */
-    public static DateTimeFormatter dateFormatter     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     /**
      * 默认的日期格式化工具(例如: 2021-09-09)
      */
-    public static DateTimeFormatter timeFormatter     = DateTimeFormatter.ofPattern("HH:mm:ss");
+    public static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     /**
      * 默认的日期时间格式化工具(例如: 2021-09-09 09:45:23)
      */
