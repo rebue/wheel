@@ -22,15 +22,15 @@ import rebue.wheel.vertx.web.impl.HttpServerRequestWrapperEx;
  * @author <a href="mailto:emad.albloushi@gmail.com">Emad Alblueshi</a>
  */
 @Slf4j
-public class ProxyHandlerExImpl implements ProxyHandler {
+public class ProxyHandlerImplEx implements ProxyHandler {
 
     private final HttpProxyEx httpProxy;
 
-    public ProxyHandlerExImpl(HttpProxyEx httpProxy) {
+    public ProxyHandlerImplEx(HttpProxyEx httpProxy) {
         this.httpProxy = httpProxy;
     }
 
-    public ProxyHandlerExImpl(HttpProxyEx httpProxy, int port, String host) {
+    public ProxyHandlerImplEx(HttpProxyEx httpProxy, int port, String host) {
         this.httpProxy = httpProxy.origin(port, host);
     }
 
