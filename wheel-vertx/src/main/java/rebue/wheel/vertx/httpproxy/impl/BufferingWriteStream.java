@@ -1,5 +1,6 @@
 /**
- * XXX 复制io.vertx.httpproxy.impl.BufferingWriteStream类的代码，原类不是public的
+ * XXX 复制io.vertx.httpproxy.impl.BufferingWriteStream类的代码
+ * 原类不是public的，外部无法访问，未做任何改动
  *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
@@ -19,11 +20,11 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.WriteStream;
 
-public class BufferingWriteStreamEx implements WriteStream<Buffer> {
+public class BufferingWriteStream implements WriteStream<Buffer> {
 
     private final Buffer content;
 
-    public BufferingWriteStreamEx() {
+    public BufferingWriteStream() {
         this.content = Buffer.buffer();
     }
 

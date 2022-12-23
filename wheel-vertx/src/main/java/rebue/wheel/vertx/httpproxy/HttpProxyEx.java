@@ -1,5 +1,5 @@
 /**
- * XXX 复制io.vertx.httpproxy.HttpProxy接口的代码，原接口会让ctx的后置处理器失效
+ * XXX 复制4.3.7版本的io.vertx.httpproxy.HttpProxy接口的代码，原接口会让ctx的后置处理器失效
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
  * This program and the accompanying materials are made available under the
@@ -15,28 +15,33 @@ import java.util.List;
 import java.util.function.Function;
 
 import io.vertx.codegen.annotations.Fluent;
+import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.RequestOptions;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.httpproxy.ProxyContext;
 import io.vertx.httpproxy.ProxyOptions;
 import rebue.wheel.vertx.httpproxy.impl.ReverseProxyEx;
 
+import java.util.function.BiFunction;
+
 /**
  * Handles the HTTP reverse proxy logic between the <i><b>user agent</b></i> and the <i><b>origin</b></i>.
  * <p>
- *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@VertxGen
 public interface HttpProxyEx extends Handler<HttpServerRequest> {
 
     /**
      * Create a new {@code HttpProxyEx} instance.
      *
      * @param client the {@code HttpClient} that forwards <i><b>outbound</b></i> requests to the <i><b>origin</b></i>.
-     *
      * @return a reference to this, so the API can be used fluently.
      */
     static HttpProxyEx reverseProxy(HttpClient client) {
@@ -47,7 +52,6 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
      * Create a new {@code HttpProxyEx} instance.
      *
      * @param client the {@code HttpClient} that forwards <i><b>outbound</b></i> requests to the <i><b>origin</b></i>.
-     *
      * @return a reference to this, so the API can be used fluently.
      */
     static HttpProxyEx reverseProxy(ProxyOptions options, HttpClient client) {
@@ -58,7 +62,6 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
      * Set the {@code SocketAddress} of the <i><b>origin</b></i>.
      *
      * @param address the {@code SocketAddress} of the <i><b>origin</b></i>
-     *
      * @return a reference to this, so the API can be used fluently
      */
     @Fluent
@@ -71,7 +74,6 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
      *
      * @param port the port number of the <i><b>origin</b></i> server
      * @param host the host name of the <i><b>origin</b></i> server
-     *
      * @return a reference to this, so the API can be used fluently
      */
     @Fluent
@@ -80,20 +82,33 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
     }
 
     /**
-     * Set a selector that resolves the <i><b>origin</b></i> address based on the <i><b>outbound</b></i> request.
+     * Set a selector that resolves the <i><b>origin</b></i> address based on the incoming HTTP request.
      *
      * @param selector the selector
-     *
      * @return a reference to this, so the API can be used fluently
      */
     @Fluent
-    HttpProxyEx originSelector(Function<HttpServerRequest, Future<SocketAddress>> selector);
+    default HttpProxyEx originSelector(Function<HttpServerRequest, Future<SocketAddress>> selector) {
+        return originRequestProvider((req, client) -> selector
+                .apply(req)
+                .flatMap(server -> client.request(new RequestOptions().setServer(server))));
+    }
+
+    /**
+     * Set a provider that creates the request to the <i><b>origin</b></i> server based the incoming HTTP request.
+     * Setting a provider overrides any origin selector previously set.
+     *
+     * @param provider the provider
+     * @return a reference to this, so the API can be used fluently
+     */
+    @GenIgnore()
+    @Fluent
+    HttpProxyEx originRequestProvider(BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider);
 
     /**
      * Add an interceptor to the interceptor chain.
      *
      * @param interceptor
-     *
      * @return a reference to this, so the API can be used fluently
      */
     @Fluent
@@ -102,10 +117,9 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
     /**
      * Handle the <i><b>outbound</b></i> {@code HttpServerRequest}.
      *
-     * @param outboundRequest the outbound {@code HttpServerRequest}
+     * @param request the outbound {@code HttpServerRequest}
      */
-    @Override
-    void handle(HttpServerRequest outboundRequest);
+    void handle(HttpServerRequest request);
 
     /**
      * XXX 添加能返回future的处理方法
@@ -119,10 +133,5 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
      * XXX 获取拦截器
      */
     List<ProxyInterceptorEx> getInterceptors();
-
-    /**
-     * XXX 获取客户端
-     */
-    HttpClient getClient();
 
 }

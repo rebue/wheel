@@ -1,5 +1,6 @@
 /**
- * XXX 复制io.vertx.httpproxy.impl.CacheControl类的代码，原类会让ctx的后置处理器失效
+ * XXX 复制4.3.7版本的io.vertx.httpproxy.impl.CacheControl类的代码
+ * 原类不是public的，外部无法访问，未做任何改动
  *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
@@ -15,27 +16,27 @@ package rebue.wheel.vertx.httpproxy.impl;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class CacheControlEx {
+class CacheControl {
 
-    private int     maxAge;
+    private int maxAge;
     private boolean _public;
 
-    public CacheControlEx parse(String header) {
-        maxAge  = -1;
+    public CacheControl parse(String header) {
+        maxAge = -1;
         _public = false;
-        final String[] parts = header.split(","); // No regex
+        String[] parts = header.split(","); // No regex
         for (String part : parts) {
             part = part.trim().toLowerCase();
             switch (part) {
-            case "public":
-                _public = true;
-                break;
-            default:
-                if (part.startsWith("max-age=")) {
-                    maxAge = Integer.parseInt(part.substring(8));
+                case "public":
+                    _public = true;
+                    break;
+                default:
+                    if (part.startsWith("max-age=")) {
+                        maxAge = Integer.parseInt(part.substring(8));
 
-                }
-                break;
+                    }
+                    break;
             }
         }
         return this;

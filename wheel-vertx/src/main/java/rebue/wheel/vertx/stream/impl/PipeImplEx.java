@@ -1,5 +1,5 @@
 /**
- * XXX 复制io.vertx.core.streams.impl，加上一些日志打印方便调试
+ * XXX 复制4.3.7版本的io.vertx.core.streams.impl.PipeImpl，加上一些日志打印方便调试
  *
  * Copyright (c) 2011-2019 Contributors to the Eclipse Foundation
  *
@@ -27,12 +27,12 @@ public class PipeImplEx<T> implements Pipe<T> {
 
     private final Promise<Void> result;
     private final ReadStream<T> src;
-    private boolean             endOnSuccess = true;
-    private boolean             endOnFailure = true;
-    private WriteStream<T>      dst;
+    private boolean endOnSuccess = true;
+    private boolean endOnFailure = true;
+    private WriteStream<T> dst;
 
     public PipeImplEx(ReadStream<T> src) {
-        this.src    = src;
+        this.src = src;
         this.result = Promise.promise();
 
         // Set handlers now
@@ -79,11 +79,11 @@ public class PipeImplEx<T> implements Pipe<T> {
             if (dst != null) {
                 throw new IllegalStateException();
             }
-            dst          = ws;
+            dst = ws;
             endOnSuccess = this.endOnSuccess;
             endOnFailure = this.endOnFailure;
         }
-        final Handler<Void> drainHandler = v -> src.resume();
+        Handler<Void> drainHandler = v -> src.resume();
         src.handler(item -> {
             log.debug("PipeImplEx.to.src.handler");
             ws.write(item, this::handleWriteResult);
@@ -97,15 +97,15 @@ public class PipeImplEx<T> implements Pipe<T> {
             log.debug("PipeImplEx.to.result.future.onComplete");
             try {
                 src.handler(null);
-            } catch (final Exception ignore) {
+            } catch (Exception ignore) {
             }
             try {
                 src.exceptionHandler(null);
-            } catch (final Exception ignore) {
+            } catch (Exception ignore) {
             }
             try {
                 src.endHandler(null);
-            } catch (final Exception ignore) {
+            } catch (Exception ignore) {
             }
             if (ar.succeeded()) {
                 log.debug("PipeImplEx.to.result.future.onComplete: ar.succeeded");
@@ -131,8 +131,8 @@ public class PipeImplEx<T> implements Pipe<T> {
     }
 
     private void handleFailure(Throwable cause, Handler<AsyncResult<Void>> completionHandler) {
-        final Future<Void> res = Future.failedFuture(cause);
-        if (endOnFailure) {
+        Future<Void> res = Future.failedFuture(cause);
+        if (endOnFailure){
             dst.end(ignore -> {
                 completionHandler.handle(res);
             });
@@ -141,7 +141,6 @@ public class PipeImplEx<T> implements Pipe<T> {
         }
     }
 
-    @Override
     public void close() {
         synchronized (this) {
             src.exceptionHandler(null);
@@ -151,15 +150,13 @@ public class PipeImplEx<T> implements Pipe<T> {
                 dst.exceptionHandler(null);
             }
         }
-        final VertxException err = new VertxException("Pipe closed", true);
+        VertxException err = new VertxException("Pipe closed", true);
         if (result.tryFail(err)) {
             src.resume();
         }
     }
 
     private static class WriteException extends VertxException {
-        private static final long serialVersionUID = 1L;
-
         private WriteException(Throwable cause) {
             super(cause, true);
         }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 缓存body的处理器
+ * body只能读取一次，将其存入ctx中方便多次读取
  *
  * @author zbz
  *

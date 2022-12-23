@@ -1,5 +1,6 @@
 /**
- * XXX 复制io.vertx.httpproxy.impl.BufferingReadStream类的代码，原类会让ctx的后置处理器失效
+ * XXX 复制4.3.7版本的io.vertx.httpproxy.impl.BufferingReadStream类的代码
+ * 原类不是public的，外部无法访问，未做任何改动
  *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
@@ -16,15 +17,14 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 
-class BufferingReadStreamEx implements ReadStream<Buffer> {
+class BufferingReadStream implements ReadStream<Buffer> {
 
     private final ReadStream<Buffer> stream;
-    private final Buffer             content;
-    @SuppressWarnings("unused")
-    private Handler<Void>            endHandler;
+    private final Buffer content;
+    private Handler<Void> endHandler;
 
-    public BufferingReadStreamEx(ReadStream<Buffer> stream, Buffer content) {
-        this.stream  = stream;
+    public BufferingReadStream(ReadStream<Buffer> stream, Buffer content) {
+        this.stream = stream;
         this.content = content;
     }
 

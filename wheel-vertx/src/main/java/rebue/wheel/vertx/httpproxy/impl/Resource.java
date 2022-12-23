@@ -1,5 +1,6 @@
-/**
- * XXX 复制io.vertx.httpproxy.impl.Resource类的代码，原类会让ctx的后置处理器失效
+/*
+ * XXX 复制4.3.7版本的io.vertx.httpproxy.impl.Resource类的代码
+ * 原类不是public的，外部无法访问，未做任何改动
  *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
@@ -12,8 +13,6 @@
  */
 package rebue.wheel.vertx.httpproxy.impl;
 
-import java.util.Date;
-
 import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
@@ -21,28 +20,30 @@ import io.vertx.httpproxy.Body;
 import io.vertx.httpproxy.ProxyResponse;
 import io.vertx.httpproxy.impl.ParseUtils;
 
-class ResourceEx {
+import java.util.Date;
 
-    final String   absoluteUri;
-    final int      statusCode;
-    final String   statusMessage;
+class Resource {
+
+    final String absoluteUri;
+    final int statusCode;
+    final String statusMessage;
     final MultiMap headers;
-    final long     timestamp;
-    final long     maxAge;
-    final Date     lastModified;
-    final String   etag;
-    final Buffer   content = Buffer.buffer();
+    final long timestamp;
+    final long maxAge;
+    final Date lastModified;
+    final String etag;
+    final Buffer content = Buffer.buffer();
 
-    ResourceEx(String absoluteUri, int statusCode, String statusMessage, MultiMap headers, long timestamp, long maxAge) {
-        final String lastModifiedHeader = headers.get(HttpHeaders.LAST_MODIFIED);
-        this.absoluteUri   = absoluteUri;
-        this.statusCode    = statusCode;
+    Resource(String absoluteUri, int statusCode, String statusMessage, MultiMap headers, long timestamp, long maxAge) {
+        String lastModifiedHeader = headers.get(HttpHeaders.LAST_MODIFIED);
+        this.absoluteUri = absoluteUri;
+        this.statusCode = statusCode;
         this.statusMessage = statusMessage;
-        this.headers       = headers;
-        this.timestamp     = timestamp;
-        this.maxAge        = maxAge;
-        this.lastModified  = lastModifiedHeader != null ? ParseUtils.parseHeaderDate(lastModifiedHeader) : null;
-        this.etag          = headers.get(HttpHeaders.ETAG);
+        this.headers = headers;
+        this.timestamp = timestamp;
+        this.maxAge = maxAge;
+        this.lastModified = lastModifiedHeader != null ? ParseUtils.parseHeaderDate(lastModifiedHeader) : null;
+        this.etag = headers.get(HttpHeaders.ETAG);
     }
 
     void init(ProxyResponse proxyResponse) {
