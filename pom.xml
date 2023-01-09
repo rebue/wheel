@@ -46,6 +46,7 @@
 
         <spring.version>5.3.22</spring.version>
         <bouncycastle.version>1.70</bouncycastle.version>
+        <bouncycastle18.version>1.72</bouncycastle18.version>
         <guice.version>5.1.0</guice.version>
         <dagger.version>2.42</dagger.version>
         <jackson.version>2.14.1</jackson.version>
@@ -164,7 +165,22 @@
                 <artifactId>bcprov-ext-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle18.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle18.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>9.28</version>
+            </dependency>
             <dependency>
                 <groupId>com.nimbusds</groupId>
                 <artifactId>oauth2-oidc-sdk</artifactId>
