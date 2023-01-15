@@ -1,18 +1,15 @@
 /**
  * XXX 复制4.3.7版本的io.vertx.httpproxy.HttpProxy接口的代码，原接口会让ctx的后置处理器失效
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
 package rebue.wheel.vertx.httpproxy;
-
-import java.util.List;
-import java.util.function.Function;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
@@ -28,11 +25,15 @@ import io.vertx.httpproxy.ProxyContext;
 import io.vertx.httpproxy.ProxyOptions;
 import rebue.wheel.vertx.httpproxy.impl.ReverseProxyEx;
 
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Handles the HTTP reverse proxy logic between the <i><b>user agent</b></i> and the <i><b>origin</b></i>.
  * <p>
+ *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
@@ -122,12 +123,13 @@ public interface HttpProxyEx extends Handler<HttpServerRequest> {
     void handle(HttpServerRequest request);
 
     /**
-     * XXX 添加能返回future的处理方法
+     * XXX 添加响应前的事件
      *
-     * @param request 请求
-     *
+     * @param request        请求
+     * @param beforeResponse 响应前的事件
      */
-    Future<ProxyContext> handleEx(HttpServerRequest request);
+    @GenIgnore
+    void handleEx(HttpServerRequest request, Consumer<ProxyContext> beforeResponse);
 
     /**
      * XXX 获取拦截器

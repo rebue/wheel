@@ -28,6 +28,7 @@ import rebue.wheel.vertx.httpproxy.ProxyInterceptorEx;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 @Slf4j
 public class ReverseProxyEx implements HttpProxyEx {
@@ -59,44 +60,26 @@ public class ReverseProxyEx implements HttpProxyEx {
         return this;
     }
 
-
     @Override
     public void handle(HttpServerRequest request) {
-        ProxyRequest proxyRequest = ProxyRequest.reverseProxy(request);
-
-        // Encoding sanity check
-        Boolean chunked = HttpUtils.isChunked(request.headers());
-        if (chunked == null) {
-            end(proxyRequest, 400);
-            return;
-        }
-
-        // WebSocket upgrade tunneling
-        if (supportWebSocket &&
-                request.version() == HttpVersion.HTTP_1_1 &&
-                request.method() == HttpMethod.GET &&
-                request.headers().contains(HttpHeaders.CONNECTION, HttpHeaders.UPGRADE, true)) {
-            handleWebSocketUpgrade(proxyRequest);
-            return;
-        }
-
-        Proxy proxy = new Proxy(proxyRequest);
-        proxy.filters = interceptors.listIterator();
-        proxy.sendRequest().compose(proxy::sendProxyResponse);
+        handleEx(request, null);
     }
 
     /**
-     * XXX 返回future(复制handle方法)
+     * XXX 添加响应前的事件(复制handle方法)
+     *
+     * @param request        请求
+     * @param beforeResponse 响应前的事件
      */
     @Override
-    public Future<ProxyContext> handleEx(HttpServerRequest request) {
+    public void handleEx(HttpServerRequest request, Consumer<ProxyContext> beforeResponse) {
         ProxyRequest proxyRequest = ProxyRequest.reverseProxy(request);
 
         // Encoding sanity check
         Boolean chunked = HttpUtils.isChunked(request.headers());
         if (chunked == null) {
             end(proxyRequest, 400);
-            return Future.succeededFuture();
+            return;
         }
 
         // WebSocket upgrade tunneling
@@ -105,12 +88,17 @@ public class ReverseProxyEx implements HttpProxyEx {
                 request.method() == HttpMethod.GET &&
                 request.headers().contains(HttpHeaders.CONNECTION, HttpHeaders.UPGRADE, true)) {
             handleWebSocketUpgrade(proxyRequest);
-            return Future.succeededFuture();
+            return;
         }
 
         Proxy proxy = new Proxy(proxyRequest);
         proxy.filters = interceptors.listIterator();
-        return proxy.sendRequest().compose(proxy::sendProxyResponse).compose(v -> Future.succeededFuture(proxy));
+        // XXX 以下是修改的部分
+        if (beforeResponse == null) {
+            proxy.sendRequest().compose(proxy::sendProxyResponse);
+            return;
+        }
+        proxy.sendRequest().compose(proxy::sendProxyResponse).onSuccess(v -> beforeResponse.accept(proxy));
     }
 
     private void handleWebSocketUpgrade(ProxyRequest proxyRequest) {

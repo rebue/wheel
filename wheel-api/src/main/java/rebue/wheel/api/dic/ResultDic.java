@@ -8,8 +8,8 @@ import lombok.Getter;
  * 返回结果的字典
  * 1: 成功
  * -1: 参数错误
- * -2: 失败(系统出现异常)
- * -3: 警告(用户操作错误)
+ * -2: 失败(系统方面的异常)
+ * -3: 警告(用户方面的错误)
  */
 @AllArgsConstructor
 @Getter
@@ -23,11 +23,11 @@ public enum ResultDic implements Dic {
      */
     ILLEGAL_ARGUMENT(-1, "参数错误"),
     /**
-     * -2: 失败(系统出现异常)
+     * -2: 失败(系统方面的异常)
      */
     FAIL(-2, "失败"),
     /**
-     * -3: 警告(用户操作错误)
+     * -3: 警告(用户方面的错误)
      */
     WARN(-3, "警告");
 

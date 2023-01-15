@@ -13,9 +13,13 @@ import io.vertx.httpproxy.ProxyInterceptor;
 public interface ProxyInterceptorEx extends ProxyInterceptor {
 
     /**
-     * 结束响应之前
+     * 响应前的事件
+     *
+     * @param routingContext 路由上下文
+     * @param proxyContext   代理上下文
+     * @return 是否继续下一个拦截器
      */
-    default boolean beforeEndResponse(RoutingContext routingContext, ProxyContext proxyContext) {
+    default boolean beforeResponse(RoutingContext routingContext, ProxyContext proxyContext) {
         return true;
     }
 
