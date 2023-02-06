@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.dic.HttpStatusCodeDic;
 import rebue.wheel.api.dic.ResultDic;
 
 import java.io.Serializable;
@@ -18,6 +20,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @DataObject
 public class Vro implements Serializable {
 
@@ -144,6 +147,26 @@ public class Vro implements Serializable {
 
     public static Vro fail(final String msg, final Object extra) {
         return new Vro(ResultDic.FAIL, msg, extra);
+    }
+
+    public static Vro code(final HttpStatusCodeDic statusCode) {
+        Integer   code = statusCode.getCode();
+        ResultDic result;
+        if (code == 400) {
+            result = ResultDic.ILLEGAL_ARGUMENT;
+        } else if (code >= 200 && code < 400) {
+            result = ResultDic.SUCCESS;
+        } else if (code < 500) {
+            result = ResultDic.WARN;
+        } else {
+            result = ResultDic.FAIL;
+        }
+
+        return Vro.builder()
+                .result(result)
+                .msg(statusCode.getDesc())
+                .code(code.toString())
+                .build();
     }
 
     /**
