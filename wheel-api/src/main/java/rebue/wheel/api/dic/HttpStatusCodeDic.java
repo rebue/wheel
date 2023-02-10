@@ -57,6 +57,10 @@ public enum HttpStatusCodeDic implements Dic {
      */
     NOT_FOUND(404, "请求的地址不存在"),
     /**
+     * 405: 请求的方法不正确
+     */
+    METHOD_NOT_ALLOWED(405, "请求的方法不正确"),
+    /**
      * 406: 请求头的格式不正确
      */
     NOT_ACCEPTABLE(406, "请求头的格式不正确"),
