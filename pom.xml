@@ -54,7 +54,7 @@
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <curator.version>5.4.0</curator.version>
         <log4j.version>2.19.0</log4j.version>
-        <vertx.version>4.3.7</vertx.version>
+        <vertx.version>4.3.8</vertx.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <spring-amqp.version>2.4.5</spring-amqp.version>

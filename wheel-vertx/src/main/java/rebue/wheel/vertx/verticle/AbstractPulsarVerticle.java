@@ -1,31 +1,30 @@
 package rebue.wheel.vertx.verticle;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.pulsar.client.api.MessageListener;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.Schema;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.client.api.*;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Slf4j
 public abstract class AbstractPulsarVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String                mainId;
+    private String mainId;
 
     @Inject
-    private PulsarClient          pulsarClient;
+    private PulsarClient pulsarClient;
 
     private MessageConsumer<Void> startConsumer;
+
+    private ConsumerBuilder<String> consumerBuilder;
 
     protected abstract String getTopic();
 
@@ -34,26 +33,8 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
     protected abstract Future<Boolean> receivedData(String data);
 
     @Override
-    public void start() throws Exception {
-        log.info("PulsarVerticle start");
-
-        log.info("配置消费EventBus事件-MainVerticle部署成功事件");
-        final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-        this.startConsumer = this.vertx.eventBus()
-                .consumer(address, this::handleStart);
-        this.startConsumer.completionHandler(this::handleStartCompletion);
-
-        log.info("PulsarVerticle Started");
-    }
-
-    @Override
-    public void stop() throws Exception {
-        log.info("PulsarVerticle stop");
-    }
-
-    private void handleStart(final Message<Void> message) {
-        this.startConsumer.unregister();
+    public void start() {
+        log.info("PulsarVerticle start preparing");
 
         final MessageListener<String> messageListener = (consumer, msg) -> {
             final String data = msg.getValue();
@@ -76,23 +57,36 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
             });
         };
 
-        try {
-            pulsarClient.newConsumer(Schema.STRING)
-                    .topic(getTopic())
-                    .subscriptionName(getSubscriptionName())
-                    .messageListener(messageListener)
-                    .subscribe();
-        } catch (final PulsarClientException e) {
-            log.error("创建消息消费者并订阅出现异常", e);
-            throw new RuntimeException(e);
-        }
+        consumerBuilder = pulsarClient.newConsumer(Schema.STRING)
+                .topic(getTopic())
+                .subscriptionName(getSubscriptionName())
+                .messageListener(messageListener);
+
+        log.info("PulsarVerticle配置消费EventBus事件-MainVerticle部署成功事件");
+        final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+        this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
+        this.startConsumer.completionHandler(this::handleStartCompletion);
+
+        log.info("PulsarVerticle end preparing");
+    }
+
+    @Override
+    public void stop() {
+        log.info("PulsarVerticle stop");
+    }
+
+    @SneakyThrows
+    private void handleStart(final Message<Void> message) {
+        log.info("PulsarVerticle start");
+        this.startConsumer.unregister();
+        consumerBuilder.subscribe();
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {
         if (res.succeeded()) {
-            log.info("Event Bus register success: consumer.start");
+            log.info("PulsarVerticle start success");
         } else {
-            log.error("Event Bus register fail: consumer.start", res.cause());
+            log.error("PulsarVerticle start fail", res.cause());
         }
     }
 

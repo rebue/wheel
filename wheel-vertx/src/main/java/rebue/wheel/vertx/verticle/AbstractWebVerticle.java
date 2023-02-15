@@ -5,7 +5,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
@@ -37,7 +36,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     @Override
     public void start() {
-        log.info("WebVerticle start");
+        log.info("WebVerticle start preparing");
 
         WebProperties webProperties = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
@@ -70,13 +69,14 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         // CORS
         if (webProperties.getIsCors()) {
             log.info("开启CORS");
-            globalRoute.handler(CorsHandler.create("*")
-                    .allowedMethod(HttpMethod.GET)
-                    .allowedMethod(HttpMethod.POST)
-                    .allowedMethod(HttpMethod.PUT)
-                    .allowedMethod(HttpMethod.DELETE)
-                    .allowedMethod(HttpMethod.PATCH)
-                    .allowedMethod(HttpMethod.OPTIONS));
+//            globalRoute.handler(CorsHandler.create("*")
+//                    .allowedMethod(HttpMethod.GET)
+//                    .allowedMethod(HttpMethod.POST)
+//                    .allowedMethod(HttpMethod.PUT)
+//                    .allowedMethod(HttpMethod.DELETE)
+//                    .allowedMethod(HttpMethod.PATCH)
+//                    .allowedMethod(HttpMethod.OPTIONS));
+            globalRoute.handler(CorsHandler.create());
         }
         // 全局路由错误处理
         final ErrorHandler errorHandler = ErrorHandler.create(this.vertx);
@@ -90,14 +90,17 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 
-        log.info("配置消费EventBus事件-MainVerticle部署成功事件");
+        log.info("WebVerticle配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-        this.startConsumer = this.vertx.eventBus()
-                .consumer(address, this::handleStart);
+        this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
         this.startConsumer.completionHandler(this::handleStartCompletion);
 
-        log.info("WebVerticle Started");
+        log.info("WebVerticle end preparing");
+    }
+
+    @Override
+    public void stop() {
+        log.info("WebVerticle stop");
     }
 
     /**
@@ -108,6 +111,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     protected abstract void configRouter(Router router);
 
     private void handleStart(final Message<Void> message) {
+        log.info("WebVerticle start");
         this.startConsumer.unregister();
         this.httpServer.listen(res -> {
             if (res.succeeded()) {
@@ -120,15 +124,10 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     private void handleStartCompletion(final AsyncResult<Void> res) {
         if (res.succeeded()) {
-            log.info("Event Bus register success: web.start");
+            log.info("WebVerticle start success");
         } else {
-            log.error("Event Bus register fail: web.start", res.cause());
+            log.error("WebVerticle start fail", res.cause());
         }
-    }
-
-    @Override
-    public void stop() throws Exception {
-        log.info("WebVerticle stop");
     }
 
 }

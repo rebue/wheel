@@ -1,50 +1,45 @@
 package rebue.wheel.vertx.verticle;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import rebue.wheel.vertx.config.XxlJobProperties;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String                mainId;
+    private String mainId;
 
     private MessageConsumer<Void> startConsumer;
 
-    private XxlJobSimpleExecutor  xxlJobExecutor = null;
+    private XxlJobSimpleExecutor xxlJobExecutor = null;
 
     @Override
-    public void start() throws Exception {
-        log.info("XxlJobVerticle start");
+    public void start() {
+        log.info("XxlJobVerticle start preparing");
 
         final XxlJobProperties xxlJobProperties = config().mapTo(XxlJobProperties.class);
         log.debug("xxlJobProperties: {}", xxlJobProperties);
 
         setExecutorProperties(xxlJobProperties);
 
-        log.info("配置消费EventBus事件-MainVerticle部署成功事件");
+        log.info("XxlJobVerticle配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-        this.startConsumer = this.vertx.eventBus()
-                .consumer(address, this::handleStart);
+        this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
         this.startConsumer.completionHandler(this::handleStartCompletion);
 
-        log.info("XxlJobVerticle Started");
+        log.info("XxlJobVerticle end preparing");
     }
 
     /**
@@ -96,7 +91,7 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
     protected abstract void addJob(List<Object> jobs);
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         log.info("XxlJobVerticle stop");
         if (xxlJobExecutor != null) {
             xxlJobExecutor.destroy();
@@ -104,15 +99,16 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
     }
 
     private void handleStart(final Message<Void> message) {
+        log.info("XxlJobVerticle start");
         this.startConsumer.unregister();
         xxlJobExecutor.start();
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {
         if (res.succeeded()) {
-            log.info("Event Bus register success: consumer.start");
+            log.info("XxlJobVerticle start success");
         } else {
-            log.error("Event Bus register fail: consumer.start", res.cause());
+            log.error("XxlJobVerticle start fail", res.cause());
         }
     }
 

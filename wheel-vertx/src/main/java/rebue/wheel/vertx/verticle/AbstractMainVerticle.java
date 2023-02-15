@@ -1,15 +1,5 @@
 package rebue.wheel.vertx.verticle;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TimeZone;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -20,22 +10,21 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
 import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.CompositeFuture;
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.core.Verticle;
+import io.vertx.core.*;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.*;
+import java.util.Map.Entry;
 
 @SuppressWarnings("deprecation")
 @Slf4j
@@ -147,8 +136,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("部署verticle");
         final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
         addVerticleClasses(verticleClasses);
-        @SuppressWarnings("rawtypes")
-        final List<Future> deployFutures = new LinkedList<>();
+        @SuppressWarnings("rawtypes") final List<Future> deployFutures = new LinkedList<>();
         for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
             final JsonObject configJsonObject = config.getJsonObject(entry.getKey());
             if (configJsonObject == null) {
@@ -198,7 +186,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     protected abstract void addVerticleClasses(Map<String, Class<? extends Verticle>> verticleClasses);
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         log.info("MainVerticle stop");
     }
 
