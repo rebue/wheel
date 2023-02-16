@@ -93,8 +93,8 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
     @Override
     public void stop() {
         log.info("XxlJobVerticle stop");
-        if (xxlJobExecutor != null) {
-            xxlJobExecutor.destroy();
+        if (this.xxlJobExecutor != null) {
+            this.xxlJobExecutor.destroy();
         }
     }
 

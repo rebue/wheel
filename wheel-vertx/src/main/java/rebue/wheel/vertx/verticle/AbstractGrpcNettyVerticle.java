@@ -37,7 +37,7 @@ public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
 
         GrpcNettyProperties.ServerProperties serverProperties = gRpcNettyProperties.getServer();
 
-        rpcServer = VertxServerBuilder
+        this.rpcServer = VertxServerBuilder
                 .forAddress(this.vertx, serverProperties.getHost(), serverProperties.getPort())
                 .addServices(getServices())
                 .build();
@@ -53,13 +53,14 @@ public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
     @Override
     public void stop() {
         log.info("GrpcNettyVerticle stop");
+        if (this.rpcServer != null) this.rpcServer.shutdown();
     }
 
     @SneakyThrows
     private void handleStart(final Message<Void> message) {
         log.info("GrpcNettyVerticle start");
         this.startConsumer.unregister();
-        rpcServer.start();
+        this.rpcServer.start();
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {

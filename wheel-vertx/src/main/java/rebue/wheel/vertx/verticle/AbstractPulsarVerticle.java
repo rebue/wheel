@@ -22,9 +22,9 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
     @Inject
     private PulsarClient pulsarClient;
 
-    private MessageConsumer<Void> startConsumer;
-
+    private MessageConsumer<Void>   startConsumer;
     private ConsumerBuilder<String> consumerBuilder;
+    private Consumer<String>        _consumer;
 
     protected abstract String getTopic();
 
@@ -70,16 +70,18 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
         log.info("PulsarVerticle end preparing");
     }
 
+    @SneakyThrows
     @Override
     public void stop() {
         log.info("PulsarVerticle stop");
+        if (this._consumer != null) this._consumer.close();
     }
 
     @SneakyThrows
     private void handleStart(final Message<Void> message) {
         log.info("PulsarVerticle start");
         this.startConsumer.unregister();
-        consumerBuilder.subscribe();
+        this._consumer = consumerBuilder.subscribe();
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {

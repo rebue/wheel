@@ -101,6 +101,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     @Override
     public void stop() {
         log.info("WebVerticle stop");
+        this.httpServer.close();
     }
 
     /**

@@ -10,13 +10,17 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import io.vertx.config.ConfigChange;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.*;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
@@ -34,6 +38,10 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * 部署成功事件
      */
     public static final String EVENT_BUS_DEPLOY_SUCCESS = "rebue.wheel.vertx.verticle.main-verticle.deploy-success";
+    /**
+     * 配置改变事件
+     */
+    public static final String EVENT_BUS_CONFIG_CHANGED = "rebue.wheel.vertx.verticle.main-verticle.config-changed";
 
     static {
         // 初始化jackson的功能
@@ -60,54 +68,88 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     @Named("mainId")
     private String mainId;
 
+    private final List<String> deploymentIds = new LinkedList<>();
+
+    private MessageConsumer<JsonObject> configChangedConsumer;
+
+
     @Override
     public void start(final Promise<Void> startPromise) {
         log.info("MainVerticle start");
 
-        final ConfigRetriever retriever = ConfigRetriever.create(this.vertx);
-        retriever.getConfig(configRes -> {
-            if (configRes.failed()) {
-                log.warn("Get config failed", configRes.cause());
-                startPromise.fail(configRes.cause());
+        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx);
+        defaultConfigRetriever.getConfig(defaultConfigRes -> {
+            if (defaultConfigRes.failed()) {
+                log.warn("Get config failed", defaultConfigRes.cause());
+                startPromise.fail(defaultConfigRes.cause());
                 return;
             }
 
-            final JsonObject config = configRes.result();
-            if (config == null || config.isEmpty()) {
+            final JsonObject defaultConfigJsonObject = defaultConfigRes.result();
+            if (defaultConfigJsonObject == null || defaultConfigJsonObject.isEmpty()) {
                 startPromise.fail("Get config is empty");
                 return;
             }
 
-            final JsonArray stores = config.getJsonArray("stores");
+            JsonArray stores = defaultConfigJsonObject.getJsonArray("stores");
             if (stores == null) {
-                startWithConfig(startPromise, config);
-                return;
+                startWithConfig(startPromise, defaultConfigJsonObject);
+            } else {
+                log.info("配置中心列表: {}", stores);
+                final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
+                stores.forEach(store -> configRetrieverOptions.addStore(new ConfigStoreOptions((JsonObject) store)));
+
+                ConfigRetriever storeConfigRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
+                storeConfigRetriever.getConfig(storeConfigRes -> {
+                    if (storeConfigRes.failed()) {
+                        log.warn("Get store config failed", storeConfigRes.cause());
+                        startPromise.fail(storeConfigRes.cause());
+                        return;
+                    }
+
+                    final JsonObject storeConfigJsonObject = storeConfigRes.result();
+                    if (storeConfigJsonObject == null || storeConfigJsonObject.isEmpty()) {
+                        startPromise.fail("Get store config is empty");
+                        return;
+                    }
+
+                    startWithConfig(startPromise, storeConfigJsonObject);
+                });
+
+                storeConfigRetriever.listen(this::listenConfigChange);
             }
 
-            log.info("配置中心列表: {}", stores);
-            final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
-            stores.forEach(store -> {
-                final ConfigStoreOptions storeOptions = new ConfigStoreOptions((JsonObject) store);
-                configRetrieverOptions.addStore(storeOptions);
-            });
-
-            final ConfigRetriever configServerRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
-            configServerRetriever.getConfig(configServerConfigRes -> {
-                if (configServerConfigRes.failed()) {
-                    log.warn("Get server config failed", configServerConfigRes.cause());
-                    startPromise.fail(configServerConfigRes.cause());
-                    return;
-                }
-
-                final JsonObject configServerConfig = configServerConfigRes.result();
-                if (configServerConfig == null || configServerConfig.isEmpty()) {
-                    startPromise.fail("Get server config is empty");
-                    return;
-                }
-
-                startWithConfig(startPromise, configServerConfig);
-            });
+            defaultConfigRetriever.listen(this::listenConfigChange);
         });
+    }
+
+    /**
+     * 监听配置改变事件
+     *
+     * @param configChange 配置改变对象
+     */
+    private void listenConfigChange(ConfigChange configChange) {
+        log.info("配置有变动");
+        JsonObject previousConfiguration = configChange.getPreviousConfiguration();
+        JsonObject newConfiguration      = configChange.getNewConfiguration();
+        log.info("上一次的配置: \n{}", previousConfiguration.encode());
+        log.info("新配置: \n{}", newConfiguration.encode());
+        log.info("发布配置改变的消息");
+        this.vertx.eventBus().publish(EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId, newConfiguration);
+    }
+
+    /**
+     * 处理配置改变
+     */
+    @SneakyThrows
+    private void handleConfigChange(Message<JsonObject> message) {
+        JsonObject newConfiguration = message.body();
+        log.info("处理配置改变");
+        this.configChangedConsumer.unregister();
+        log.info("undeploy verticles");
+        deploymentIds.forEach(deploymentId -> this.vertx.undeploy(deploymentId));
+//        this.start();
+        startWithConfig(null, newConfiguration);
     }
 
     /**
@@ -117,6 +159,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * @param config       配置项
      */
     private void startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
+        log.info("start with config");
         log.info("添加注入模块");
         final List<Module> guiceModules = new LinkedList<>();
         // 添加默认的注入模块
@@ -136,13 +179,16 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("部署verticle");
         final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
         addVerticleClasses(verticleClasses);
+        deploymentIds.clear();
         @SuppressWarnings("rawtypes") final List<Future> deployFutures = new LinkedList<>();
         for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
             final JsonObject configJsonObject = config.getJsonObject(entry.getKey());
             if (configJsonObject == null) {
-                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName()));
+                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName())
+                        .onSuccess(deploymentIds::add));
             } else {
-                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(configJsonObject)));
+                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(configJsonObject))
+                        .onSuccess(deploymentIds::add));
             }
         }
 
@@ -150,16 +196,22 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         CompositeFuture.all(deployFutures)
                 .onSuccess(handle -> {
                     log.info("部署Verticle完成，发布部署成功的消息");
-                    final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
-                    this.vertx.eventBus().publish(address, null);
+                    final String deploySuccessEventBusAddress = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + deploySuccessEventBusAddress);
+                    this.vertx.eventBus().publish(deploySuccessEventBusAddress, null);
+
+                    log.info("监听配置改变的消息");
+                    final String configChangedEventBusAddress = EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId;
+                    log.info("MainVerticle.EVENT_BUS_CONFIG_CHANGED address is " + configChangedEventBusAddress);
+                    this.configChangedConsumer = this.vertx.eventBus().consumer(configChangedEventBusAddress, this::handleConfigChange);
+
                     log.info("是否开启 native transport: {}", vertx.isNativeTransportEnabled());
                     log.info("启动完成.");
-                    startPromise.complete();
+                    if (startPromise != null) startPromise.complete();
                 })
                 .onFailure(err -> {
                     log.error("启动失败.", err);
-                    startPromise.fail(err);
+                    if (startPromise != null) startPromise.fail(err);
                     this.vertx.close();
                 });
 
