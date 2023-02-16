@@ -62,8 +62,8 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
                 .subscriptionName(getSubscriptionName())
                 .messageListener(messageListener);
 
-        log.info("PulsarVerticle配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+        log.info("PulsarVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
         this.startConsumer.completionHandler(this::handleStartCompletion);
 

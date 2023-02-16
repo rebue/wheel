@@ -47,7 +47,6 @@ public class GuiceVerticleFactory implements VerticleFactory {
             });
         } catch (final ClassNotFoundException e) {
             promise.fail(e);
-            return;
         }
 
     }

@@ -147,9 +147,20 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("处理配置改变");
         this.configChangedConsumer.unregister();
         log.info("undeploy verticles");
-        deploymentIds.forEach(deploymentId -> this.vertx.undeploy(deploymentId));
-//        this.start();
-        startWithConfig(null, newConfiguration);
+        @SuppressWarnings("rawtypes") final List<Future> undeployFutures = new LinkedList<>();
+        for (String deploymentId : deploymentIds) {
+            undeployFutures.add(this.vertx.undeploy(deploymentId));
+        }
+
+        CompositeFuture.all(undeployFutures)
+                .onSuccess(compositeFuture -> {
+                    log.info("取消部署verticle完成");
+                    this.vertx.verticleFactories().forEach(verticleFactory -> {
+                        log.info("unregisterVerticleFactory: {}", verticleFactory.prefix());
+                        this.vertx.unregisterVerticleFactory(verticleFactory);
+                    });
+                    startWithConfig(null, newConfiguration);
+                }).onFailure(err -> log.error("取消部署verticle失败", err));
     }
 
     /**
@@ -214,7 +225,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                     if (startPromise != null) startPromise.fail(err);
                     this.vertx.close();
                 });
-
     }
 
     /**

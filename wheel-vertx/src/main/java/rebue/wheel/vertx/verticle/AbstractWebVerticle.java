@@ -90,8 +90,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 
-        log.info("WebVerticle配置消费EventBus事件-MainVerticle部署成功事件");
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
+        log.info("WebVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
         this.startConsumer.completionHandler(this::handleStartCompletion);
 

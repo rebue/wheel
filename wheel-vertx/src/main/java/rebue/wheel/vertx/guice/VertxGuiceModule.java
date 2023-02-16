@@ -59,7 +59,9 @@ public class VertxGuiceModule extends AbstractModule {
     @Named("mainId")
     String getMainId() {
         log.info("VertxGuiceModule.getMainId");
-        return UlidCreator.getUlid().toLowerCase();
+        String mainId = UlidCreator.getUlid().toLowerCase();
+        log.info("生成MainId: {}", mainId);
+        return mainId;
     }
 
 }
