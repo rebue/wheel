@@ -153,6 +153,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                     final String address = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
                     log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + address);
                     this.vertx.eventBus().publish(address, null);
+                    log.info("是否开启 native transport: {}", vertx.isNativeTransportEnabled());
                     log.info("启动完成.");
                     startPromise.complete();
                 })
