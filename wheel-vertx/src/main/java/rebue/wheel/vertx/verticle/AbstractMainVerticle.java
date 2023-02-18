@@ -95,7 +95,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             if (stores == null) {
                 startWithConfig(startPromise, defaultConfigJsonObject);
             } else {
-                log.info("配置中心列表: {}", stores);
+                log.info("配置仓库数量: {}", stores.size());
                 final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
                 stores.forEach(store -> configRetrieverOptions.addStore(new ConfigStoreOptions((JsonObject) store)));
 
