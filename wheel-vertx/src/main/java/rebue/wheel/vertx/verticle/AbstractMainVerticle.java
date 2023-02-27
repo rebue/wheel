@@ -159,7 +159,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                         log.info("unregisterVerticleFactory: {}", verticleFactory.prefix());
                         this.vertx.unregisterVerticleFactory(verticleFactory);
                     });
-                    startWithConfig(null, newConfiguration);
+                    this.vertx.close();
                 }).onFailure(err -> log.error("取消部署verticle失败", err));
     }
 
