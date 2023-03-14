@@ -8,9 +8,17 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.httpproxy.ProxyContext;
 import io.vertx.httpproxy.ProxyInterceptor;
+import io.vertx.httpproxy.ProxyRequest;
 
 @VertxGen
 public interface ProxyInterceptorEx extends ProxyInterceptor {
+    /**
+     * 修改WebSocket的代理请求
+     *
+     * @param proxyRequest 要修改的代理请求
+     */
+    default void modifyProxyRequest(ProxyRequest proxyRequest) {
+    }
 
     /**
      * 响应前的事件

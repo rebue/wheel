@@ -55,6 +55,7 @@ public class ProxyHandlerImplEx implements ProxyHandler {
         // 在响应前添加拦截器，并且支持proxyContext参数，使其能在一次代理会话中传递参数
         httpProxy.handleEx(request, proxyContext -> {
             log.debug("ProxyHandler.handleEx.compose");
+            log.debug("foreach proxyInterceptor beforeResponse");
             final List<ProxyInterceptorEx> filters = httpProxy.getInterceptors();
             for (int i = filters.size() - 1; i >= 0; i--) {
                 final ProxyInterceptorEx filter = filters.get(i);

@@ -93,21 +93,32 @@ public class ReverseProxyEx implements HttpProxyEx {
 
         Proxy proxy = new Proxy(proxyRequest);
         proxy.filters = interceptors.listIterator();
+
         // XXX 以下是修改的部分
         if (beforeResponse == null) {
             proxy.sendRequest().compose(proxy::sendProxyResponse);
-            return;
+        } else {
+            proxy.sendRequest().compose(proxy::sendProxyResponse).onSuccess(v -> beforeResponse.accept(proxy));
         }
-        proxy.sendRequest().compose(proxy::sendProxyResponse).onSuccess(v -> beforeResponse.accept(proxy));
     }
 
+    /**
+     * XXX 复制原来的handleWebSocketUpgrade方法，因为过滤器可能要改变目标请求的uri，所以URI要用代理请求的uri，而不是被代理请求的uri，
+     *
+     * @param proxyRequest 代理请求
+     */
     private void handleWebSocketUpgrade(ProxyRequest proxyRequest) {
+        // XXX 添加调用拦截器修改代理请求
+        interceptors.forEach(proxyInterceptorEx -> proxyInterceptorEx.modifyProxyRequest(proxyRequest));
+
         HttpServerRequest proxiedRequest = proxyRequest.proxiedRequest();
         resolveOrigin(proxiedRequest).onComplete(ar -> {
             if (ar.succeeded()) {
                 HttpClientRequest request = ar.result();
                 request.setMethod(HttpMethod.GET);
-                request.setURI(proxiedRequest.uri());
+                // XXX 过滤器可能要改变目标请求的uri，所以这里用代理请求的URI，而不是用被代理请求的URI
+                request.setURI(proxyRequest.getURI());
+                log.debug("handleWebSocketUpgrade: request.getURI()={}", request.getURI());
                 request.headers().addAll(proxiedRequest.headers());
                 Future<HttpClientResponse> fut2 = request.connect();
                 proxiedRequest.handler(request::write);
