@@ -18,7 +18,7 @@ public class WebProperties {
     /**
      * 路由器是否解析 forwarded 类型的 headers
      * 默认 NONE: 不解析
-     * FORWARD: 标准的Forward header，https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+     * FORWARD: 标准的Forward header，<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded</a>
      * X_FORWARD: X-Forward-*
      * ALL: 支持 FORWARD 和 X_FORWARD
      */
