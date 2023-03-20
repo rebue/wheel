@@ -19,15 +19,15 @@ public class RequestBodyCachedHandler implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext ctx) {
         log.debug("RequestBodyCachedHandler.handle");
-        final String originBody = ctx.body().asString();
-        log.debug("originBody: {}", originBody);
-        if (originBody == null) {
+        final String originRequestBody = ctx.body().asString();
+        log.debug("originRequestBody: {}", originRequestBody);
+        if (originRequestBody == null) {
             log.warn("body is null");
             ctx.next();
             return;
         }
-        ctx.put("originBody", originBody);
-        ((RoutingContextInternal) ctx).setBody(Buffer.buffer(originBody));
+        ctx.put("originRequestBody", originRequestBody);
+        ((RoutingContextInternal) ctx).setBody(Buffer.buffer(originRequestBody));
         ctx.next();
     }
 

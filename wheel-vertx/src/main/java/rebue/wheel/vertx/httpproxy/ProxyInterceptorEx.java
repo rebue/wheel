@@ -25,7 +25,7 @@ public interface ProxyInterceptorEx extends ProxyInterceptor {
      *
      * @param routingContext 路由上下文
      * @param proxyContext   代理上下文
-     * @return 是否继续下一个拦截器
+     * @return 是否继续下一个代理拦截器
      */
     default boolean beforeResponse(RoutingContext routingContext, ProxyContext proxyContext) {
         return true;
