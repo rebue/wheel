@@ -8,6 +8,7 @@ import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.*;
@@ -44,6 +45,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("创建路由");
         final Router router = Router.router(this.vertx);
+
+        AllowForwardHeaders allowForwardHeaders = AllowForwardHeaders.valueOf(webProperties.getAllowForward());
+        log.info("设置allow forward: {}", allowForwardHeaders);
+        router.allowForward(allowForwardHeaders);
+
         // 全局route
         final Route globalRoute = router.route();
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
