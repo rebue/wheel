@@ -38,7 +38,7 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
 
         final MessageListener<String> messageListener = (consumer, msg) -> {
             final String data = msg.getValue();
-            log.debug("Message received: {}", data);
+            log.debug("接收到消息: {}", data);
             receivedData(data).compose(bool -> {
                 if (bool) {
                     try {
@@ -60,6 +60,7 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
         consumerBuilder = pulsarClient.newConsumer(Schema.STRING)
                 .topic(getTopic())
                 .subscriptionName(getSubscriptionName())
+                .subscriptionType(SubscriptionType.Shared)
                 .messageListener(messageListener);
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;

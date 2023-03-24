@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -177,7 +176,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("添加默认的注入模块VertxGuiceModule");
         guiceModules.add(new VertxGuiceModule(this.vertx, config));
         log.info("通过SPI加载AbstractModule模块");
-        ServiceLoader<AbstractModule> guiceModuleServiceLoader = ServiceLoader.load(AbstractModule.class);
+        ServiceLoader<Module> guiceModuleServiceLoader = ServiceLoader.load(Module.class);
         guiceModuleServiceLoader.forEach(guiceModules::add);
         log.info("添加自定义的注入模块");
         addGuiceModules(guiceModules);
