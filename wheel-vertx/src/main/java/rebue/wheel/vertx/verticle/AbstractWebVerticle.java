@@ -7,7 +7,9 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.SelfSignedCertificate;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
@@ -18,10 +20,12 @@ import rebue.wheel.vertx.guice.InjectorVerticle;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Map;
 
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {
     private HttpServer httpServer;
+    private HttpServer http2httpsServer;
 
     @Inject
     @Named("mainId")
@@ -91,10 +95,37 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             errorHandler.handle(ctx);
         });
 
+        if (webProperties.getSelfSignedCertificate()) {
+            log.info("实现自签名证书");
+            SelfSignedCertificate certificate = SelfSignedCertificate.create();
+            httpServerOptions
+                    .setSsl(true)
+                    .setKeyCertOptions(certificate.keyCertOptions())
+                    .setTrustOptions(certificate.trustOptions());
+        }
+
         log.info("配置路由器");
         configRouter(router);
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
+
+        Map<String, Object> http2https = webProperties.getHttp2https();
+        if (http2https != null) {
+            final HttpServerOptions http2httpsServerOptions = new HttpServerOptions(JsonObject.mapFrom(webProperties.getHttp2https()));
+            int                     http2httpsPort          = http2httpsServerOptions.getPort();
+            int                     httpsPort               = httpServerOptions.getPort();
+            Arguments.require(http2httpsPort != 0, "web.config.http2https.port不能为null或0");
+            Arguments.require(httpsPort != 0, "web.config.server.port不能为null或0");
+
+            this.http2httpsServer = this.vertx.createHttpServer(http2httpsServerOptions)
+                    .requestHandler(req -> req.response()
+                            .setStatusCode(301)
+                            .putHeader("Location", req.absoluteURI()
+                                    .replace("http", "https")
+                                    .replace(":" + http2httpsPort, ":" + httpsPort)
+                            )
+                            .end());
+        }
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
         log.info("WebVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
@@ -107,6 +138,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     @Override
     public void stop() {
         log.info("WebVerticle stop");
+        if (http2httpsServer != null) http2httpsServer.close();
         this.httpServer.close();
     }
 
@@ -127,6 +159,14 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                 log.error("HTTP server start fail", res.cause());
             }
         });
+        if (http2httpsServer != null) http2httpsServer.listen(res -> {
+            if (res.succeeded()) {
+                log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
+            } else {
+                log.error("HTTP to HTTPS server start fail", res.cause());
+            }
+        });
+
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {
