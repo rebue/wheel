@@ -37,6 +37,7 @@
         <module>wheel-serialization</module>
         <module>wheel-turing</module>
         <module>wheel-vertx</module>
+        <module>wheel-package</module>
     </modules>
 
     <properties>
@@ -47,6 +48,8 @@
         <spring.version>5.3.22</spring.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.72</bouncycastle18.version>
+        <netty.version>4.1.90.Final</netty.version>
+        <netty-tcnative>2.0.59.Final</netty-tcnative>
         <guice.version>5.1.0</guice.version>
         <dagger.version>2.42</dagger.version>
         <jackson.version>2.14.1</jackson.version>
@@ -71,37 +74,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-net</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-serialization</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-turing</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-vertx</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
@@ -149,7 +121,6 @@
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>${jackson-asl.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.bouncycastle</groupId>
@@ -466,6 +437,36 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-net</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-serialization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-turing</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-vertx</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
