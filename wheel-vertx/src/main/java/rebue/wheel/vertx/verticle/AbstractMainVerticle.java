@@ -28,6 +28,8 @@ import rebue.wheel.vertx.guice.VertxGuiceModule;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -78,14 +80,20 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     public void start(final Promise<Void> startPromise) {
         log.info("MainVerticle start");
 
-        ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
-                .setType("file")
-                .setFormat("yaml")
-                .setOptional(true)
-                .setConfig(new JsonObject().put("path", "conf" + File.separator + "config.yml"));
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
-                .setIncludeDefaultStores(true)
-                .addStore(defaultConfigStoreOptions);
+                .setIncludeDefaultStores(true);
+
+        String defaultConfigYamlFile = "conf" + File.separator + "config.yml";
+        if (Files.exists(Path.of(defaultConfigYamlFile))) {
+            log.debug("加载conf/config.yml文件的配置");
+            ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
+                    .setType("file")
+                    .setFormat("yaml")
+                    .setOptional(true)
+                    .setConfig(new JsonObject().put("path", defaultConfigYamlFile));
+            defaultConfigRetrieverOptions.addStore(defaultConfigStoreOptions);
+        }
+
         final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx, defaultConfigRetrieverOptions);
         defaultConfigRetriever.getConfig(defaultConfigRes -> {
             if (defaultConfigRes.failed()) {
