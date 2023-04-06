@@ -27,6 +27,7 @@ import rebue.wheel.vertx.guice.VertxGuiceModule;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -77,7 +78,15 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     public void start(final Promise<Void> startPromise) {
         log.info("MainVerticle start");
 
-        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx);
+        ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
+                .setType("file")
+                .setFormat("yaml")
+                .setOptional(true)
+                .setConfig(new JsonObject().put("path", "conf" + File.separator + "config.yml"));
+        ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
+                .setIncludeDefaultStores(true)
+                .addStore(defaultConfigStoreOptions);
+        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx, defaultConfigRetrieverOptions);
         defaultConfigRetriever.getConfig(defaultConfigRes -> {
             if (defaultConfigRes.failed()) {
                 log.warn("Get config failed", defaultConfigRes.cause());
