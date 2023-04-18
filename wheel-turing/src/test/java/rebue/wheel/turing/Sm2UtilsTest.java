@@ -1,6 +1,14 @@
 package rebue.wheel.turing;
 
-import java.io.UnsupportedEncodingException;
+import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -8,84 +16,236 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-import org.junit.jupiter.api.Test;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class Sm2UtilsTest {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     // 固定值，SM2签名的标识
-    private static final String USERID = "UwMDAwMjAwMDAwMDAwMDAxODciLAog";
-
-    // 生成公钥Base64编码字符串，该公钥字符串提供给其他系统
-    // 广西统一公共收付系统提供的测试环境公钥是（生产环境另外提供）：
-    private static final String privateKey = "MTliNDAyMzBmNDM3ZWEzOTg4NjM1YmUyNmIxMGFiNTdiY2Q2YzQ0YzYzOTYwYjAyNzIwMTc3Yzk2YTUxNWE5Zg==";
-    private static final String publicKey  = "MDQ1NGFjNWYyZTc0YmZlOWQzMjZkMTJiY2RiZDg5ODdhNzM2MzBmNTg2OGJjNjQxNGY2OTQzNjE0YWUwNDE1N2UzYjAyOWMwNWUwMDY5YTUxMWQ3YzVhZTdhZmExN2I4NmM0ZmQ4ODc4YzE2Y2MyNWRkMjRjZDY0NDA2MDk3MjQ4Yg==";
-    private static final String plainText  = "authCode=auth0000001&requestTime=1482809327714&bizParam=eyJwYXlDb2RlIjoiMTgxMTA0MTU0NzExMTEwMSJ9";
+    private static final String USER_ID = "1234567812345678";
 
     /**
      * 测试生成公私钥对
      */
     @Test
-    public void testGenKeyPair() throws Exception {
-        // 生成公私钥对
-        final KeyPair keyPair = Sm2Utils.generateKeyPair();
+    public void test01_genKeyPair() {
+        log.info("生成公私钥对");
+        KeyPair keyPair          = EcKeyUtils.generateKeyPair();
+        String  privateKeyString = EcKeyUtils.getPrivateKeyToString(keyPair);
+        log.info("生成Hex_Base64密钥");
+        log.info("  私钥: {}", privateKeyString);
+        String uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        String compressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex_Base64私钥");
+        BCECPrivateKey privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex_Base64公钥(非压缩)");
+        BCECPublicKey uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex_Base64公钥(压缩)");
+        BCECPublicKey compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
 
-        // 生成私钥Base64编码字符串，各自系统保存好自己的私钥，不外泄
-        final String privateKeyStr = Sm2Utils.getPrivateKeyString(keyPair);
-        log.info("私钥: {}", privateKeyStr);
+        log.info("生成Hex密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToHexString(keyPair);
+        log.info("  私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
 
-        // 生成公钥Base64编码字符串，该公钥字符串提供给其他系统
-        // 广西统一公共收付系统提供的测试环境公钥是（生产环境另外提供）：MDRhNzg4ZmU1NWRmZjYxN2Y3NTI2M2EyMjVjZWU5NzljODdkYzVkYjQ4ZDllOTljNTc3MTdmZWY0YzZlMmY1ZGMzNmQ0MTRjMzJjMjRlZjE4NTM0MGUwZTg2YjlkYjA1NzBhNzIxNzRiZTQ0OTgyNmQ5MmM3NDEwYzFkMzFiMGYxZQ==
-        final String publicKeyStr = Sm2Utils.getPublicKeyString(keyPair);
-        log.info("公钥: {}", publicKeyStr);
+        log.info("生成Base64密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        log.info("私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Base64私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
     }
 
+
+    /**
+     * 加密与解密
+     */
     @Test
-    public void test01() throws Exception {
-        // 生成签名
-        final BCECPrivateKey bcecPrivateKey = Sm2Utils.getPrivateKeyFromString(privateKey);
-        final String         sign           = sign(bcecPrivateKey, plainText);
-        System.out.println("生成签名： " + sign);
+    public void test02_encrypt() throws Exception {
+        log.info("生成公私钥对");
+        KeyPair keyPair          = EcKeyUtils.generateKeyPair();
+        String  privateKeyString = EcKeyUtils.getPrivateKeyToString(keyPair);
+        log.info("生成Hex_Base64密钥");
+        log.info("  私钥: {}", privateKeyString);
+        String uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        String compressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex_Base64私钥");
+        BCECPrivateKey privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex_Base64公钥(非压缩)");
+        BCECPublicKey uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex_Base64公钥(压缩)");
+        BCECPublicKey compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
+
+        log.info("生成Hex密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToHexString(keyPair);
+        log.info("  私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
+
+        log.info("生成Base64密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        log.info("私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Base64私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
+
+        String plainText = "你好，World！Hello, 世界!";
+        log.info("加密: {}", plainText);
+
+        String encryptedData = Sm2Utils.encrypt(plainText, uncompressedPublicKey);
+        log.info("公钥(非压缩)加密后的数据: {}", encryptedData);
+        String decryptText = Sm2Utils.decrypt(encryptedData, privateKey);
+        log.info("解密后的文本: {}", decryptText);
+
+        encryptedData = Sm2Utils.encrypt(plainText, compressedPublicKey);
+        log.info("公钥(压缩)加密后的数据: {}", encryptedData);
+        decryptText = Sm2Utils.decrypt(encryptedData, privateKey);
+        log.info("解密后的文本: {}", decryptText);
     }
 
+    /**
+     * 解密在线网站加密的数据
+     * https://the-x.cn/cryptography/Sm2.aspx
+     */
     @Test
-    public void test02() throws Exception {
-        // 验证签名
-        final BCECPublicKey bcecPublicKey = Sm2Utils.getPublicKeyFromString(publicKey);
-        System.out.println("验签结果：" + verifySign(bcecPublicKey, plainText,
-                "MzA0NDAyMjA3YzIwZTQ2Nzg4ZTQzMWUzYjc4ZjM5N2MyMGYzZTIxMDcyZTZlYWY4NDM4NGQwNWM5OTQwOThlOGJkMDI4YTQxMDIyMDUxMzQ5MGQ3YjlmNzMwYzJjOWQ0NmQ4NDUxMDMwNzA3ZTU4MmZlY2UzNDk5MmZlYmRiNTQ3NjQyOWJlZjYxMzA="));
+    public void test03_decrypt_online() throws InvalidCipherTextException {
+        String privateKeyString = "46c90cfd6babaef118fdf23c0748675dde9f7bfb0221a88c300d1f2f60241740";
+        log.info("获取私钥");
+        BCECPrivateKey privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        String encryptedData = "BF7Fr9bh/Gn5pBr1+N7MNQuuMr9RLXCxDhFExGt9AT/WtbcunONh8nay/u7raZ5XspZGurZTUX728JYTXgQ7v+IH0w0UD8wbcKVPricfQgEjwgGk6VD5JnxVr0z7J5LOfyTofuoeJlbgP4mslpZSUS/Qdh3+xOC3ncyWioX+IJk=";
+        log.info("在线网页加密后的数据: {}", encryptedData);
+        String decryptText = Sm2Utils.decrypt(encryptedData, privateKey);
+        log.info("解密后的文本: {}", decryptText);
+        Assertions.assertEquals("你好，World！Hello, 世界!", decryptText);
     }
 
+    /**
+     * 签名与验签
+     */
     @Test
-    public void test03() throws Exception {
-        // 生成公私钥对
-        final KeyPair keyPair = Sm2Utils.generateKeyPair();
+    public void test04_sign() {
+        log.info("生成公私钥对");
+        KeyPair keyPair          = EcKeyUtils.generateKeyPair();
+        String  privateKeyString = EcKeyUtils.getPrivateKeyToString(keyPair);
+        log.info("生成Hex_Base64密钥");
+        log.info("  私钥: {}", privateKeyString);
+        String uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        String compressedPublicKeyString = EcKeyUtils.getPublicKeyToString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex_Base64私钥");
+        BCECPrivateKey privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex_Base64公钥(非压缩)");
+        BCECPublicKey uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex_Base64公钥(压缩)");
+        BCECPublicKey compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
 
-        // 生成私钥Base64编码字符串，各自系统保存好自己的私钥，不外泄
-        final String privateKey = Sm2Utils.getPrivateKeyString(keyPair);
-        System.out.println("私钥:" + privateKey);
+        log.info("生成Hex密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToHexString(keyPair);
+        log.info("  私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToHexString(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Hex私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Hex公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        log.info("获取Hex公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
 
-        // 生成公钥Base64编码字符串，该公钥字符串提供给其他系统
-        // 广西统一公共收付系统提供的测试环境公钥是（生产环境另外提供）：MDRhNzg4ZmU1NWRmZjYxN2Y3NTI2M2EyMjVjZWU5NzljODdkYzVkYjQ4ZDllOTljNTc3MTdmZWY0YzZlMmY1ZGMzNmQ0MTRjMzJjMjRlZjE4NTM0MGUwZTg2YjlkYjA1NzBhNzIxNzRiZTQ0OTgyNmQ5MmM3NDEwYzFkMzFiMGYxZQ==
-        final String publicKey = Sm2Utils.getPublicKeyString(keyPair);
-        System.out.println("公钥:" + publicKey);
+        log.info("生成Base64密钥");
+        privateKeyString = EcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        log.info("私钥: {}", privateKeyString);
+        uncompressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
+        compressedPublicKeyString = EcKeyUtils.getPublicKeyToBase64String(keyPair);
+        log.info("  公钥(压缩): {}", compressedPublicKeyString);
+        log.info("获取Base64私钥");
+        privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(非压缩)");
+        uncompressedPublicKey = EcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        Assertions.assertNotNull(uncompressedPublicKey);
+        Assertions.assertNotNull(privateKey);
+        log.info("获取Base64公钥(压缩)");
+        compressedPublicKey = EcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        Assertions.assertNotNull(compressedPublicKey);
 
-        // 签名参数（按该顺序排列）,其中bizParam参数是业务参数的Base64编码
-        final String plainText = "authCode=auth0000001&requestTime=1482809327714&bizParam=eyJwYXlDb2RlIjoiMTgxMTA0MTU0NzExMTEwMSJ9";
+        String plainText = "你好，World！Hello, 世界!";
+        log.info("要签名的文本: {}", plainText);
 
-        // 生成签名
-        final BCECPrivateKey bcecPrivateKey = Sm2Utils.getPrivateKeyFromString(privateKey);
-        final String         sign           = sign(bcecPrivateKey, plainText);
-        System.out.println("生成签名： " + sign);
+        final String sign = sign(privateKey, plainText);
+        log.info("生成签名： {}", sign);
 
-        // 验证签名
-        final BCECPublicKey bcecPublicKey = Sm2Utils.getPublicKeyFromString(publicKey);
-        System.out.println("验签结果：" + verifySign(bcecPublicKey, plainText, sign));
+        boolean verifySignResult = verifySign(uncompressedPublicKey, plainText, sign);
+        log.info("公钥(非压缩)验签结果： {}", verifySignResult);
+        Assertions.assertTrue(verifySignResult);
+        verifySignResult = verifySign(compressedPublicKey, plainText, sign);
+        log.info("公钥(压缩)验签结果： {}", verifySignResult);
+        Assertions.assertTrue(verifySignResult);
     }
 
     /**
@@ -94,13 +254,11 @@ public class Sm2UtilsTest {
      * @param privateKey 私钥
      * @param plainText  签名参数
      */
-    public static String sign(final PrivateKey privateKey, final String plainText) throws UnsupportedEncodingException {
-        System.out.println("USERID: " + USERID);
-        System.out.println("msg: " + plainText);
-        final byte[] userId = USERID.getBytes(DEFAULT_CHARSET);
+    public static String sign(final PrivateKey privateKey, final String plainText) {
+        final byte[] userId = USER_ID.getBytes(DEFAULT_CHARSET);
         final byte[] msg    = plainText.getBytes(DEFAULT_CHARSET);
         final byte[] signed = Sm2Utils.signSm3WithSm2(msg, userId, privateKey);
-        return encodeBase64Str(signed);
+        return Base64.getEncoder().encodeToString(signed);
     }
 
     /**
@@ -112,27 +270,14 @@ public class Sm2UtilsTest {
      */
     public static boolean verifySign(final PublicKey publicKey, final String plainText, final String sign) {
         try {
-            final byte[] signed = decodeBase64(sign.getBytes(DEFAULT_CHARSET));
+            final byte[] signed = Base64.getDecoder().decode(sign.getBytes());
             final byte[] msg    = plainText.getBytes(DEFAULT_CHARSET);
-            final byte[] userId = USERID.getBytes(DEFAULT_CHARSET);
+            final byte[] userId = USER_ID.getBytes(DEFAULT_CHARSET);
             return Sm2Utils.verifySm3WithSm2(msg, userId, signed, publicKey);
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("验签出现异常", e);
+            return false;
         }
-        return false;
     }
 
-    /**
-     * Base64编码
-     */
-    public static String encodeBase64Str(final byte[] bytes) {
-        return new String(Base64.getEncoder().encode(bytes), DEFAULT_CHARSET);
-    }
-
-    /**
-     * Base64解码
-     */
-    public static byte[] decodeBase64(final byte[] bytes) {
-        return Base64.getDecoder().decode(bytes);
-    }
 }
