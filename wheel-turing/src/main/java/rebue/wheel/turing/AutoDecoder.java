@@ -31,7 +31,7 @@ public class AutoDecoder {
             log.debug("编码为Base64格式");
             return key;
         } else {
-            throw new RuntimeException("unsupported encode");
+            return encode.getBytes();
         }
     }
 
