@@ -83,7 +83,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 
-        String defaultConfigYamlFile = "conf" + File.separator + "config.yml";
+        String classpath             = Thread.currentThread().getContextClassLoader().getResource("/").getPath();
+        String defaultConfigYamlFile = classpath + File.separator + "conf" + File.separator + "config.yml";
         if (Files.exists(Path.of(defaultConfigYamlFile))) {
             log.debug("加载conf/config.yml文件的配置");
             ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
