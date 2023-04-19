@@ -205,6 +205,7 @@ public class Sm2Utils {
      */
     private static byte[] rsAsn1ToPlainByteArray(final byte[] rsDer) {
         final ASN1Sequence seq    = ASN1Sequence.getInstance(rsDer);
+        // r，s可能因为大正数的补0规则在第一个有效字节前面插了一个(byte)0，变成33个字节，在这里要修正回32个字节去
         final byte[]       r      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(0)).getValue());
         final byte[]       s      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(1)).getValue());
         final byte[]       result = new byte[RS_LEN * 2];
@@ -223,6 +224,7 @@ public class Sm2Utils {
         if (sign.length != RS_LEN * 2) {
             throw new RuntimeException("err sign. ");
         }
+        // c1x,c1y的第一个bit可能为1，这个时候要确保他们表示的大数一定是正数，所以new BigInteger符号强制设为正
         final BigInteger          r = new BigInteger(1, Arrays.copyOfRange(sign, 0, RS_LEN));
         final BigInteger          s = new BigInteger(1, Arrays.copyOfRange(sign, RS_LEN, RS_LEN * 2));
         final ASN1EncodableVector v = new ASN1EncodableVector();
