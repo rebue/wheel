@@ -22,6 +22,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
@@ -83,7 +84,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 
-        String classpath             = Thread.currentThread().getContextClassLoader().getResource("/").getPath();
+        String classpath             = FileUtils.getClassesPath(this.getClass());
         String defaultConfigYamlFile = classpath + File.separator + "conf" + File.separator + "config.yml";
         if (Files.exists(Path.of(defaultConfigYamlFile))) {
             log.debug("加载conf/config.yml文件的配置");
