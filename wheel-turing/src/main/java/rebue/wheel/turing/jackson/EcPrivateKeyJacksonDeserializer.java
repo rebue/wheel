@@ -1,7 +1,7 @@
 package rebue.wheel.turing.jackson;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
-import rebue.wheel.turing.EcKeyUtils;
+import rebue.wheel.turing.BcEcKeyUtils;
 
 import java.security.PrivateKey;
 
@@ -14,7 +14,7 @@ public class EcPrivateKeyJacksonDeserializer extends StdConverter<String, Privat
 
     @Override
     public PrivateKey convert(final String value) {
-        return EcKeyUtils.getPrivateKeyFromString(value);
+        return BcEcKeyUtils.getPrivateKeyFromString(value);
     }
 
 }
