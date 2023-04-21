@@ -14,7 +14,7 @@ public class EcPrivateKeyJacksonDeserializer extends StdConverter<String, Privat
 
     @Override
     public PrivateKey convert(final String value) {
-        return BcEcKeyUtils.getPrivateKeyFromString(value);
+        return BcEcKeyUtils.getPrivateKeyFromStr(value);
     }
 
 }

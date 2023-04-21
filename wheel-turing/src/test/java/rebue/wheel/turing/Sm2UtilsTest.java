@@ -31,56 +31,56 @@ public class Sm2UtilsTest {
     public void test01_genKeyPair() {
         log.info("生成公私钥对");
         KeyPair keyPair          = BcEcKeyUtils.generateKeyPair();
-        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToString(keyPair);
+        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToStr(keyPair);
         log.info("生成Hex_Base64密钥");
         log.info("  私钥: {}", privateKeyString);
-        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair, false);
+        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair);
+        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex_Base64私钥");
-        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex_Base64公钥(非压缩)");
-        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex_Base64公钥(压缩)");
-        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Hex密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexString(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexStr(keyPair);
         log.info("  私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Base64密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64Str(keyPair);
         log.info("私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Base64私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
     }
 
@@ -92,56 +92,56 @@ public class Sm2UtilsTest {
     public void test02_encrypt() throws Exception {
         log.info("生成公私钥对");
         KeyPair keyPair          = BcEcKeyUtils.generateKeyPair();
-        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToString(keyPair);
+        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToStr(keyPair);
         log.info("生成Hex_Base64密钥");
         log.info("  私钥: {}", privateKeyString);
-        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair, false);
+        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair);
+        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex_Base64私钥");
-        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex_Base64公钥(非压缩)");
-        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex_Base64公钥(压缩)");
-        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Hex密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexString(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexStr(keyPair);
         log.info("  私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Base64密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64Str(keyPair);
         log.info("私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Base64私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         String plainText = "你好，World！Hello, 世界!";
@@ -160,13 +160,13 @@ public class Sm2UtilsTest {
 
     /**
      * 解密在线网站加密的数据
-     * https://the-x.cn/cryptography/Sm2.aspx
+     * <a href="https://the-x.cn/cryptography/Sm2.aspx">在线网站</a>
      */
     @Test
     public void test03_decrypt_online() throws InvalidCipherTextException {
         String privateKeyString = "46c90cfd6babaef118fdf23c0748675dde9f7bfb0221a88c300d1f2f60241740";
         log.info("获取私钥");
-        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         String encryptedData = "BF7Fr9bh/Gn5pBr1+N7MNQuuMr9RLXCxDhFExGt9AT/WtbcunONh8nay/u7raZ5XspZGurZTUX728JYTXgQ7v+IH0w0UD8wbcKVPricfQgEjwgGk6VD5JnxVr0z7J5LOfyTofuoeJlbgP4mslpZSUS/Qdh3+xOC3ncyWioX+IJk=";
         log.info("在线网页加密后的数据: {}", encryptedData);
@@ -182,56 +182,56 @@ public class Sm2UtilsTest {
     public void test04_sign() {
         log.info("生成公私钥对");
         KeyPair keyPair          = BcEcKeyUtils.generateKeyPair();
-        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToString(keyPair);
+        String  privateKeyString = BcEcKeyUtils.getPrivateKeyToStr(keyPair);
         log.info("生成Hex_Base64密钥");
         log.info("  私钥: {}", privateKeyString);
-        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair, false);
+        String uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToString(keyPair);
+        String compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex_Base64私钥");
-        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        BCECPrivateKey privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex_Base64公钥(非压缩)");
-        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        BCECPublicKey uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex_Base64公钥(压缩)");
-        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        BCECPublicKey compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Hex密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexString(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToHexStr(keyPair);
         log.info("  私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexString(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToHexStr(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Hex私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Hex公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         log.info("获取Hex公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         log.info("生成Base64密钥");
-        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64String(keyPair);
+        privateKeyString = BcEcKeyUtils.getPrivateKeyToBase64Str(keyPair);
         log.info("私钥: {}", privateKeyString);
-        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair, false);
+        uncompressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair, false);
         log.info("  公钥(非压缩): {}", uncompressedPublicKeyString);
-        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64String(keyPair);
+        compressedPublicKeyString = BcEcKeyUtils.getPublicKeyToBase64Str(keyPair);
         log.info("  公钥(压缩): {}", compressedPublicKeyString);
         log.info("获取Base64私钥");
-        privateKey = BcEcKeyUtils.getPrivateKeyFromString(privateKeyString);
+        privateKey = BcEcKeyUtils.getPrivateKeyFromStr(privateKeyString);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(非压缩)");
-        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(uncompressedPublicKeyString);
+        uncompressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(uncompressedPublicKeyString);
         Assertions.assertNotNull(uncompressedPublicKey);
         Assertions.assertNotNull(privateKey);
         log.info("获取Base64公钥(压缩)");
-        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromString(compressedPublicKeyString);
+        compressedPublicKey = BcEcKeyUtils.getPublicKeyFromStr(compressedPublicKeyString);
         Assertions.assertNotNull(compressedPublicKey);
 
         String plainText = "你好，World！Hello, 世界!";

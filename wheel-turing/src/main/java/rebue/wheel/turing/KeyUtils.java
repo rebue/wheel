@@ -27,8 +27,8 @@ public class KeyUtils {
      * @throws NoSuchAlgorithmException 算法不支持
      * @throws InvalidKeySpecException  私钥字符串不正确
      */
-    public static PrivateKey getPrivateKeyFromString(String privateKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyFactory keyFactory = null;
+    public static PrivateKey getPrivateKeyFromStr(String privateKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory keyFactory;
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
         } catch (NoSuchProviderException e) {
@@ -47,8 +47,8 @@ public class KeyUtils {
      * @throws NoSuchAlgorithmException 算法不支持
      * @throws InvalidKeySpecException  公钥字符串不正确
      */
-    public static PublicKey getPublicKeyFromString(String publicKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyFactory keyFactory = null;
+    public static PublicKey getPublicKeyFromStr(String publicKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory keyFactory;
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
         } catch (NoSuchProviderException e) {
@@ -64,7 +64,7 @@ public class KeyUtils {
      * @param key 密钥
      * @return 编码后的字符串
      */
-    public static String encodeBase64ToString(Key key) {
+    public static String encodeBase64ToStr(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
@@ -84,7 +84,7 @@ public class KeyUtils {
      * @param key 密钥
      * @return 编码后的字符串
      */
-    public static String encodeHexToString(Key key) {
+    public static String encodeHexToStr(Key key) {
         return Hex.toHexString(key.getEncoded());
     }
 
@@ -94,7 +94,7 @@ public class KeyUtils {
      * @param key 密钥
      * @return 编码后的字符串
      */
-    public static String encodeHexBase64ToString(Key key) {
+    public static String encodeHexBase64ToStr(Key key) {
         return Base64.getEncoder().encodeToString(encodeHex(key));
     }
 
@@ -105,7 +105,7 @@ public class KeyUtils {
      * @return 编码后的字符串
      */
     public static String encode(Key key) {
-        return encodeBase64ToString(key);
+        return encodeBase64ToStr(key);
     }
 
     /**
@@ -117,11 +117,11 @@ public class KeyUtils {
     public static String encode(Key key, EncodeMode encodeMode) {
         switch (encodeMode) {
             case HEX:
-                return encodeHexToString(key);
+                return encodeHexToStr(key);
             case BASE64:
-                return encodeBase64ToString(key);
+                return encodeBase64ToStr(key);
             case HEX_BASE64:
-                return encodeHexBase64ToString(key);
+                return encodeHexBase64ToStr(key);
         }
         throw new RuntimeException();   // 代码不会运行到这里
     }

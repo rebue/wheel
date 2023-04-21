@@ -37,9 +37,9 @@ public class JwtUtilsTests {
         log.info("jwk.toECPrivateKey: {}", privateKeyEncode);
         String publicKeyEncode = KeyUtils.encode(((ECKey) jwk).toPublicKey());
         log.info("jwk.toECPublicKey: {}", publicKeyEncode);
-        PrivateKey privateKey = EcKeyUtils.getPrivateKeyFromString(privateKeyEncode);
+        PrivateKey privateKey = EcKeyUtils.getPrivateKeyFromStr(privateKeyEncode);
         log.info("jwk.privateKey: {}", new String(Base64.getEncoder().encode(privateKey.getEncoded())));
-        PublicKey publicKey = EcKeyUtils.getPublicKeyFromString(publicKeyEncode);
+        PublicKey publicKey = EcKeyUtils.getPublicKeyFromStr(publicKeyEncode);
         log.info("jwk.publicKey: {}", new String(Base64.getEncoder().encode(publicKey.getEncoded())));
         JWK privateKeyJwk = JwtUtils.toJwk(privateKey, publicKey);
         log.info("privateKey.jwk.toJSONString: {}", privateKeyJwk.toJSONString());

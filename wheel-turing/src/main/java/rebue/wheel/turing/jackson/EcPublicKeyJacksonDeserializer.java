@@ -14,7 +14,7 @@ public class EcPublicKeyJacksonDeserializer extends StdConverter<String, PublicK
 
     @Override
     public PublicKey convert(final String value) {
-        return BcEcKeyUtils.getPublicKeyFromString(value);
+        return BcEcKeyUtils.getPublicKeyFromStr(value);
     }
 
 }

@@ -84,7 +84,7 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPrivateKeyToHexString(final KeyPair keyPair) {
+    public static String getPrivateKeyToHexStr(final KeyPair keyPair) {
         return Hex.toHexString(getPrivateKey(keyPair));
     }
 
@@ -94,7 +94,7 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPrivateKeyToBase64String(final KeyPair keyPair) {
+    public static String getPrivateKeyToBase64Str(final KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(getPrivateKey(keyPair));
     }
 
@@ -105,7 +105,7 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    private static String getPrivateKeyToHexBase64String(KeyPair keyPair) {
+    private static String getPrivateKeyToHexBase64Str(KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(getPrivateKeyToHex(keyPair));
     }
 
@@ -127,8 +127,8 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPrivateKeyToString(final KeyPair keyPair) {
-        return getPrivateKeyToHexBase64String(keyPair);
+    public static String getPrivateKeyToStr(final KeyPair keyPair) {
+        return getPrivateKeyToHexBase64Str(keyPair);
     }
 
     /**
@@ -137,14 +137,14 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPrivateKeyToString(final KeyPair keyPair, EncodeMode encodeMode) {
+    public static String getPrivateKeyToStr(final KeyPair keyPair, EncodeMode encodeMode) {
         switch (encodeMode) {
             case HEX:
-                return getPrivateKeyToHexString(keyPair);
+                return getPrivateKeyToHexStr(keyPair);
             case BASE64:
-                return getPrivateKeyToBase64String(keyPair);
+                return getPrivateKeyToBase64Str(keyPair);
             case HEX_BASE64:
-                return getPrivateKeyToHexBase64String(keyPair);
+                return getPrivateKeyToHexBase64Str(keyPair);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -155,8 +155,8 @@ public class BcEcKeyUtils {
      * @param privateKeyEncode 私钥编码字符串(自动适配Hex或Base64编码，及先Hex再Base64编码的字符串)
      * @return 私钥
      */
-    public static BCECPrivateKey getPrivateKeyFromString(final String privateKeyEncode) {
-        return getPrivateKeyFromString(privateKeyEncode, EcAlgorithm.SM2);
+    public static BCECPrivateKey getPrivateKeyFromStr(final String privateKeyEncode) {
+        return getPrivateKeyFromStr(privateKeyEncode, EcAlgorithm.SM2);
     }
 
     /**
@@ -166,7 +166,7 @@ public class BcEcKeyUtils {
      * @param ecAlgorithm      椭圆曲线算法
      * @return 私钥
      */
-    public static BCECPrivateKey getPrivateKeyFromString(final String privateKeyEncode, EcAlgorithm ecAlgorithm) {
+    public static BCECPrivateKey getPrivateKeyFromStr(final String privateKeyEncode, EcAlgorithm ecAlgorithm) {
         byte[]           privateKey       = AutoDecoder.decode(privateKeyEncode);
         X9ECParameters   x9ECParameters   = GMNamedCurves.getByName(ecAlgorithm.getCode());
         ECParameterSpec  ecParameterSpec  = newEcParameterSpec(x9ECParameters);
@@ -214,8 +214,8 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToHexString(final KeyPair keyPair) {
-        return getPublicKeyToHexString(keyPair, true);
+    public static String getPublicKeyToHexStr(final KeyPair keyPair) {
+        return getPublicKeyToHexStr(keyPair, true);
     }
 
     /**
@@ -225,7 +225,7 @@ public class BcEcKeyUtils {
      * @param compressed 是否压缩
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToHexString(final KeyPair keyPair, boolean compressed) {
+    public static String getPublicKeyToHexStr(final KeyPair keyPair, boolean compressed) {
         return Hex.toHexString(getPublicKey(keyPair, compressed));
     }
 
@@ -235,8 +235,8 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToBase64String(final KeyPair keyPair) {
-        return getPublicKeyToBase64String(keyPair, true);
+    public static String getPublicKeyToBase64Str(final KeyPair keyPair) {
+        return getPublicKeyToBase64Str(keyPair, true);
     }
 
     /**
@@ -246,7 +246,7 @@ public class BcEcKeyUtils {
      * @param compressed 是否压缩
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToBase64String(final KeyPair keyPair, boolean compressed) {
+    public static String getPublicKeyToBase64Str(final KeyPair keyPair, boolean compressed) {
         return Base64.getEncoder().encodeToString(getPublicKey(keyPair, compressed));
     }
 
@@ -257,8 +257,8 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    private static String getPublicKeyToHexBaseString(KeyPair keyPair) {
-        return getPublicKeyToHexBaseString(keyPair, true);
+    private static String getPublicKeyToHexBaseStr(KeyPair keyPair) {
+        return getPublicKeyToHexBaseStr(keyPair, true);
     }
 
     /**
@@ -269,7 +269,7 @@ public class BcEcKeyUtils {
      * @param compressed 是否压缩
      * @return 编码后的字符串
      */
-    private static String getPublicKeyToHexBaseString(KeyPair keyPair, boolean compressed) {
+    private static String getPublicKeyToHexBaseStr(KeyPair keyPair, boolean compressed) {
         return Base64.getEncoder().encodeToString(getPublicKeyToHex(keyPair, compressed));
     }
 
@@ -280,8 +280,8 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToString(final KeyPair keyPair) {
-        return getPublicKeyToString(keyPair, true);
+    public static String getPublicKeyToStr(final KeyPair keyPair) {
+        return getPublicKeyToStr(keyPair, true);
     }
 
     /**
@@ -292,8 +292,8 @@ public class BcEcKeyUtils {
      * @param compressed 是否压缩
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToString(final KeyPair keyPair, boolean compressed) {
-        return getPublicKeyToHexBaseString(keyPair, compressed);
+    public static String getPublicKeyToStr(final KeyPair keyPair, boolean compressed) {
+        return getPublicKeyToHexBaseStr(keyPair, compressed);
     }
 
     /**
@@ -304,14 +304,14 @@ public class BcEcKeyUtils {
      * @param compressed 是否压缩
      * @return 编码后的字符串
      */
-    public static String getPublicKeyToString(final KeyPair keyPair, EncodeMode encodeMode, boolean compressed) {
+    public static String getPublicKeyToStr(final KeyPair keyPair, EncodeMode encodeMode, boolean compressed) {
         switch (encodeMode) {
             case HEX:
-                return getPublicKeyToHexString(keyPair, compressed);
+                return getPublicKeyToHexStr(keyPair, compressed);
             case BASE64:
-                return getPublicKeyToBase64String(keyPair, compressed);
+                return getPublicKeyToBase64Str(keyPair, compressed);
             case HEX_BASE64:
-                return getPublicKeyToHexBaseString(keyPair, compressed);
+                return getPublicKeyToHexBaseStr(keyPair, compressed);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -322,8 +322,8 @@ public class BcEcKeyUtils {
      * @param publicKeyEncode 公钥编码字符串(自动适配Hex或Base64编码，及先Hex再Base64编码的字符串)
      * @return 公钥
      */
-    public static BCECPublicKey getPublicKeyFromString(final String publicKeyEncode) {
-        return getPublicKeyFromString(publicKeyEncode, EcAlgorithm.SM2);
+    public static BCECPublicKey getPublicKeyFromStr(final String publicKeyEncode) {
+        return getPublicKeyFromStr(publicKeyEncode, EcAlgorithm.SM2);
     }
 
     /**
@@ -333,7 +333,7 @@ public class BcEcKeyUtils {
      * @param ecAlgorithm     椭圆曲线的算法
      * @return 公钥
      */
-    public static BCECPublicKey getPublicKeyFromString(final String publicKeyEncode, EcAlgorithm ecAlgorithm) {
+    public static BCECPublicKey getPublicKeyFromStr(final String publicKeyEncode, EcAlgorithm ecAlgorithm) {
         byte[]                publicKey       = AutoDecoder.decode(publicKeyEncode);
         X9ECParameters        x9ECParameters  = GMNamedCurves.getByName(ecAlgorithm.getCode());
         ECParameterSpec       ecParameterSpec = newEcParameterSpec(x9ECParameters);
