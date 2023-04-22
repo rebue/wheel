@@ -99,6 +99,16 @@ public class KeyUtils {
     }
 
     /**
+     * 对密钥进行Base64Url编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encodeBase64UrlToStr(Key key) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(key.getEncoded());
+    }
+
+    /**
      * 对密钥进行编码
      *
      * @param key 密钥
@@ -122,9 +132,10 @@ public class KeyUtils {
                 return encodeBase64ToStr(key);
             case HEX_BASE64:
                 return encodeHexBase64ToStr(key);
+            case BASE64URL:
+                return encodeBase64UrlToStr(key);
         }
         throw new RuntimeException();   // 代码不会运行到这里
     }
-
 
 }

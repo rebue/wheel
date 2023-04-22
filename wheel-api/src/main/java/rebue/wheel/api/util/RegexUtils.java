@@ -63,10 +63,17 @@ public class RegexUtils {
     }
 
     /**
-     * 判断是否是BASE64编码
+     * 判断是否是Base64编码
      */
     public static boolean matchBase64(final String text) {
         return BASE64.matcher(text).matches();
+    }
+
+    /**
+     * 判断是否是Base64Url编码
+     */
+    public static boolean matchBase64Url(final String text) {
+        return BASE64URL.matcher(text).matches();
     }
 
 

@@ -41,9 +41,14 @@ public class RegexConstant {
      */
     public static final Pattern HEX           = Pattern.compile("^[\\da-fA-F]+$");
     /**
-     * 16进制字符串
-     * 在base64编码中，字符集是[A-Z, a-z, 0-9, and + /]
+     * Base64字符串
+     * 在Base64编码中，字符集是[A-Z, a-z, 0-9, +, /, =]
      * 如果剩余长度小于4，则使用'='字符填充字符串
      */
     public static final Pattern BASE64        = Pattern.compile("^([A-Za-z\\d+/]{4})*([A-Za-z\\d+/]{3}=|[A-Za-z\\d+/]{2}==)?$");
+    /**
+     * Base64Url字符串
+     * 在Base64uUrl编码中，字符集是[A-Z, a-z, 0-9, -, _]
+     */
+    public static final Pattern BASE64URL     = Pattern.compile("^[A-Za-z\\d-_]+$");
 }

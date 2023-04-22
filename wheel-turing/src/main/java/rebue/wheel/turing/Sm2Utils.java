@@ -30,15 +30,13 @@ import java.util.Base64;
 
 @Slf4j
 public class Sm2Utils {
-    private static final SM2Engine sm2Engine = new SM2Engine(new SM3Digest(), SM2Engine.Mode.C1C3C2);
-
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     /**
      * 加密
      *
      * @param plainText 要加密的明文文本
-     * @param publicKey 公钥
+     * @param publicKey 加密用的公钥
      * @return 加密后的数据(经过了Base64编码得到的字符串)
      */
     public static String encrypt(String plainText, PublicKey publicKey) throws InvalidCipherTextException {
@@ -48,12 +46,26 @@ public class Sm2Utils {
     /**
      * 加密
      *
-     * @param plainText 要加密的明文文本
-     * @param publicKey 公钥
+     * @param plainText  要加密的明文文本
+     * @param publicKey  加密用的公钥
+     * @param encodeMode 加密的编码方式
      * @return 加密后的数据(经过了Base64编码得到的字符串)
      */
     public static String encrypt(String plainText, PublicKey publicKey, EncodeMode encodeMode) throws InvalidCipherTextException {
-        byte[] data = encrypt(plainText.getBytes(DEFAULT_CHARSET), publicKey);
+        return encrypt(plainText, publicKey, SM2Engine.Mode.C1C3C2, encodeMode);
+    }
+
+    /**
+     * 加密
+     *
+     * @param plainText  要加密的明文文本
+     * @param publicKey  加密用的公钥
+     * @param mode       引擎的模式
+     * @param encodeMode 加密的编码方式
+     * @return 加密后的数据(经过了Base64编码得到的字符串)
+     */
+    public static String encrypt(String plainText, PublicKey publicKey, SM2Engine.Mode mode, EncodeMode encodeMode) throws InvalidCipherTextException {
+        byte[] data = encrypt(plainText, publicKey, mode);
         switch (encodeMode) {
             case HEX:
                 return Hex.toHexString(data);
@@ -61,6 +73,8 @@ public class Sm2Utils {
                 return Base64.getEncoder().encodeToString(data);
             case HEX_BASE64:
                 return Base64.getEncoder().encodeToString(Hex.encode(data));
+            case BASE64URL:
+                return Base64.getUrlEncoder().withoutPadding().encodeToString(data);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -68,44 +82,67 @@ public class Sm2Utils {
     /**
      * 加密
      *
-     * @param data      要加密的数据
-     * @param publicKey 公钥
+     * @param plainText 要加密的数据
+     * @param publicKey 加密用的公钥
+     * @param mode      引擎的模式
      * @return 加密后的数据
      */
-    public static byte[] encrypt(byte[] data, PublicKey publicKey) throws InvalidCipherTextException {
+    public static byte[] encrypt(String plainText, PublicKey publicKey, SM2Engine.Mode mode) throws InvalidCipherTextException {
         BCECPublicKey         ecPublicKey           = (BCECPublicKey) publicKey;
         ECParameterSpec       ecParameterSpec       = ecPublicKey.getParameters();
         ECDomainParameters    ecDomainParameters    = newEcDomainParameters(ecParameterSpec);
         ECPublicKeyParameters ecPublicKeyParameters = new ECPublicKeyParameters(ecPublicKey.getQ(), ecDomainParameters);
+        SM2Engine             sm2Engine             = new SM2Engine(new SM3Digest(), mode);
         sm2Engine.init(true, new ParametersWithRandom(ecPublicKeyParameters));
+        byte[] data = plainText.getBytes(DEFAULT_CHARSET);
         return sm2Engine.processBlock(data, 0, data.length);
     }
 
     /**
      * 解密
      *
-     * @param data       要解密的字符串数据(自动适配Hex或Base64编码，及先Hex再Base64编码的字符串)
-     * @param privateKey 私钥
+     * @param encryptedData 加密的数据
+     * @param privateKey    解密用的私钥
      * @return 解密后的数据
      */
-    public static String decrypt(String data, PrivateKey privateKey) throws InvalidCipherTextException {
-        return new String(decrypt(AutoDecoder.decode(data), privateKey), DEFAULT_CHARSET);
+    public static String decrypt(String encryptedData, PrivateKey privateKey) throws InvalidCipherTextException {
+        return decrypt(encryptedData, privateKey, SM2Engine.Mode.C1C3C2);
     }
 
     /**
      * 解密
      *
-     * @param data       要解密的数据
-     * @param privateKey 私钥
+     * @param encryptedData 加密的数据
+     * @param privateKey    解密用的私钥
+     * @param mode          引擎的模式
      * @return 解密后的数据
      */
-    public static byte[] decrypt(byte[] data, PrivateKey privateKey) throws InvalidCipherTextException {
+    public static String decrypt(String encryptedData, PrivateKey privateKey, SM2Engine.Mode mode) throws InvalidCipherTextException {
         BCECPrivateKey         sm2PrivateKey          = (BCECPrivateKey) privateKey;
         ECParameterSpec        ecParameterSpec        = sm2PrivateKey.getParameters();
         ECDomainParameters     ecDomainParameters     = newEcDomainParameters(ecParameterSpec);
         ECPrivateKeyParameters ecPrivateKeyParameters = new ECPrivateKeyParameters(sm2PrivateKey.getD(), ecDomainParameters);
+        SM2Engine              sm2Engine              = new SM2Engine(new SM3Digest(), mode);
         sm2Engine.init(false, ecPrivateKeyParameters);
-        return sm2Engine.processBlock(data, 0, data.length);
+        byte[] data = AutoDecoder.decode(encryptedData);
+        return new String(sm2Engine.processBlock(data, 0, data.length), DEFAULT_CHARSET);
+    }
+
+    private static ECDomainParameters newEcDomainParameters(ECParameterSpec ecParameterSpec) {
+        return new ECDomainParameters(ecParameterSpec.getCurve(), ecParameterSpec.getG(), ecParameterSpec.getN(), ecParameterSpec.getH(), ecParameterSpec.getSeed());
+    }
+
+    /**
+     * 签名
+     *
+     * @param msg        需要签名的内容
+     * @param userId     签名需要用到的用户ID
+     * @param privateKey 签名需要用到私钥
+     * @return r||s，直接拼接byte数组的rs
+     */
+    public static String signSm3WithSm2(final String msg, final String userId, final PrivateKey privateKey) {
+        byte[] signed = signSm3WithSm2(msg.getBytes(DEFAULT_CHARSET), userId.getBytes(DEFAULT_CHARSET), privateKey);
+        return Base64.getEncoder().encodeToString(signed);
     }
 
     /**
@@ -146,12 +183,25 @@ public class Sm2Utils {
      *
      * @param msg       明文的内容
      * @param userId    签名需要用到的userId
-     * @param sign      要验证的签名
+     * @param signed    要验证的签名
      * @param publicKey 公钥
      * @return 签名是否正确
      */
-    public static boolean verifySm3WithSm2(final byte[] msg, final byte[] userId, final byte[] sign, final PublicKey publicKey) {
-        return verifySm3WithSm2Asn1Rs(msg, userId, rsPlainByteArrayToAsn1(sign), publicKey);
+    public static boolean verifySm3WithSm2(final String msg, final String userId, final String signed, final PublicKey publicKey) {
+        return verifySm3WithSm2(msg.getBytes(DEFAULT_CHARSET), userId.getBytes(DEFAULT_CHARSET), AutoDecoder.decode(signed), publicKey);
+    }
+
+    /**
+     * 校验签名
+     *
+     * @param msg       明文的内容
+     * @param userId    签名需要用到的userId
+     * @param signed    要验证的签名
+     * @param publicKey 公钥
+     * @return 签名是否正确
+     */
+    public static boolean verifySm3WithSm2(final byte[] msg, final byte[] userId, final byte[] signed, final PublicKey publicKey) {
+        return verifySm3WithSm2Asn1Rs(msg, userId, rsPlainByteArrayToAsn1(signed), publicKey);
     }
 
     /**
@@ -204,11 +254,11 @@ public class Sm2Utils {
      * @return sign result in plain byte array
      */
     private static byte[] rsAsn1ToPlainByteArray(final byte[] rsDer) {
-        final ASN1Sequence seq    = ASN1Sequence.getInstance(rsDer);
+        final ASN1Sequence seq = ASN1Sequence.getInstance(rsDer);
         // r，s可能因为大正数的补0规则在第一个有效字节前面插了一个(byte)0，变成33个字节，在这里要修正回32个字节去
-        final byte[]       r      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(0)).getValue());
-        final byte[]       s      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(1)).getValue());
-        final byte[]       result = new byte[RS_LEN * 2];
+        final byte[] r      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(0)).getValue());
+        final byte[] s      = bigIntToFixedLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(1)).getValue());
+        final byte[] result = new byte[RS_LEN * 2];
         System.arraycopy(r, 0, result, 0, r.length);
         System.arraycopy(s, 0, result, RS_LEN, s.length);
         return result;
@@ -235,10 +285,6 @@ public class Sm2Utils {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static ECDomainParameters newEcDomainParameters(ECParameterSpec ecParameterSpec) {
-        return new ECDomainParameters(ecParameterSpec.getCurve(), ecParameterSpec.getG(), ecParameterSpec.getN(), ecParameterSpec.getH(), ecParameterSpec.getSeed());
     }
 
 }

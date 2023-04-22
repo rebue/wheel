@@ -30,6 +30,10 @@ public class AutoDecoder {
             }
             log.debug("编码为Base64格式");
             return key;
+        } else if (RegexUtils.matchBase64Url(encode)) {
+            byte[] key = Base64.getUrlDecoder().decode(encode);
+            log.debug("编码为Base64Url格式");
+            return key;
         } else {
             return encode.getBytes();
         }

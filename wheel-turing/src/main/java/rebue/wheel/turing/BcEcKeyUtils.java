@@ -110,14 +110,13 @@ public class BcEcKeyUtils {
     }
 
     /**
-     * 从密钥对中获取私钥，并编码生成字符串
-     * 先进行16进制编码，再进行BASE64编码
+     * 从密钥对中获取私钥，并用Base64Url编码生成字符串
      *
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
-    private static String getPrivateKeyToPem(KeyPair keyPair) {
-        return Base64.getEncoder().encodeToString(getPrivateKeyToHex(keyPair));
+    public static String getPrivateKeyToBase64UrlStr(final KeyPair keyPair) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(getPrivateKey(keyPair));
     }
 
     /**
@@ -145,6 +144,8 @@ public class BcEcKeyUtils {
                 return getPrivateKeyToBase64Str(keyPair);
             case HEX_BASE64:
                 return getPrivateKeyToHexBase64Str(keyPair);
+            case BASE64URL:
+                return getPrivateKeyToBase64UrlStr(keyPair);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -250,6 +251,7 @@ public class BcEcKeyUtils {
         return Base64.getEncoder().encodeToString(getPublicKey(keyPair, compressed));
     }
 
+
     /**
      * 从密钥对中获取公钥，并编码生成字符串
      * 先进行16进制编码，再进行BASE64编码
@@ -271,6 +273,27 @@ public class BcEcKeyUtils {
      */
     private static String getPublicKeyToHexBaseStr(KeyPair keyPair, boolean compressed) {
         return Base64.getEncoder().encodeToString(getPublicKeyToHex(keyPair, compressed));
+    }
+
+    /**
+     * 从密钥对中获取公钥，并用Base64Url编码生成字符串
+     *
+     * @param keyPair 密钥对
+     * @return 编码后的字符串
+     */
+    public static String getPublicKeyToBase64UrlStr(final KeyPair keyPair) {
+        return getPublicKeyToBase64UrlStr(keyPair, true);
+    }
+
+    /**
+     * 从密钥对中获取公钥，并用Base64Url编码生成字符串
+     *
+     * @param keyPair    密钥对
+     * @param compressed 是否压缩
+     * @return 编码后的字符串
+     */
+    public static String getPublicKeyToBase64UrlStr(final KeyPair keyPair, boolean compressed) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(getPublicKey(keyPair, compressed));
     }
 
     /**
@@ -312,6 +335,8 @@ public class BcEcKeyUtils {
                 return getPublicKeyToBase64Str(keyPair, compressed);
             case HEX_BASE64:
                 return getPublicKeyToHexBaseStr(keyPair, compressed);
+            case BASE64URL:
+                return getPublicKeyToBase64UrlStr(keyPair, compressed);
         }
         throw new RuntimeException("unsupported encode mode");
     }
