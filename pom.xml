@@ -55,6 +55,7 @@
         <jackson.version>2.14.1</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <drools.version>8.38.0.Final</drools.version>
         <curator.version>5.4.0</curator.version>
         <slf4j.version>2.0.6</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
@@ -171,6 +172,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-bom</artifactId>
+                <type>pom</type>
+                <version>${drools.version}</version>
+                <scope>import</scope>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
