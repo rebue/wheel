@@ -6,7 +6,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>2.1.5</version>
+    <version>2.1.6</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,7 +30,7 @@
         <guice.version>7.0.0</guice.version>
         <pulsar.version>3.0.0</pulsar.version>
         <hazelcast.version>5.3.0</hazelcast.version>
-        <vertx.version>4.4.2</vertx.version>
+        <vertx.version>4.4.3</vertx.version>
     </properties>
 
     <dependencies>

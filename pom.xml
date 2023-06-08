@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>2.1.5</version>
+    <version>2.1.6</version>
     <packaging>pom</packaging>
     <description>基础函数和工具库</description>
 
@@ -63,7 +63,7 @@
         <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
         <logback.version>1.4.7</logback.version>
-        <vertx.version>4.4.2</vertx.version>
+        <vertx.version>4.4.3</vertx.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <spring-amqp.version>2.4.5</spring-amqp.version>
