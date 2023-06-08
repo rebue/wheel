@@ -9,7 +9,6 @@ public class CaseFormatUtils {
      * e.g., "lower-hyphen".
      *
      * @param str 小驼峰格式的字符串
-     *
      * @return 烤串格式的字符串
      */
     public static String lowerCamelToLowerHyphen(final String str) {
@@ -20,7 +19,6 @@ public class CaseFormatUtils {
      * 将大驼峰格式的字符串转换成烤串格式的字符串
      *
      * @param str 大驼峰格式的字符串
-     *
      * @return 烤串格式的字符串
      */
     public static String upperCamelToLowerHyphen(final String str) {

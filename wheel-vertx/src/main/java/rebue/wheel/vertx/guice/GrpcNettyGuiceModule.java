@@ -6,10 +6,10 @@ import io.grpc.ManagedChannel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.grpc.VertxChannelBuilder;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

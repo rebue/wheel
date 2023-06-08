@@ -5,11 +5,10 @@ import com.google.inject.Provides;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Pool;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.util.OracleUtils;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 @Slf4j
 public class OracleGuiceModule extends AbstractModule {

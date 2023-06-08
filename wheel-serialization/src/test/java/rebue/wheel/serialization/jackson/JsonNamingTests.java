@@ -1,11 +1,10 @@
 package rebue.wheel.serialization.jackson;
 
-import java.io.IOException;
-import java.util.Date;
-
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Date;
 
 @Slf4j
 public class JsonNamingTests {

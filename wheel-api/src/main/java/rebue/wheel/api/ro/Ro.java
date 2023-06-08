@@ -1,18 +1,15 @@
 package rebue.wheel.api.ro;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rebue.wheel.api.dic.ResultDic;
 
+import java.io.Serializable;
+
 /**
  * 返回结果
- *
- * @param 返回附加内容的类型
  */
 @Data
 @NoArgsConstructor
@@ -24,64 +21,64 @@ public class Ro implements Serializable {
     /**
      * 返回结果的类型
      */
-    protected ResultDic       result;
+    protected ResultDic result;
 
     /**
      * 返回结果的信息
      */
-    protected String          msg;
+    protected String msg;
 
     /**
      * 详情
      */
-    protected String          detail;
+    protected String detail;
 
     /**
      * 附加的内容
      * (如果前面的属性已经能够满足需求，可不需要附加的内容，设为null或不设置即可)
      */
-    protected Object          extra;
+    protected Object extra;
 
     /**
      * 返回结果的自定义编码
      * (如果通过result已经能够满足需求，可不需要自定义编码，设为null或不设置即可)
      */
-    protected String          code;
+    protected String code;
 
     public Ro(final ResultDic result, final String msg) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
     }
 
     public Ro(final ResultDic result, final Object extra) {
         this.result = result;
-        this.extra  = extra;
+        this.extra = extra;
     }
 
     public Ro(final ResultDic result, final String msg, final String detail) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
     }
 
     public Ro(final ResultDic result, final String msg, final String detail, final String code) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
-        this.code   = code;
+        this.code = code;
     }
 
     public Ro(final ResultDic result, final String msg, final Object extra) {
         this.result = result;
-        this.msg    = msg;
-        this.extra  = extra;
+        this.msg = msg;
+        this.extra = extra;
     }
 
     public Ro(final ResultDic result, final String msg, final String detail, final Object extra) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
-        this.extra  = extra;
+        this.extra = extra;
     }
 
     public static Ro success(final String msg) {

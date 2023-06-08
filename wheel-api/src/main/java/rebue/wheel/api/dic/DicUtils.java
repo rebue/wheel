@@ -43,7 +43,7 @@ public class DicUtils {
 
     /**
      * 根据code获取对应的字典值
-     * 
+     *
      * @param dicClass 字典类型
      * @param code     字典的编码
      */
@@ -53,7 +53,7 @@ public class DicUtils {
 
     /**
      * 判断code是否在字典中是有效的值
-     * 
+     *
      * @param dicClass 字典类型
      * @param code     字典的编码
      */

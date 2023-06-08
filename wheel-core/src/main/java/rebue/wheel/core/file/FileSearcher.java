@@ -1,5 +1,7 @@
 package rebue.wheel.core.file;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -8,28 +10,19 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * 文件搜索器<br>
  * 根据提供的正则表达式，递归搜索指定的目录下，匹配的文件
- * 
+ *
  * @since JDK1.8
  */
 @Slf4j
 public final class FileSearcher {
 
     /**
-     *
-     * @param sSearchRootDir
-     *                       查找的文件夹路径
-     * @param regex
-     *                       匹配文件名的正则表达式
-     * @param onMatched
-     *                       文件匹配事件
-     * 
+     * @param sSearchRootDir 查找的文件夹路径
+     * @param regex          匹配文件名的正则表达式
+     * @param onMatched      文件匹配事件
      * @throws IOException
      */
     public static void searchFiles(String sSearchRootDir, String regex, Consumer<File> onMatched) throws IOException {
@@ -53,20 +46,16 @@ public final class FileSearcher {
 
     /**
      * 递归搜索文件的方法，可将所有子目录的文件都查出来
-     * 
-     * @param searchDir
-     *                  查找的文件夹路径
-     * @param pattern
-     *                  匹配文件名的正则表达式
-     * @param onMatched
-     *                  文件匹配事件
+     *
+     * @param searchDir 查找的文件夹路径
+     * @param pattern   匹配文件名的正则表达式
+     * @param onMatched 文件匹配事件
      */
     private static void searchFiles0(File searchDir, Pattern pattern, Consumer<File> onMatched) {
         Stream.of(searchDir.listFiles()).forEach(file -> {
             if (file.isDirectory()) {
                 searchFiles0(file, pattern, onMatched);
-            }
-            else {
+            } else {
                 try {
                     // 注意，这里用的是getCanonicalPath，是经过解析后的路径
                     if (pattern.matcher(file.getCanonicalPath()).find()) {
@@ -80,12 +69,8 @@ public final class FileSearcher {
     }
 
     /**
-     *
-     * @param sSearchRootDir
-     *                       查找的文件夹路径
-     * @param pattern
-     *                       匹配文件名的正则表达式
-     * 
+     * @param sSearchRootDir 查找的文件夹路径
+     * @param pattern        匹配文件名的正则表达式
      * @throws IOException
      */
     public static List<File> searchFiles(String sSearchRootDir, Pattern pattern) throws IOException {
@@ -106,8 +91,7 @@ public final class FileSearcher {
         for (File file : searchDir.listFiles()) {
             if (file.isDirectory()) {
                 searchFiles1(file, pattern, files);
-            }
-            else {
+            } else {
                 if (pattern.matcher(file.getCanonicalPath()).find()) {
                     files.add(file);
                 }

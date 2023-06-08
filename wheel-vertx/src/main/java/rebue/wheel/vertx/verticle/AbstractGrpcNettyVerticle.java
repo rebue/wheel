@@ -7,12 +7,12 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.grpc.VertxServer;
 import io.vertx.grpc.VertxServerBuilder;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.GrpcNettyProperties;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 
 @Slf4j

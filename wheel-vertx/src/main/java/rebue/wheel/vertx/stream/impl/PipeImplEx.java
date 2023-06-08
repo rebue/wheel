@@ -1,22 +1,18 @@
 /**
  * XXX 复制4.3.7版本的io.vertx.core.streams.impl.PipeImpl，加上一些日志打印方便调试
- *
+ * <p>
  * Copyright (c) 2011-2019 Contributors to the Eclipse Foundation
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
 package rebue.wheel.vertx.stream.impl;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Promise;
-import io.vertx.core.VertxException;
+import io.vertx.core.*;
 import io.vertx.core.streams.Pipe;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.core.streams.WriteStream;
@@ -25,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipeImplEx<T> implements Pipe<T> {
 
-    private final Promise<Void> result;
-    private final ReadStream<T> src;
-    private boolean endOnSuccess = true;
-    private boolean endOnFailure = true;
-    private WriteStream<T> dst;
+    private final Promise<Void>  result;
+    private final ReadStream<T>  src;
+    private       boolean        endOnSuccess = true;
+    private       boolean        endOnFailure = true;
+    private       WriteStream<T> dst;
 
     public PipeImplEx(ReadStream<T> src) {
         this.src = src;
@@ -132,7 +128,7 @@ public class PipeImplEx<T> implements Pipe<T> {
 
     private void handleFailure(Throwable cause, Handler<AsyncResult<Void>> completionHandler) {
         Future<Void> res = Future.failedFuture(cause);
-        if (endOnFailure){
+        if (endOnFailure) {
             dst.end(ignore -> {
                 completionHandler.handle(res);
             });

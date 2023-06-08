@@ -1,5 +1,10 @@
 package rebue.wheel.net;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rebue.wheel.api.util.RegexUtils;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -11,25 +16,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import rebue.wheel.api.util.RegexUtils;
-
 public class NetUtils {
     private final static Logger _log = LoggerFactory.getLogger(NetUtils.class);
 
     /**
      * 指定第一网卡的名称
      */
-    private static String       _firstNetworkInterfaceName;
+    private static String _firstNetworkInterfaceName;
 
     /**
      * 指定第一网卡的名称
      *
-     * @param name
-     *             网卡名称
+     * @param name 网卡名称
      */
     public static void setFirstNetworkInterface(final String name) {
         _firstNetworkInterfaceName = name;
@@ -39,6 +37,7 @@ public class NetUtils {
      * 忽略的网卡
      */
     private static List<Pattern> _ignoreNetworkInterfaces = new LinkedList<>();
+
     static {
         _ignoreNetworkInterfaces.add(Pattern.compile("docker\\d{1,2}"));
     }
@@ -46,8 +45,7 @@ public class NetUtils {
     /**
      * 添加要忽略的网卡(多网卡下排除一些不合理的网卡)
      *
-     * @param regex
-     *              要忽略网卡的正则表达式
+     * @param regex 要忽略网卡的正则表达式
      */
     public static void addIgnoreNetworkInterface(final String regex) {
         _ignoreNetworkInterfaces.add(Pattern.compile(regex));
@@ -55,24 +53,24 @@ public class NetUtils {
 
     /**
      * FIXME 解决并发问题
-     *
      */
     private static class NetUtilsSingletonHolder {
         private static List<String> _macs = new LinkedList<>();
         private static List<String> _ips  = new LinkedList<>();
         private static String       _firstIp;
         private static String       _firstMac;
+
         static {
             _log.info("NetUtils类初始化：获取本机的IP地址和MAC地址");
             try {
                 final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
                 if (networkInterfaces != null) {
                     while (networkInterfaces.hasMoreElements()) {
-                        final NetworkInterface         networkInterface     = networkInterfaces.nextElement();
-                        final String                   networkInterfaceName = networkInterface.getName();
+                        final NetworkInterface networkInterface     = networkInterfaces.nextElement();
+                        final String           networkInterfaceName = networkInterface.getName();
                         // 获取网卡的所有IP地址
-                        final Enumeration<InetAddress> inetAddresses        = networkInterface.getInetAddresses();
-                        String                         ip                   = null, firstIp = null;
+                        final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                        String                         ip            = null, firstIp = null;
                         if (inetAddresses != null) {
                             while (inetAddresses.hasMoreElements()) {
                                 final InetAddress address = inetAddresses.nextElement();

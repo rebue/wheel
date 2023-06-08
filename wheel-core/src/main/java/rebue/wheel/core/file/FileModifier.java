@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 
 /**
  * 文件修改器
- * 
+ *
  * @since JDK1.8
  */
 public final class FileModifier {
 
-    private boolean        mIsModified = false;
+    private boolean mIsModified = false;
 
-    private String         mFileName;
+    private String mFileName;
 
-    private List<Adder>    mAdders     = new LinkedList<>();
-    private List<Modifier> mModifiers  = new LinkedList<>();
-    private List<String>   mDeleters   = new LinkedList<>();
+    private List<Adder>    mAdders    = new LinkedList<>();
+    private List<Modifier> mModifiers = new LinkedList<>();
+    private List<String>   mDeleters  = new LinkedList<>();
 
     public FileModifier(String fileName) {
         mFileName = fileName;
@@ -40,7 +40,7 @@ public final class FileModifier {
 
     /**
      * 修改一行
-     * 
+     *
      * @param matcher
      * @param older
      * @param newer
@@ -78,7 +78,7 @@ public final class FileModifier {
             for (Modifier modifier : mModifiers) {
                 if (line.matches(modifier.getMatcher())) {
                     mIsModified = true;
-                    line        = line.replaceAll(modifier.getOlder(), modifier.getNewer());
+                    line = line.replaceAll(modifier.getOlder(), modifier.getNewer());
                     break;
                 }
             }

@@ -1,11 +1,11 @@
 package rebue.wheel.serialization.kryo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 public class KryoUtils {
     static private final ThreadLocal<Kryo> kryos = ThreadLocal.withInitial(() -> {

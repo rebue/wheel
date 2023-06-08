@@ -1,5 +1,10 @@
 package rebue.wheel.net;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import rebue.wheel.core.OsUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -7,38 +12,26 @@ import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.core.OsUtils;
-
 @Slf4j
 public class AgentUtils {
     /**
      * 获取浏览器客户端IP
-     * 
-     * @param passProxy
-     *                  指出之前经过什么反向代理(只能设置为noproxy/nginx/apache/weblogic其中之一)
+     *
+     * @param passProxy 指出之前经过什么反向代理(只能设置为noproxy/nginx/apache/weblogic其中之一)
      */
     public static String getIpAddr(final HttpServletRequest req, final String passProxy) {
         log.info("获取浏览器客户端IP");
         String ip;
         if ("noproxy".equalsIgnoreCase(passProxy)) {
             ip = AgentUtils.getIpAddrNoPassProxy(req);
-        }
-        else {
+        } else {
             if ("nginx".equalsIgnoreCase(passProxy)) {
                 ip = AgentUtils.getIpAddrPassNginx(req);
-            }
-            else if ("apache".equalsIgnoreCase(passProxy)) {
+            } else if ("apache".equalsIgnoreCase(passProxy)) {
                 ip = AgentUtils.getIpAddrPassApache(req);
-            }
-            else if ("weblogic".equalsIgnoreCase(passProxy)) {
+            } else if ("weblogic".equalsIgnoreCase(passProxy)) {
                 ip = AgentUtils.getIpAddrPassWebLogic(req);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("passProxy配置错误，只能设置为noproxy/nginx/apache/weblogic其中之一");
             }
             if (ip == null) {
@@ -66,9 +59,8 @@ public class AgentUtils {
     /**
      * 获取浏览器客户端IP(在经过Nginx反向代理的情况下)
      * 在一般情况下使用request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
-     * 
+     * <p>
      * 本方法先从Header中获取X-Real-IP，如果不存在再从X-Forwarded-For获得第一个IP(用,分割)，如果还不存在则返回null
-     * 
      */
     public static String getIpAddrPassNginx(final HttpServletRequest req) {
         log.info("从Nginx反向代理后的请求头中获取X-Real-IP");
@@ -96,10 +88,8 @@ public class AgentUtils {
     /**
      * 获取浏览器客户端IP(在经过Apache反向代理的情况下)
      * 在一般情况下使用request.getRemoteAddr()即可，但是经过Apache等反向代理软件后，这个方法会失效。
-     * 
+     * <p>
      * 本方法先从Header中获取Proxy-Client-IP，如果还不存在则返回null
-     * 
-     * 
      */
     public static String getIpAddrPassApache(final HttpServletRequest req) {
         log.info("从Apache反向代理后的请求头中获取Proxy-Client-IP");
@@ -115,9 +105,8 @@ public class AgentUtils {
     /**
      * 获取浏览器客户端IP(在经过WebLogic反向代理的情况下)
      * 在一般情况下使用request.getRemoteAddr()即可，但是经过WebLogic等反向代理软件后，这个方法会失效。
-     * 
+     * <p>
      * 本方法先从Header中获取WL-Proxy-Client-IP，如果还不存在则返回null
-     * 
      */
     public static String getIpAddrPassWebLogic(final HttpServletRequest req) {
         log.info("从WebLogic反向代理后的请求头中获取WL-Proxy-Client-IP");
@@ -139,8 +128,7 @@ public class AgentUtils {
         if (StringUtils.isBlank(userAgent)) {
             log.info("没有获取到用户浏览器的信息");
             return "";
-        }
-        else {
+        } else {
             log.info("用户浏览器的信息: {}", userAgent);
             return userAgent;
         }
@@ -148,9 +136,8 @@ public class AgentUtils {
 
     /**
      * 获取来访者的浏览器版本
-     * 
+     *
      * @param req
-     * 
      * @return
      */
     public static String getRequestBrowserInfo(final HttpServletRequest req) {
@@ -161,20 +148,15 @@ public class AgentUtils {
         }
         if (header.indexOf("MSIE") > 0) {
             browserVersion = "IE";
-        }
-        else if (header.indexOf("Firefox") > 0) {
+        } else if (header.indexOf("Firefox") > 0) {
             browserVersion = "Firefox";
-        }
-        else if (header.indexOf("Chrome") > 0) {
+        } else if (header.indexOf("Chrome") > 0) {
             browserVersion = "Chrome";
-        }
-        else if (header.indexOf("Safari") > 0) {
+        } else if (header.indexOf("Safari") > 0) {
             browserVersion = "Safari";
-        }
-        else if (header.indexOf("Camino") > 0) {
+        } else if (header.indexOf("Camino") > 0) {
             browserVersion = "Camino";
-        }
-        else if (header.indexOf("Konqueror") > 0) {
+        } else if (header.indexOf("Konqueror") > 0) {
             browserVersion = "Konqueror";
         }
         return browserVersion;
@@ -182,9 +164,8 @@ public class AgentUtils {
 
     /**
      * 获取系统版本信息
-     * 
+     *
      * @param req
-     * 
      * @return
      */
     public static String getRequestSystemInfo(final HttpServletRequest req) {
@@ -196,50 +177,35 @@ public class AgentUtils {
         // 得到用户的操作系统
         if (header.indexOf("NT 6.0") > 0) {
             systenInfo = "Windows Vista/Server 2008";
-        }
-        else if (header.indexOf("NT 5.2") > 0) {
+        } else if (header.indexOf("NT 5.2") > 0) {
             systenInfo = "Windows Server 2003";
-        }
-        else if (header.indexOf("NT 5.1") > 0) {
+        } else if (header.indexOf("NT 5.1") > 0) {
             systenInfo = "Windows XP";
-        }
-        else if (header.indexOf("NT 6.0") > 0) {
+        } else if (header.indexOf("NT 6.0") > 0) {
             systenInfo = "Windows Vista";
-        }
-        else if (header.indexOf("NT 6.1") > 0) {
+        } else if (header.indexOf("NT 6.1") > 0) {
             systenInfo = "Windows 7";
-        }
-        else if (header.indexOf("NT 6.2") > 0) {
+        } else if (header.indexOf("NT 6.2") > 0) {
             systenInfo = "Windows Slate";
-        }
-        else if (header.indexOf("NT 6.3") > 0) {
+        } else if (header.indexOf("NT 6.3") > 0) {
             systenInfo = "Windows 9";
-        }
-        else if (header.indexOf("NT 5") > 0) {
+        } else if (header.indexOf("NT 5") > 0) {
             systenInfo = "Windows 2000";
-        }
-        else if (header.indexOf("NT 4") > 0) {
+        } else if (header.indexOf("NT 4") > 0) {
             systenInfo = "Windows NT4";
-        }
-        else if (header.indexOf("Me") > 0) {
+        } else if (header.indexOf("Me") > 0) {
             systenInfo = "Windows Me";
-        }
-        else if (header.indexOf("98") > 0) {
+        } else if (header.indexOf("98") > 0) {
             systenInfo = "Windows 98";
-        }
-        else if (header.indexOf("95") > 0) {
+        } else if (header.indexOf("95") > 0) {
             systenInfo = "Windows 95";
-        }
-        else if (header.indexOf("Mac") > 0) {
+        } else if (header.indexOf("Mac") > 0) {
             systenInfo = "Mac";
-        }
-        else if (header.indexOf("Unix") > 0) {
+        } else if (header.indexOf("Unix") > 0) {
             systenInfo = "UNIX";
-        }
-        else if (header.indexOf("Linux") > 0) {
+        } else if (header.indexOf("Linux") > 0) {
             systenInfo = "Linux";
-        }
-        else if (header.indexOf("SunOS") > 0) {
+        } else if (header.indexOf("SunOS") > 0) {
             systenInfo = "SunOS";
         }
         return systenInfo;
@@ -247,9 +213,8 @@ public class AgentUtils {
 
     /**
      * 获取来访者的主机名称
-     * 
+     *
      * @param ip
-     * 
      * @return
      */
     public static String getHostName(final String ip) {
@@ -265,9 +230,8 @@ public class AgentUtils {
 
     /**
      * 命令获取mac地址
-     * 
+     *
      * @param cmd
-     * 
      * @return
      */
     private static String callCmd(final String[] cmd) {
@@ -287,17 +251,9 @@ public class AgentUtils {
     }
 
     /**
-     * 
-     * 
-     * 
-     * @param cmd
-     *                第一个命令
-     * 
-     * @param another
-     *                第二个命令
-     * 
+     * @param cmd     第一个命令
+     * @param another 第二个命令
      * @return 第二个命令的执行结果
-     * 
      */
 
     private static String callCmd(final String[] cmd, final String[] another) {
@@ -320,20 +276,10 @@ public class AgentUtils {
     }
 
     /**
-     * 
-     * 
-     * 
-     * @param ip
-     *                     目标ip,一般在局域网内
-     * 
-     * @param sourceString
-     *                     命令处理的结果字符串
-     * 
-     * @param macSeparator
-     *                     mac分隔符号
-     * 
+     * @param ip           目标ip,一般在局域网内
+     * @param sourceString 命令处理的结果字符串
+     * @param macSeparator mac分隔符号
      * @return mac地址，用上面的分隔符号表示
-     * 
      */
 
     private static String filterMacAddress(final String ip, final String sourceString, final String macSeparator) {
@@ -351,20 +297,17 @@ public class AgentUtils {
     }
 
     /**
-     * @param ip
-     *           目标ip
-     * 
+     * @param ip 目标ip
      * @return Mac Address
-     * 
      */
 
     private static String getMacInWindows(final String ip) {
-        String         result    = "";
-        final String[] cmd       = { "cmd", "/c", "ping " + ip
+        String result = "";
+        final String[] cmd = {"cmd", "/c", "ping " + ip
         };
-        final String[] another   = { "cmd", "/c", "arp -a"
+        final String[] another = {"cmd", "/c", "arp -a"
         };
-        final String   cmdResult = callCmd(cmd, another);
+        final String cmdResult = callCmd(cmd, another);
         log.info("ping的结果: {}", cmdResult);
         if (StringUtils.isBlank(cmdResult)) {
             return null;
@@ -374,18 +317,14 @@ public class AgentUtils {
     }
 
     /**
-     * 
-     * @param ip
-     *           目标ip
-     * 
+     * @param ip 目标ip
      * @return Mac Address
-     * 
      */
     private static String getMacInLinux(final String ip) {
-        String         result    = "";
-        final String[] cmd       = { "/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a"
+        String result = "";
+        final String[] cmd = {"/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a"
         };
-        final String   cmdResult = callCmd(cmd);
+        final String cmdResult = callCmd(cmd);
         log.info("ping的结果: {}", cmdResult);
         if (StringUtils.isBlank(cmdResult)) {
             return null;
@@ -396,7 +335,7 @@ public class AgentUtils {
 
     /**
      * 获取MAC地址
-     * 
+     *
      * @return 返回MAC地址
      */
     public static String getMacAddress(final String ip) {
@@ -404,8 +343,7 @@ public class AgentUtils {
         String macAddress = "";
         if (OsUtils.isWin()) {
             macAddress = getMacInWindows(ip);
-        }
-        else {
+        } else {
             macAddress = getMacInLinux(ip);
         }
         if (StringUtils.isBlank(macAddress)) {

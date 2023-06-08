@@ -20,14 +20,14 @@ import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -162,7 +162,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      */
     @SneakyThrows
     private void handleConfigChange(Message<JsonObject> message) {
-        JsonObject newConfiguration = message.body();
         log.info("处理配置改变");
         this.configChangedConsumer.unregister();
         log.info("undeploy verticles");

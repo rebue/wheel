@@ -7,7 +7,6 @@ import java.math.BigDecimal;
  * XXX wheel : 浮点运算: 注意在构造Double类型的BigDecimal时不能直接用new BigDecimal(Double)的方法
  *
  * @author zbz
- *
  */
 public class BigDecimalUtils {
     /**

@@ -5,12 +5,12 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import rebue.wheel.vertx.config.XxlJobProperties;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.LinkedList;
 import java.util.List;
 

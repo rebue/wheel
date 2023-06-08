@@ -24,15 +24,15 @@ import java.util.Date;
 
 class Resource {
 
-    final String absoluteUri;
-    final int statusCode;
-    final String statusMessage;
+    final String   absoluteUri;
+    final int      statusCode;
+    final String   statusMessage;
     final MultiMap headers;
-    final long timestamp;
-    final long maxAge;
-    final Date lastModified;
-    final String etag;
-    final Buffer content = Buffer.buffer();
+    final long     timestamp;
+    final long     maxAge;
+    final Date     lastModified;
+    final String   etag;
+    final Buffer   content = Buffer.buffer();
 
     Resource(String absoluteUri, int statusCode, String statusMessage, MultiMap headers, long timestamp, long maxAge) {
         String lastModifiedHeader = headers.get(HttpHeaders.LAST_MODIFIED);

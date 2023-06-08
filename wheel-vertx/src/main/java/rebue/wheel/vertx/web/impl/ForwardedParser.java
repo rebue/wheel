@@ -1,21 +1,21 @@
 /**
  * 复制4.3.7版本的io.vertx.ext.web.impl.ForwardedParser
  * 原类不是public的，外部无法访问，未做任何改动
- *
- *
+ * <p>
+ * <p>
  * Copyright 2014 Red Hat, Inc.
- *
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  and Apache License v2.0 which accompanies this distribution.
- *
- *  The Eclipse Public License is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- *
- *  The Apache License v2.0 is available at
- *  http://www.opensource.org/licenses/apache2.0.php
- *
- *  You may elect to redistribute this code under either of these licenses.
+ * <p>
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Apache License v2.0 which accompanies this distribution.
+ * <p>
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p>
+ * The Apache License v2.0 is available at
+ * http://www.opensource.org/licenses/apache2.0.php
+ * <p>
+ * You may elect to redistribute this code under either of these licenses.
  */
 
 // This code was Heavily influenced from spring forward header parser
@@ -38,27 +38,27 @@ import java.util.regex.Pattern;
 class ForwardedParser {
     private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 
-    private static final String HTTP_SCHEME = "http";
-    private static final String HTTPS_SCHEME = "https";
-    private static final AsciiString FORWARDED = AsciiString.cached("Forwarded");
-    private static final AsciiString X_FORWARDED_SSL = AsciiString.cached("X-Forwarded-Ssl");
+    private static final String      HTTP_SCHEME       = "http";
+    private static final String      HTTPS_SCHEME      = "https";
+    private static final AsciiString FORWARDED         = AsciiString.cached("Forwarded");
+    private static final AsciiString X_FORWARDED_SSL   = AsciiString.cached("X-Forwarded-Ssl");
     private static final AsciiString X_FORWARDED_PROTO = AsciiString.cached("X-Forwarded-Proto");
-    private static final AsciiString X_FORWARDED_HOST = AsciiString.cached("X-Forwarded-Host");
-    private static final AsciiString X_FORWARDED_PORT = AsciiString.cached("X-Forwarded-Port");
-    private static final AsciiString X_FORWARDED_FOR = AsciiString.cached("X-Forwarded-For");
+    private static final AsciiString X_FORWARDED_HOST  = AsciiString.cached("X-Forwarded-Host");
+    private static final AsciiString X_FORWARDED_PORT  = AsciiString.cached("X-Forwarded-Port");
+    private static final AsciiString X_FORWARDED_FOR   = AsciiString.cached("X-Forwarded-For");
 
-    private static final Pattern FORWARDED_HOST_PATTERN = Pattern.compile("host=\"?([^;,\"]+)\"?");
+    private static final Pattern FORWARDED_HOST_PATTERN  = Pattern.compile("host=\"?([^;,\"]+)\"?");
     private static final Pattern FORWARDED_PROTO_PATTERN = Pattern.compile("proto=\"?([^;,\"]+)\"?");
-    private static final Pattern FORWARDED_FOR_PATTERN = Pattern.compile("for=\"?([^;,\"]+)\"?");
+    private static final Pattern FORWARDED_FOR_PATTERN   = Pattern.compile("for=\"?([^;,\"]+)\"?");
 
-    private final HttpServerRequest delegate;
+    private final HttpServerRequest   delegate;
     private final AllowForwardHeaders allowForward;
 
-    private boolean calculated;
-    private String host;
-    private int port = -1;
-    private String scheme;
-    private String absoluteURI;
+    private boolean       calculated;
+    private String        host;
+    private int           port = -1;
+    private String        scheme;
+    private String        absoluteURI;
     private SocketAddress remoteAddress;
 
     ForwardedParser(HttpServerRequest delegate, AllowForwardHeaders allowForward) {
@@ -135,8 +135,8 @@ class ForwardedParser {
     private void calculateForward() {
         String forwarded = delegate.getHeader(FORWARDED);
         if (forwarded != null) {
-            String forwardedToUse = forwarded.split(",")[0];
-            Matcher matcher = FORWARDED_PROTO_PATTERN.matcher(forwardedToUse);
+            String  forwardedToUse = forwarded.split(",")[0];
+            Matcher matcher        = FORWARDED_PROTO_PATTERN.matcher(forwardedToUse);
             if (matcher.find()) {
                 scheme = (matcher.group(1).trim());
                 port = -1;
@@ -155,7 +155,7 @@ class ForwardedParser {
     }
 
     private void calculateXForward() {
-        String forwardedSsl = delegate.getHeader(X_FORWARDED_SSL);
+        String  forwardedSsl     = delegate.getHeader(X_FORWARDED_SSL);
         boolean isForwardedSslOn = forwardedSsl != null && forwardedSsl.equalsIgnoreCase("on");
 
         String protocolHeader = delegate.getHeader(X_FORWARDED_PROTO);
@@ -201,9 +201,9 @@ class ForwardedParser {
     }
 
     private SocketAddress parseFor(String forToParse, int defaultPort) {
-        String host = forToParse;
-        int port = defaultPort;
-        int portSeparatorIdx = forToParse.lastIndexOf(':');
+        String host             = forToParse;
+        int    port             = defaultPort;
+        int    portSeparatorIdx = forToParse.lastIndexOf(':');
         if (portSeparatorIdx > forToParse.lastIndexOf(']')) {
             host = forToParse.substring(0, portSeparatorIdx);
             port = parsePort(forToParse.substring(portSeparatorIdx + 1), defaultPort);

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 /**
  * XXX 属性命名策略的扩展，序列化时不变化，反序列化时变化
  * 从com.fasterxml.jackson.databind.PropertyNamingStrategies复制并进行了相应修改
- *
+ * <p>
  * Container for standard {@link PropertyNamingStrategy} implementations
  * and singleton instances.
  * <p>
@@ -54,14 +54,14 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <p>
      * Example external property names would be "number_value", "naming_strategy", "the_definite_proof".
      */
-    public static final PropertyNamingStrategy SNAKE_CASE       = new SnakeCaseStrategy();
+    public static final PropertyNamingStrategy SNAKE_CASE = new SnakeCaseStrategy();
 
     /**
      * Naming convention in which the words are in upper-case letters, separated by underscores.
      * See {@link UpperSnakeCaseStrategy} for details.
      *
      * @since 2.13
-     *        <p>
+     * <p>
      */
     public static final PropertyNamingStrategy UPPER_SNAKE_CASE = new UpperSnakeCaseStrategy();
 
@@ -72,7 +72,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <p>
      * Example external property names would be "numbervalue", "namingstrategy", "thedefiniteproof".
      */
-    public static final PropertyNamingStrategy LOWER_CASE       = new LowerCaseStrategy();
+    public static final PropertyNamingStrategy LOWER_CASE = new LowerCaseStrategy();
 
     /**
      * Naming convention used in languages like Lisp, where words are in lower-case
@@ -81,7 +81,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <p>
      * Example external property names would be "number-value", "naming-strategy", "the-definite-proof".
      */
-    public static final PropertyNamingStrategy KEBAB_CASE       = new KebabCaseStrategy();
+    public static final PropertyNamingStrategy KEBAB_CASE = new KebabCaseStrategy();
 
     /**
      * Naming convention widely used as configuration properties name, where words are in
@@ -90,7 +90,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <p>
      * Example external property names would be "number.value", "naming.strategy", "the.definite.proof".
      */
-    public static final PropertyNamingStrategy LOWER_DOT_CASE   = new LowerDotCaseStrategy();
+    public static final PropertyNamingStrategy LOWER_DOT_CASE = new LowerDotCaseStrategy();
 
     /*
      * /**********************************************************************
@@ -122,7 +122,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
 
         @Override
         public String nameForConstructorParameter(MapperConfig<?> config, AnnotatedParameter ctorParam,
-                String defaultName) {
+                                                  String defaultName) {
             return translate(defaultName);
         }
 
@@ -259,7 +259,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
                             result.append('_');
                             resultLength++;
                         }
-                        c                 = Character.toLowerCase(c);
+                        c = Character.toLowerCase(c);
                         wasPrevTranslated = true;
                     } else {
                         wasPrevTranslated = false;
@@ -315,7 +315,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <li>The first lower-case letter in the Java property name is translated
      * into its equivalent upper-case representation.</li>
      * </ul>
-     *
+     * <p>
      * This rules result in the following example translation from
      * Java property names to JSON element names.
      * <ul>
@@ -327,12 +327,11 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
 
         /**
          * Converts camelCase to PascalCase
-         *
+         * <p>
          * For example, "userName" would be converted to
          * "UserName".
          *
          * @param input formatted as camelCase string
-         *
          * @return input converted to PascalCase format
          */
         @Override

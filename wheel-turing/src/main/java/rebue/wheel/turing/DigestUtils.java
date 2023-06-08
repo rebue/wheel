@@ -1,17 +1,16 @@
 package rebue.wheel.turing;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
+
 import java.security.MessageDigest;
 import java.security.Security;
 import java.util.Arrays;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
 
 /**
  * 摘要算法(使用BouncyCastle实现算法)
  *
  * @author zbz
- *
  */
 public class DigestUtils {
     static {

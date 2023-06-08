@@ -14,7 +14,6 @@ import io.vertx.httpproxy.ProxyRequest;
 import io.vertx.httpproxy.ProxyResponse;
 import io.vertx.httpproxy.impl.ParseUtils;
 import io.vertx.httpproxy.spi.cache.Cache;
-
 import rebue.wheel.vertx.httpproxy.ProxyInterceptorEx;
 
 import java.util.Date;
@@ -124,7 +123,7 @@ class CachingFilter implements ProxyInterceptorEx {
         if (cacheControlHeader != null) {
             CacheControl cacheControl = new CacheControl().parse(cacheControlHeader);
             if (cacheControl.maxAge() >= 0) {
-                long now = System.currentTimeMillis();
+                long now        = System.currentTimeMillis();
                 long currentAge = now - resource.timestamp;
                 if (currentAge > cacheControl.maxAge() * 1000) {
                     String etag = resource.headers.get(HttpHeaders.ETAG);

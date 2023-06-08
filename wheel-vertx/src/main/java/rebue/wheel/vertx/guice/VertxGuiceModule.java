@@ -6,10 +6,9 @@ import com.google.inject.Provides;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 @Slf4j
 public class VertxGuiceModule extends AbstractModule {

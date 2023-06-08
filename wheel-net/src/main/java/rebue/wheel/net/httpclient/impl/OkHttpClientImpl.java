@@ -55,8 +55,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.info("接收到response的信息：{}", msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -66,7 +65,6 @@ public class OkHttpClientImpl implements HttpClient {
      * 发出POST请求
      *
      * @param url 请求的地址
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -79,8 +77,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -91,7 +88,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -107,8 +103,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -119,7 +114,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url        请求的地址
      * @param jsonParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -132,8 +126,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug("接收到response的信息：{}", msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -144,7 +137,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数(一个Bean或Map&lt;String,Object$gt;)
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -157,7 +149,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url       请求的地址
      * @param xmlParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -168,8 +159,7 @@ public class OkHttpClientImpl implements HttpClient {
         final Response    response = _client.newCall(request).execute();
         if (response.isSuccessful()) {
             return XmlUtils.xmlToMap(response.body().string());
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -179,7 +169,6 @@ public class OkHttpClientImpl implements HttpClient {
      * 发出PUT请求
      *
      * @param url 请求的地址
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -192,8 +181,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -204,7 +192,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -220,8 +207,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -232,7 +218,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url        请求的地址
      * @param jsonParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -245,8 +230,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug("接收到response的信息：{}", msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -257,7 +241,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数(一个Bean或Map&lt;String,Object&gt;)
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -269,7 +252,6 @@ public class OkHttpClientImpl implements HttpClient {
      * 发出DELETE请求
      *
      * @param url 请求的地址
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -282,8 +264,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }
@@ -294,7 +275,6 @@ public class OkHttpClientImpl implements HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     * 
      * @return 响应的字符串
      */
     @Override
@@ -310,8 +290,7 @@ public class OkHttpClientImpl implements HttpClient {
             final String msg = response.body().string();
             log.debug(msg);
             return msg;
-        }
-        else {
+        } else {
             log.error("服务器返回错误: " + response);
             throw new HttpClientErrorException(HttpStatus.valueOf(response.code()));
         }

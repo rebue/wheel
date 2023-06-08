@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>2.0.4</version>
+    <version>2.1.5</version>
     <packaging>pom</packaging>
     <description>基础函数和工具库</description>
 
@@ -48,22 +48,26 @@
         <spring.version>5.3.22</spring.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.73</bouncycastle18.version>
-        <netty.version>4.1.90.Final</netty.version>
-        <netty-tcnative>2.0.59.Final</netty-tcnative>
-        <guice.version>5.1.0</guice.version>
+        <netty.version>4.1.93.Final</netty.version>
+        <netty-tcnative>2.0.61.Final</netty-tcnative>
+        <guice.version>7.0.0</guice.version>
         <dagger.version>2.42</dagger.version>
-        <jackson.version>2.14.1</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
-        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <drools.version>8.38.0.Final</drools.version>
-        <curator.version>5.4.0</curator.version>
-        <slf4j.version>2.0.6</slf4j.version>
+        <zookeeper.version>3.8.1</zookeeper.version>
+        <curator.version>5.5.0</curator.version>
+        <pulsar.version>3.0.0</pulsar.version>
+        <ulid.version>5.2.0</ulid.version>
+        <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
-        <vertx.version>4.3.8</vertx.version>
+        <logback.version>1.4.7</logback.version>
+        <vertx.version>4.4.2</vertx.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <spring-amqp.version>2.4.5</spring-amqp.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <junit.version>5.8.2</junit.version>
 
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
@@ -75,6 +79,37 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-net</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-serialization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-turing</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel-vertx</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
@@ -89,7 +124,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotaations</artifactId>
+                <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
@@ -185,7 +220,7 @@
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client</artifactId>
-                <version>2.10.1</version>
+                <version>${pulsar.version}</version>
             </dependency>
 
             <dependency>
@@ -261,6 +296,11 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
@@ -270,22 +310,17 @@
                 <artifactId>curator-x-discovery</artifactId>
                 <version>${curator.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>3.8.0</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.github.f4b6a3</groupId>
                 <artifactId>ulid-creator</artifactId>
-                <version>5.1.0</version>
+                <version>${ulid.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.oracle.database.jdbc.debug</groupId>
                 <artifactId>ojdbc11_g</artifactId>
-                <version>21.7.0.0</version>
+                <version>21.10.0.0</version>
             </dependency>
 
             <!-- 连接postgre需要使用 -->
@@ -355,7 +390,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.4.5</version>
+                <version>${logback.version}</version>
             </dependency>
             <!-- logback配置使用if需要 -->
             <dependency>
@@ -454,7 +489,6 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
-                <optional>true</optional>
             </dependency>
 
             <dependency>
@@ -462,37 +496,6 @@
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-net</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-serialization</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-turing</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.rebue.wheel</groupId>
-                <artifactId>wheel-vertx</artifactId>
-                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

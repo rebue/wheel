@@ -1,14 +1,5 @@
 package rebue.wheel.serialization.xml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -17,6 +8,14 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import javax.servlet.ServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);
@@ -54,7 +53,7 @@ public class XmlUtils {
         final Map<String, Object> map = new HashMap<>();
 
         // 得到xml根元素
-        final Element       root        = document.getRootElement();
+        final Element root = document.getRootElement();
         // 得到根元素的所有子节点
         final List<Element> elementList = root.elements();
 
@@ -67,9 +66,9 @@ public class XmlUtils {
     }
 
     public static String mapToXml(final Map<String, Object> map) {
-        String              xmlResult = "";
+        String xmlResult = "";
 
-        final StringBuilder sb        = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("<xml>");
         for (final String key : map.keySet()) {
             sb.append("<" + key + ">" + "<![CDATA[" + map.get(key) + "]]>" + "</" + key + ">");

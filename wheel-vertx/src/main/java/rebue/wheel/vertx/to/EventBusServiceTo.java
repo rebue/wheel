@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
  * EventBus服务的传递参数
  *
  * @author zbz
- *
  */
 @DataObject
 @Data

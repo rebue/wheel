@@ -1,18 +1,16 @@
 package rebue.wheel.net.httpclient;
 
-import java.io.IOException;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentException;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import lombok.SneakyThrows;
 import rebue.wheel.core.MapUtils;
 import rebue.wheel.core.OrikaUtils;
 import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
+
+import java.io.IOException;
+import java.util.Map;
 
 public interface HttpClient {
 
@@ -28,7 +26,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     default String get(final String url, final Map<String, Object> requestParams) throws IOException {
@@ -58,7 +55,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     default String get(final String url, final Object requestParams) throws IOException {
@@ -72,7 +68,6 @@ public interface HttpClient {
      * @param requestParams 请求的参数
      * @param valueTypeRef  要转换对象的泛型引用
      * @param <T>           要转换对象的泛型
-     *
      */
     @SneakyThrows
     default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final TypeReference<T> valueTypeRef) {
@@ -85,9 +80,8 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     * @param valueTypeRef  要转换对象的泛型引用
+     * @param clazz         要转换对象的泛型引用
      * @param <T>           要转换对象的泛型
-     *
      */
     @SneakyThrows
     default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final Class<T> clazz) {
@@ -96,12 +90,11 @@ public interface HttpClient {
     }
 
     /**
-     *
      * 发出带参数的GET请求，并将JSON格式的响应转成对象(主要解决微信乱码的问题)
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     * @param valueTypeRef  要转换对象的泛型引用
+     * @param clazz         要转换对象的泛型引用
      * @param <T>           要转换对象的泛型
      * @param encoding      转码
      */
@@ -117,7 +110,6 @@ public interface HttpClient {
      * 发出POST请求
      *
      * @param url 请求的地址
-     *
      * @return 响应的字符串
      */
     String post(String url) throws IOException;
@@ -127,7 +119,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     String postByFormParams(String url, Map<String, Object> requestParams) throws IOException;
@@ -137,7 +128,6 @@ public interface HttpClient {
      *
      * @param url        请求的地址
      * @param jsonParams 请求的参数
-     *
      * @return 响应的字符串
      */
     String postByJsonParams(String url, String jsonParams) throws IOException;
@@ -147,7 +137,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数(一个Bean或Map&lt;String,Object&gt;)
-     *
      * @return 响应的字符串
      */
     String postByJsonParams(String url, Object requestParams) throws IOException;
@@ -157,7 +146,6 @@ public interface HttpClient {
      *
      * @param url       请求的地址
      * @param xmlParams 请求的参数
-     *
      * @return 响应的字符串
      */
     Map<String, Object> postByXmlParams(String url, String xmlParams) throws IOException, DocumentException;
@@ -167,7 +155,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     default Map<String, Object> postByXmlParams(final String url, final Map<String, Object> requestParams) throws IOException, DocumentException {
@@ -178,7 +165,6 @@ public interface HttpClient {
      * 发出PUT请求
      *
      * @param url 请求的地址
-     *
      * @return 响应的字符串
      */
     String put(String url) throws IOException;
@@ -188,7 +174,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     String putByFormParams(String url, Map<String, Object> requestParams) throws IOException;
@@ -198,7 +183,6 @@ public interface HttpClient {
      *
      * @param url        请求的地址
      * @param jsonParams 请求的参数
-     *
      * @return 响应的字符串
      */
     String putByJsonParams(String url, String jsonParams) throws IOException;
@@ -208,7 +192,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数(一个Bean或Map&lt;String,Object&gt;)
-     *
      * @return 响应的字符串
      */
     String putByJsonParams(String url, Object requestParams) throws IOException;
@@ -217,7 +200,6 @@ public interface HttpClient {
      * 发出DELETE请求
      *
      * @param url 请求的地址
-     *
      * @return 响应的字符串
      */
     String delete(String url) throws IOException;
@@ -227,7 +209,6 @@ public interface HttpClient {
      *
      * @param url           请求的地址
      * @param requestParams 请求的参数
-     *
      * @return 响应的字符串
      */
     String deleteByFormParams(String url, Map<String, Object> requestParams) throws IOException;

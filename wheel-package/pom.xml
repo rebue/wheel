@@ -6,46 +6,460 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>2.0.4</version>
+    <version>2.1.5</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
         <os.detected.classifier>linux-x86_64-fedora</os.detected.classifier>
-<!--        <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes>-->
+        <!-- <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes> -->
 
-        <netty.version>4.1.90.Final</netty.version>
-        <netty-tcnative>2.0.59.Final</netty-tcnative>
+        <slf4j.version>2.0.7</slf4j.version>
+        <logback.version>1.4.7</logback.version>
+        <jackson.version>2.15.2</jackson.version>
+        <jackson-asl.version>1.9.13</jackson-asl.version>
+        <netty.version>4.1.93.Final</netty.version>
+        <netty-tcnative.version>2.0.61.Final</netty-tcnative.version>
+        <bouncycastle18.version>1.73</bouncycastle18.version>
+        <scram.version>2.1</scram.version>
+        <zookeeper.version>3.8.1</zookeeper.version>
+        <curator.version>5.5.0</curator.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <ulid.version>5.2.0</ulid.version>
+        <guice.version>7.0.0</guice.version>
+        <pulsar.version>3.0.0</pulsar.version>
+        <hazelcast.version>5.3.0</hazelcast.version>
+        <vertx.version>4.4.2</vertx.version>
     </properties>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-all</artifactId>-->
-<!--            <version>${netty.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.slf4j</groupId>-->
+        <!--            <artifactId>slf4j-api</artifactId>-->
+        <!--            <version>${slf4j.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.slf4j</groupId>-->
+        <!--            <artifactId>jul-to-slf4j</artifactId>-->
+        <!--            <version>${slf4j.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.slf4j</groupId>-->
+        <!--            <artifactId>jcl-over-slf4j</artifactId>-->
+        <!--            <version>${slf4j.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-classic</artifactId>-->
+        <!--            <version>${logback.version}</version>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; logback配置使用if需要 &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.codehaus.janino</groupId>-->
+        <!--            <artifactId>janino</artifactId>-->
+        <!--            <version>3.1.9</version>-->
+        <!--        </dependency>-->
 
-<!--        &lt;!&ndash; netty-tcnative系列包&ndash;&gt;-->
-<!--        &lt;!&ndash; https://netty.io/wiki/forked-tomcat-native.html&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-tcnative</artifactId>-->
-<!--            <version>${netty-tcnative}</version>-->
-<!--            <classifier>${os.detected.classifier}</classifier>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.module</groupId>-->
+        <!--            <artifactId>jackson-module-parameter-names</artifactId>-->
+        <!--            <version>${jackson.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.datatype</groupId>-->
+        <!--            <artifactId>jackson-datatype-jsr310</artifactId>-->
+        <!--            <version>${jackson.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.datatype</groupId>-->
+        <!--            <artifactId>jackson-datatype-jdk8</artifactId>-->
+        <!--            <version>${jackson.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.dataformat</groupId>-->
+        <!--            <artifactId>jackson-dataformat-yaml</artifactId>-->
+        <!--            <version>${jackson.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.codehaus.jackson</groupId>-->
+        <!--            <artifactId>jackson-mapper-asl</artifactId>-->
+        <!--            <version>${jackson-asl.version}</version>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-tcnative-boringssl-static</artifactId>-->
-<!--            <version>${netty-tcnative}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-all</artifactId>-->
+        <!--            <version>${netty.version}</version>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; netty-tcnative系列包&ndash;&gt;-->
+        <!--        &lt;!&ndash; https://netty.io/wiki/forked-tomcat-native.html&ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-tcnative</artifactId>-->
+        <!--            <version>${netty-tcnative.version}</version>-->
+        <!--            <classifier>${os.detected.classifier}</classifier>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-tcnative-boringssl-static</artifactId>-->
+        <!--            <version>${netty-tcnative.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty.incubator</groupId>-->
+        <!--            <artifactId>netty-incubator-transport-native-io_uring</artifactId>-->
+        <!--            <version>0.0.21.Final</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-buffer</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-common</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-transport</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-transport-native-unix-common</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
+        <!--        <dependency>-->
+        <!--            <groupId>org.bouncycastle</groupId>-->
+        <!--            <artifactId>bcprov-jdk18on</artifactId>-->
+        <!--            <version>${bouncycastle18.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.bouncycastle</groupId>-->
+        <!--            <artifactId>bcpkix-jdk18on</artifactId>-->
+        <!--            <version>${bouncycastle18.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.bouncycastle</groupId>-->
+        <!--            <artifactId>bcprov-ext-jdk18on</artifactId>-->
+        <!--            <version>${bouncycastle18.version}</version>-->
+        <!--        </dependency>-->
+
+        <!-- 连接postgre需要使用 -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.ongres.scram</groupId>-->
+        <!--            <artifactId>common</artifactId>-->
+        <!--            <version>${scram.version}</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.ongres.scram</groupId>-->
+        <!--            <artifactId>client</artifactId>-->
+        <!--            <version>${scram.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.oracle.database.jdbc.debug</groupId>-->
+        <!--            <artifactId>ojdbc11_g</artifactId>-->
+        <!--            <version>21.10.0.0</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.google.guava</groupId>-->
+        <!--            <artifactId>guava</artifactId>-->
+        <!--            <version>32.0.0-jre</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.zookeeper</groupId>-->
+        <!--            <artifactId>zookeeper</artifactId>-->
+        <!--            <version>${zookeeper.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>logback-classic</artifactId>-->
+        <!--                    <groupId>ch.qos.logback</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>slf4j-api</artifactId>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-handler</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-transport-native-epoll</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>logback-core</artifactId>-->
+        <!--                    <groupId>ch.qos.logback</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.curator</groupId>-->
+        <!--            <artifactId>curator-client</artifactId>-->
+        <!--            <version>${curator.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>guava</artifactId>-->
+        <!--                    <groupId>com.google.guava</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>slf4j-api</artifactId>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zookeeper</artifactId>-->
+        <!--                    <groupId>org.apache.zookeeper</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.curator</groupId>-->
+        <!--            <artifactId>curator-recipes</artifactId>-->
+        <!--            <version>${curator.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>slf4j-api</artifactId>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zookeeper</artifactId>-->
+        <!--                    <groupId>org.apache.zookeeper</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>guava</artifactId>-->
+        <!--                    <groupId>com.google.guava</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.curator</groupId>-->
+        <!--            <artifactId>curator-x-discovery</artifactId>-->
+        <!--            <version>${curator.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jackson-databind</artifactId>-->
+        <!--                    <groupId>com.fasterxml.jackson.core</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.mapstruct</groupId>-->
+        <!--            <artifactId>mapstruct</artifactId>-->
+        <!--            <version>${mapstruct.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.f4b6a3</groupId>-->
+        <!--            <artifactId>ulid-creator</artifactId>-->
+        <!--            <version>${ulid.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.google.inject</groupId>-->
+        <!--            <artifactId>guice</artifactId>-->
+        <!--            <version>${guice.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>guava</artifactId>-->
+        <!--                    <groupId>com.google.guava</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.pulsar</groupId>-->
+        <!--            <artifactId>pulsar-client</artifactId>-->
+        <!--            <version>${pulsar.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>slf4j-api</artifactId>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcpkix-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcprov-ext-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcutil-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>bcprov-jdk15on</artifactId>-->
+        <!--                    <groupId>org.bouncycastle</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>jackson-annotations</artifactId>-->
+        <!--                    <groupId>com.fasterxml.jackson.core</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.jgit</groupId>-->
+        <!--            <artifactId>org.eclipse.jgit</artifactId>-->
+        <!--            <version>6.5.0.202303070854-r</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>slf4j-api</artifactId>-->
+        <!--                    <groupId>org.slf4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.hazelcast</groupId>-->
+        <!--            <artifactId>hazelcast</artifactId>-->
+        <!--            <version>${hazelcast.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-zipkin</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>brave</artifactId>-->
+        <!--                    <groupId>io.zipkin.brave</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>brave-instrumentation-http</artifactId>-->
+        <!--                    <groupId>io.zipkin.brave</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.zipkin2</groupId>-->
+        <!--            <artifactId>zipkin</artifactId>-->
+        <!--            <version>2.24.2</version>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; zipkin的埋点库 &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.reporter2</groupId>-->
+        <!--            <artifactId>zipkin-reporter-brave</artifactId>-->
+        <!--            <version>2.16.4</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zipkin</artifactId>-->
+        <!--                    <groupId>io.zipkin.zipkin2</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.brave</groupId>-->
+        <!--            <artifactId>brave-instrumentation-http</artifactId>-->
+        <!--            <version>5.16.0</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zipkin-reporter-brave</artifactId>-->
+        <!--                    <groupId>io.zipkin.reporter2</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-zookeeper</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>curator-framework</artifactId>-->
+        <!--                    <groupId>org.apache.curator</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>curator-recipes</artifactId>-->
+        <!--                    <groupId>org.apache.curator</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>guava</artifactId>-->
+        <!--                    <groupId>com.google.guava</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zookeeper</artifactId>-->
+        <!--                    <groupId>org.apache.zookeeper</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-web-proxy</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-web</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-io_uring-incubator</artifactId>
-            <version>4.4.1</version>
+            <artifactId>vertx-config-git</artifactId>
+            <version>${vertx.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>vertx-core</artifactId>
+                    <groupId>io.vertx</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>vertx-config</artifactId>
+                    <groupId>io.vertx</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpclient</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-config-yaml</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>snakeyaml</artifactId>-->
+        <!--                    <groupId>org.yaml</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-config</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-io_uring-incubator</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
     <build>

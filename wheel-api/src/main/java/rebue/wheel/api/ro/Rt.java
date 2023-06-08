@@ -1,15 +1,14 @@
 package rebue.wheel.api.ro;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rebue.wheel.api.dic.ResultDic;
+
+import java.io.Serializable;
 
 /**
  * 返回结果
@@ -27,64 +26,64 @@ public class Rt<T> implements Serializable {
     /**
      * 返回结果的类型
      */
-    private ResultDic         result;
+    private ResultDic result;
 
     /**
      * 返回结果的信息
      */
-    private String            msg;
+    private String msg;
 
     /**
      * 详情
      */
-    private String            detail;
+    private String detail;
 
     /**
      * 附加的内容
      * (如果前面的属性已经能够满足需求，可不需要附加的内容，设为null或不设置即可)
      */
-    private T                 extra;
+    private T extra;
 
     /**
      * 返回结果的自定义编码
      * (如果通过result已经能够满足需求，可不需要自定义编码，设为null或不设置即可)
      */
-    private String            code;
+    private String code;
 
     public Rt(final ResultDic result, final String msg) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
     }
 
     public Rt(final ResultDic result, final T extra) {
         this.result = result;
-        this.extra  = extra;
+        this.extra = extra;
     }
 
     public Rt(final ResultDic result, final String msg, final String detail) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
     }
 
     public Rt(final ResultDic result, final String msg, final String detail, final String code) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
-        this.code   = code;
+        this.code = code;
     }
 
     public Rt(final ResultDic result, final String msg, final T extra) {
         this.result = result;
-        this.msg    = msg;
-        this.extra  = extra;
+        this.msg = msg;
+        this.extra = extra;
     }
 
     public Rt(final ResultDic result, final String msg, final String detail, final T extra) {
         this.result = result;
-        this.msg    = msg;
+        this.msg = msg;
         this.detail = detail;
-        this.extra  = extra;
+        this.extra = extra;
     }
 
     public static Rt<?> success(final String msg) {

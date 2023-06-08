@@ -43,11 +43,11 @@ public class IdWorkerUtils {
             throw new RuntimeException("idworker值应该是整数、”auto“或以”auto:“开头的字符串");
         }
 
-        final String packageName = thisObj.getClass().getPackage().getName();
-        final String className = thisObj.getClass().getSimpleName();
+        final String packageName       = thisObj.getClass().getPackage().getName();
+        final String className         = thisObj.getClass().getSimpleName();
         final String reducePackageName = packageName.replaceAll(".svc.impl.ex", "").replaceAll(".svc.impl", "");
-        final String reduceClassName = className.replaceAll("SvcImpl", "");
-        final String zkNodePath = "/idworker/" + reducePackageName + "/" + reduceClassName;
+        final String reduceClassName   = className.replaceAll("SvcImpl", "");
+        final String zkNodePath        = "/idworker/" + reducePackageName + "/" + reduceClassName;
 
         Integer nodeId;
         try {

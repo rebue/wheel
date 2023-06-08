@@ -5,12 +5,11 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 @Slf4j
 public abstract class AbstractPulsarVerticle extends AbstractVerticle {

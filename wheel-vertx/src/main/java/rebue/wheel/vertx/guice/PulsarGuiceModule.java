@@ -1,16 +1,13 @@
 package rebue.wheel.vertx.guice;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
 import io.vertx.core.json.JsonObject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
 import rebue.wheel.vertx.config.PulsarClientProperties;
 
 @Slf4j
@@ -25,9 +22,9 @@ public class PulsarGuiceModule extends AbstractModule {
     PulsarClient getPulsarClient(@Named("config") final JsonObject config) {
         log.info("PulsarGuiceModule.getPulsarClient");
 
-        final JsonObject             pulsarClientPropertiesJsonObject = config.getJsonObject("pulsar");
+        final JsonObject pulsarClientPropertiesJsonObject = config.getJsonObject("pulsar");
 
-        final PulsarClientProperties pulsarClientProperties           = pulsarClientPropertiesJsonObject == null
+        final PulsarClientProperties pulsarClientProperties = pulsarClientPropertiesJsonObject == null
                 ? new PulsarClientProperties()
                 : pulsarClientPropertiesJsonObject.mapTo(PulsarClientProperties.class);
 

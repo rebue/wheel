@@ -11,7 +11,7 @@ public class EcKeyUtils extends KeyUtils {
      *
      * @param privateKeyEncode 编码的私钥字符串
      * @return 私钥
-     * @throws InvalidKeySpecException  私钥字符串不正确
+     * @throws InvalidKeySpecException 私钥字符串不正确
      */
     public static PrivateKey getPrivateKeyFromStr(String privateKeyEncode) throws InvalidKeySpecException {
         try {
@@ -26,7 +26,7 @@ public class EcKeyUtils extends KeyUtils {
      *
      * @param publicKeyEncode 编码的公钥字符串
      * @return 公钥
-     * @throws InvalidKeySpecException  公钥字符串不正确
+     * @throws InvalidKeySpecException 公钥字符串不正确
      */
     public static PublicKey getPublicKeyFromStr(String publicKeyEncode) throws InvalidKeySpecException {
         try {

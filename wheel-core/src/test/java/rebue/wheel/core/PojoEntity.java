@@ -1,8 +1,8 @@
 package rebue.wheel.core;
 
-import java.math.BigDecimal;
-
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class PojoEntity {
@@ -10,27 +10,27 @@ public class PojoEntity {
     /**
      * 学生ID
      */
-    private Long       id;
+    private Long id;
 
     /**
      * 学号
      */
-    private String     studentCode;
+    private String studentCode;
 
     /**
      * 姓名
      */
-    private String     name;
+    private String name;
 
     /**
      * 电话号码1
      */
-    private Double     phone1;
+    private Double phone1;
 
     /**
      * 电话号码2
      */
-    private Integer    phone2;
+    private Integer phone2;
 
     /**
      * 金额
@@ -40,11 +40,11 @@ public class PojoEntity {
     /**
      * 身份证号码
      */
-    private String     idCard;
+    private String idCard;
 
     /**
      * 年龄
      */
-    private Byte       age;
+    private Byte age;
 
 }

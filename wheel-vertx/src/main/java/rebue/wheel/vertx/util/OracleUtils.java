@@ -1,7 +1,5 @@
 package rebue.wheel.vertx.util;
 
-import java.util.Map.Entry;
-
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.oracleclient.OracleConnectOptions;
@@ -9,6 +7,8 @@ import io.vertx.oracleclient.OraclePool;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import rebue.wheel.vertx.config.OracleConfig;
+
+import java.util.Map.Entry;
 
 public class OracleUtils {
     /**
