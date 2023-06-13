@@ -7,8 +7,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import rebue.wheel.core.fact.RequestFact;
 import rebue.wheel.core.file.FileUtils;
@@ -23,9 +21,6 @@ import java.util.UUID;
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class DroolsTests {
-    private static final KieServices  kieServices = KieServices.Factory.get();
-    private static       KieContainer kieContainer;
-
     @RepeatedTest(1)
     @Execution(ExecutionMode.CONCURRENT)
     public void test01() throws IOException, InterruptedException {
@@ -79,8 +74,7 @@ public class DroolsTests {
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
     }
 
-    public Map<String, String> execute(String random) throws IOException {
-        DroolsUtils.newKieContainer();
+    public Map<String, String> execute(String random) {
         KieSession kieSession = DroolsUtils.newKieSession("test01");   // kSessionName在kmodule.xml文件中定义
 
         Map<String, String> body = new LinkedHashMap<>();
