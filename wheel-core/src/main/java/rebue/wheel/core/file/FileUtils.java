@@ -2,10 +2,8 @@ package rebue.wheel.core.file;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.StringJoiner;
 
 @Slf4j
 public class FileUtils {
@@ -100,6 +98,24 @@ public class FileUtils {
         }
         // 目录此时为空，可以删除
         return dir.delete();
+    }
+
+    /**
+     * 读取文件内容到字符串
+     *
+     * @param filePath 文件路径
+     * @return 文件内容的字符串
+     * @throws IOException IO异常
+     */
+    public static String readToString(String filePath) throws IOException {
+        StringJoiner contentStringJoiner = new StringJoiner("\n");
+        try (BufferedReader in = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                contentStringJoiner.add(line);
+            }
+        }
+        return contentStringJoiner.toString();
     }
 
     // /**

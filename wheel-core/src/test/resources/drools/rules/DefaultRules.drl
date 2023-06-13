@@ -1,4 +1,4 @@
-package drools.test.rules;
+package drools.rules;
 
 import java.util.Map;
 import rebue.wheel.core.fact.RequestFact;

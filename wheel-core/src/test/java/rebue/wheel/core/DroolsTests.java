@@ -8,10 +8,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.internal.io.ResourceFactory;
 import rebue.wheel.core.fact.RequestFact;
 import rebue.wheel.core.file.FileUtils;
 
@@ -20,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
+
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -34,7 +33,7 @@ public class DroolsTests {
         Map<String, String> body   = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
 
-        String       drlPath    = FileUtils.getClassesPath() + "drools/test/rules/DefaultRules.drl";
+        String       drlPath    = FileUtils.getClassesPath() + "drools/rules/DefaultRules.drl";
         StringJoiner drlContent = new StringJoiner("\n");
         try (BufferedReader in = new BufferedReader(new FileReader(drlPath))) {
             String line;
@@ -80,21 +79,11 @@ public class DroolsTests {
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
     }
 
-    private static void reloadDrl() {
-        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-        String        kmodulePath   = "META-INF/kmodule.xml";
-        String        drlPath       = "drools/test/rules/DefaultRules.drl";
-        kieFileSystem.write("src/main/resources/" + kmodulePath, ResourceFactory.newClassPathResource(kmodulePath));
-        kieFileSystem.write("src/main/resources/" + drlPath, ResourceFactory.newClassPathResource(drlPath));
-        kieServices.newKieBuilder(kieFileSystem).buildAll();
-        kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-    }
+    public Map<String, String> execute(String random) throws IOException {
+        DroolsUtils.newKieContainer();
+        KieSession kieSession = DroolsUtils.newKieSession("test01");   // kSessionName在kmodule.xml文件中定义
 
-
-    public Map<String, String> execute(String random) {
         Map<String, String> body = new LinkedHashMap<>();
-        reloadDrl();
-        KieSession kieSession = kieContainer.newKieSession("test01");   // kSessionName在kmodule.xml文件中定义
         body.put("0", random);
         body.put("a", "AAA");
         body.put("b", "BBB");
