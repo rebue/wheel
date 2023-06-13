@@ -1,0 +1,42 @@
+package drools.test.rules;
+
+import java.util.Map;
+import rebue.wheel.core.fact.RequestFact;
+
+function void rename(Map body, String oldName, String newName){
+    body.put(newName, body.get(oldName));
+    body.remove(oldName);
+}
+
+rule abc
+    no-loop true
+    lock-on-active true
+when
+    $fact: RequestFact(uri=="/abc", $body: body)
+then
+    $body.remove("a");
+    $body.remove("b");
+    $body.put("c", "CCCCC");
+    $body.put("d", "DDDDD");
+    $body.put("h", "HHHHH");
+    $body.put("i", "IIIII");
+    $body.put("j", $body.get("c"));
+    $body.put("k", $body.get("e"));
+    rename($body, "e", "l");
+    System.out.println("ABC OK!");
+    update($fact)
+end
+
+rule def
+when
+    RequestFact(uri=="/def")
+then
+    System.out.println("DEF OK!");
+end
+
+rule ghi
+when
+    RequestFact(uri=="/ghi")
+then
+    System.out.println("GHI OK!");
+end
