@@ -19,6 +19,7 @@ import io.vertx.core.streams.WriteStream;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class PipeImplEx<T> implements Pipe<T> {
 
     private final Promise<Void>  result;

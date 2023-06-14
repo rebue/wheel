@@ -23,6 +23,7 @@ import java.util.List;
  * @author <a href="mailto:emad.albloushi@gmail.com">Emad Alblueshi</a>
  */
 @Slf4j
+@Deprecated
 public class ProxyHandlerImplEx implements ProxyHandler {
 
     private final HttpProxyEx httpProxy;

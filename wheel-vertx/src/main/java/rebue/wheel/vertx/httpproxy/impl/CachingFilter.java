@@ -19,6 +19,7 @@ import rebue.wheel.vertx.httpproxy.ProxyInterceptorEx;
 import java.util.Date;
 import java.util.function.BiFunction;
 
+@Deprecated
 class CachingFilter implements ProxyInterceptorEx {
 
     private static final BiFunction<String, Resource, Resource> CACHE_GET_AND_VALIDATE = (key, resource) -> {

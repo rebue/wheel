@@ -20,6 +20,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.WriteStream;
 
+@Deprecated
 public class BufferingWriteStream implements WriteStream<Buffer> {
 
     private final Buffer content;

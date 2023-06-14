@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author zbz
  */
 @Slf4j
+@Deprecated
 public class RequestBodyCachedHandler implements Handler<RoutingContext> {
 
     @Override

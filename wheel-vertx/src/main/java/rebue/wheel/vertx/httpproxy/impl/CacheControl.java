@@ -16,6 +16,7 @@ package rebue.wheel.vertx.httpproxy.impl;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
+@Deprecated
 class CacheControl {
 
     private int     maxAge;

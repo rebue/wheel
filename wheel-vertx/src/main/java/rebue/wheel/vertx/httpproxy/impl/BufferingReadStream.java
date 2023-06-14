@@ -17,6 +17,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 
+@Deprecated
 class BufferingReadStream implements ReadStream<Buffer> {
 
     private final ReadStream<Buffer> stream;

@@ -11,6 +11,7 @@ import io.vertx.httpproxy.ProxyInterceptor;
 import io.vertx.httpproxy.ProxyRequest;
 
 @VertxGen
+@Deprecated
 public interface ProxyInterceptorEx extends ProxyInterceptor {
     /**
      * 修改WebSocket的代理请求

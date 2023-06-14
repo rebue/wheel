@@ -22,6 +22,7 @@ import io.vertx.httpproxy.impl.ParseUtils;
 
 import java.util.Date;
 
+@Deprecated
 class Resource {
 
     final String   absoluteUri;

@@ -20,6 +20,7 @@ import io.vertx.httpproxy.impl.ParseUtils;
 import java.util.Date;
 import java.util.List;
 
+@Deprecated
 class HttpUtils {
 
     static Boolean isChunked(MultiMap headers) {

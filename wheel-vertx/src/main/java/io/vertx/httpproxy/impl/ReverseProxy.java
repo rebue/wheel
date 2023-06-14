@@ -1,45 +1,48 @@
 /**
- * XXX 复制4.3.7版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，原类会让ctx的后置处理器失效
- * <p>
+ * XXX 复制4.4.3版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
- * <p>
+ *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- * <p>
+ *
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
-package rebue.wheel.vertx.httpproxy.impl;
+package io.vertx.httpproxy.impl;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.http.*;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.HttpVersion;
 import io.vertx.core.net.NetSocket;
-import io.vertx.httpproxy.ProxyContext;
-import io.vertx.httpproxy.ProxyOptions;
-import io.vertx.httpproxy.ProxyRequest;
-import io.vertx.httpproxy.ProxyResponse;
+import io.vertx.httpproxy.*;
 import io.vertx.httpproxy.cache.CacheOptions;
 import io.vertx.httpproxy.spi.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.vertx.httpproxy.HttpProxyEx;
-import rebue.wheel.vertx.httpproxy.ProxyInterceptorEx;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 @Slf4j
-@Deprecated
-public class ReverseProxyEx implements HttpProxyEx {
+public class ReverseProxy implements HttpProxy {
 
-    private final HttpClient                                                           client;
-    private final boolean                                                              supportWebSocket;
-    private       BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector     = (req, client) -> Future.failedFuture("No origin available");
-    private final List<ProxyInterceptorEx>                                             interceptors = new ArrayList<>();
+    private final HttpClient client;
+    private final boolean supportWebSocket;
+    private BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector = (req, client) -> Future.failedFuture("No origin available");
+    private final List<ProxyInterceptor> interceptors = new ArrayList<>();
 
-    public ReverseProxyEx(ProxyOptions options, HttpClient client) {
+    public ReverseProxy(ProxyOptions options, HttpClient client) {
         CacheOptions cacheOptions = options.getCacheOptions();
         if (cacheOptions != null) {
             Cache<String, Resource> cache = cacheOptions.newCache();
@@ -50,30 +53,20 @@ public class ReverseProxyEx implements HttpProxyEx {
     }
 
     @Override
-    public HttpProxyEx originRequestProvider(BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider) {
+    public HttpProxy originRequestProvider(BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider) {
         selector = provider;
         return this;
     }
 
     @Override
-    public HttpProxyEx addInterceptor(ProxyInterceptorEx interceptor) {
+    public HttpProxy addInterceptor(ProxyInterceptor interceptor) {
         interceptors.add(interceptor);
         return this;
     }
 
+
     @Override
     public void handle(HttpServerRequest request) {
-        handleEx(request, null);
-    }
-
-    /**
-     * XXX 添加响应前的事件(复制handle方法)
-     *
-     * @param request        请求
-     * @param beforeResponse 响应前的事件
-     */
-    @Override
-    public void handleEx(HttpServerRequest request, Consumer<ProxyContext> beforeResponse) {
         ProxyRequest proxyRequest = ProxyRequest.reverseProxy(request);
 
         // Encoding sanity check
@@ -94,32 +87,24 @@ public class ReverseProxyEx implements HttpProxyEx {
 
         Proxy proxy = new Proxy(proxyRequest);
         proxy.filters = interceptors.listIterator();
-
-        // XXX 以下是修改的部分
-        if (beforeResponse == null) {
-            proxy.sendRequest().compose(proxy::sendProxyResponse);
-        } else {
-            proxy.sendRequest().compose(proxy::sendProxyResponse).onSuccess(v -> beforeResponse.accept(proxy));
-        }
+        proxy.sendRequest().compose(proxy::sendProxyResponse);
     }
 
-    /**
-     * XXX 复制原来的handleWebSocketUpgrade方法，因为过滤器可能要改变目标请求的uri，所以URI要用代理请求的uri，而不是被代理请求的uri，
-     *
-     * @param proxyRequest 代理请求
-     */
     private void handleWebSocketUpgrade(ProxyRequest proxyRequest) {
         // XXX 添加调用拦截器修改代理请求
-        interceptors.forEach(proxyInterceptorEx -> proxyInterceptorEx.modifyProxyRequest(proxyRequest));
+        interceptors.forEach(proxyInterceptor -> proxyInterceptor.modifyProxyRequest(proxyRequest));
 
         HttpServerRequest proxiedRequest = proxyRequest.proxiedRequest();
         resolveOrigin(proxiedRequest).onComplete(ar -> {
             if (ar.succeeded()) {
                 HttpClientRequest request = ar.result();
                 request.setMethod(HttpMethod.GET);
+
                 // XXX 过滤器可能要改变目标请求的uri，所以这里用代理请求的URI，而不是用被代理请求的URI
+                // request.setURI(proxiedRequest.uri());
                 request.setURI(proxyRequest.getURI());
                 log.debug("handleWebSocketUpgrade: request.getURI()={}", request.getURI());
+
                 request.headers().addAll(proxiedRequest.headers());
                 Future<HttpClientResponse> fut2 = request.connect();
                 proxiedRequest.handler(request::write);
@@ -135,7 +120,7 @@ public class ReverseProxyEx implements HttpProxyEx {
                             Future<NetSocket> otherso = proxiedRequest.toNetSocket();
                             otherso.onComplete(ar3 -> {
                                 if (ar3.succeeded()) {
-                                    NetSocket responseSocket      = ar3.result();
+                                    NetSocket responseSocket = ar3.result();
                                     NetSocket proxyResponseSocket = proxiedResponse.netSocket();
                                     responseSocket.handler(proxyResponseSocket::write);
                                     proxyResponseSocket.handler(responseSocket::write);
@@ -180,10 +165,10 @@ public class ReverseProxyEx implements HttpProxyEx {
 
     private class Proxy implements ProxyContext {
 
-        private final ProxyRequest                     request;
-        private       ProxyResponse                    response;
-        private final Map<String, Object>              attachments = new HashMap<>();
-        private       ListIterator<ProxyInterceptorEx> filters;
+        private final ProxyRequest request;
+        private ProxyResponse response;
+        private final Map<String, Object> attachments = new HashMap<>();
+        private ListIterator<ProxyInterceptor> filters;
 
         private Proxy(ProxyRequest request) {
             this.request = request;
@@ -208,7 +193,7 @@ public class ReverseProxyEx implements HttpProxyEx {
         @Override
         public Future<ProxyResponse> sendRequest() {
             if (filters.hasNext()) {
-                ProxyInterceptorEx next = filters.next();
+                ProxyInterceptor next = filters.next();
                 return next.handleProxyRequest(this);
             } else {
                 return sendProxyRequest(request);
@@ -223,7 +208,7 @@ public class ReverseProxyEx implements HttpProxyEx {
         @Override
         public Future<Void> sendResponse() {
             if (filters.hasPrevious()) {
-                ProxyInterceptorEx filter = filters.previous();
+                ProxyInterceptor filter = filters.previous();
                 return filter.handleProxyResponse(this);
             } else {
                 return response.send();
@@ -247,8 +232,7 @@ public class ReverseProxyEx implements HttpProxyEx {
         }
 
         private Future<ProxyResponse> sendProxyRequest(ProxyRequest proxyRequest, HttpClientRequest request) {
-            log.debug("ReverseProxyEx.sendProxyRequest");
-            final Future<ProxyResponse> fut = proxyRequest.send(request);
+            Future<ProxyResponse> fut = proxyRequest.send(request);
             fut.onFailure(err -> {
                 proxyRequest.proxiedRequest().response().setStatusCode(502).end();
             });
@@ -269,14 +253,6 @@ public class ReverseProxyEx implements HttpProxyEx {
 
             return sendResponse();
         }
-    }
-
-    /**
-     * XXX 获取拦截器
-     */
-    @Override
-    public List<ProxyInterceptorEx> getInterceptors() {
-        return interceptors;
     }
 
 }

@@ -35,6 +35,7 @@ import io.vertx.ext.web.impl.RouterImpl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 class ForwardedParser {
     private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 

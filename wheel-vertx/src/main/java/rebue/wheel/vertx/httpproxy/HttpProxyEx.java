@@ -37,6 +37,7 @@ import java.util.function.Function;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 @VertxGen
+@Deprecated
 public interface HttpProxyEx extends Handler<HttpServerRequest> {
 
     /**

@@ -29,6 +29,7 @@ import java.util.Map;
  * resumes the request if a caller explicitly sets a handler to any callback that processes the request body.
  */
 @Slf4j
+@Deprecated
 public class HttpServerRequestWrapperEx extends io.vertx.core.http.impl.HttpServerRequestWrapper {
 
     private final ForwardedParser forwardedParser;
