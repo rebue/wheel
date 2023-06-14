@@ -11,9 +11,11 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.io.ResourceFactory;
+import rebue.wheel.core.file.FileSearcher;
 import rebue.wheel.core.file.FileUtils;
 
 import java.io.File;
+import java.util.Objects;
 
 @Slf4j
 public class DroolsUtils {
@@ -34,10 +36,14 @@ public class DroolsUtils {
     @SneakyThrows
     private static void newKieContainer() {
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-        String        kmodulePath   = "drools/kmodule.xml";
-        String        drlPath       = "drools/rules/DefaultRules.drl";
+        log.info("加载kmodule文件");
+        String kmodulePath = "drools/kmodule.xml";
         kieFileSystem.writeKModuleXML(FileUtils.readToString(FileUtils.getClassesPath() + kmodulePath));
-        kieFileSystem.write(ResourceFactory.newClassPathResource(drlPath));
+        File drlDir = new File(FileUtils.getClassesPath() + "drools/rules/");
+        FileSearcher.searchFiles(drlDir, ".*\\.drl", file -> {
+            log.info("加载drl文件: {}", file.getPath());
+            kieFileSystem.write(ResourceFactory.newFileResource(file));
+        });
         kieServices.newKieBuilder(kieFileSystem).buildAll();
         kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     }
@@ -76,7 +82,9 @@ public class DroolsUtils {
     /**
      * 创建新的会话
      *
-     * @param kSessionName 会话名(kmodule.xml文件中的ksession节点定义)
+     * @param kSessionName 会话名
+     *                     在kmodule.xml文件中的ksession节点定义
+     *                     在kmodule.xml文件中定义必须是唯一的，不能有重名
      * @return 会话
      */
     public static KieSession newKieSession(String kSessionName) {

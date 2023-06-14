@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -23,7 +24,7 @@ public final class FileSearcher {
      * @param sSearchRootDir 查找的文件夹路径
      * @param regex          匹配文件名的正则表达式
      * @param onMatched      文件匹配事件
-     * @throws IOException
+     * @throws IOException IO异常
      */
     public static void searchFiles(String sSearchRootDir, String regex, Consumer<File> onMatched) throws IOException {
         File searchRootDir = new File(sSearchRootDir);
@@ -52,7 +53,7 @@ public final class FileSearcher {
      * @param onMatched 文件匹配事件
      */
     private static void searchFiles0(File searchDir, Pattern pattern, Consumer<File> onMatched) {
-        Stream.of(searchDir.listFiles()).forEach(file -> {
+        Stream.of(Objects.requireNonNull(searchDir.listFiles())).forEach(file -> {
             if (file.isDirectory()) {
                 searchFiles0(file, pattern, onMatched);
             } else {
@@ -71,7 +72,7 @@ public final class FileSearcher {
     /**
      * @param sSearchRootDir 查找的文件夹路径
      * @param pattern        匹配文件名的正则表达式
-     * @throws IOException
+     * @throws IOException IO异常
      */
     public static List<File> searchFiles(String sSearchRootDir, Pattern pattern) throws IOException {
         File searchDir = new File(sSearchRootDir);
@@ -88,7 +89,7 @@ public final class FileSearcher {
     }
 
     private static void searchFiles1(File searchDir, Pattern pattern, List<File> files) throws IOException {
-        for (File file : searchDir.listFiles()) {
+        for (File file : Objects.requireNonNull(searchDir.listFiles())) {
             if (file.isDirectory()) {
                 searchFiles1(file, pattern, files);
             } else {

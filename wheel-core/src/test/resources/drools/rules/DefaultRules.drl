@@ -9,8 +9,8 @@ function void rename(Map body, String oldName, String newName){
 }
 
 rule abc
-    no-loop true
-    lock-on-active true
+    no-loop true        // 防止死循环(当规则通过update之类的函数修改了Fact对象时，可能使当前规则再次被激活从而导致死循环)
+    lock-on-active true // 限制当前规则只会被执行一次(包括当前规则的重复执行不是本身触发的)
 when
     $fact: RequestFact(uri=="/abc", $body: body)
 then
@@ -28,6 +28,8 @@ then
 end
 
 rule def
+    no-loop true        // 防止死循环(当规则通过update之类的函数修改了Fact对象时，可能使当前规则再次被激活从而导致死循环)
+    lock-on-active true // 限制当前规则只会被执行一次(包括当前规则的重复执行不是本身触发的)
 when
     RequestFact(uri=="/def")
 then
@@ -35,6 +37,8 @@ then
 end
 
 rule ghi
+    no-loop true        // 防止死循环(当规则通过update之类的函数修改了Fact对象时，可能使当前规则再次被激活从而导致死循环)
+    lock-on-active true // 限制当前规则只会被执行一次(包括当前规则的重复执行不是本身触发的)
 when
     RequestFact(uri=="/ghi")
 then
