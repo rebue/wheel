@@ -9,12 +9,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.kie.api.runtime.KieSession;
 import rebue.wheel.core.fact.RequestFact;
+import rebue.wheel.core.file.FileModifier;
 import rebue.wheel.core.file.FileUtils;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 
@@ -28,45 +28,21 @@ public class DroolsTests {
         Map<String, String> body   = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
 
-        String       drlPath    = FileUtils.getClassesPath() + "drools/rules/DefaultRules.drl";
-        StringJoiner drlContent = new StringJoiner("\n");
-        try (BufferedReader in = new BufferedReader(new FileReader(drlPath))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.contains("IIIII")) {
-                    line = line.replaceAll("IIIII", "IIIII IIIII IIIII");
-                }
-                if (line.contains("ABC OK!")) {
-                    line = line.replaceAll("ABC OK!", "ABC OK!OK!OK!");
-                }
-                drlContent.add(line);
-            }
-        }
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(drlPath))) {
-            out.write(drlContent.toString());
-        }
+        String       drlPath      = FileUtils.getClassesPath() + "drools/rules/DefaultRules.drl";
+        FileModifier fileModifier = new FileModifier(drlPath);
+        fileModifier.modifyLine("IIIII", "IIIII IIIII IIIII");
+        fileModifier.modifyLine("ABC OK!", "ABC OK!OK!OK!");
+        fileModifier.process();
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
         body = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII IIIII IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
 
-        drlContent = new StringJoiner("\n");
-        try (BufferedReader in = new BufferedReader(new FileReader(drlPath))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.contains("IIIII IIIII IIIII")) {
-                    line = line.replaceAll("IIIII IIIII IIIII", "IIIII");
-                }
-                if (line.contains("ABC OK!OK!OK!")) {
-                    line = line.replaceAll("ABC OK!OK!OK!", "ABC OK!");
-                }
-                drlContent.add(line);
-            }
-        }
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(drlPath))) {
-            out.write(drlContent.toString());
-        }
+        fileModifier = new FileModifier(drlPath);
+        fileModifier.modifyLine("IIIII IIIII IIIII", "IIIII");
+        fileModifier.modifyLine("ABC OK!OK!OK!", "ABC OK!");
+        fileModifier.process();
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
