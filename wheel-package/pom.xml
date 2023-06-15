@@ -22,6 +22,7 @@
         <netty.version>4.1.93.Final</netty.version>
         <netty-tcnative.version>2.0.61.Final</netty-tcnative.version>
         <bouncycastle18.version>1.73</bouncycastle18.version>
+        <drools.version>8.39.0.Final</drools.version>
         <scram.version>2.1</scram.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <curator.version>5.5.0</curator.version>
@@ -32,6 +33,18 @@
         <hazelcast.version>5.3.0</hazelcast.version>
         <vertx.version>4.4.3</vertx.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-bom</artifactId>
+                <type>pom</type>
+                <version>${drools.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!--        <dependency>-->
@@ -59,6 +72,12 @@
         <!--            <groupId>org.codehaus.janino</groupId>-->
         <!--            <artifactId>janino</artifactId>-->
         <!--            <version>3.1.9</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>commons-io</groupId>-->
+        <!--            <artifactId>commons-io</artifactId>-->
+        <!--            <version>2.13.0</version>-->
         <!--        </dependency>-->
 
         <!--        <dependency>-->
@@ -144,6 +163,55 @@
         <!--            <artifactId>bcprov-ext-jdk18on</artifactId>-->
         <!--            <version>${bouncycastle18.version}</version>-->
         <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-ruleunits-engine</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-xml-support</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>drools-wiring-static</artifactId>
+                    <groupId>org.drools</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-mvel</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-wiring-dynamic</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- 连接postgre需要使用 -->
         <!--        <dependency>-->
@@ -350,140 +418,140 @@
         <!--            </exclusions>-->
         <!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-zipkin</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vertx-core</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>brave</artifactId>
-                    <groupId>io.zipkin.brave</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>brave-instrumentation-http</artifactId>
-                    <groupId>io.zipkin.brave</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-zipkin</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>brave</artifactId>-->
+        <!--                    <groupId>io.zipkin.brave</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>brave-instrumentation-http</artifactId>-->
+        <!--                    <groupId>io.zipkin.brave</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-zookeeper</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>curator-framework</artifactId>
-                    <groupId>org.apache.curator</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>curator-recipes</artifactId>
-                    <groupId>org.apache.curator</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>zookeeper</artifactId>
-                    <groupId>org.apache.zookeeper</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-zookeeper</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>curator-framework</artifactId>-->
+        <!--                    <groupId>org.apache.curator</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>curator-recipes</artifactId>-->
+        <!--                    <groupId>org.apache.curator</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>guava</artifactId>-->
+        <!--                    <groupId>com.google.guava</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>zookeeper</artifactId>-->
+        <!--                    <groupId>org.apache.zookeeper</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-web-proxy</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vertx-core</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>vertx-web</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-web-proxy</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-web</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-config-git</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vertx-core</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>vertx-config</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>httpclient</artifactId>
-                    <groupId>org.apache.httpcomponents</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-config-yaml</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>snakeyaml</artifactId>
-                    <groupId>org.yaml</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>vertx-config</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>vertx-core</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-config-git</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-config</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>httpclient</artifactId>-->
+        <!--                    <groupId>org.apache.httpcomponents</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>commons-codec</artifactId>-->
+        <!--                    <groupId>commons-codec</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>commons-logging</artifactId>-->
+        <!--                    <groupId>commons-logging</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-config-yaml</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>snakeyaml</artifactId>-->
+        <!--                    <groupId>org.yaml</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-config</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-io_uring-incubator</artifactId>
-            <version>${vertx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vertx-core</artifactId>
-                    <groupId>io.vertx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>netty-buffer</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>netty-common</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>netty-transport</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>netty-transport-native-unix-common</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.vertx</groupId>-->
+        <!--            <artifactId>vertx-io_uring-incubator</artifactId>-->
+        <!--            <version>${vertx.version}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>vertx-core</artifactId>-->
+        <!--                    <groupId>io.vertx</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-buffer</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-common</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-transport</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>netty-transport-native-unix-common</artifactId>-->
+        <!--                    <groupId>io.netty</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
     </dependencies>
 
     <build>
