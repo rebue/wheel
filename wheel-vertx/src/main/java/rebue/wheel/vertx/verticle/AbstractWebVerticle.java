@@ -45,7 +45,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         WebProperties webProperties = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
-                : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
+            : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
 
         log.info("创建路由");
         final Router router = Router.router(this.vertx);
@@ -68,7 +68,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (timeout != null && timeout != 0) {
             final Integer timeoutErrorCode = webProperties.getTimeoutErrorCode();
             final int     errorCode        = timeoutErrorCode != null ? timeoutErrorCode : 503;
-            log.info("开启超时返回错误状态码{}", errorCode);
+            log.info("开启超时{}毫秒未响应返回错误状态码{}", timeout, errorCode);
             globalRoute.handler(TimeoutHandler.create(timeout, errorCode));
         }
         // 记录日志
@@ -99,9 +99,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("实现自签名证书");
             SelfSignedCertificate certificate = SelfSignedCertificate.create();
             httpServerOptions
-                    .setSsl(true)
-                    .setKeyCertOptions(certificate.keyCertOptions())
-                    .setTrustOptions(certificate.trustOptions());
+                .setSsl(true)
+                .setKeyCertOptions(certificate.keyCertOptions())
+                .setTrustOptions(certificate.trustOptions());
         }
 
         log.info("配置路由器");
@@ -118,13 +118,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             Arguments.require(httpsPort != 0, "web.config.server.port不能为null或0");
 
             this.http2httpsServer = this.vertx.createHttpServer(http2httpsServerOptions)
-                    .requestHandler(req -> req.response()
-                            .setStatusCode(301)
-                            .putHeader("Location", req.absoluteURI()
-                                    .replace("http", "https")
-                                    .replace(":" + http2httpsPort, ":" + httpsPort)
-                            )
-                            .end());
+                .requestHandler(req -> req.response()
+                    .setStatusCode(301)
+                    .putHeader("Location", req.absoluteURI()
+                        .replace("http", "https")
+                        .replace(":" + http2httpsPort, ":" + httpsPort)
+                    )
+                    .end());
         }
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
