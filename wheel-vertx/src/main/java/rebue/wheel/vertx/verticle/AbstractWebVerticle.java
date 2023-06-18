@@ -19,6 +19,8 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
+import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
+import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
 
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         WebProperties webProperties = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
-            : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
+                : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
 
         log.info("创建路由");
         final Router router = Router.router(this.vertx);
@@ -56,6 +58,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         // 全局route
         final Route globalRoute = router.route();
+
+        // 是否启用SkyWalking Agent支持
+        if (SkyWalkingUtils.isEnabled()) {
+            globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
+        }
+
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
         globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
@@ -99,9 +107,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("实现自签名证书");
             SelfSignedCertificate certificate = SelfSignedCertificate.create();
             httpServerOptions
-                .setSsl(true)
-                .setKeyCertOptions(certificate.keyCertOptions())
-                .setTrustOptions(certificate.trustOptions());
+                    .setSsl(true)
+                    .setKeyCertOptions(certificate.keyCertOptions())
+                    .setTrustOptions(certificate.trustOptions());
         }
 
         log.info("配置路由器");
@@ -118,13 +126,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             Arguments.require(httpsPort != 0, "web.config.server.port不能为null或0");
 
             this.http2httpsServer = this.vertx.createHttpServer(http2httpsServerOptions)
-                .requestHandler(req -> req.response()
-                    .setStatusCode(301)
-                    .putHeader("Location", req.absoluteURI()
-                        .replace("http", "https")
-                        .replace(":" + http2httpsPort, ":" + httpsPort)
-                    )
-                    .end());
+                    .requestHandler(req -> req.response()
+                            .setStatusCode(301)
+                            .putHeader("Location", req.absoluteURI()
+                                    .replace("http", "https")
+                                    .replace(":" + http2httpsPort, ":" + httpsPort)
+                            )
+                            .end());
         }
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;

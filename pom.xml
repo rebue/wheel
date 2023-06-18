@@ -56,6 +56,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <drools.version>8.39.0.Final</drools.version>
+        <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <curator.version>5.5.0</curator.version>
         <pulsar.version>3.0.0</pulsar.version>
@@ -293,6 +294,17 @@
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
                 <version>1.5.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-toolkit-logback-1.x</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-toolkit-trace</artifactId>
+                <version>${skywalking.version}</version>
             </dependency>
 
             <dependency>
