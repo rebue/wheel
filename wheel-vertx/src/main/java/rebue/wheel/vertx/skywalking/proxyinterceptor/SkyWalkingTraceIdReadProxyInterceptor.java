@@ -6,6 +6,7 @@ import io.vertx.httpproxy.ProxyInterceptor;
 import io.vertx.httpproxy.ProxyResponse;
 import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
 
+@Deprecated
 public class SkyWalkingTraceIdReadProxyInterceptor implements ProxyInterceptor {
     private final ProxyInterceptor innerProxyInterceptor;
 

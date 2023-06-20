@@ -19,8 +19,8 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
-import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
 import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
+import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
 
 import java.util.Map;
 
@@ -61,10 +61,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         // 是否启用SkyWalking Agent支持
         if (SkyWalkingUtils.isEnabled()) {
+            log.info("开启SkyWalking Agent支持");
             globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
         }
-
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
+        log.info("开启响应内容类型处理");
         globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
         if (webProperties.getIsResponseTime()) {
