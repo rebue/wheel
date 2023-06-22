@@ -14,7 +14,8 @@ public class SkyWalkingUtils {
     public final static String TRACE_ID_KEY = "traceId";
 
     public static boolean isEnabled() {
-        return System.getenv("SW_AGENT_ENABLE").equalsIgnoreCase("true");
+        String sw_agent_enable = System.getenv("SW_AGENT_ENABLE");
+        return sw_agent_enable != null && sw_agent_enable.equalsIgnoreCase("true");
     }
 
     public static String getTraceIdFromHttpHeaders(MultiMap headers) {
