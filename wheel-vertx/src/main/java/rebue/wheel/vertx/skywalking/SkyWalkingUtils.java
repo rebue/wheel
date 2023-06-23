@@ -9,7 +9,6 @@ import org.slf4j.MDC;
 import java.util.Base64;
 
 @Slf4j
-@Deprecated
 public class SkyWalkingUtils {
     public final static String TRACE_ID_KEY = "traceId";
 
@@ -39,6 +38,7 @@ public class SkyWalkingUtils {
         log.debug("put trace id in MDC: {}", TID);
     }
 
+    @Deprecated
     public static void clearTraceIdInMdc() {
         MDC.put(SkyWalkingUtils.TRACE_ID_KEY, "N/A");
         MDC.put("tid", "N/A");

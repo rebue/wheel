@@ -2,7 +2,6 @@ package rebue.wheel.vertx.verticle;
 
 import io.grpc.ServerServiceDefinition;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -74,14 +73,6 @@ public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    private void handleStartCompletion(final AsyncResult<Void> res) {
-        if (res.succeeded()) {
-            log.info("GrpcNettyVerticle start success");
-        } else {
-            log.error("GrpcNettyVerticle start fail", res.cause());
-        }
     }
 
 }

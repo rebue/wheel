@@ -2,7 +2,6 @@ package rebue.wheel.vertx.verticle;
 
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -110,14 +109,6 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
     private void handleStart(final Message<Void> message) {
         log.info("XxlJobVerticle start");
         this.startConsumer.unregister(res -> xxlJobExecutor.start());
-    }
-
-    private void handleStartCompletion(final AsyncResult<Void> res) {
-        if (res.succeeded()) {
-            log.info("XxlJobVerticle start success");
-        } else {
-            log.error("XxlJobVerticle start fail", res.cause());
-        }
     }
 
 }
