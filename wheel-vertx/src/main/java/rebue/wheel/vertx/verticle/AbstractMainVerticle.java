@@ -78,7 +78,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 
 
     @Override
-    public void start(final Promise<Void> startPromise) {
+    public void start(Promise<Void> startPromise) {
         log.info("MainVerticle start");
 
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
@@ -163,22 +163,23 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     @SneakyThrows
     private void handleConfigChange(Message<JsonObject> message) {
         log.info("处理配置改变");
-        this.configChangedConsumer.unregister();
-        log.info("undeploy verticles");
-        @SuppressWarnings("rawtypes") final List<Future> undeployFutures = new LinkedList<>();
-        for (String deploymentId : deploymentIds) {
-            undeployFutures.add(this.vertx.undeploy(deploymentId));
-        }
+        this.configChangedConsumer.unregister(res -> {
+            log.info("undeploy verticles");
+            @SuppressWarnings("rawtypes") final List<Future> undeployFutures = new LinkedList<>();
+            for (String deploymentId : deploymentIds) {
+                undeployFutures.add(this.vertx.undeploy(deploymentId));
+            }
 
-        CompositeFuture.all(undeployFutures)
-                .onSuccess(compositeFuture -> {
-                    log.info("取消部署verticle完成");
-                    this.vertx.verticleFactories().forEach(verticleFactory -> {
-                        log.info("unregisterVerticleFactory: {}", verticleFactory.prefix());
-                        this.vertx.unregisterVerticleFactory(verticleFactory);
-                    });
-                    this.vertx.close();
-                }).onFailure(err -> log.error("取消部署verticle失败", err));
+            CompositeFuture.all(undeployFutures)
+                    .onSuccess(compositeFuture -> {
+                        log.info("取消部署verticle完成");
+                        this.vertx.verticleFactories().forEach(verticleFactory -> {
+                            log.info("unregisterVerticleFactory: {}", verticleFactory.prefix());
+                            this.vertx.unregisterVerticleFactory(verticleFactory);
+                        });
+                        this.vertx.close();
+                    }).onFailure(err -> log.error("取消部署verticle失败", err));
+        });
     }
 
     /**

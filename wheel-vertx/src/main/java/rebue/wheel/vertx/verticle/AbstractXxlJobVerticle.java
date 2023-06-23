@@ -3,6 +3,7 @@ package rebue.wheel.vertx.verticle;
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import jakarta.inject.Inject;
@@ -26,7 +27,7 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
     private XxlJobSimpleExecutor xxlJobExecutor = null;
 
     @Override
-    public void start() {
+    public void start(Promise<Void> startPromise) {
         log.info("XxlJobVerticle start preparing");
 
         final XxlJobProperties xxlJobProperties = config().mapTo(XxlJobProperties.class);
@@ -35,11 +36,19 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
         setExecutorProperties(xxlJobProperties);
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("XxlJobVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
+        log.info("XxlJobVerticle注册消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
-        this.startConsumer.completionHandler(this::handleStartCompletion);
-
-        log.info("XxlJobVerticle end preparing");
+        // 注册完成处理器
+        this.startConsumer.completionHandler(res -> {
+            log.info("XxlJobVerticle end deployed");
+            if (res.succeeded()) {
+                log.info("XxlJobVerticle deployed success");
+                startPromise.complete();
+            } else {
+                log.error("XxlJobVerticle deployed fail", res.cause());
+                startPromise.fail(res.cause());
+            }
+        });
     }
 
     /**
@@ -100,8 +109,7 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
 
     private void handleStart(final Message<Void> message) {
         log.info("XxlJobVerticle start");
-        this.startConsumer.unregister();
-        xxlJobExecutor.start();
+        this.startConsumer.unregister(res -> xxlJobExecutor.start());
     }
 
     private void handleStartCompletion(final AsyncResult<Void> res) {

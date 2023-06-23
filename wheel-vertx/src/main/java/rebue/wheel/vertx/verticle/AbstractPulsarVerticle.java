@@ -1,8 +1,8 @@
 package rebue.wheel.vertx.verticle;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import jakarta.inject.Inject;
@@ -32,8 +32,8 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
     protected abstract Future<Boolean> receivedData(String data);
 
     @Override
-    public void start() {
-        log.info("PulsarVerticle start preparing");
+    public void start(Promise<Void> startPromise) {
+        log.info("PulsarVerticle start deployed");
 
         final MessageListener<String> messageListener = (consumer, msg) -> {
             final String data = msg.getValue();
@@ -63,11 +63,19 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
                 .messageListener(messageListener);
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("PulsarVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
+        log.info("PulsarVerticle注册消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
-        this.startConsumer.completionHandler(this::handleStartCompletion);
-
-        log.info("PulsarVerticle end preparing");
+        // 注册完成处理器
+        this.startConsumer.completionHandler(res -> {
+            log.info("PulsarVerticle end deployed");
+            if (res.succeeded()) {
+                log.info("PulsarVerticle deployed success");
+                startPromise.complete();
+            } else {
+                log.error("PulsarVerticle deployed fail", res.cause());
+                startPromise.fail(res.cause());
+            }
+        });
     }
 
     @SneakyThrows
@@ -77,19 +85,15 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
         if (this._consumer != null) this._consumer.close();
     }
 
-    @SneakyThrows
     private void handleStart(final Message<Void> message) {
         log.info("PulsarVerticle start");
-        this.startConsumer.unregister();
-        this._consumer = consumerBuilder.subscribe();
-    }
-
-    private void handleStartCompletion(final AsyncResult<Void> res) {
-        if (res.succeeded()) {
-            log.info("PulsarVerticle start success");
-        } else {
-            log.error("PulsarVerticle start fail", res.cause());
-        }
+        this.startConsumer.unregister(res -> {
+            try {
+                this._consumer = consumerBuilder.subscribe();
+            } catch (PulsarClientException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

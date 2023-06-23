@@ -2,7 +2,7 @@ package rebue.wheel.vertx.verticle;
 
 import com.google.inject.Injector;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
@@ -42,8 +42,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     private MessageConsumer<Void> startConsumer;
 
     @Override
-    public void start() {
-        log.info("WebVerticle start preparing");
+    public void start(Promise<Void> startPromise) {
+        log.info("WebVerticle start deployed");
 
         WebProperties webProperties = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
@@ -137,11 +137,19 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         }
 
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-        log.info("WebVerticle配置消费EventBus事件-MainVerticle部署成功事件: {}", address);
+        log.info("WebVerticle注册消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
-        this.startConsumer.completionHandler(this::handleStartCompletion);
-
-        log.info("WebVerticle end preparing");
+        // 注册完成处理器
+        this.startConsumer.completionHandler(res -> {
+            log.info("WebVerticle end deployed");
+            if (res.succeeded()) {
+                log.info("WebVerticle deployed success");
+                startPromise.complete();
+            } else {
+                log.error("WebVerticle deployed fail", res.cause());
+                startPromise.fail(res.cause());
+            }
+        });
     }
 
     @Override
@@ -160,30 +168,22 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     private void handleStart(final Message<Void> message) {
         log.info("WebVerticle start");
-        this.startConsumer.unregister();
-        this.httpServer.listen(res -> {
-            if (res.succeeded()) {
-                log.info("HTTP server started on port " + res.result().actualPort());
-            } else {
-                log.error("HTTP server start fail", res.cause());
-            }
+        this.startConsumer.unregister(result -> {
+            this.httpServer.listen(res -> {
+                if (res.succeeded()) {
+                    log.info("HTTP server started on port " + res.result().actualPort());
+                } else {
+                    log.error("HTTP server start fail", res.cause());
+                }
+            });
+            if (http2httpsServer != null) http2httpsServer.listen(res -> {
+                if (res.succeeded()) {
+                    log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
+                } else {
+                    log.error("HTTP to HTTPS server start fail", res.cause());
+                }
+            });
         });
-        if (http2httpsServer != null) http2httpsServer.listen(res -> {
-            if (res.succeeded()) {
-                log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
-            } else {
-                log.error("HTTP to HTTPS server start fail", res.cause());
-            }
-        });
-
-    }
-
-    private void handleStartCompletion(final AsyncResult<Void> res) {
-        if (res.succeeded()) {
-            log.info("WebVerticle start success");
-        } else {
-            log.error("WebVerticle start fail", res.cause());
-        }
     }
 
 }
