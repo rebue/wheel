@@ -1,12 +1,22 @@
 package rebue.wheel.core.file;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.*;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringJoiner;
 
-@Slf4j
 public class FileUtils {
+
+    /**
+     * 判断是否是绝对路径(不是绝对路径就是相对路径)
+     *
+     * @param path 路径
+     * @return 是否是绝对路径
+     */
+    public static boolean isAbsPath(String path) {
+        return path.startsWith("/") || path.indexOf(":") > 0;
+    }
 
     /**
      * 得到项目的绝对路径
@@ -25,18 +35,14 @@ public class FileUtils {
     /**
      * 得到类路径
      */
-    public static String getClassesPath(Class clazz) {
-        String result;
-        result = clazz.getResource(File.separator).getPath();
+    public static String getClassesPath(Class<?> clazz) {
+        URL resource = clazz.getResource(File.separator);
+        if (resource == null) throw new RuntimeException("获取类资源为null");
+        String result = resource.getPath();
         // windows系统中取得的路径如/D:/workspace/abc/， 去掉第一个字母'/'
         if (result.charAt(0) == '/' && result.charAt(2) == ':') {
             result = result.substring(1);
         }
-
-//        result = Thread.currentThread().getContextClassLoader().getResource(File.separator).getPath();
-//        result = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-
-        log.info("得到类路径:" + result);
         return result;
     }
 
@@ -56,7 +62,6 @@ public class FileUtils {
             return new File(path).getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("错误的路径：" + path);
             throw new RuntimeException(e);
         }
     }
@@ -87,9 +92,10 @@ public class FileUtils {
     }
 
     public static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
+        String[] dirList = dir.list();
+        if (dir.isDirectory() && dirList != null) {
             // 递归删除目录中的子目录下
-            for (String children : dir.list()) {
+            for (String children : dirList) {
                 boolean success = deleteDir(new File(dir, children));
                 if (!success) {
                     return false;
@@ -108,7 +114,7 @@ public class FileUtils {
      * @throws IOException IO异常
      */
     public static String readToString(String filePath) throws IOException {
-        StringJoiner contentStringJoiner = new StringJoiner("\n");
+        StringJoiner contentStringJoiner = new StringJoiner(System.lineSeparator());
         try (BufferedReader in = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = in.readLine()) != null) {
@@ -118,55 +124,25 @@ public class FileUtils {
         return contentStringJoiner.toString();
     }
 
-    // /**
-    // * 查找文件的匹配器
-    // */
-    // public interface FileMatcher {
-    // void matched(File file, Matcher matcher);
-    // }
-
-    // /**
-    // * 递归查找文件
-    // *
-    // * @param sSearchDir
-    // * 查找的文件夹路径
-    // * @param fileComparer
-    // * 文件比较接口
-    // * @param patten
-    // * 匹配文件名的正则表达式
-    // *
-    // * XXX 与new File(dir).listFiles(new
-    // * FileFilter(){....有区别，这个是递归查找文件的
-    // */
-    // public static void searchFiles(String sSearchDir, Pattern pattern, FileMatcher fileComparer) {
-    // File searchDir = new File(sSearchDir);
-    // if (!searchDir.exists())
-    // _logger.error("文件查找失败：不存在" + sSearchDir + "这个路径");
-    // else if (!searchDir.isDirectory())
-    // _logger.error("文件查找失败：" + sSearchDir + "不是一个目录！");
-    // else
-    // searchFiles(new File(sSearchDir), pattern, fileComparer);
-    // }
-    //
-    // private static void searchFiles(File searchDir, final Pattern pattern, final FileMatcher fileMatcher) {
-    // searchDir.listFiles(new FileFilter() {
-    // @Override
-    // public boolean accept(File file) {
-    // if (file.isDirectory())
-    // searchFiles(file, pattern, fileMatcher);
-    // else {
-    // try {
-    // Matcher matcher = pattern.matcher(file.getCanonicalPath());
-    // if (matcher.find())
-    // fileMatcher.matched(file, matcher);
-    // } catch (IOException e) {
-    // _logger.error("不应该的异常：是在查找到文件后再取的路径信息", e);
-    // }
-    // }
-    // return false;
-    // }
-    // });
-    // }
+    /**
+     * 读取资源文件内容到字符串
+     *
+     * @param resourceFilePath 文件路径
+     * @return 文件内容的字符串
+     * @throws IOException IO异常
+     */
+    public static List<String> readResourceFileToList(String resourceFilePath, Class<?> clazz) throws IOException {
+        List<String> list        = new LinkedList<>();
+        InputStream  inputStream = clazz.getResourceAsStream(resourceFilePath);
+        if (inputStream == null) throw new RuntimeException("获取类资源为null");
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                list.add(line);
+            }
+        }
+        return list;
+    }
 
     public static byte[] getBytesFromFile(String filePath) throws IOException {
         File            file            = new File(filePath);
