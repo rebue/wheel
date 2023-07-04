@@ -13,7 +13,7 @@ import java.util.Properties;
 public class JdbcUtils {
     public static Connection getConnection(ConnectParam connectParam) throws SQLException {
         return DriverManager.getConnection(
-                String.format(connectParam.getUrl(), connectParam.getUrlParams()),
+                String.format(connectParam.getUrl(), (Object[]) connectParam.getParams()),
                 connectParam.getProperties());
     }
 
@@ -29,7 +29,7 @@ public class JdbcUtils {
         /**
          * url参数
          */
-        private Object[]   urlParams;
+        private String[]   params;
         /**
          * 连接属性
          */
