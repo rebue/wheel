@@ -1,14 +1,11 @@
 package rebue.wheel.core;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class JdbcUtils {
     public static Connection getConnection(ConnectParam connectParam) throws SQLException {
@@ -35,8 +32,8 @@ public class JdbcUtils {
             try (ResultSet tables = metaData.getTables(null, null, tableNamePattern, new String[]{"TABLE"})) {
                 // 遍历表元数据并读出表名和结构
                 while (tables.next()) {
-                    String tableName = tables.getString("TABLE_NAME");
-                    TableMeta table = new TableMeta();
+                    String    tableName = tables.getString("TABLE_NAME");
+                    TableMeta table     = new TableMeta();
                     dbMeta.tables.add(table);
                     table.name = tableName;
                     table.remark = tables.getString("REMARKS");
