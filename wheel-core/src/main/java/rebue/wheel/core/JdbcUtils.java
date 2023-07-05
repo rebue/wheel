@@ -37,16 +37,28 @@ public class JdbcUtils {
                     dbMeta.tables.add(table);
                     table.name = tableName;
                     table.remark = tables.getString("REMARKS");
+                    // 获取主键
                     ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(null, null, tableName);
                     while (primaryKeysResultSet.next()) {
                         table.primaryKeys.add(primaryKeysResultSet.getString("COLUMN_NAME"));
                     }
+                    // 获取unique字段
                     ResultSet uniquesResultSet = metaData.getIndexInfo(null, null, tableName, true, false);
                     while (uniquesResultSet.next()) {
                         String columnName = uniquesResultSet.getString("COLUMN_NAME");
                         // 排除主键
                         if (table.primaryKeys.contains(columnName)) continue;
                         table.uniques.add(columnName);
+                    }
+                    // 获取外键
+                    ResultSet importedKeyResultSet = metaData.getImportedKeys(null, null, tableName);
+                    while (importedKeyResultSet.next()) {
+                        ImportKeyMeta importKey = new ImportKeyMeta();
+                        importKey.fkTableName = importedKeyResultSet.getString("FKTABLE_NAME");
+                        importKey.fkColumnName = importedKeyResultSet.getString("FKCOLUMN_NAME");
+                        importKey.pkTableName = importedKeyResultSet.getString("PKTABLE_NAME");
+                        importKey.pkColumnName = importedKeyResultSet.getString("PKCOLUMN_NAME");
+                        table.importedKeys.add(importKey);
                     }
                     // 获取表的列元数据
                     try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
@@ -63,6 +75,14 @@ public class JdbcUtils {
                             column.isUnique = table.uniques.contains(column.name);
                             column.isNullable = columnResultSet.getBoolean("IS_NULLABLE");
                             column.remark = columnResultSet.getString("REMARKS");
+                            column.isForeignKey = false;
+                            for (ImportKeyMeta importKey : table.importedKeys) {
+                                if (column.name.equalsIgnoreCase(importKey.fkColumnName)) {
+                                    column.isForeignKey = true;
+                                    column.referencedTableName = importKey.pkTableName;
+                                    column.referencedColumnName = importKey.pkColumnName;
+                                }
+                            }
                         }
                     }
                 }
@@ -114,23 +134,47 @@ public class JdbcUtils {
         /**
          * 表名
          */
-        private String           name;
+        private String              name;
         /**
          * 表注释
          */
-        private String           remark;
+        private String              remark;
         /**
          * 表的主键列表
          */
-        private List<String>     primaryKeys = new LinkedList<>();
+        private List<String>        primaryKeys  = new LinkedList<>();
         /**
          * 表的unique列表
          */
-        private List<String>     uniques     = new LinkedList<>();
+        private List<String>        uniques      = new LinkedList<>();
+        /**
+         * 表的外键列表
+         */
+        private List<ImportKeyMeta> importedKeys = new LinkedList<>();
         /**
          * 列集合
          */
-        private List<ColumnMeta> columns     = new LinkedList<>();
+        private List<ColumnMeta>    columns      = new LinkedList<>();
+    }
+
+    @Data
+    public static class ImportKeyMeta {
+        /**
+         * 外键表名
+         */
+        private String fkTableName;
+        /**
+         * 外键列名
+         */
+        private String fkColumnName;
+        /**
+         * 主键表名
+         */
+        private String pkTableName;
+        /**
+         * 主键列名
+         */
+        private String pkColumnName;
     }
 
     @Data
@@ -171,6 +215,18 @@ public class JdbcUtils {
          * 列注释
          */
         private String  remark;
+        /**
+         * 是否外键
+         */
+        private Boolean isForeignKey;
+        /**
+         * 外键引用的表名
+         */
+        private String  referencedTableName;
+        /**
+         * 外键引用的列名
+         */
+        private String  referencedColumnName;
     }
 
 }
