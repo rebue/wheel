@@ -43,7 +43,10 @@ public class JdbcUtils {
                     }
                     ResultSet uniquesResultSet = metaData.getIndexInfo(null, null, tableName, true, false);
                     while (uniquesResultSet.next()) {
-                        table.uniques.add(uniquesResultSet.getString("COLUMN_NAME"));
+                        String columnName = uniquesResultSet.getString("COLUMN_NAME");
+                        // 排除主键
+                        if (table.primaryKeys.contains(columnName)) continue;
+                        table.uniques.add(columnName);
                     }
                     // 获取表的列元数据
                     try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
