@@ -219,6 +219,11 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.ibeetl</groupId>
+                <artifactId>beetl</artifactId>
+                <version>3.15.6.RELEASE</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.pulsar</groupId>

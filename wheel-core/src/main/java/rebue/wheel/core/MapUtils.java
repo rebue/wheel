@@ -3,9 +3,7 @@ package rebue.wheel.core;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.beans.IntrospectionException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.time.LocalDate;
@@ -24,26 +22,38 @@ public class MapUtils {
             if (sb.length() > 0) {
                 sb.append(",");
             }
-            String value = "";
+            StringBuilder value = new StringBuilder();
             // request.getParameterMap()的返回值类型是Map<String,String[]>，因为像checkbox这样的组件会有一个name对应多个value的时候
             if (item.getValue().getClass().getName().equals("[Ljava.lang.String;")) {
                 final String[] values = (String[]) item.getValue();
                 for (final String val : values) {
-                    value += val + ",";
+                    value.append(val).append(",");
                 }
-                value = "[" + StringUtils.left(value, value.length() - 1) + "]";
+                value = new StringBuilder("[" + StringUtils.left(value.toString(), value.length() - 1) + "]");
             } else {
-                value = item.getValue().toString();
+                value = new StringBuilder(item.getValue().toString());
             }
-            sb.append(item.getKey() + ":" + value);
+            sb.append(item.getKey()).append(":").append(value);
         }
         return sb.toString();
     }
 
     /**
+     * Map转Properties
+     *
+     * @param map 要转换的map
+     * @return 转换后的properties
+     */
+    public static Properties map2Props(Map<?, ?> map) {
+        Properties properties = new Properties();
+        properties.putAll(map);
+        return properties;
+    }
+
+    /**
      * 将map转成Bean对象
      */
-    public static Object map2Bean(final Map<String, Object> map, final Class<?> beanClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    public static Object map2Bean(final Map<String, Object> map, final Class<?> beanClass) {
         if (map == null || map.isEmpty()) {
             return null;
         }
@@ -63,7 +73,7 @@ public class MapUtils {
     /**
      * 将Bean对象转成map
      */
-    public static Map<?, ?> bean2Map(final Object bean) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public static Map<?, ?> bean2Map(final Object bean) throws IllegalArgumentException {
         if (bean == null) {
             return null;
         }
@@ -160,7 +170,7 @@ public class MapUtils {
         if (value == null) {
             return null;
         }
-        String valueStr = null;
+        String valueStr;
         if (value instanceof LocalDate) {
             valueStr = LocalDateTimeUtils.format((LocalDate) value);
         } else if (value instanceof LocalDateTime) {
