@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -21,6 +22,8 @@ import java.util.stream.Stream;
 public final class FileSearcher {
 
     /**
+     * 搜索文件
+     *
      * @param sSearchRootDir 查找的文件夹路径
      * @param regex          匹配文件名的正则表达式
      * @param onMatched      文件匹配事件
@@ -98,5 +101,37 @@ public final class FileSearcher {
                 }
             }
         }
+    }
+
+    /**
+     * 搜索文件
+     *
+     * @param sSearchRootDir 搜索的根目录
+     * @param isMatch        是否匹配的函数
+     * @param onMatched      匹配成功的事件
+     */
+    public static void searchFiles(String sSearchRootDir, Predicate<File> isMatch, Consumer<File> onMatched) {
+        File searchRootDir = new File(sSearchRootDir);
+        searchFiles(searchRootDir, isMatch, onMatched);
+    }
+
+    /**
+     * 搜索文件
+     *
+     * @param searchDir 搜索的根目录
+     * @param isMatch   是否匹配的函数
+     * @param onMatched 匹配成功的事件
+     */
+    public static void searchFiles(File searchDir, Predicate<File> isMatch, Consumer<File> onMatched) {
+        Stream.of(Objects.requireNonNull(searchDir.listFiles())).forEach(file -> {
+            // 不匹配则返回
+            if (!isMatch.test(file)) return;
+            // 是否是目录
+            if (file.isDirectory()) {
+                searchFiles(file, isMatch, onMatched);
+            } else {
+                onMatched.accept(file);
+            }
+        });
     }
 }
