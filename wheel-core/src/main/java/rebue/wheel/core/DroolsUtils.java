@@ -15,12 +15,11 @@ import rebue.wheel.core.file.FileSearcher;
 import rebue.wheel.core.file.FileUtils;
 
 import java.io.File;
-import java.util.Objects;
 
 @Slf4j
 public class DroolsUtils {
-    private static final KieServices  kieServices = KieServices.Factory.get();
-    private static       KieContainer kieContainer;
+    private static final KieServices kieServices = KieServices.Factory.get();
+    private static KieContainer kieContainer;
 
     static {
         // 初始化时创建容器
@@ -54,7 +53,7 @@ public class DroolsUtils {
     @SneakyThrows
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(FileUtils.getClassesPath() + "drools/");
-        FileAlterationMonitor  monitor  = new FileAlterationMonitor(5 * 1000);
+        FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             @Override
             public void onFileCreate(File file) {
