@@ -113,6 +113,24 @@ public class FileUtils {
      * @return 文件内容的字符串
      * @throws IOException IO异常
      */
+    public static String readToString(File file) throws IOException {
+        StringJoiner contentStringJoiner = new StringJoiner(System.lineSeparator());
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                contentStringJoiner.add(line);
+            }
+        }
+        return contentStringJoiner.toString();
+    }
+
+    /**
+     * 读取文件内容到字符串
+     *
+     * @param filePath 文件路径
+     * @return 文件内容的字符串
+     * @throws IOException IO异常
+     */
     public static String readToString(String filePath) throws IOException {
         StringJoiner contentStringJoiner = new StringJoiner(System.lineSeparator());
         try (BufferedReader in = new BufferedReader(new FileReader(filePath))) {
@@ -132,8 +150,8 @@ public class FileUtils {
      * @throws IOException IO异常
      */
     public static List<String> readResourceFileToList(String resourceFilePath, Class<?> clazz) throws IOException {
-        List<String> list        = new LinkedList<>();
-        InputStream  inputStream = clazz.getResourceAsStream(resourceFilePath);
+        List<String> list = new LinkedList<>();
+        InputStream inputStream = clazz.getResourceAsStream(resourceFilePath);
         if (inputStream == null) throw new RuntimeException("获取类资源为null");
         try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
@@ -145,9 +163,9 @@ public class FileUtils {
     }
 
     public static byte[] getBytesFromFile(String filePath) throws IOException {
-        File            file            = new File(filePath);
+        File file = new File(filePath);
         FileInputStream fileInputStream = new FileInputStream(file);
-        byte[]          data            = new byte[(int) file.length()];
+        byte[] data = new byte[(int) file.length()];
         try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
             dataInputStream.readFully(data);
         }
