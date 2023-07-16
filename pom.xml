@@ -55,7 +55,7 @@
         <jackson.version>2.15.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <drools.version>8.39.0.Final</drools.version>
+        <drools.version>8.41.0.Final</drools.version>
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <curator.version>5.5.0</curator.version>
