@@ -6,10 +6,12 @@ import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.commons.lang3.StringUtils;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.AgendaGroup;
 import org.kie.internal.io.ResourceFactory;
 import rebue.wheel.core.file.FileSearcher;
 import rebue.wheel.core.file.FileUtils;
@@ -18,8 +20,8 @@ import java.io.File;
 
 @Slf4j
 public class DroolsUtils {
-    private static final KieServices kieServices = KieServices.Factory.get();
-    private static KieContainer kieContainer;
+    private static final KieServices  kieServices = KieServices.Factory.get();
+    private static       KieContainer kieContainer;
 
     static {
         // 初始化时创建容器
@@ -53,7 +55,7 @@ public class DroolsUtils {
     @SneakyThrows
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(FileUtils.getClassesPath() + "drools/");
-        FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
+        FileAlterationMonitor  monitor  = new FileAlterationMonitor(5 * 1000);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             @Override
             public void onFileCreate(File file) {
@@ -79,16 +81,31 @@ public class DroolsUtils {
     }
 
     /**
-     * 创建新的会话
+     * 触发规则
      *
-     * @param kSessionName 会话名
-     *                     在kmodule.xml文件中的ksession节点定义
-     *                     在kmodule.xml文件中定义必须是唯一的，不能有重名
-     * @return 会话
+     * @param kSessionName    会话名称
+     *                        在kmodule.xml文件中的ksession节点定义
+     *                        在kmodule.xml文件中定义必须是唯一的，不能有重名
+     * @param agendaGroupName 议程分组
+     * @param fact            要传递给规则执行的参数
+     * @return 触发执行的规则数
      */
-    public static KieSession newKieSession(String kSessionName) {
-        return kieContainer.newKieSession(kSessionName);
+    public static int fireRules(String kSessionName, String agendaGroupName, Object fact) {
+        // 执行规则引擎自定义绑定变量
+        KieSession kieSession = kieContainer.newKieSession(kSessionName);
+        try {
+            if (StringUtils.isNotBlank(agendaGroupName)) {
+                AgendaGroup agendaGroup = kieSession.getAgenda().getAgendaGroup(agendaGroupName);
+                if (agendaGroup == null) return 0;
+                agendaGroup.setFocus();
+            }
+            kieSession.insert(fact);
+            int firedRulesCount = kieSession.fireAllRules();
+            System.out.printf("触发执行了改变%s的规则数为%d%n", agendaGroupName, firedRulesCount);
+            return firedRulesCount;
+        } finally {
+            kieSession.dispose();
+        }
     }
-
 
 }

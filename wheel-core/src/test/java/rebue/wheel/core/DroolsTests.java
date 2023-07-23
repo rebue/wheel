@@ -7,7 +7,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.kie.api.runtime.KieSession;
 import rebue.wheel.core.fact.RequestFact;
 import rebue.wheel.core.file.FileModifier;
 import rebue.wheel.core.file.FileUtils;
@@ -35,7 +34,7 @@ public class DroolsTests {
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
-        body = execute(random);
+        body   = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII IIIII IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
 
         fileModifier = new FileModifier(drlPath);
@@ -45,13 +44,11 @@ public class DroolsTests {
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
-        body = execute(random);
+        body   = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
     }
 
     public Map<String, String> execute(String random) {
-        KieSession kieSession = DroolsUtils.newKieSession("test01");   // kSessionName在kmodule.xml文件中定义
-
         Map<String, String> body = new LinkedHashMap<>();
         body.put("0", random);
         body.put("a", "AAA");
@@ -61,15 +58,12 @@ public class DroolsTests {
         body.put("e", "EEE");
         body.put("f", "FFF");
         body.put("g", "GGG");
-        kieSession.insert(RequestFact.builder()
+        int rulesCount = DroolsUtils.fireRules("test01", null, RequestFact.builder()
                 .uri("/abc")
                 .body(body)
                 .build());
-        int rulesCount = kieSession.fireAllRules();
         log.info("result: {}", body);
         Assertions.assertEquals(1, rulesCount);
-
-        kieSession.dispose();
         return body;
     }
 
