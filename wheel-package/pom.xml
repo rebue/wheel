@@ -30,7 +30,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <ulid.version>5.2.0</ulid.version>
         <guice.version>7.0.0</guice.version>
-        <pulsar.version>3.0.0</pulsar.version>
+        <pulsar.version>2.11.2</pulsar.version>
         <hazelcast.version>5.3.0</hazelcast.version>
         <vertx.version>4.4.3</vertx.version>
     </properties>

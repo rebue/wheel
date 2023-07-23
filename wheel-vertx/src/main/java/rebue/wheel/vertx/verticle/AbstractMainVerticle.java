@@ -54,7 +54,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES   // 忽略没有的字段
                 )
                 .disable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS      // 按默认的时间格式'yyyy-MM-dd'T'HH:mm:ss.SSS’转换有时会报错
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS      // 按默认的时间格式 yyyy-MM-dd'T'HH:mm:ss.SSS 转换有时会报错
                 )
                 .enable(
                         MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES    // 忽略字段和属性的大小写

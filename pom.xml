@@ -59,7 +59,7 @@
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <curator.version>5.5.0</curator.version>
-        <pulsar.version>3.0.0</pulsar.version>
+        <pulsar.version>2.11.2</pulsar.version>
         <ulid.version>5.2.0</ulid.version>
         <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
