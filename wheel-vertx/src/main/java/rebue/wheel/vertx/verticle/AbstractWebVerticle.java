@@ -21,6 +21,7 @@ import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
 import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
+import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 import java.util.Map;
 
@@ -59,11 +60,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         // 全局route
         final Route globalRoute = router.route();
 
-        // 是否启用SkyWalking Agent支持
-        if (SkyWalkingUtils.isEnabled()) {
-            log.info("开启SkyWalking Agent支持");
-            globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
-        }
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
         log.info("开启响应内容类型处理");
         globalRoute.handler(ResponseContentTypeHandler.create());
@@ -103,7 +99,18 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.error("全局路由错误处理: {}", ctx.statusCode());
             errorHandler.handle(ctx);
         });
+        // 是否打印来源的IP
+        if (webProperties.getPrintSrcIp()) {
+            log.info("开启打印来源的IP");
+            globalRoute.handler(new PrintSrcIpHandler());
+        }
+        // 是否启用SkyWalking Agent支持
+        if (SkyWalkingUtils.isEnabled()) {
+            log.info("开启SkyWalking Agent支持");
+            globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
+        }
 
+        // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
             log.info("实现自签名证书");
             SelfSignedCertificate certificate = SelfSignedCertificate.create();
