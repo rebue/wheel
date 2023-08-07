@@ -24,11 +24,15 @@ public class DroolsUtils {
     private static       KieContainer kieContainer;
 
     static {
+        log.info("初始化drools");
         // 初始化时创建容器
         newKieContainer();
-
         // 监听drools目录是否有文件变化，如果有就重新创建新的容器
         watchDroolsDir();
+    }
+
+    public static void init() {
+
     }
 
     /**
