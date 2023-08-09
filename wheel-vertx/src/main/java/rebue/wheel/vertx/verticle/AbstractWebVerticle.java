@@ -99,15 +99,15 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.error("全局路由错误处理: {}", ctx.statusCode());
             errorHandler.handle(ctx);
         });
-        // 是否打印来源的IP
-        if (webProperties.getPrintSrcIp()) {
-            log.info("开启打印来源的IP");
-            globalRoute.handler(new PrintSrcIpHandler());
-        }
         // 是否启用SkyWalking Agent支持
         if (SkyWalkingUtils.isEnabled()) {
             log.info("开启SkyWalking Agent支持");
             globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
+        }
+        // 是否打印来源的IP
+        if (webProperties.getPrintSrcIp()) {
+            log.info("开启打印来源的IP");
+            globalRoute.handler(new PrintSrcIpHandler());
         }
 
         // 是否实现自签名证书
