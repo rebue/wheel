@@ -20,8 +20,8 @@ import java.io.File;
 
 @Slf4j
 public class DroolsUtils {
-    private static final KieServices  kieServices = KieServices.Factory.get();
-    private static       KieContainer kieContainer;
+    private static final KieServices kieServices = KieServices.Factory.get();
+    private static KieContainer kieContainer;
 
     static {
         log.info("初始化drools");
@@ -59,7 +59,7 @@ public class DroolsUtils {
     @SneakyThrows
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(FileUtils.getClassesPath() + "drools/");
-        FileAlterationMonitor  monitor  = new FileAlterationMonitor(5 * 1000);
+        FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             @Override
             public void onFileCreate(File file) {
@@ -100,12 +100,15 @@ public class DroolsUtils {
         try {
             if (StringUtils.isNotBlank(agendaGroupName)) {
                 AgendaGroup agendaGroup = kieSession.getAgenda().getAgendaGroup(agendaGroupName);
-                if (agendaGroup == null) return 0;
+                if (agendaGroup == null) {
+                    log.warn("找不到议程分组(AgendaGroup)为{}的规则", agendaGroupName);
+                    return 0;
+                }
                 agendaGroup.setFocus();
             }
             kieSession.insert(fact);
             int firedRulesCount = kieSession.fireAllRules();
-            System.out.printf("触发执行了改变%s的规则数为%d%n", agendaGroupName, firedRulesCount);
+            log.info("触发执行了议程分组(AgendaGroup)为{}的规则数为{}", agendaGroupName, firedRulesCount);
             return firedRulesCount;
         } finally {
             kieSession.dispose();
