@@ -92,13 +92,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         // CORS
         if (webProperties.getIsCors()) {
             log.info("开启CORS");
-//            globalRoute.handler(CorsHandler.create("*")
-//                    .allowedMethod(HttpMethod.GET)
-//                    .allowedMethod(HttpMethod.POST)
-//                    .allowedMethod(HttpMethod.PUT)
-//                    .allowedMethod(HttpMethod.DELETE)
-//                    .allowedMethod(HttpMethod.PATCH)
-//                    .allowedMethod(HttpMethod.OPTIONS));
             globalRoute.handler(CorsHandler.create());
         }
         // 全局路由错误处理
@@ -171,8 +164,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
      *
      * @param globalRoute 全局路由
      */
-    private void addGlobalRouteHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteHandler方法");
+    protected void addGlobalRouteHandler(Route globalRoute) {
+        log.info("未重写addGlobalRouteHandler方法:{}", globalRoute.getName());
     }
 
     /**
@@ -180,8 +173,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
      *
      * @param globalRoute 全局路由
      */
-    private void addGlobalRouteSubHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteSubHandler方法");
+    protected void addGlobalRouteSubHandler(Route globalRoute) {
+        log.info("未重写addGlobalRouteSubHandler方法: {}", globalRoute.getName());
     }
 
     @Override
