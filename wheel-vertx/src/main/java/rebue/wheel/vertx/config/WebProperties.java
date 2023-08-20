@@ -25,9 +25,9 @@ public class WebProperties {
     private String              allowForward          = "NONE";
     /**
      * 是否打印来源的IP
-     * 默认 true: 打印
+     * 默认 false: 不打印
      */
-    private Boolean             printSrcIp            = true;
+    private Boolean             printSrcIp            = false;
     /**
      * 是否响应时间
      * 如果是，将在响应的header中包含x-response-time返回响应的时间

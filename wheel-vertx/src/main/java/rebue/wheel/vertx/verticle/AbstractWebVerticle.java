@@ -60,14 +60,17 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         // 全局route
         final Route globalRoute = router.route();
 
+        // 添加全局路由处理器
+        addGlobalRouteHandler(globalRoute);
+
         // 是否启用SkyWalking Agent支持
         if (SkyWalkingUtils.isEnabled()) {
             log.info("开启SkyWalking Agent支持");
             globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
         }
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
-        log.info("开启响应内容类型处理");
-        globalRoute.handler(ResponseContentTypeHandler.create());
+//        log.info("开启响应内容类型处理");
+//        globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
         if (webProperties.getIsResponseTime()) {
             log.info("开启返回响应时间");
@@ -109,6 +112,10 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("开启打印来源的IP");
             globalRoute.handler(new PrintSrcIpHandler());
         }
+
+        // 添加全局子路由处理器
+        addGlobalRouteSubHandler(globalRoute);
+
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
@@ -157,6 +164,24 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                 startPromise.fail(res.cause());
             }
         });
+    }
+
+    /**
+     * 添加全局路由处理器
+     *
+     * @param globalRoute 全局路由
+     */
+    private void addGlobalRouteHandler(Route globalRoute) {
+        log.info("未重写addGlobalRouteHandler方法");
+    }
+
+    /**
+     * 添加全局路由子处理器
+     *
+     * @param globalRoute 全局路由
+     */
+    private void addGlobalRouteSubHandler(Route globalRoute) {
+        log.info("未重写addGlobalRouteSubHandler方法");
     }
 
     @Override
