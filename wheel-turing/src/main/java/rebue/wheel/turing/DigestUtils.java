@@ -115,10 +115,6 @@ public class DigestUtils {
         return md5ToHexStrX32(data).substring(8, 24);
     }
 
-    public static String shaToHexStr(byte[] data) {
-        return sha1ToHexStr(data);
-    }
-
     public static String sha1ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA1, data);
     }
@@ -141,14 +137,14 @@ public class DigestUtils {
 
     public static void main(String[] args) {
         System.out.println(Arrays.toString(Security.getProviders()));
-        System.out.println("111111 MD4   :" + DigestUtils.md4ToHexStr("111111".getBytes()));
-        System.out.println("111111 MD5 16:" + DigestUtils.md5ToHexStrX16("111111".getBytes()));
-        System.out.println("111111 MD5 32:" + DigestUtils.md5ToHexStrX32("111111".getBytes()));
-        System.out.println("111111 SHA1  :" + DigestUtils.sha1ToHexStr("111111".getBytes()));
-        System.out.println("111111 SHA224:" + DigestUtils.sha224ToHexStr("111111".getBytes()));
-        System.out.println("111111 SHA256:" + DigestUtils.sha256ToHexStr("111111".getBytes()));
-        System.out.println("111111 SHA384:" + DigestUtils.sha384ToHexStr("111111".getBytes()));
-        System.out.println("111111 SHA512:" + DigestUtils.sha512ToHexStr("111111".getBytes()));
+        System.out.println("111111 MD4   :" + DigestUtils.md4ToHexStr("111111" .getBytes()));
+        System.out.println("111111 MD5 16:" + DigestUtils.md5ToHexStrX16("111111" .getBytes()));
+        System.out.println("111111 MD5 32:" + DigestUtils.md5ToHexStrX32("111111" .getBytes()));
+        System.out.println("111111 SHA1  :" + DigestUtils.sha1ToHexStr("111111" .getBytes()));
+        System.out.println("111111 SHA224:" + DigestUtils.sha224ToHexStr("111111" .getBytes()));
+        System.out.println("111111 SHA256:" + DigestUtils.sha256ToHexStr("111111" .getBytes()));
+        System.out.println("111111 SHA384:" + DigestUtils.sha384ToHexStr("111111" .getBytes()));
+        System.out.println("111111 SHA512:" + DigestUtils.sha512ToHexStr("111111" .getBytes()));
     }
 
 }
