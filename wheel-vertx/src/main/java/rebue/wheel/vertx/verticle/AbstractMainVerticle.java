@@ -34,7 +34,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 
-@SuppressWarnings("deprecation")
+//@SuppressWarnings("deprecation")
 @Slf4j
 public abstract class AbstractMainVerticle extends AbstractVerticle {
 
@@ -110,12 +110,15 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 return;
             }
 
+            Long scanPeriod = defaultConfigJsonObject.getLong("scanPeriod");
+            if (scanPeriod == null) scanPeriod = 180000L;    // 默认3分钟检查一下是否有更新
             JsonArray stores = defaultConfigJsonObject.getJsonArray("stores");
             if (stores == null) {
                 startWithConfig(startPromise, defaultConfigJsonObject);
             } else {
                 log.info("配置仓库数量: {}", stores.size());
                 final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
+                configRetrieverOptions.setScanPeriod(scanPeriod);
                 stores.forEach(store -> configRetrieverOptions.addStore(new ConfigStoreOptions((JsonObject) store)));
 
                 ConfigRetriever storeConfigRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
@@ -165,12 +168,12 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("处理配置改变");
         this.configChangedConsumer.unregister(res -> {
             log.info("undeploy verticles");
-            @SuppressWarnings("rawtypes") final List<Future> undeployFutures = new LinkedList<>();
+            final List<Future<Void>> undeployFutures = new LinkedList<>();
             for (String deploymentId : deploymentIds) {
                 undeployFutures.add(this.vertx.undeploy(deploymentId));
             }
 
-            CompositeFuture.all(undeployFutures)
+            Future.all(undeployFutures)
                     .onSuccess(compositeFuture -> {
                         log.info("取消部署verticle完成");
                         this.vertx.verticleFactories().forEach(verticleFactory -> {
@@ -213,7 +216,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         final Map<String, Class<? extends Verticle>> verticleClasses = new LinkedHashMap<>();
         addVerticleClasses(verticleClasses);
         deploymentIds.clear();
-        @SuppressWarnings("rawtypes") final List<Future> deployFutures = new LinkedList<>();
+        final List<Future<String>> deployFutures = new LinkedList<>();
         for (final Entry<String, Class<? extends Verticle>> entry : verticleClasses.entrySet()) {
             final JsonObject configJsonObject = config.getJsonObject(entry.getKey());
             if (configJsonObject == null) {
@@ -226,7 +229,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         }
 
         // 部署成功或失败事件
-        CompositeFuture.all(deployFutures)
+        Future.all(deployFutures)
                 .onSuccess(handle -> {
                     log.info("部署Verticle完成，发布部署成功的消息");
                     final String deploySuccessEventBusAddress = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;

@@ -20,8 +20,8 @@ import java.io.File;
 
 @Slf4j
 public class DroolsUtils {
-    private static final KieServices kieServices = KieServices.Factory.get();
-    private static KieContainer kieContainer;
+    private static final KieServices  kieServices = KieServices.Factory.get();
+    private static       KieContainer kieContainer;
 
     static {
         log.info("初始化drools");
@@ -59,7 +59,7 @@ public class DroolsUtils {
     @SneakyThrows
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(FileUtils.getClassesPath() + "drools/");
-        FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
+        FileAlterationMonitor  monitor  = new FileAlterationMonitor(5 * 1000);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             @Override
             public void onFileCreate(File file) {
@@ -95,6 +95,7 @@ public class DroolsUtils {
      * @return 触发执行的规则数
      */
     public static int fireRules(String kSessionName, String agendaGroupName, Object fact) {
+        log.debug("fireRules: kSessionName-{} agendaGroupName-{} fact-{}", kSessionName, agendaGroupName, fact);
         // 执行规则引擎自定义绑定变量
         KieSession kieSession = kieContainer.newKieSession(kSessionName);
         try {
