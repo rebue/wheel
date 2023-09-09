@@ -111,7 +111,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             }
 
             Long scanPeriod = defaultConfigJsonObject.getLong("scanPeriod");
-            if (scanPeriod == null) scanPeriod = 180000L;    // 默认3分钟检查一下是否有更新
+            if (scanPeriod == null) scanPeriod = 15000L;    // 默认15秒检查一下是否有更新
             JsonArray stores = defaultConfigJsonObject.getJsonArray("stores");
             if (stores == null) {
                 startWithConfig(startPromise, defaultConfigJsonObject);
