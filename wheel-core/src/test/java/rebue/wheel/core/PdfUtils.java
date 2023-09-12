@@ -20,10 +20,10 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.signatures.*;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -114,15 +114,45 @@ public class PdfUtils {
      * 添加图片
      *
      * @param pdfDoc    pdf文档
+     * @param imageData 图像数据
+     * @param left      图片左边距(当前页面)
+     * @param bottom    图片底边距(当前页面)
+     */
+    public static void addImage(PdfDocument pdfDoc, ImageData imageData, float left, float bottom) {
+        Image    image = new Image(imageData, left, bottom);
+        Document doc   = new Document(pdfDoc);
+        doc.add(image);
+    }
+
+    /**
+     * 添加图片
+     *
+     * @param pdfDoc    pdf文档
      * @param imagePath 图片路径
      * @param left      图片左边距(当前页面)
      * @param bottom    图片底边距(当前页面)
      */
-    public static void addImage(PdfDocument pdfDoc, String imagePath, float left, float bottom) throws MalformedURLException {
-        ImageData imageData = ImageDataFactory.create(imagePath);
-        Image     image     = new Image(imageData, left, bottom);
-        Document  doc       = new Document(pdfDoc);
-        doc.add(image);
+    @SneakyThrows
+    public static void addImage(PdfDocument pdfDoc, String imagePath, float left, float bottom) {
+        addImage(pdfDoc, ImageDataFactory.create(imagePath), left, bottom);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param page        页面
+     * @param imageData   图像数据
+     * @param rectangle   显示位置和范围
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    private static void addWaterMask0(PdfDocument doc, PdfPage page, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), doc);
+        canvas.saveState();
+        PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度
+        canvas.setExtGState(state);
+        canvas.addImageFittedIntoRectangle(imageData, rectangle, false);
+        canvas.restoreState();
     }
 
     /**
@@ -134,17 +164,22 @@ public class PdfUtils {
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
+    @SneakyThrows
     private static void addWaterMask0(PdfDocument doc, PdfPage page, String imagePath, Rectangle rectangle, float fillOpacity) {
-        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), doc);
-        canvas.saveState();
-        PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度
-        canvas.setExtGState(state);
-        try {
-            canvas.addImageFittedIntoRectangle(ImageDataFactory.create(imagePath), rectangle, false);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        canvas.restoreState();
+        addWaterMask0(doc, page, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
+     * @param imageData   图像数据
+     * @param rectangle   显示位置和范围
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+        addWaterMask0(doc, doc.getPage(pageNum), imageData, rectangle, fillOpacity);
     }
 
     /**
@@ -165,11 +200,11 @@ public class PdfUtils {
      *
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
-     * @param imagePath   图片路径
+     * @param imageData   图像数据
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
         // 监听结束绘制每一个页面的事件，在结束时再绘制图片，可使图片在顶层
         doc.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
             PdfDocumentEvent docEvent   = (PdfDocumentEvent) event;
@@ -178,8 +213,22 @@ public class PdfUtils {
             int              curPageNum = pdfDoc.getPageNumber(page);
             if (curPageNum != pageNum) return;
 
-            addWaterMask0(doc, page, imagePath, rectangle, fillOpacity);
+            addWaterMask0(doc, page, imageData, rectangle, fillOpacity);
         });
+    }
+
+    /**
+     * 添加水印(在结束绘制页面事件时添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
+     * @param imagePath   图片路径
+     * @param rectangle   显示位置和范围
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    @SneakyThrows
+    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+        addWaterMask2(doc, pageNum, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
     }
 
     /**
