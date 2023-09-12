@@ -21,9 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -38,7 +38,8 @@ public class PdfUtilsTests {
     public static final String SRC   = "pdf/测试模板.pdf";
     public static final String TEMP  = "target/pdf/temp.pdf";
     public static final String DEST  = "target/pdf/result.pdf";
-    public static final String SIGN  = "target/pdf/result-signed.pdf";
+    public static final String SIGN1 = "target/pdf/result-signed1.pdf";
+    public static final String SIGN2 = "target/pdf/result-signed2.pdf";
     public static final String FONT1 = "pdf/FreeSans.ttf";
     public static final String FONT2 = "pdf/AlimamaFangYuanTiVF-Thin.ttf";
     public static final String FONT3 = "pdf/AlimamaShuHeiTi-Bold.ttf";
@@ -130,17 +131,25 @@ public class PdfUtilsTests {
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(new FileInputStream(KEYSTORE), PASSWORD);
+        ks.load(Files.newInputStream(Paths.get(KEYSTORE)), PASSWORD);
         String        alias      = ks.aliases().nextElement();
         PrivateKey    privateKey = (PrivateKey) ks.getKey(alias, PASSWORD);
         Certificate[] chain      = ks.getCertificateChain(alias);
-        ImageData     imageData  = ImageDataFactory.create(SEAL1);
 
-        String reason   = "reason";
-        String location = "location";
-        PdfUtils.sign(new PdfReader(DEST), new FileOutputStream(SIGN), reason, location, privateKey,
+        String    reason    = "reason 1";
+        String    location  = "location 1";
+        ImageData imageData = ImageDataFactory.create(SEAL1);
+        PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKey,
                 DigestAlgorithms.SHA256, provider.getName(), chain,
-                2, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
+                2, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
+
+        reason = "reason 2";
+        location = "location 2";
+        imageData = ImageDataFactory.create(SealUtils.draw01("中国电子公章测试有限责任公司", "电子公章演示", "专用章", 300, 300, 10, 150));
+//        imageData = ImageDataFactory.create(SealUtils.draw01(200, 200));
+        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKey,
+                DigestAlgorithms.SHA256, provider.getName(), chain,
+                2, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
 
     }
 }
