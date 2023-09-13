@@ -170,13 +170,11 @@ public class SealUtils {
 
             if (!isTop) {
                 theta = firstAngle + i * radianPerInterval;
-                thetaX = newRadius * Math.sin(Math.PI / 2 - theta);
-                thetaY = newRadius * Math.cos(theta - Math.PI / 2);
             } else {
                 theta = firstAngle - i * radianPerInterval;
-                thetaX = newRadius * Math.sin(Math.PI / 2 - theta);
-                thetaY = newRadius * Math.cos(theta - Math.PI / 2);
             }
+            thetaX = newRadius * Math.sin(Math.PI / 2 - theta);
+            thetaY = newRadius * Math.cos(theta - Math.PI / 2);
 
             AffineTransform transform;
             if (!isTop) {

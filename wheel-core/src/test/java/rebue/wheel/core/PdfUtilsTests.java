@@ -57,9 +57,9 @@ public class PdfUtilsTests {
     @Test
     public void test01() throws IOException, GeneralSecurityException {
         File tempFile = new File(TEMP);
-        tempFile.getParentFile().mkdirs();
+        log.debug("mkdirs tempFile: {}", tempFile.getParentFile().mkdirs());
         File dstFile = new File(DEST);
-        dstFile.getParentFile().mkdirs();
+        log.debug("mkdirs dstFile: {}", dstFile.getParentFile().mkdirs());
 
         PdfWriter   writer      = new PdfWriter(TEMP);
         PdfDocument pdfDoc      = new PdfDocument(new PdfReader(SRC), writer);
@@ -115,7 +115,7 @@ public class PdfUtilsTests {
 
         // 展平表单的所有字段，这样图片才能覆盖在这些字段的上面
         // If no fields have been explicitly included, then all fields are flattened.
-        // Otherwise only the included fields are flattened.
+        // Otherwise, only the included fields are flattened.
         pdfAcroForm.flattenFields();
 
         PdfUtils.addImage(pdfDoc, SEAL1, 250, 400);
@@ -124,8 +124,12 @@ public class PdfUtilsTests {
         PdfUtils.showImage3(pdfDoc, pdfAcroForm, "seal3", SEAL3);
 
         // 添加水印
-        PdfUtils.addWaterMask1(pdfDoc, 1, SEAL1, new Rectangle(250, 400, 200, 200), 0.9f);
-        PdfUtils.addWaterMask2(pdfDoc, 1, SEAL1, new Rectangle(250, 300, 200, 200), 0.9f);
+        PdfUtils.addWaterMask1(pdfDoc, 2, SEAL1, 250, 500, 0.9f);
+        PdfUtils.addWaterMask1(pdfDoc, 2, SEAL2, 250, 400, 0.9f);
+        PdfUtils.addWaterMask1(pdfDoc, 2, ImageDataFactory.create(SEAL2), new Rectangle(250, 300, 100, 100), 0.9f);
+        PdfUtils.addWaterMask1(pdfDoc, 2, SEAL2, new Rectangle(250, 200, 100, 100), 0.9f);
+        PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, 250, 100, 0.9f);
+        PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, new Rectangle(250, 0, 100, 100), 0.9f);
 
         String title = "中国电子公章测试有限责任公司";
         String name  = "电子公章演示";
@@ -143,7 +147,21 @@ public class PdfUtilsTests {
                 new SealUtils.SealText(date, new Font("宋体", Font.PLAIN, 24)),
                 300, 300, 10, 150));
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
-        PdfUtils.addWaterMask1(pdfDoc, 2, imageData, new Rectangle(0, 500, 300, 300), 0.9f);
+        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
+
+        imageData = ImageDataFactory.create(SealUtils.draw01(SealUtils.SealText.builder()
+                        .text(title)
+                        .font(new Font("宋体", Font.PLAIN, 36))
+                        .margin(10D)
+                        .build(),
+                SealUtils.SealText.builder()
+                        .text(name)
+                        .font(new Font("宋体", Font.PLAIN, 24))
+                        .margin(15D)
+                        .build(),
+                new SealUtils.SealText(date, new Font("宋体", Font.PLAIN, 24)),
+                300, 150, 10, 150));
+        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 300, 0.9f);
 
         pdfDoc.close();
 
@@ -160,14 +178,14 @@ public class PdfUtilsTests {
         imageData = ImageDataFactory.create(SEAL1);
         PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKey,
                 DigestAlgorithms.SHA256, provider.getName(), chain,
-                2, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
+                4, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
 
         reason = "reason 2";
         location = "location 2";
         imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKey,
                 DigestAlgorithms.SHA256, provider.getName(), chain,
-                2, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
+                4, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
 
     }
 }

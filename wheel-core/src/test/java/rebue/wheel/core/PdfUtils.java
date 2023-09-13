@@ -160,6 +160,21 @@ public class PdfUtils {
      *
      * @param doc         pdf文档
      * @param page        页面
+     * @param imageData   图像数据
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    @SneakyThrows
+    private static void addWaterMask0(PdfDocument doc, PdfPage page, ImageData imageData, float left, float bottom, float fillOpacity) {
+        addWaterMask0(doc, page, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param page        页面
      * @param imagePath   图片路径
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
@@ -167,6 +182,22 @@ public class PdfUtils {
     @SneakyThrows
     private static void addWaterMask0(PdfDocument doc, PdfPage page, String imagePath, Rectangle rectangle, float fillOpacity) {
         addWaterMask0(doc, page, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param page        页面
+     * @param imagePath   图片路径
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    @SneakyThrows
+    private static void addWaterMask0(PdfDocument doc, PdfPage page, String imagePath, float left, float bottom, float fillOpacity) {
+        ImageData imageData = ImageDataFactory.create(imagePath);
+        addWaterMask0(doc, page, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
     }
 
     /**
@@ -187,12 +218,40 @@ public class PdfUtils {
      *
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
+     * @param imageData   图像数据
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
+        addWaterMask0(doc, doc.getPage(pageNum), imageData, left, bottom, fillOpacity);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
         addWaterMask0(doc, doc.getPage(pageNum), imagePath, rectangle, fillOpacity);
+    }
+
+    /**
+     * 添加水印(直接添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
+     * @param imagePath   图片路径
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
+        addWaterMask0(doc, doc.getPage(pageNum), imagePath, left, bottom, fillOpacity);
     }
 
     /**
@@ -222,6 +281,21 @@ public class PdfUtils {
      *
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
+     * @param imageData   图像数据
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    @SneakyThrows
+    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
+        addWaterMask2(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+    }
+
+    /**
+     * 添加水印(在结束绘制页面事件时添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
@@ -229,6 +303,21 @@ public class PdfUtils {
     @SneakyThrows
     public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
         addWaterMask2(doc, pageNum, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
+    }
+
+    /**
+     * 添加水印(在结束绘制页面事件时添加)
+     *
+     * @param doc         pdf文档
+     * @param pageNum     页码(从1开始)
+     * @param imagePath   图片路径
+     * @param left        水印的左边距
+     * @param bottom      水印的底边距
+     * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     */
+    @SneakyThrows
+    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
+        addWaterMask2(doc, pageNum, ImageDataFactory.create(imagePath), left, bottom, fillOpacity);
     }
 
     /**
