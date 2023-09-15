@@ -115,8 +115,8 @@ public class PdfUtils {
      *
      * @param pdfDoc    pdf文档
      * @param imageData 图像数据
-     * @param left      图片左边距(当前页面)
-     * @param bottom    图片底边距(当前页面)
+     * @param left      图片左边坐标(当前页面)
+     * @param bottom    图片底边坐标(当前页面)
      */
     public static void addImage(PdfDocument pdfDoc, ImageData imageData, float left, float bottom) {
         Image    image = new Image(imageData, left, bottom);
@@ -129,8 +129,8 @@ public class PdfUtils {
      *
      * @param pdfDoc    pdf文档
      * @param imagePath 图片路径
-     * @param left      图片左边距(当前页面)
-     * @param bottom    图片底边距(当前页面)
+     * @param left      图片左边坐标(当前页面)
+     * @param bottom    图片底边坐标(当前页面)
      */
     @SneakyThrows
     public static void addImage(PdfDocument pdfDoc, String imagePath, float left, float bottom) {
@@ -161,8 +161,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param page        页面
      * @param imageData   图像数据
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
@@ -190,8 +190,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param page        页面
      * @param imagePath   图片路径
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
@@ -219,8 +219,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
      * @param imageData   图像数据
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
@@ -246,8 +246,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
@@ -282,8 +282,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
      * @param imageData   图像数据
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
@@ -311,8 +311,8 @@ public class PdfUtils {
      * @param doc         pdf文档
      * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
-     * @param left        水印的左边距
-     * @param bottom      水印的底边距
+     * @param left        水印的左边坐标
+     * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows

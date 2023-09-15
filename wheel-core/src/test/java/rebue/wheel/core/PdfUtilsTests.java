@@ -22,10 +22,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -55,7 +53,7 @@ public class PdfUtilsTests {
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Test
-    public void test01() throws IOException, GeneralSecurityException {
+    public void test01() throws Exception {
         File tempFile = new File(TEMP);
         log.debug("mkdirs tempFile: {}", tempFile.getParentFile().mkdirs());
         File dstFile = new File(DEST);
@@ -131,37 +129,113 @@ public class PdfUtilsTests {
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, 250, 100, 0.9f);
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, new Rectangle(250, 0, 100, 100), 0.9f);
 
-        String title = "中国电子公章测试有限责任公司";
-        String name  = "电子公章演示";
-        String date  = "专用章";
+        String topText        = "中国电子公章测试有限责任公司";
+        String captionText    = "电子公章演示";
+        String subcaptionText = "演示专用章";
         ImageData imageData = ImageDataFactory.create(SealUtils.draw01(SealUtils.SealText.builder()
-                        .text(title)
+                        .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
-                        .margin(10D)
+                        .marginTop(10D)
                         .build(),
                 SealUtils.SealText.builder()
-                        .text(name)
+                        .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
-                        .margin(15D)
+                        .marginTop(15D)
                         .build(),
-                new SealUtils.SealText(date, new Font("宋体", Font.PLAIN, 24)),
-                300, 300, 10, 150));
+                SealUtils.SealText.builder()
+                        .text(subcaptionText)
+                        .font(new Font("宋体", Font.BOLD, 24))
+                        .build(),
+                300, 10, 150));
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw01(SealUtils.SealText.builder()
-                        .text(title)
+                        .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
-                        .margin(10D)
+                        .marginTop(10.0)
                         .build(),
                 SealUtils.SealText.builder()
-                        .text(name)
+                        .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
-                        .margin(15D)
+                        .marginTop(15.0)
                         .build(),
-                new SealUtils.SealText(date, new Font("宋体", Font.PLAIN, 24)),
-                300, 150, 10, 150));
+                SealUtils.SealText.builder()
+                        .text(subcaptionText)
+                        .font(new Font("宋体", Font.PLAIN, 24))
+                        .build(),
+                300, 10, 150));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 300, 0.9f);
+
+        imageData = ImageDataFactory.create(SealUtils.draw02(SealUtils.SealText.builder()
+                        .text(topText)
+                        .font(new Font("宋体", Font.PLAIN, 20))
+                        .build(),
+                SealUtils.SealText.builder()
+                        .text(captionText)
+                        .font(new Font("宋体", Font.BOLD, 16))
+                        .build(),
+                SealUtils.SealText.builder()
+                        .text(subcaptionText)
+                        .font(new Font("宋体", Font.BOLD, 16))
+                        .marginBottom(4.0)
+                        .marginLeft(2.0)
+                        .build(),
+                300, 180, 10, 2));
+        PdfUtils.addWaterMask1(pdfDoc, 4, imageData, 50, 500, 0.9f);
+
+//        SealDTO sealDTO = new SealDTO();
+//        sealDTO.setCompanyName("阿里云计算有限公司");
+//        sealDTO.setSerNo("123456789987");
+//        sealDTO.setTitle("财务专用章");
+//        BaseSeal                  baseSeal      =  new EllipseSealFactory().getInstance();
+//        SealConfiguration configuration = new SealConfiguration();
+//        SealFont                  mainFont      = new SealFont();
+//        mainFont.setBold(true);
+//        mainFont.setFontFamily(sealDTO.getFont());
+//        mainFont.setMarginSize(10);
+//        mainFont.setFontText(sealDTO.getCompanyName());
+//        mainFont.setFontSize(25);
+//        mainFont.setFontSpace(12.0);
+//        if (sealDTO.getCompanyName().length() > 14) {
+//            mainFont.setFontSize(20);
+//            mainFont.setFontSpace(8.0);
+//        }
+//
+//        configuration.setMainFont(mainFont);
+//        SealFont titleFont;
+//        if (sealDTO.getSerNo() != null && !"".equals(sealDTO.getSerNo())) {
+//            titleFont = new SealFont();
+//            titleFont.setBold(true);
+//            titleFont.setFontFamily(sealDTO.getFont());
+//            titleFont.setMarginSize(5);
+//            titleFont.setFontText(sealDTO.getSerNo());
+//            titleFont.setFontSize(13);
+//            titleFont.setFontSpace(12.0);
+//            configuration.setViceFont(titleFont);
+//        }
+//
+//        if (sealDTO.getTitle() != null && !"".equals(sealDTO.getTitle())) {
+//            titleFont = new SealFont();
+//            titleFont.setBold(true);
+//            titleFont.setFontFamily(sealDTO.getFont());
+//            titleFont.setFontSize(22);
+//            if (sealDTO.getCompanyName().length() > 14) {
+//                titleFont.setFontSize(20);
+//            }
+//
+//            titleFont.setFontText(sealDTO.getTitle());
+//            titleFont.setMarginSize(68);
+//            titleFont.setMarginSize(27);
+//            configuration.setTitleFont(titleFont);
+//        }
+//
+//        configuration.setImageSize(300);
+//        configuration.setBackgroudColor(sealDTO.getColor());
+//        configuration.setBorderCircle(new SealCircle(4, 140, 90));
+//
+//        com.niezhiliang.signature.utils.utils.SealUtils.buildAndStoreSeal(configuration)
+//        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 300, 300, 0.9f);
 
         pdfDoc.close();
 
@@ -182,7 +256,7 @@ public class PdfUtilsTests {
 
         reason = "reason 2";
         location = "location 2";
-        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
+        imageData = ImageDataFactory.create(SealUtils.draw01(topText, captionText, subcaptionText));
         PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKey,
                 DigestAlgorithms.SHA256, provider.getName(), chain,
                 4, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
