@@ -1,13 +1,9 @@
-package rebue.wheel.core;
+package rebue.wheel.core.pdf;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.fields.PdfTextFormField;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -19,6 +15,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import rebue.wheel.core.seal.SealText;
+import rebue.wheel.core.seal.SealUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -28,15 +26,16 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class PdfUtilsTests {
-    public static final String SRC   = "pdf/测试模板.pdf";
-    public static final String TEMP  = "target/pdf/temp.pdf";
-    public static final String DEST  = "target/pdf/result.pdf";
+    public static final String SRC = "pdf/测试模板.pdf";
+    public static final String TEMP = "target/pdf/temp.pdf";
+    public static final String DEST = "target/pdf/result.pdf";
     public static final String SIGN1 = "target/pdf/result-signed1.pdf";
     public static final String SIGN2 = "target/pdf/result-signed2.pdf";
     public static final String FONT1 = "pdf/FreeSans.ttf";
@@ -59,8 +58,8 @@ public class PdfUtilsTests {
         File dstFile = new File(DEST);
         log.debug("mkdirs dstFile: {}", dstFile.getParentFile().mkdirs());
 
-        PdfWriter   writer      = new PdfWriter(TEMP);
-        PdfDocument pdfDoc      = new PdfDocument(new PdfReader(SRC), writer);
+        PdfWriter writer = new PdfWriter(TEMP);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC), writer);
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         // Being set as true, this parameter is responsible to generate an appearance Stream
@@ -68,29 +67,44 @@ public class PdfUtilsTests {
         // slow down form flattening, but otherwise Acrobat might render the pdf on its own rules.
         pdfAcroForm.setGenerateAppearance(true);
 
-        PdfFont pdfFont1 = PdfFontFactory.createFont(FONT1, PdfEncodings.IDENTITY_H);
-        PdfFont pdfFont2 = PdfFontFactory.createFont(FONT2, PdfEncodings.IDENTITY_H);
-        PdfFont pdfFont3 = PdfFontFactory.createFont(FONT3, PdfEncodings.IDENTITY_H);
-        pdfAcroForm.getField("param1").setValue("1234567890一二三四五六七八九十", pdfFont1, 12f);// 字体不对，乱码
-        pdfAcroForm.getField("param2").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        pdfAcroForm.getField("param3").setValue("男");// 未设置字体，只读下没有乱码
+//        PdfFont pdfFont1 = PdfFontFactory.createFont(FONT1, PdfEncodings.IDENTITY_H);
+//        PdfFont pdfFont2 = PdfFontFactory.createFont(FONT2, PdfEncodings.IDENTITY_H);
+//        PdfFont pdfFont3 = PdfFontFactory.createFont(FONT3, PdfEncodings.IDENTITY_H);
+//        pdfAcroForm.getField("param1").setValue("1234567890一二三四五六七八九十", pdfFont1, 12f);// 字体不对，乱码
+//        pdfAcroForm.getField("param2").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        pdfAcroForm.getField("param3").setValue("男");// 未设置字体，只读下没有乱码
+//
+//        // 换行
+//        PdfTextFormField param4 = (PdfTextFormField) pdfAcroForm.getField("param4");
+//        param4.setMultiline(true);
+//        param4.setValue("2234567890二二三四\n五六七八九十", pdfFont3, 12f);
+//
+//        pdfAcroForm.getField("param5").setValue(LocalDateTime.now().format(dateTimeFormatter), pdfFont1, 12f);// 时间
+//        pdfAcroForm.getField("param6").setValue("true");//checkbox
+//        pdfAcroForm.getField("param7").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        pdfAcroForm.getField("param8").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        pdfAcroForm.getField("param9").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        pdfAcroForm.getField("param10").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        pdfAcroForm.getField("param11").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+//        // 换行
+//        PdfTextFormField param12 = (PdfTextFormField) pdfAcroForm.getField("param12");
+//        param12.setMultiline(true);
+//        param12.setValue("2234567890\n二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
 
-        // 换行
-        PdfTextFormField param4 = (PdfTextFormField) pdfAcroForm.getField("param4");
-        param4.setMultiline(true);
-        param4.setValue("2234567890二二三四\n五六七八九十", pdfFont3, 12f);
-
-        pdfAcroForm.getField("param5").setValue(LocalDateTime.now().format(dateTimeFormatter), pdfFont1, 12f);// 时间
-        pdfAcroForm.getField("param6").setValue("true");//checkbox
-        pdfAcroForm.getField("param7").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        pdfAcroForm.getField("param8").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        pdfAcroForm.getField("param9").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        pdfAcroForm.getField("param10").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        pdfAcroForm.getField("param11").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-        // 换行
-        PdfTextFormField param12 = (PdfTextFormField) pdfAcroForm.getField("param12");
-        param12.setMultiline(true);
-        param12.setValue("2234567890\n二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("param1", "1234567890一二三四五六七八九十");
+        fields.put("param2", "1234567890一二三四五六七八九十");
+        fields.put("param3", "男");
+        fields.put("param4", "1234567890一二三四五六七八九十");
+        fields.put("param5", "1234567890一二三四五六七八九十");
+        fields.put("param6", true);
+        fields.put("param7", "1234567890一二三四五六七八九十");
+        fields.put("param8", "1234567890一二三四五六七八九十");
+        fields.put("param9", "1234567890一二三四五六七八九十");
+        fields.put("param10", "1234567890一二三四五六七八九十");
+        fields.put("param11", "1234567890一二三四五六七八九十");
+        fields.put("param12", "1234567890一二三四五六七八九十");
+        PdfUtils.fillForm(pdfDoc, fields);
 
         // 二维码
         PdfUtils.showQrcode(pdfDoc, pdfAcroForm, "qrcode1", "2234567890二二三四五六七八九十");
@@ -129,20 +143,20 @@ public class PdfUtilsTests {
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, 250, 100, 0.9f);
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, new Rectangle(250, 0, 100, 100), 0.9f);
 
-        String topText        = "中国电子公章测试有限责任公司";
-        String captionText    = "电子公章演示";
+        String topText = "中国电子公章测试有限责任公司";
+        String captionText = "电子公章演示";
         String subcaptionText = "演示专用章";
-        ImageData imageData = ImageDataFactory.create(SealUtils.draw01(SealUtils.SealText.builder()
+        ImageData imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
                         .marginTop(10D)
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
                         .marginTop(15D)
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(subcaptionText)
                         .font(new Font("宋体", Font.BOLD, 24))
                         .build(),
@@ -150,32 +164,32 @@ public class PdfUtilsTests {
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
-        imageData = ImageDataFactory.create(SealUtils.draw01(SealUtils.SealText.builder()
+        imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
                         .marginTop(10.0)
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
                         .marginTop(15.0)
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(subcaptionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
                         .build(),
                 300, 10, 150));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 300, 0.9f);
 
-        imageData = ImageDataFactory.create(SealUtils.draw02(SealUtils.SealText.builder()
+        imageData = ImageDataFactory.create(SealUtils.draw02(SealText.builder()
                         .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 20))
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(captionText)
                         .font(new Font("宋体", Font.BOLD, 16))
                         .build(),
-                SealUtils.SealText.builder()
+                SealText.builder()
                         .text(subcaptionText)
                         .font(new Font("宋体", Font.BOLD, 16))
                         .marginBottom(4.0)
@@ -184,70 +198,17 @@ public class PdfUtilsTests {
                 300, 180, 10, 2));
         PdfUtils.addWaterMask1(pdfDoc, 4, imageData, 50, 500, 0.9f);
 
-//        SealDTO sealDTO = new SealDTO();
-//        sealDTO.setCompanyName("阿里云计算有限公司");
-//        sealDTO.setSerNo("123456789987");
-//        sealDTO.setTitle("财务专用章");
-//        BaseSeal                  baseSeal      =  new EllipseSealFactory().getInstance();
-//        SealConfiguration configuration = new SealConfiguration();
-//        SealFont                  mainFont      = new SealFont();
-//        mainFont.setBold(true);
-//        mainFont.setFontFamily(sealDTO.getFont());
-//        mainFont.setMarginSize(10);
-//        mainFont.setFontText(sealDTO.getCompanyName());
-//        mainFont.setFontSize(25);
-//        mainFont.setFontSpace(12.0);
-//        if (sealDTO.getCompanyName().length() > 14) {
-//            mainFont.setFontSize(20);
-//            mainFont.setFontSpace(8.0);
-//        }
-//
-//        configuration.setMainFont(mainFont);
-//        SealFont titleFont;
-//        if (sealDTO.getSerNo() != null && !"".equals(sealDTO.getSerNo())) {
-//            titleFont = new SealFont();
-//            titleFont.setBold(true);
-//            titleFont.setFontFamily(sealDTO.getFont());
-//            titleFont.setMarginSize(5);
-//            titleFont.setFontText(sealDTO.getSerNo());
-//            titleFont.setFontSize(13);
-//            titleFont.setFontSpace(12.0);
-//            configuration.setViceFont(titleFont);
-//        }
-//
-//        if (sealDTO.getTitle() != null && !"".equals(sealDTO.getTitle())) {
-//            titleFont = new SealFont();
-//            titleFont.setBold(true);
-//            titleFont.setFontFamily(sealDTO.getFont());
-//            titleFont.setFontSize(22);
-//            if (sealDTO.getCompanyName().length() > 14) {
-//                titleFont.setFontSize(20);
-//            }
-//
-//            titleFont.setFontText(sealDTO.getTitle());
-//            titleFont.setMarginSize(68);
-//            titleFont.setMarginSize(27);
-//            configuration.setTitleFont(titleFont);
-//        }
-//
-//        configuration.setImageSize(300);
-//        configuration.setBackgroudColor(sealDTO.getColor());
-//        configuration.setBorderCircle(new SealCircle(4, 140, 90));
-//
-//        com.niezhiliang.signature.utils.utils.SealUtils.buildAndStoreSeal(configuration)
-//        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 300, 300, 0.9f);
-
         pdfDoc.close();
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(Files.newInputStream(Paths.get(KEYSTORE)), PASSWORD);
-        String        alias      = ks.aliases().nextElement();
-        PrivateKey    privateKey = (PrivateKey) ks.getKey(alias, PASSWORD);
-        Certificate[] chain      = ks.getCertificateChain(alias);
+        String alias = ks.aliases().nextElement();
+        PrivateKey privateKey = (PrivateKey) ks.getKey(alias, PASSWORD);
+        Certificate[] chain = ks.getCertificateChain(alias);
 
-        String reason   = "reason 1";
+        String reason = "reason 1";
         String location = "location 1";
         imageData = ImageDataFactory.create(SEAL1);
         PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKey,

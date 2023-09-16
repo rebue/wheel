@@ -1,6 +1,4 @@
-package rebue.wheel.core;
-
-import lombok.*;
+package rebue.wheel.core.seal;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -87,15 +85,15 @@ public class SealUtils {
             g2d.fill(new Polygon(xPoints, yPoints, 2 * starHornCount));
 
             // 绘制公章标题名称
-            g2d.setFont(captionText.font);
+            g2d.setFont(captionText.getFont());
             FontMetrics captionFontMetrics = g2d.getFontMetrics();
-            int         nameY              = (int) (centerY + starRadius + captionText.marginTop);
-            g2d.drawString(captionText.text, centerX - captionFontMetrics.stringWidth(captionText.text) / 2, nameY);
+            int         nameY              = (int) (centerY + starRadius + captionText.getMarginTop());
+            g2d.drawString(captionText.getText(), centerX - captionFontMetrics.stringWidth(captionText.getText()) / 2, nameY);
 
             // 绘制公章副标题名称
-            g2d.setFont(subcaptionText.font);
+            g2d.setFont(subcaptionText.getFont());
             FontMetrics subcaptionFontMetrics = g2d.getFontMetrics();
-            g2d.drawString(subcaptionText.text, centerX - subcaptionFontMetrics.stringWidth(subcaptionText.text) / 2, nameY + captionFontMetrics.getHeight());
+            g2d.drawString(subcaptionText.getText(), centerX - subcaptionFontMetrics.stringWidth(subcaptionText.getText()) / 2, nameY + captionFontMetrics.getHeight());
         } finally {
             // Dispose the Graphics2D object
             g2d.dispose();
@@ -153,24 +151,24 @@ public class SealUtils {
             g2d.draw(innerEllipse);
 
             // 绘制公章上部分弧形文字
-            double topTextLeft   = innerEllipseLeft + innerEllipseBorderWidth + topText.marginTop;  // 文字椭圆曲线的左边坐标
-            double topTextTop    = innerEllipseTop + innerEllipseBorderWidth + topText.marginTop;   // 文字椭圆曲线的上边坐标
-            double topTextWidth  = width - topTextLeft * 2;                                         // 文字椭圆曲线的宽度
-            double topTextHeight = height - topTextTop * 2;                                         // 文字椭圆曲线的高度
+            double topTextLeft   = innerEllipseLeft + innerEllipseBorderWidth + topText.getMarginTop(); // 文字椭圆曲线的左边坐标
+            double topTextTop    = innerEllipseTop + innerEllipseBorderWidth + topText.getMarginTop();  // 文字椭圆曲线的上边坐标
+            double topTextWidth  = width - topTextLeft * 2;                                             // 文字椭圆曲线的宽度
+            double topTextHeight = height - topTextTop * 2;                                             // 文字椭圆曲线的高度
             drawArcTextForEllipse(topText, topTextLeft, topTextTop, topTextWidth, topTextHeight, 1, true, g2d);
 
             // 绘制公章标题名称
-            g2d.setFont(centerText.font);
+            g2d.setFont(centerText.getFont());
             FontMetrics centerFontMetrics = g2d.getFontMetrics();
-            g2d.drawString(centerText.text,
-                    centerX - centerFontMetrics.stringWidth(centerText.text) / 2,
+            g2d.drawString(centerText.getText(),
+                    centerX - centerFontMetrics.stringWidth(centerText.getText()) / 2,
                     centerY + centerFontMetrics.getHeight() / 2 - centerFontMetrics.getDescent());
 
             // 绘制公章下部分弧形文字
-            double bottomTextLeft   = innerEllipseLeft + innerEllipseBorderWidth + topText.marginTop;   // 文字椭圆曲线的左边坐标
-            double bottomTextTop    = innerEllipseTop + innerEllipseBorderWidth + topText.marginTop;    // 文字椭圆曲线的上边坐标
-            double bottomTextWidth  = width - bottomTextLeft * 2;                                       // 文字椭圆曲线的宽度
-            double bottomTextHeight = height - bottomTextTop * 2;                                       // 文字椭圆曲线的高度
+            double bottomTextLeft   = innerEllipseLeft + innerEllipseBorderWidth + topText.getMarginTop();  // 文字椭圆曲线的左边坐标
+            double bottomTextTop    = innerEllipseTop + innerEllipseBorderWidth + topText.getMarginTop();   // 文字椭圆曲线的上边坐标
+            double bottomTextWidth  = width - bottomTextLeft * 2;                                           // 文字椭圆曲线的宽度
+            double bottomTextHeight = height - bottomTextTop * 2;                                           // 文字椭圆曲线的高度
             drawArcTextForEllipse(bottomText, bottomTextLeft, bottomTextTop, bottomTextWidth, bottomTextHeight, 0, false, g2d);
         } finally {
             // Dispose the Graphics2D object
@@ -203,7 +201,7 @@ public class SealUtils {
         int textLen = sealText.getText().length();
 
         FontRenderContext context   = g2d.getFontRenderContext();
-        Rectangle2D       rectangle = sealText.font.getStringBounds(sealText.getText(), context);
+        Rectangle2D       rectangle = sealText.getFont().getStringBounds(sealText.getText(), context);
 
         //5.文字之间间距，默认动态调整
         Double space = sealText.getSpace();
@@ -212,7 +210,7 @@ public class SealUtils {
         }
 
         // 7.写字
-        double newRadius         = circleRadius + rectangle.getY() - sealText.marginTop;
+        double newRadius         = circleRadius + rectangle.getY() - sealText.getMarginTop();
         double radianPerInterval = 2 * Math.asin(space / (2 * newRadius));
 
         double fix = 0.04;
@@ -253,7 +251,7 @@ public class SealUtils {
             } else {
                 transform = AffineTransform.getRotateInstance(Math.PI / 2 - theta + Math.toRadians(8));
             }
-            Font f2 = sealText.font.deriveFont(transform);
+            Font f2 = sealText.getFont().deriveFont(transform);
             g2d.setFont(f2);
             g2d.drawString(sealText.getText().substring(i, i + 1), (float) (circleRadius + thetaX + left), (float) (circleRadius - thetaY + top));
         }
@@ -261,6 +259,16 @@ public class SealUtils {
 
     /**
      * 绘制椭圆弧形文字
+     * FIXME 圆弧形文字分布均匀
+     *
+     * @param sealText 文本
+     * @param left     左边坐标
+     * @param top      上边坐标
+     * @param width    宽度
+     * @param height   高度
+     * @param lineSize 行高
+     * @param isTop    是否顶部圆弧(不是则为底部圆弧)
+     * @param g2d      Graphics2D
      */
     private static void drawArcTextForEllipse(SealText sealText,
                                               double left, double top, double width, double height, int lineSize,
@@ -269,18 +277,18 @@ public class SealUtils {
         float radiusY      = (float) height / 2;
         float radiusWidth  = radiusX + (float) lineSize;
         float radiusHeight = radiusY + (float) lineSize;
-        int   fontTextLen  = sealText.text.length();
+        int   fontTextLen  = sealText.getText().length();
 
-        g2d.setFont(sealText.font);
+        g2d.setFont(sealText.getFont());
         FontMetrics fontMetrics = g2d.getFontMetrics();
-        int         charWidth   = fontMetrics.stringWidth(sealText.text) / sealText.text.length();
+        int         charWidth   = fontMetrics.stringWidth(sealText.getText()) / sealText.getText().length();
         int         charHeight  = fontMetrics.getHeight();
         if (isTop) {
-            left += sealText.marginLeft;
-            top += sealText.marginTop;
+            left += sealText.getMarginLeft();
+            top += sealText.getMarginTop();
         } else {
-            left += sealText.marginLeft;
-            top += charHeight - sealText.marginBottom;
+            left += sealText.getMarginLeft();
+            top += charHeight - sealText.getMarginBottom();
         }
 
         //        int   fontSize     = 25 + (10 - fontTextLen) / 2;
@@ -338,7 +346,7 @@ public class SealUtils {
             double qxang    = Math.atan2((double) radiusY * Math.cos(angR), (double) (-radiusX) * Math.sin(angR));
             double fxang    = qxang + 1.5707963267948966;
             int    subIndex = isTop ? i : fontTextLen - 1 - i;
-            String c        = sealText.text.substring(subIndex, subIndex + 1);
+            String c        = sealText.getText().substring(subIndex, subIndex + 1);
             if (isTop) {
                 x = x + (float) charHeight * minRat * (float) Math.cos(fxang);
                 y = y + (float) charHeight * minRat * (float) Math.sin(fxang);
@@ -359,46 +367,10 @@ public class SealUtils {
                 affineTransform.rotate(Math.toRadians(fxang * 180.0 / Math.PI + 180.0 - 90.0), 0.0, 0.0);
             }
 
-            Font f2 = sealText.font.deriveFont(affineTransform);
+            Font f2 = sealText.getFont().deriveFont(affineTransform);
             g2d.setFont(f2);
             g2d.drawString(c, (float) (x + left), (float) (y + top));
         }
     }
 
-    @Data
-    @NoArgsConstructor
-    @RequiredArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class SealText {
-        /**
-         * 文本
-         */
-        @NonNull
-        private String text;
-        /**
-         * 字体
-         */
-        @NonNull
-        private Font   font;
-        /**
-         * 字之距
-         */
-        private Double space;
-        /**
-         * 上外边距
-         */
-        @Builder.Default
-        private Double marginTop    = 0.0;
-        /**
-         * 左外边距
-         */
-        @Builder.Default
-        private Double marginLeft   = 0.0;
-        /**
-         * 下外边距
-         */
-        @Builder.Default
-        private Double marginBottom = 0.0;
-    }
 }
