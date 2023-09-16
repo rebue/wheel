@@ -34,8 +34,31 @@ import java.util.Map;
 public class PdfUtils {
     public static void fillForm(PdfDocument pdfDoc, Map<String, ?> fields) {
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
+
+        // Being set as true, this parameter is responsible to generate an appearance Stream
+        // while flattening for all form fields that don't have one. Generating appearances will
+        // slow down form flattening, but otherwise Acrobat might render the pdf on its own rules.
+        pdfAcroForm.setGenerateAppearance(true);
+
         for (Map.Entry<String, ?> field : fields.entrySet()) {
-            pdfAcroForm.getField(field.getKey()).setValue(field.getValue().toString());
+            if (field.getValue() instanceof PdfField) {
+                PdfField pdfField = (PdfField) field.getValue();
+                switch (pdfField.getFieldType()) {
+                    case TEXT:
+                        pdfAcroForm.getField(field.getKey()).setValue(
+                                pdfField.getValue().toString(),
+                                pdfField.getFont(),
+                                pdfField.getFontSize());
+                        break;
+                    case QRCODE:
+                        showQrcode(pdfDoc, pdfAcroForm, field.getKey(), pdfField.getValue().toString());
+                        break;
+                    default:
+                        throw new RuntimeException("不会运行到这里");
+                }
+            } else {
+                pdfAcroForm.getField(field.getKey()).setValue(field.getValue().toString());
+            }
         }
     }
 
@@ -48,10 +71,8 @@ public class PdfUtils {
      */
     public static void showImage1(PdfAcroForm form, String fieldName, String imagePath) throws IOException {
         PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
-//        PdfFormAnnotation  formAnnotation  = buttonFormField.getFirstFormAnnotation();
         buttonFormField.setImage(imagePath);
-
-
+//        PdfFormAnnotation  formAnnotation  = buttonFormField.getFirstFormAnnotation();
 //        formAnnotation.setBackgroundColor(WebColors.getCMYKColor("transparent"));
 //        PdfDictionary pdfObject    = buttonFormField.getPdfObject();
 //        PdfDictionary dictionaryMk = pdfObject.getAsDictionary(PdfName.MK);
@@ -70,11 +91,11 @@ public class PdfUtils {
      */
     public static void showImage2(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
         PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
-        ImageData imageData = ImageDataFactory.create(imagePath);
-        Image image = new Image(imageData, 0, 0);
+        ImageData          imageData       = ImageDataFactory.create(imagePath);
+        Image              image           = new Image(imageData, 0, 0);
 //        image.setOpacity(0.1f);
         PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas canvas = new Canvas(pdfFormXObject, doc);
+        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
 //        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
         canvas.add(image);
         buttonFormField.setImageAsForm(pdfFormXObject);
@@ -89,10 +110,10 @@ public class PdfUtils {
      * @param imagePath 图片路径
      */
     public static void showImage3(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
-        PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
-        PdfWidgetAnnotation widget = buttonFormField.getFirstFormAnnotation().getWidget();
-        Rectangle rectangle = widget.getRectangle().toRectangle();
-        PdfPage page = widget.getPage();
+        PdfButtonFormField  buttonFormField = (PdfButtonFormField) form.getField(fieldName);
+        PdfWidgetAnnotation widget          = buttonFormField.getFirstFormAnnotation().getWidget();
+        Rectangle           rectangle       = widget.getRectangle().toRectangle();
+        PdfPage             page            = widget.getPage();
         PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(doc, fieldName)
                 .setWidgetRectangle(rectangle)
                 .setPage(page)
@@ -104,10 +125,10 @@ public class PdfUtils {
 //        pushButton.getPdfObject().put(PdfName.MK, pdfDictionaryMk);
 
         ImageData imageData = ImageDataFactory.create(imagePath);
-        Image image = new Image(imageData, 0, 0);
+        Image     image     = new Image(imageData, 0, 0);
 //        image.setOpacity(0.1f);
         PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas canvas = new Canvas(pdfFormXObject, doc);
+        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
 //        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
         canvas.add(image);
         pushButton.setImageAsForm(pdfFormXObject);
@@ -125,8 +146,8 @@ public class PdfUtils {
      * @param bottom    图片底边坐标(当前页面)
      */
     public static void addImage(PdfDocument pdfDoc, ImageData imageData, float left, float bottom) {
-        Image image = new Image(imageData, left, bottom);
-        Document doc = new Document(pdfDoc);
+        Image    image = new Image(imageData, left, bottom);
+        Document doc   = new Document(pdfDoc);
         doc.add(image);
     }
 
@@ -272,10 +293,10 @@ public class PdfUtils {
     public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
         // 监听结束绘制每一个页面的事件，在结束时再绘制图片，可使图片在顶层
         doc.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
-            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
-            PdfDocument pdfDoc = docEvent.getDocument();
-            PdfPage page = docEvent.getPage();
-            int curPageNum = pdfDoc.getPageNumber(page);
+            PdfDocumentEvent docEvent   = (PdfDocumentEvent) event;
+            PdfDocument      pdfDoc     = docEvent.getDocument();
+            PdfPage          page       = docEvent.getPage();
+            int              curPageNum = pdfDoc.getPageNumber(page);
             if (curPageNum != pageNum) return;
 
             addWaterMask0(doc, page, imageData, rectangle, fillOpacity);
@@ -335,11 +356,11 @@ public class PdfUtils {
      * @param content   二维码内容
      */
     public static void showQrcode(PdfDocument doc, PdfAcroForm form, String fieldName, String content) {
-        PdfFormField qrcode1Field = form.getField(fieldName);
-        Map<EncodeHintType, Object> hints = new HashMap<>();
+        PdfFormField                qrcode1Field = form.getField(fieldName);
+        Map<EncodeHintType, Object> hints        = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");   // 设置UTF-8， 防止中文乱码
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H); // 设置二维码的容错性
-        BarcodeQRCode qrcode1 = new BarcodeQRCode(content, hints);
+        BarcodeQRCode       qrcode1    = new BarcodeQRCode(content, hints);
         PdfWidgetAnnotation annotation = qrcode1Field.getWidgets().get(0);
         annotation.setAppearance(PdfName.N, qrcode1.createFormXObject(doc).getPdfObject());
     }
@@ -375,17 +396,17 @@ public class PdfUtils {
         appearance.setPageRect(rectangle);
 
         // 将图片绘制到图层2(绘制文本的那一层，官方示例文档: https://kb.itextpdf.com/home/it7kb/examples/digital-signing-with-itext/part-iv-appearances#PartIVAppearances-CompletelyCustomAppearancesLayers)
-        PdfFormXObject layer2 = appearance.getLayer2();
-        Rectangle imageRectangle = layer2.getBBox().toRectangle();
-        PdfCanvas canvas = new PdfCanvas(layer2, pdfSigner.getDocument());
+        PdfFormXObject layer2         = appearance.getLayer2();
+        Rectangle      imageRectangle = layer2.getBBox().toRectangle();
+        PdfCanvas      canvas         = new PdfCanvas(layer2, pdfSigner.getDocument());
         canvas.saveState();
         PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度
         canvas.setExtGState(state);
         canvas.addImageFittedIntoRectangle(imageData, imageRectangle, false);
         canvas.restoreState();
 
-        IExternalDigest digest = new BouncyCastleDigest();
-        PrivateKeySignature pks = new PrivateKeySignature(privateKey, digestAlgorithm, provider);
+        IExternalDigest     digest = new BouncyCastleDigest();
+        PrivateKeySignature pks    = new PrivateKeySignature(privateKey, digestAlgorithm, provider);
         // Sign the document using the detached mode, CMS or CAdES equivalent.
         pdfSigner.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
     }
