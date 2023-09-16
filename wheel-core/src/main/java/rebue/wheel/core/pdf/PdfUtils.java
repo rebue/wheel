@@ -21,17 +21,93 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.signatures.*;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PdfUtils {
+
+    /**
+     * 创建PDF文档
+     *
+     * @param srcPath 源文件路径
+     * @param dstPath 输出文件路径
+     * @return PDF文档
+     */
+    @SneakyThrows
+    public static PdfDocument createPdfDoc(String srcPath, String dstPath) {
+        return createPdfDoc(srcPath, dstPath, false);
+    }
+
+    /**
+     * 创建PDF文档
+     *
+     * @param srcPath    源文件路径
+     * @param dstPath    输出文件路径
+     * @param isReadOnly 输出文件是否只读
+     * @return PDF文档
+     */
+    @SneakyThrows
+    public static PdfDocument createPdfDoc(String srcPath, String dstPath, boolean isReadOnly) {
+        PdfWriter writer;
+        if (isReadOnly) {
+            writer = new PdfWriter(dstPath, createReadOnlyWriterProperties());
+        } else {
+            writer = new PdfWriter(dstPath);
+        }
+        return new PdfDocument(new PdfReader(srcPath), writer);
+    }
+
+    /**
+     * 创建PDF文档
+     *
+     * @param srcPath 源文件路径
+     * @return PDF文档
+     */
+    @SneakyThrows
+    public static PdfDocument createPdfDoc(String srcPath, OutputStream outputStream) {
+        return createPdfDoc(srcPath, outputStream, false);
+    }
+
+    /**
+     * 创建PDF文档
+     *
+     * @param srcPath    源文件路径
+     * @param isReadOnly 输出文件是否只读
+     * @return PDF文档
+     */
+    @SneakyThrows
+    public static PdfDocument createPdfDoc(String srcPath, OutputStream outputStream, boolean isReadOnly) {
+        PdfWriter writer;
+        if (isReadOnly) {
+            writer = new PdfWriter(outputStream, createReadOnlyWriterProperties());
+        } else {
+            writer = new PdfWriter(outputStream);
+        }
+        return new PdfDocument(new PdfReader(srcPath), writer);
+    }
+
+    /**
+     * 创建只读的写属性
+     *
+     * @return 写属性
+     */
+    @NonNull
+    private static WriterProperties createReadOnlyWriterProperties() {
+        WriterProperties writerProperties = new WriterProperties();
+        // 设置只读
+        writerProperties.setStandardEncryption(null, null,
+                EncryptionConstants.ALLOW_PRINTING,
+                EncryptionConstants.STANDARD_ENCRYPTION_128);
+        return writerProperties;
+    }
+
     public static void fillForm(PdfDocument pdfDoc, Map<String, ?> fields) {
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
 
@@ -41,11 +117,13 @@ public class PdfUtils {
         pdfAcroForm.setGenerateAppearance(true);
 
         for (Map.Entry<String, ?> field : fields.entrySet()) {
+            PdfFormField pdfFormField = pdfAcroForm.getField(field.getKey());
+            if (pdfFormField == null) continue;
             if (field.getValue() instanceof PdfField) {
                 PdfField pdfField = (PdfField) field.getValue();
                 switch (pdfField.getFieldType()) {
                     case TEXT:
-                        pdfAcroForm.getField(field.getKey()).setValue(
+                        pdfFormField.setValue(
                                 pdfField.getValue().toString(),
                                 pdfField.getFont(),
                                 pdfField.getFontSize());
@@ -57,7 +135,7 @@ public class PdfUtils {
                         throw new RuntimeException("不会运行到这里");
                 }
             } else {
-                pdfAcroForm.getField(field.getKey()).setValue(field.getValue().toString());
+                pdfFormField.setValue(field.getValue().toString());
             }
         }
     }
@@ -368,21 +446,19 @@ public class PdfUtils {
     /**
      * 数字签章
      *
-     * @param reader          读取器
-     * @param outputStream    输出流
-     * @param reason          原因(一般写明此章的用途)
-     * @param location        位置(一般为发布者的地址，不用很详细，省或市就可以了)
-     * @param privateKey      私钥
-     * @param digestAlgorithm 签名算法
-     * @param provider        签名算法的提供者
-     * @param chain           证书
-     * @param pageNum         页码(签章的页面)
-     * @param rectangle       签章的位置和范围
-     * @param fillOpacity     填充的透明度(0-1之间，0为完全透明，1为完全不透明)
-     * @param imageData       签章的图像
+     * @param reader              读取器
+     * @param outputStream        输出流
+     * @param reason              原因(一般写明此章的用途)
+     * @param location            位置(一般为发布者的地址，不用很详细，省或市就可以了)
+     * @param privateKeySignature 私钥签名器
+     * @param chain               证书链
+     * @param pageNum             页码(签章的页面)
+     * @param rectangle           签章的位置和范围
+     * @param fillOpacity         填充的透明度(0-1之间，0为完全透明，1为完全不透明)
+     * @param imageData           签章的图像
      */
     public static void sign(PdfReader reader, OutputStream outputStream, String reason, String location,
-                            PrivateKey privateKey, String digestAlgorithm, String provider, Certificate[] chain,
+                            PrivateKeySignature privateKeySignature, Certificate[] chain,
                             int pageNum, Rectangle rectangle, float fillOpacity, ImageData imageData)
             throws GeneralSecurityException, IOException {
         PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
@@ -405,10 +481,9 @@ public class PdfUtils {
         canvas.addImageFittedIntoRectangle(imageData, imageRectangle, false);
         canvas.restoreState();
 
-        IExternalDigest     digest = new BouncyCastleDigest();
-        PrivateKeySignature pks    = new PrivateKeySignature(privateKey, digestAlgorithm, provider);
+        IExternalDigest digest = new BouncyCastleDigest();
         // Sign the document using the detached mode, CMS or CAdES equivalent.
-        pdfSigner.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
+        pdfSigner.signDetached(digest, privateKeySignature, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
     }
 
 

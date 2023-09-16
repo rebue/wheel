@@ -10,6 +10,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * 生成公章图像工具类
+ * 参考了 <a href="https://github.com/niezhiliang/signature-utils">signature-utils</a> 项目
+ */
 public class SealUtils {
 
     /**

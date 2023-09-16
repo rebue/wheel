@@ -10,9 +10,8 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.PrivateKeySignature;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.MethodOrderer;
@@ -50,7 +49,11 @@ public class PdfUtilsTests {
     public static final String SEAL2 = "src/test/resources/pdf/seal2.png";
     public static final String SEAL3 = "src/test/resources/pdf/seal3.png";
 
-    public static final String KEYSTORE = "src/test/resources/pdf/ks";
+    /**
+     * 用下面命令可以生成密钥库文件
+     * keytool -genkeypair -alias demo -validity 365 -keyalg RSA -keysize 2048 -keystore keystore.jks
+     */
+    public static final String KEYSTORE = "src/test/resources/pdf/ks.jks";
     public static final char[] PASSWORD = "password".toCharArray();
 
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -62,32 +65,11 @@ public class PdfUtilsTests {
         File dstFile = new File(DEST);
         log.debug("mkdirs dstFile: {}", dstFile.getParentFile().mkdirs());
 
-        PdfWriter   writer = new PdfWriter(TEMP);
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC), writer);
+        PdfDocument pdfDoc = PdfUtils.createPdfDoc(SRC, TEMP);
 
         PdfFont pdfFont1 = PdfFontFactory.createFont(FONT1, PdfEncodings.IDENTITY_H);
         PdfFont pdfFont2 = PdfFontFactory.createFont(FONT2, PdfEncodings.IDENTITY_H);
         PdfFont pdfFont3 = PdfFontFactory.createFont(FONT3, PdfEncodings.IDENTITY_H);
-//        pdfAcroForm.getField("param1").setValue("1234567890一二三四五六七八九十", pdfFont1, 12f);// 字体不对，乱码
-//        pdfAcroForm.getField("param2").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        pdfAcroForm.getField("param3").setValue("男");// 未设置字体，只读下没有乱码
-//
-//        // 换行
-//        PdfTextFormField param4 = (PdfTextFormField) pdfAcroForm.getField("param4");
-//        param4.setMultiline(true);
-//        param4.setValue("2234567890二二三四\n五六七八九十", pdfFont3, 12f);
-//
-//        pdfAcroForm.getField("param5").setValue(LocalDateTime.now().format(dateTimeFormatter), pdfFont1, 12f);// 时间
-//        pdfAcroForm.getField("param6").setValue("true");//checkbox
-//        pdfAcroForm.getField("param7").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        pdfAcroForm.getField("param8").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        pdfAcroForm.getField("param9").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        pdfAcroForm.getField("param10").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        pdfAcroForm.getField("param11").setValue("2234567890二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
-//        // 换行
-//        PdfTextFormField param12 = (PdfTextFormField) pdfAcroForm.getField("param12");
-//        param12.setMultiline(true);
-//        param12.setValue("2234567890\n二二三四五六七八九十", pdfFont2, 12f);// 字体正确，不乱码
 
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("param1", PdfField.builder().value("1234567890一二三四五六七八九十").font(pdfFont1).fontSize(12).build());   // 字体不对，乱码
@@ -107,13 +89,7 @@ public class PdfUtilsTests {
 
         pdfDoc.close();
 
-        WriterProperties writerProperties = new WriterProperties();
-        // 设置只读
-//        writerProperties.setStandardEncryption(null, null,
-//                EncryptionConstants.ALLOW_PRINTING,
-//                EncryptionConstants.STANDARD_ENCRYPTION_128);
-        writer = new PdfWriter(DEST, writerProperties);
-        pdfDoc = new PdfDocument(new PdfReader(TEMP), writer);
+        pdfDoc = PdfUtils.createPdfDoc(TEMP, DEST);
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         // Being set as true, this parameter is responsible to generate an appearance Stream
@@ -198,24 +174,23 @@ public class PdfUtilsTests {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(Files.newInputStream(Paths.get(KEYSTORE)), PASSWORD);
-        String        alias      = ks.aliases().nextElement();
-        PrivateKey    privateKey = (PrivateKey) ks.getKey(alias, PASSWORD);
-        Certificate[] chain      = ks.getCertificateChain(alias);
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(Files.newInputStream(Paths.get(KEYSTORE)), PASSWORD);
+        String              alias               = keyStore.aliases().nextElement();
+        PrivateKey          privateKey          = (PrivateKey) keyStore.getKey(alias, PASSWORD);
+        Certificate[]       chain               = keyStore.getCertificateChain(alias);
+        PrivateKeySignature privateKeySignature = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256, provider.getName());
 
         String reason   = "reason 1";
         String location = "location 1";
         imageData = ImageDataFactory.create(SEAL1);
-        PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKey,
-                DigestAlgorithms.SHA256, provider.getName(), chain,
+        PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKeySignature, chain,
                 4, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
 
         reason = "reason 2";
         location = "location 2";
         imageData = ImageDataFactory.create(SealUtils.draw01(topText, captionText, subcaptionText));
-        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKey,
-                DigestAlgorithms.SHA256, provider.getName(), chain,
+        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKeySignature, chain,
                 4, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
 
     }
