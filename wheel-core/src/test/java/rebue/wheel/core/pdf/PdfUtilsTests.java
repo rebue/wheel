@@ -1,5 +1,6 @@
 package rebue.wheel.core.pdf;
 
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.font.PdfEncodings;
@@ -17,6 +18,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import rebue.wheel.core.QrcodeUtils;
 import rebue.wheel.core.seal.SealText;
 import rebue.wheel.core.seal.SealUtils;
 
@@ -101,6 +103,10 @@ public class PdfUtilsTests {
         // If no fields have been explicitly included, then all fields are flattened.
         // Otherwise, only the included fields are flattened.
         pdfAcroForm.flattenFields();
+
+        // 用zxing库展示二维码
+        byte[] qrcodeBytes = QrcodeUtils.genQrcode("1234567890一二三四五六七八九十", 50, 1, 1, ErrorCorrectionLevel.L);
+        PdfUtils.addImage(pdfDoc, ImageDataFactory.create(qrcodeBytes), 250, 200);
 
         PdfUtils.addImage(pdfDoc, SEAL1, 250, 400);
         PdfUtils.showImage1(pdfAcroForm, "seal1", SEAL1);

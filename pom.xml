@@ -375,6 +375,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>3.5.2</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.itextpdf</groupId>
                 <artifactId>kernel</artifactId>
                 <version>${itext.version}</version>

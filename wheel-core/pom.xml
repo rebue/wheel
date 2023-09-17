@@ -36,6 +36,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- 使用字符串的一些帮助库 -->
         <dependency>
             <groupId>org.apache.commons</groupId>

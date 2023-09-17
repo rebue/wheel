@@ -115,7 +115,7 @@ public class PdfUtils {
         return writerProperties;
     }
 
-    public static void fillForm(PdfDocument pdfDoc, Map<String, ?> fields) {
+    public static PdfAcroForm fillForm(PdfDocument pdfDoc, Map<String, ?> fields) {
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
 
         // Being set as true, this parameter is responsible to generate an appearance Stream
@@ -145,6 +145,8 @@ public class PdfUtils {
                 pdfFormField.setValue(field.getValue().toString());
             }
         }
+
+        return pdfAcroForm;
     }
 
     /**
@@ -176,11 +178,11 @@ public class PdfUtils {
      */
     public static void showImage2(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
         PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
-        ImageData imageData = ImageDataFactory.create(imagePath);
-        Image image = new Image(imageData, 0, 0);
+        ImageData          imageData       = ImageDataFactory.create(imagePath);
+        Image              image           = new Image(imageData, 0, 0);
 //        image.setOpacity(0.1f);
         PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas canvas = new Canvas(pdfFormXObject, doc);
+        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
 //        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
         canvas.add(image);
         buttonFormField.setImageAsForm(pdfFormXObject);
@@ -195,10 +197,10 @@ public class PdfUtils {
      * @param imagePath 图片路径
      */
     public static void showImage3(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
-        PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
-        PdfWidgetAnnotation widget = buttonFormField.getFirstFormAnnotation().getWidget();
-        Rectangle rectangle = widget.getRectangle().toRectangle();
-        PdfPage page = widget.getPage();
+        PdfButtonFormField  buttonFormField = (PdfButtonFormField) form.getField(fieldName);
+        PdfWidgetAnnotation widget          = buttonFormField.getFirstFormAnnotation().getWidget();
+        Rectangle           rectangle       = widget.getRectangle().toRectangle();
+        PdfPage             page            = widget.getPage();
         PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(doc, fieldName)
                 .setWidgetRectangle(rectangle)
                 .setPage(page)
@@ -210,10 +212,10 @@ public class PdfUtils {
 //        pushButton.getPdfObject().put(PdfName.MK, pdfDictionaryMk);
 
         ImageData imageData = ImageDataFactory.create(imagePath);
-        Image image = new Image(imageData, 0, 0);
+        Image     image     = new Image(imageData, 0, 0);
 //        image.setOpacity(0.1f);
         PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas canvas = new Canvas(pdfFormXObject, doc);
+        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
 //        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
         canvas.add(image);
         pushButton.setImageAsForm(pdfFormXObject);
@@ -231,8 +233,8 @@ public class PdfUtils {
      * @param bottom    图片底边坐标(当前页面)
      */
     public static void addImage(PdfDocument pdfDoc, ImageData imageData, float left, float bottom) {
-        Image image = new Image(imageData, left, bottom);
-        Document doc = new Document(pdfDoc);
+        Image    image = new Image(imageData, left, bottom);
+        Document doc   = new Document(pdfDoc);
         doc.add(image);
     }
 
@@ -253,12 +255,13 @@ public class PdfUtils {
      * 添加水印(直接添加)
      *
      * @param doc         pdf文档
-     * @param page        页面
+     * @param pageNum     页码(从1开始)
      * @param imageData   图像数据
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    private static void addWaterMask0(PdfDocument doc, PdfPage page, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+        PdfPage   page   = doc.getPage(pageNum);
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), doc);
         canvas.saveState();
         PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度
@@ -271,45 +274,45 @@ public class PdfUtils {
      * 添加水印(直接添加)
      *
      * @param doc         pdf文档
-     * @param page        页面
+     * @param pageNum     页码(从1开始)
      * @param imageData   图像数据
      * @param left        水印的左边坐标
      * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, PdfPage page, ImageData imageData, float left, float bottom, float fillOpacity) {
-        addWaterMask0(doc, page, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
+        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
     }
 
     /**
      * 添加水印(直接添加)
      *
      * @param doc         pdf文档
-     * @param page        页面
+     * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, PdfPage page, String imagePath, Rectangle rectangle, float fillOpacity) {
-        addWaterMask0(doc, page, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
+    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+        addWaterMask0(doc, pageNum, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
     }
 
     /**
      * 添加水印(直接添加)
      *
      * @param doc         pdf文档
-     * @param page        页面
+     * @param pageNum     页码(从1开始)
      * @param imagePath   图片路径
      * @param left        水印的左边坐标
      * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, PdfPage page, String imagePath, float left, float bottom, float fillOpacity) {
+    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
         ImageData imageData = ImageDataFactory.create(imagePath);
-        addWaterMask0(doc, page, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
     }
 
     /**
@@ -322,7 +325,7 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
-        addWaterMask0(doc, doc.getPage(pageNum), imageData, rectangle, fillOpacity);
+        addWaterMask0(doc, pageNum, imageData, rectangle, fillOpacity);
     }
 
     /**
@@ -336,7 +339,7 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
-        addWaterMask0(doc, doc.getPage(pageNum), imageData, left, bottom, fillOpacity);
+        addWaterMask0(doc, pageNum, imageData, left, bottom, fillOpacity);
     }
 
     /**
@@ -349,7 +352,7 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
-        addWaterMask0(doc, doc.getPage(pageNum), imagePath, rectangle, fillOpacity);
+        addWaterMask0(doc, pageNum, imagePath, rectangle, fillOpacity);
     }
 
     /**
@@ -363,7 +366,7 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
-        addWaterMask0(doc, doc.getPage(pageNum), imagePath, left, bottom, fillOpacity);
+        addWaterMask0(doc, pageNum, imagePath, left, bottom, fillOpacity);
     }
 
     /**
@@ -378,13 +381,13 @@ public class PdfUtils {
     public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
         // 监听结束绘制每一个页面的事件，在结束时再绘制图片，可使图片在顶层
         doc.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
-            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
-            PdfDocument pdfDoc = docEvent.getDocument();
-            PdfPage page = docEvent.getPage();
-            int curPageNum = pdfDoc.getPageNumber(page);
+            PdfDocumentEvent docEvent   = (PdfDocumentEvent) event;
+            PdfDocument      pdfDoc     = docEvent.getDocument();
+            PdfPage          curPage    = docEvent.getPage();
+            int              curPageNum = pdfDoc.getPageNumber(curPage);
             if (curPageNum != pageNum) return;
 
-            addWaterMask0(doc, page, imageData, rectangle, fillOpacity);
+            addWaterMask0(doc, pageNum, imageData, rectangle, fillOpacity);
         });
     }
 
@@ -441,11 +444,11 @@ public class PdfUtils {
      * @param content   二维码内容
      */
     public static void showQrcode(PdfDocument doc, PdfAcroForm form, String fieldName, String content) {
-        PdfFormField qrcode1Field = form.getField(fieldName);
-        Map<EncodeHintType, Object> hints = new HashMap<>();
+        PdfFormField                qrcode1Field = form.getField(fieldName);
+        Map<EncodeHintType, Object> hints        = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");   // 设置UTF-8， 防止中文乱码
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H); // 设置二维码的容错性
-        BarcodeQRCode qrcode1 = new BarcodeQRCode(content, hints);
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L); // 设置二维码的容错性
+        BarcodeQRCode       qrcode1    = new BarcodeQRCode(content, hints);
         PdfWidgetAnnotation annotation = qrcode1Field.getWidgets().get(0);
         annotation.setAppearance(PdfName.N, qrcode1.createFormXObject(doc).getPdfObject());
     }
@@ -479,9 +482,9 @@ public class PdfUtils {
         appearance.setPageRect(rectangle);
 
         // 将图片绘制到图层2(绘制文本的那一层，官方示例文档: https://kb.itextpdf.com/home/it7kb/examples/digital-signing-with-itext/part-iv-appearances#PartIVAppearances-CompletelyCustomAppearancesLayers)
-        PdfFormXObject layer2 = appearance.getLayer2();
-        Rectangle imageRectangle = layer2.getBBox().toRectangle();
-        PdfCanvas canvas = new PdfCanvas(layer2, pdfSigner.getDocument());
+        PdfFormXObject layer2         = appearance.getLayer2();
+        Rectangle      imageRectangle = layer2.getBBox().toRectangle();
+        PdfCanvas      canvas         = new PdfCanvas(layer2, pdfSigner.getDocument());
         canvas.saveState();
         PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度
         canvas.setExtGState(state);
