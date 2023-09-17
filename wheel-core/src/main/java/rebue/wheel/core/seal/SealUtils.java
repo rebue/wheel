@@ -15,14 +15,13 @@ import java.io.IOException;
  * 参考了 <a href="https://github.com/niezhiliang/signature-utils">signature-utils</a> 项目
  */
 public class SealUtils {
-
     /**
-     * 绘制圆形公章
+     * 绘制圆形公章(TODO 转成工厂模式)
      *
      * @param topText        公章上部分弧形文字
      * @param captionText    公章标题名称(五角星下方第一行文字)
      * @param subcaptionText 公章副标题名称(五角星下方第二行文字)
-     * @return 图形的字节数组
+     * @return 公章图形的字节数组
      */
     public static byte[] draw01(String topText, String captionText, String subcaptionText) throws IOException {
         return draw01(
@@ -49,7 +48,7 @@ public class SealUtils {
      * @param width             公章的宽度
      * @param circleBorderWidth 圆边框的宽度
      * @param starWidth         五角星宽度
-     * @return 图形的字节数组
+     * @return 公章图形的字节数组
      */
     public static byte[] draw01(SealText topText, SealText captionText, SealText subcaptionText, int width, int circleBorderWidth, int starWidth) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
@@ -119,7 +118,7 @@ public class SealUtils {
      * @param height                  公章的高度
      * @param outerEllipseBorderWidth 外圈椭圆边框的宽度
      * @param innerEllipseBorderWidth 内圈椭圆边框的宽度
-     * @return 图形的字节数组
+     * @return 公章图形的字节数组
      */
     public static byte[] draw02(SealText topText, SealText centerText, SealText bottomText, int width, int height,
                                 double outerEllipseBorderWidth, double innerEllipseBorderWidth) throws IOException {
@@ -186,6 +185,58 @@ public class SealUtils {
     }
 
     /**
+     * 绘制横向矩形公章
+     *
+     * @param sealText   文本
+     * @param paddingX   X轴内边框
+     * @param paddingY   Y轴内边框
+     * @param borderSize 边框宽度
+     * @return 公章图形的字节数组
+     */
+    public static byte[] draw03(SealText sealText, int paddingX, int paddingY, int borderSize) throws IOException {
+        // Create a temporary Graphics object to get the FontMetrics
+        Graphics    graphics    = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
+        FontMetrics fontMetrics = graphics.getFontMetrics(sealText.getFont());
+        int         fontWidth   = fontMetrics.stringWidth(sealText.getText());
+        int         fontHeight  = fontMetrics.getHeight(); // Get the height of the font
+        int         width       = paddingX * 2 + borderSize * 2 + fontWidth;
+        int         height      = paddingY * 2 + borderSize * 2 + fontHeight;
+
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        // Create a Graphics2D object from the BufferedImage
+        Graphics2D g2d = bufferedImage.createGraphics();
+        try {
+            // 设置抗锯齿
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // 设置公章的颜色
+            g2d.setColor(Color.RED);
+
+            // 中心点
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            // 绘制矩形边框
+            g2d.setStroke(new BasicStroke(borderSize));
+            g2d.drawRect(borderSize / 2, borderSize / 2, width - borderSize, height - borderSize);
+
+            // 绘制公章文本
+            g2d.setFont(sealText.getFont());
+            g2d.drawString(sealText.getText(),
+                    centerX - fontWidth / 2,
+                    centerY + fontHeight / 2 - fontMetrics.getDescent());
+        } finally {
+            // Dispose the Graphics2D object
+            g2d.dispose();
+        }
+
+        // 将BufferedImage转换为字节数组
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+
+    /**
      * 绘制圆弧形文字
      *
      * @param sealText     文本
@@ -195,6 +246,7 @@ public class SealUtils {
      * @param isTop        是在上部分还是下部分绘制文本
      * @param g2d          Graphic2D
      */
+    @SuppressWarnings("all")
     private static void drawArcTextForCircle(SealText sealText, double left, double top,
                                              int circleRadius, boolean isTop, Graphics2D g2d) {
         if (sealText == null) {
@@ -274,6 +326,7 @@ public class SealUtils {
      * @param isTop    是否顶部圆弧(不是则为底部圆弧)
      * @param g2d      Graphics2D
      */
+    @SuppressWarnings("all")
     private static void drawArcTextForEllipse(SealText sealText,
                                               double left, double top, double width, double height, int lineSize,
                                               boolean isTop, Graphics2D g2d) {
@@ -295,9 +348,6 @@ public class SealUtils {
             top += charHeight - sealText.getMarginBottom();
         }
 
-        //        int   fontSize     = 25 + (10 - fontTextLen) / 2;
-//        int   fontStyle    = 1;
-//        Font  font            = new Font(sealText.font.getFamily(), fontStyle, fontSize);
         float totalArcAng = 180.0F;
         if (!isTop) {
             totalArcAng = 120.0F;

@@ -121,10 +121,24 @@ public class PdfUtilsTests {
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, 250, 100, 0.9f);
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, new Rectangle(250, 0, 100, 100), 0.9f);
 
+        ImageData imageData = ImageDataFactory.create(SealUtils.draw03(SealText.builder()
+                        .text("中国很行")
+                        .font(new Font("宋体", Font.PLAIN, 36))
+                        .build(),
+                30, 20, 8));
+        PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 50, 50, 0.9f);
+
+        imageData = ImageDataFactory.create(SealUtils.draw03(SealText.builder()
+                        .text("中    国")
+                        .font(new Font("宋体", Font.PLAIN, 36))
+                        .build(),
+                50, 10, 12));
+        PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 300, 50, 0.9f);
+
         String topText        = "中国电子公章测试有限责任公司";
         String captionText    = "电子公章演示";
         String subcaptionText = "演示专用章";
-        ImageData imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
+        imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
                         .marginTop(10D)
