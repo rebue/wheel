@@ -50,7 +50,7 @@ public class SealUtils {
      * @param starWidth         五角星宽度
      * @return 公章图形的字节数组
      */
-    public static byte[] draw01(SealText topText, SealText captionText, SealText subcaptionText, int width, int circleBorderWidth, int starWidth) throws IOException {
+    public static byte[] draw01(SealText topText, SealText captionText, SealText subcaptionText, int width, double circleBorderWidth, float starWidth) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
         Graphics2D g2d = bufferedImage.createGraphics();
@@ -61,21 +61,21 @@ public class SealUtils {
             g2d.setColor(Color.RED);
 
             // 中心点
-            int centerX = width / 2;
-            int centerY = centerX;
+            float centerX = width / 2;
+            float centerY = centerX;
 
             // 绘制圆
-            int circleLeft  = circleBorderWidth / 2;                // 圆的左边坐标
-            int circleTop   = circleLeft;                           // 圆的上边距
-            int circleWidth = width - circleBorderWidth - 1;        // 圆的宽度
-            g2d.setStroke(new BasicStroke(circleBorderWidth));      // 设置圆边框的宽度
+            double circleLeft  = circleBorderWidth / 2;                     // 圆的左边坐标
+            double circleTop   = circleLeft;                                // 圆的上边距
+            double circleWidth = width - circleBorderWidth - 1;             // 圆的宽度
+            g2d.setStroke(new BasicStroke((float) circleBorderWidth));      // 设置圆边框的宽度
             g2d.draw(new Ellipse2D.Double(circleLeft, circleTop, circleWidth, circleWidth));
 
             // 绘制公章上部分弧形文字
             drawArcTextForCircle(topText, 0, 0, width / 2, true, g2d);
 
             // 绘制中间的五角星
-            int    starRadius    = starWidth / 2;               // 五角星圆的半径
+            float  starRadius    = starWidth / 2;               // 五角星圆的半径
             int    starHornCount = 5;                           // 五角星角的数量
             double starAngle     = Math.PI / starHornCount;     // 五角星旋转角度
             int[]  xPoints       = new int[2 * starHornCount];

@@ -95,7 +95,7 @@ public class DroolsUtils {
      * @return 触发执行的规则数
      */
     public static int fireRules(String kSessionName, String agendaGroupName, Object fact) {
-        log.debug("fireRules: kSessionName-{} agendaGroupName-{} fact-{}", kSessionName, agendaGroupName, fact);
+        log.debug("fireRules: kSessionName-{} agendaGroupName-{}", kSessionName, agendaGroupName);
         // 执行规则引擎自定义绑定变量
         KieSession kieSession = kieContainer.newKieSession(kSessionName);
         try {
