@@ -6,6 +6,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -89,14 +90,15 @@ public class SealUtils {
 
             // 绘制公章标题名称
             g2d.setFont(captionText.getFont());
-            FontMetrics captionFontMetrics = g2d.getFontMetrics();
-            int         nameY              = (int) (centerY + starRadius + captionText.getMarginTop());
-            g2d.drawString(captionText.getText(), centerX - captionFontMetrics.stringWidth(captionText.getText()) / 2, nameY);
+            TextDimensions captionTextDimensions = getTextDimensions(captionText.getText(), captionText.getFont(), g2d);
+            int            nameY                 = (int) (centerY + starRadius + captionText.getMarginTop());
+            g2d.drawString(captionText.getText(), centerX - captionTextDimensions.getWidth() / 2, nameY);
 
             // 绘制公章副标题名称
             g2d.setFont(subcaptionText.getFont());
-            FontMetrics subcaptionFontMetrics = g2d.getFontMetrics();
-            g2d.drawString(subcaptionText.getText(), centerX - subcaptionFontMetrics.stringWidth(subcaptionText.getText()) / 2, nameY + captionFontMetrics.getHeight());
+            TextDimensions subcaptionTextDimensions = getTextDimensions(subcaptionText.getText(), subcaptionText.getFont(), g2d);
+            g2d.drawString(subcaptionText.getText(), centerX - subcaptionTextDimensions.getWidth() / 2,
+                    nameY + captionTextDimensions.getHeight());
         } finally {
             // Dispose the Graphics2D object
             g2d.dispose();
@@ -162,10 +164,10 @@ public class SealUtils {
 
             // 绘制公章标题名称
             g2d.setFont(centerText.getFont());
-            FontMetrics centerFontMetrics = g2d.getFontMetrics();
+            TextDimensions centerTextDimensions = getTextDimensions(centerText.getText(), centerText.getFont(), g2d);
             g2d.drawString(centerText.getText(),
-                    centerX - centerFontMetrics.stringWidth(centerText.getText()) / 2,
-                    centerY + centerFontMetrics.getHeight() / 2 - centerFontMetrics.getDescent());
+                    centerX - centerTextDimensions.getWidth() / 2,
+                    centerY + centerTextDimensions.getHeight() / 2 - centerTextDimensions.getDescent());
 
             // 绘制公章下部分弧形文字
             double bottomTextLeft   = innerEllipseLeft + innerEllipseBorderWidth + topText.getMarginTop();  // 文字椭圆曲线的左边坐标
@@ -185,22 +187,21 @@ public class SealUtils {
     }
 
     /**
-     * 绘制横向矩形公章
+     * 绘制横向矩形方框公章
      *
-     * @param sealText   文本
-     * @param paddingX   X轴内边框
-     * @param paddingY   Y轴内边框
-     * @param borderSize 边框宽度
+     * @param sealText     文本
+     * @param paddingX     X轴内边距
+     * @param paddingY     Y轴内边距
+     * @param borderSize   边框宽度
+     * @param cornerRadius 圆角角度
      * @return 公章图形的字节数组
      */
-    public static byte[] draw03(SealText sealText, int paddingX, int paddingY, int borderSize) throws IOException {
+    public static byte[] draw03(SealText sealText, int paddingX, int paddingY, int borderSize, int cornerRadius) throws IOException {
         // Create a temporary Graphics object to get the FontMetrics
-        Graphics    graphics    = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
-        FontMetrics fontMetrics = graphics.getFontMetrics(sealText.getFont());
-        int         fontWidth   = fontMetrics.stringWidth(sealText.getText());
-        int         fontHeight  = fontMetrics.getHeight(); // Get the height of the font
-        int         width       = paddingX * 2 + borderSize * 2 + fontWidth;
-        int         height      = paddingY * 2 + borderSize * 2 + fontHeight;
+        Graphics       graphics       = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
+        TextDimensions textDimensions = getTextDimensions(sealText.getText(), sealText.getFont(), graphics);
+        int            width          = paddingX * 2 + borderSize * 2 + textDimensions.getWidth();
+        int            height         = paddingY * 2 + borderSize * 2 + textDimensions.getHeight();
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
@@ -211,19 +212,18 @@ public class SealUtils {
             // 设置公章的颜色
             g2d.setColor(Color.RED);
 
-            // 中心点
+            // 绘制矩形边框
+            drawRectBorder(width, height, borderSize, cornerRadius, g2d);
+
+            // 计算中心点
             int centerX = width / 2;
             int centerY = height / 2;
-
-            // 绘制矩形边框
-            g2d.setStroke(new BasicStroke(borderSize));
-            g2d.drawRect(borderSize / 2, borderSize / 2, width - borderSize, height - borderSize);
 
             // 绘制公章文本
             g2d.setFont(sealText.getFont());
             g2d.drawString(sealText.getText(),
-                    centerX - fontWidth / 2,
-                    centerY + fontHeight / 2 - fontMetrics.getDescent());
+                    centerX - textDimensions.getWidth() / 2,
+                    centerY + textDimensions.getHeight() / 2 - textDimensions.getLeading() / 2 - textDimensions.getDescent());
         } finally {
             // Dispose the Graphics2D object
             g2d.dispose();
@@ -233,6 +233,114 @@ public class SealUtils {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
+     * 绘制正方形印章
+     *
+     * @param sealText     文本(字数只能在2(含)~4(含)之间)
+     * @param paddingX     X轴内边距
+     * @param paddingY     Y轴内边距
+     * @param borderSize   边框宽度
+     * @param cornerRadius 圆角宽度
+     * @return 印章图形的字节数组
+     */
+    public static byte[] draw04(SealText sealText, int paddingX, int paddingY, int borderSize, int cornerRadius) throws IOException {
+        String text = sealText.getText();
+        switch (text.length()) {
+            case 2:
+                text += "之印";
+                break;
+            case 3:
+                text += "印";
+                break;
+            case 4:
+                break;
+            default:
+                throw new IllegalArgumentException("文本的字数只能在2(含)~4(含)之间");
+        }
+        String char0 = text.substring(2, 3);
+        String char1 = text.substring(0, 1);
+        String char2 = text.substring(3, 4);
+        String char3 = text.substring(1, 2);
+
+        // Create a temporary Graphics object to get the FontMetrics
+        Graphics       graphics       = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
+        TextDimensions textDimensions = getTextDimensions(char0, sealText.getFont(), graphics);
+        int            width          = paddingX * 2 + borderSize * 2 + textDimensions.getWidth() * 2 + (int) Math.ceil(sealText.getSpace());
+        int            height         = paddingY * 2 + borderSize * 2 + textDimensions.getHeight() * 2 + (int) Math.ceil(sealText.getSpace());
+
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        // Create a Graphics2D object from the BufferedImage
+        Graphics2D g2d = bufferedImage.createGraphics();
+        try {
+            // 设置抗锯齿
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // 设置公章的颜色
+            g2d.setColor(Color.RED);
+
+            // 绘制矩形边框
+            drawRectBorder(width, height, borderSize, cornerRadius, g2d);
+
+            // 计算中心点
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            // 绘制公章文本
+            g2d.setFont(sealText.getFont());
+            int halfSpace = (int) (sealText.getSpace() / 2);
+            int x1        = centerX - halfSpace - textDimensions.getWidth();
+            int x2        = centerX + halfSpace;
+            int y1        = centerY - halfSpace - textDimensions.getDescent();
+            int y2        = centerY + halfSpace + textDimensions.getAscent();
+            g2d.drawString(char0, x1, y1);
+            g2d.drawString(char1, x2, y1);
+            g2d.drawString(char2, x1, y2);
+            g2d.drawString(char3, x2, y2);
+        } finally {
+            // Dispose the Graphics2D object
+            g2d.dispose();
+        }
+
+        // 将BufferedImage转换为字节数组
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private static TextDimensions getTextDimensions(String text, Font font, Graphics graphics) {
+        FontMetrics fontMetrics = graphics.getFontMetrics(font);
+        return TextDimensions.builder()
+                .width(fontMetrics.stringWidth(text))
+                .height(fontMetrics.getHeight())
+                .ascent(fontMetrics.getAscent())
+                .descent(fontMetrics.getDescent())
+                .leading(fontMetrics.getLeading())
+                .build();
+    }
+
+    /**
+     * 绘制矩形边框
+     *
+     * @param width        矩形宽度
+     * @param height       矩形高度
+     * @param borderSize   矩形边框宽度
+     * @param cornerRadius 矩形圆角角度
+     * @param g2d          Graphics2D
+     */
+    private static void drawRectBorder(int width, int height, int borderSize, int cornerRadius, Graphics2D g2d) {
+        g2d.setStroke(new BasicStroke(borderSize));
+        int rectX      = borderSize / 2;
+        int rectY      = borderSize / 2;
+        int rectWidth  = width - borderSize;
+        int rectHeight = height - borderSize;
+        if (cornerRadius == 0) {
+            g2d.drawRect(rectX, rectY, rectWidth, rectHeight);
+        } else {
+            // Create a rounded rectangle shape
+            RoundRectangle2D roundedRect = new RoundRectangle2D.Float(rectX, rectY, rectWidth, rectHeight, cornerRadius, cornerRadius);
+            g2d.draw(roundedRect);
+        }
     }
 
 
@@ -337,9 +445,9 @@ public class SealUtils {
         int   fontTextLen  = sealText.getText().length();
 
         g2d.setFont(sealText.getFont());
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        int         charWidth   = fontMetrics.stringWidth(sealText.getText()) / sealText.getText().length();
-        int         charHeight  = fontMetrics.getHeight();
+        TextDimensions textDimensions = getTextDimensions(sealText.getText(), sealText.getFont(), g2d);
+        int            charWidth      = textDimensions.getWidth() / sealText.getText().length();
+        int            charHeight     = textDimensions.getHeight();
         if (isTop) {
             left += sealText.getMarginLeft();
             top += sealText.getMarginTop();

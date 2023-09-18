@@ -125,14 +125,15 @@ public class PdfUtilsTests {
                         .text("中国很行")
                         .font(new Font("宋体", Font.PLAIN, 36))
                         .build(),
-                30, 20, 8));
+                30, 20, 8, 0));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 50, 50, 0.9f);
 
-        imageData = ImageDataFactory.create(SealUtils.draw03(SealText.builder()
-                        .text("中    国")
+        imageData = ImageDataFactory.create(SealUtils.draw04(SealText.builder()
+                        .text("中国")
                         .font(new Font("宋体", Font.PLAIN, 36))
+                        .space(10.0)
                         .build(),
-                50, 10, 12));
+                10, 10, 5, 10));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 300, 50, 0.9f);
 
         String topText        = "中国电子公章测试有限责任公司";
