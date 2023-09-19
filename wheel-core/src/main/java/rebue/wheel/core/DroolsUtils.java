@@ -23,6 +23,8 @@ public class DroolsUtils {
     private static final KieServices  kieServices = KieServices.Factory.get();
     private static       KieContainer kieContainer;
 
+    private static FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
+
     static {
         log.info("初始化drools");
         // 初始化时创建容器
@@ -33,6 +35,10 @@ public class DroolsUtils {
 
     public static void init() {
 
+    }
+
+    public static void stop() throws Exception {
+        monitor.stop();
     }
 
     /**
@@ -59,7 +65,6 @@ public class DroolsUtils {
     @SneakyThrows
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(FileUtils.getClassesPath() + "drools/");
-        FileAlterationMonitor  monitor  = new FileAlterationMonitor(5 * 1000);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             @Override
             public void onFileCreate(File file) {

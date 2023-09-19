@@ -28,7 +28,6 @@ import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -84,15 +83,15 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 
-        String classpath             = FileUtils.getClassesPath(this.getClass());
-        String defaultConfigYamlFile = classpath + File.separator + "conf" + File.separator + "config.yml";
-        if (Files.exists(Path.of(defaultConfigYamlFile))) {
+        String classpath                 = FileUtils.getClassesPath(this.getClass());
+        Path   defaultConfigYamlFilePath = Path.of(classpath, "conf", "config.yml");
+        if (Files.exists(defaultConfigYamlFilePath)) {
             log.debug("加载conf/config.yml文件的配置");
             ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
                     .setType("file")
                     .setFormat("yaml")
                     .setOptional(true)
-                    .setConfig(new JsonObject().put("path", defaultConfigYamlFile));
+                    .setConfig(new JsonObject().put("path", defaultConfigYamlFilePath));
             defaultConfigRetrieverOptions.addStore(defaultConfigStoreOptions);
         }
 

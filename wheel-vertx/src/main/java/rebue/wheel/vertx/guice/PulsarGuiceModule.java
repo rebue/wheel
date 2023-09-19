@@ -36,7 +36,6 @@ public class PulsarGuiceModule extends AbstractModule {
             log.error("构建PulsarClient出现异常", e);
             throw new RuntimeException(e);
         }
-
     }
 
 }

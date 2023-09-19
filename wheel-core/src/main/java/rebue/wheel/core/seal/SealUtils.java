@@ -270,6 +270,9 @@ public class SealUtils {
         int            width          = paddingX * 2 + borderSize * 2 + textDimensions.getWidth() * 2 + (int) Math.ceil(sealText.getSpace());
         int            height         = paddingY * 2 + borderSize * 2 + textDimensions.getHeight() * 2 + (int) Math.ceil(sealText.getSpace());
 
+        if (width < height) width = height;
+        else if (height < width) height = width;
+
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
         Graphics2D g2d = bufferedImage.createGraphics();
