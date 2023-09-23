@@ -39,4 +39,14 @@ public class SealText {
      */
     @Builder.Default
     private Double marginBottom = 0.0;
+    /**
+     * X轴的放大缩小比例(大于1为放大，小于1缩小，等于1不变)
+     */
+    @Builder.Default
+    private Double scaleX       = 1.0;
+    /**
+     * Y轴的放大缩小比例(大于1为放大，小于1缩小，等于1不变)
+     */
+    @Builder.Default
+    private Double scaleY       = 1.0;
 }

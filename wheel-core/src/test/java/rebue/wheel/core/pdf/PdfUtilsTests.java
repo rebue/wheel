@@ -142,18 +142,18 @@ public class PdfUtilsTests {
         imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
                         .font(new Font("宋体", Font.PLAIN, 36))
-                        .marginTop(10D)
+                        .marginTop(10.0)
                         .build(),
                 SealText.builder()
                         .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
-                        .marginTop(15D)
+//                        .marginTop(15.0)
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
                         .font(new Font("宋体", Font.BOLD, 24))
                         .build(),
-                300, 10, 150));
+                300, 10, 100));
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
@@ -164,15 +164,22 @@ public class PdfUtilsTests {
                         .build(),
                 SealText.builder()
                         .text(captionText)
-                        .font(new Font("宋体", Font.PLAIN, 24))
-                        .marginTop(15.0)
+                        .font(new Font("宋体", Font.BOLD, 32))
+                        .space(10.0)
+                        .marginTop(5.0)
+                        .scaleX(0.5)
+                        .scaleY(1.2)
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
-                        .font(new Font("宋体", Font.PLAIN, 24))
+                        .font(new Font("宋体", Font.BOLD, 32))
+                        .space(5.0)
+                        .marginTop(5.0)
+                        .scaleX(0.5)
+                        .scaleY(1.2)
                         .build(),
-                300, 10, 150));
-        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 300, 0.9f);
+                300, 10, 100));
+        PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 250, 300, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw02(SealText.builder()
                         .text(topText)

@@ -73,7 +73,7 @@ public class SealUtils {
             g2d.draw(new Ellipse2D.Double(circleLeft, circleTop, circleWidth, circleWidth));
 
             // 绘制公章上部分弧形文字
-            drawArcTextForCircle(topText, 0, 0, width / 2, true, g2d);
+            drawArcTextForCircle1(topText, centerX, centerY, width / 2, g2d);
 
             // 绘制中间的五角星
             float  starRadius    = starWidth / 2;               // 五角星圆的半径
@@ -89,16 +89,11 @@ public class SealUtils {
             g2d.fill(new Polygon(xPoints, yPoints, 2 * starHornCount));
 
             // 绘制公章标题名称
-            g2d.setFont(captionText.getFont());
-            TextDimensions captionTextDimensions = getTextDimensions(captionText.getText(), captionText.getFont(), g2d);
-            int            nameY                 = (int) (centerY + starRadius + captionText.getMarginTop());
-            g2d.drawString(captionText.getText(), centerX - captionTextDimensions.getWidth() / 2, nameY);
+            double         captionTextTop        = (centerY + starRadius + captionText.getMarginTop());
+            TextDimensions captionTextDimensions = drawCenterText(captionText, centerX, captionTextTop, g2d);
 
             // 绘制公章副标题名称
-            g2d.setFont(subcaptionText.getFont());
-            TextDimensions subcaptionTextDimensions = getTextDimensions(subcaptionText.getText(), subcaptionText.getFont(), g2d);
-            g2d.drawString(subcaptionText.getText(), centerX - subcaptionTextDimensions.getWidth() / 2,
-                    nameY + captionTextDimensions.getHeight());
+            drawCenterText(subcaptionText, centerX, captionTextTop + captionTextDimensions.getHeight(), g2d);
         } finally {
             // Dispose the Graphics2D object
             g2d.dispose();
@@ -108,6 +103,42 @@ public class SealUtils {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+
+    private static TextDimensions drawCenterText(SealText sealText, double centerX, double top, Graphics2D g2d) {
+        // Create an AffineTransform instance
+        AffineTransform transform = new AffineTransform();
+        transform.setToScale(sealText.getScaleX(), sealText.getScaleY());
+        g2d.setTransform(transform);
+
+        g2d.setFont(sealText.getFont());
+        String         text           = sealText.getText();
+        TextDimensions textDimensions = getTextDimensions(text, sealText.getFont(), g2d);
+        // 文本的宽度
+        double textWidth = textDimensions.getWidth();
+        // 一个字的宽度
+        double charWidth = textWidth / text.length();
+        // 字间距
+        double space = sealText.getSpace() == null ? 0 : sealText.getSpace();
+        // 总字间距
+        double totalSpace = space * (text.length() - 1);
+        // 行宽度
+        double lineWidth = textWidth + totalSpace;
+        // 上边距
+        Double marginTop = sealText.getMarginTop();
+        if (marginTop == null) marginTop = 0.0;
+
+        float x = (float) ((centerX / sealText.getScaleX() - lineWidth / 2));
+        float y = (float) ((top + marginTop + textDimensions.getLeading() / 2 + textDimensions.getAscent())
+                / sealText.getScaleY());
+        for (int i = 0; i < text.length(); i++) {
+            g2d.drawString(String.valueOf(text.charAt(i)), x, y);
+            x += charWidth + space;
+        }
+        // 重置Graphics2D的Transform
+        g2d.setTransform(new AffineTransform());
+
+        return textDimensions;
     }
 
     /**
@@ -346,6 +377,152 @@ public class SealUtils {
         }
     }
 
+    private static void drawArcTextForCircle1(SealText sealText, double centerX, double centerY, double circleRadius, Graphics2D g2d) {
+        g2d.setFont(sealText.getFont());
+
+        // 计算圆弧的半径和角度
+        float  radius = (float) (circleRadius - 50);
+        double angle  = 210;
+
+        // 将坐标原点移动到圆弧的中心
+        g2d.translate(centerX, centerY);
+
+        // Create an AffineTransform instance
+        AffineTransform transform = new AffineTransform();
+        transform.scale(2, 0.5);
+        g2d.setTransform(transform);
+
+        // 计算每个字符之间的角度间隔
+        double anglePerChar = 2 * Math.PI / 2 / sealText.getText().length();
+
+        // 在圆周上绘制文本
+        for (int i = 0; i < sealText.getText().length(); i++) {
+
+            // 旋转Graphics2D对象
+            g2d.rotate(angle);
+
+            // 绘制当前字符
+            g2d.drawString(String.valueOf(sealText.getText().charAt(i)), 0, (float) -radius);
+
+            // 更新角度
+            angle += anglePerChar;
+        }
+
+
+        // 恢复Graphics2D对象的旋转和平移变换
+        g2d.rotate(-angle);
+        g2d.translate(-centerX, -centerY);
+        g2d.setTransform(new AffineTransform());
+
+    }
+
+    @SuppressWarnings("all")
+    private static void drawArcTextForCircle2(SealText sealText, double centerX, double centerY, double circleRadius, Graphics2D g2d) {
+        String message = sealText.getText();
+        //根据输入字符串得到字符数组
+        String[] messages2 = message.split("", 0);
+        String[] messages  = new String[messages2.length];
+        System.arraycopy(messages2, 0, messages, 0, messages2.length);
+
+        //输入的字数
+        int ilength = messages.length;
+
+        //设置字体属性
+        int fontsize = sealText.getFont().getSize();
+        //字体大小适配
+        int len = 0;
+        if (message.length() <= 11) {
+            fontsize = 48;
+            len = 70;
+        } else if (message.length() < 15) {
+            fontsize = 42;
+            len = 90;
+        } else if (message.length() < 17) {
+            fontsize = 39;
+            len = 130;
+        } else if (message.length() < 20) {
+            fontsize = 35;
+            len = 148;
+        } else {
+            fontsize = 31;
+            len = 160;
+        }
+        Font f = new Font("宋体", Font.PLAIN, fontsize);
+
+        FontRenderContext context = g2d.getFontRenderContext();
+        Rectangle2D       bounds  = f.getStringBounds(message, context);
+
+        //字符宽度＝字符串长度/字符数
+        double char_interval = ((bounds.getWidth() - len) / ilength);
+        //上坡度
+        double ascent = -bounds.getY() + 15;
+
+        int     first = 0, second = 0;
+        boolean odd   = false;
+        if (ilength % 2 == 1) {
+            first = (ilength - 1) / 2;
+            odd = true;
+        } else {
+            first = (ilength) / 2 - 1;
+            second = (ilength) / 2;
+            odd = false;
+        }
+
+        double radius2 = circleRadius - ascent;
+        double x0      = centerX;
+        double y0      = centerY - circleRadius + ascent;
+        //旋转角度
+        double a = 2 * Math.asin(char_interval / (2 * radius2));
+
+        if (odd) {
+            g2d.setFont(f);
+            g2d.drawString(messages[first], (float) (x0 - char_interval / 2), (float) y0);
+
+            //中心点的右边
+            for (int i = first + 1; i < ilength; i++) {
+                double          aa        = (i - first) * a;
+                double          ax        = radius2 * Math.sin(aa);
+                double          ay        = radius2 - radius2 * Math.cos(aa);
+                AffineTransform transform = AffineTransform.getRotateInstance(aa);//,x0 + ax, y0 + ay);
+                Font            f2        = f.deriveFont(transform);
+                g2d.setFont(f2);
+                g2d.drawString(messages[i], (float) (x0 + ax - char_interval / 2 * Math.cos(aa)), (float) (y0 + ay - char_interval / 2 * Math.sin(aa)));
+            }
+            //中心点的左边
+            for (int i = first - 1; i > -1; i--) {
+                double          aa        = (first - i) * a;
+                double          ax        = radius2 * Math.sin(aa);
+                double          ay        = radius2 - radius2 * Math.cos(aa);
+                AffineTransform transform = AffineTransform.getRotateInstance(-aa);//,x0 + ax, y0 + ay);
+                Font            f2        = f.deriveFont(transform);
+                g2d.setFont(f2);
+                g2d.drawString(messages[i], (float) (x0 - ax - char_interval / 2 * Math.cos(aa)), (float) (y0 + ay + char_interval / 2 * Math.sin(aa)));
+            }
+
+        } else {
+            //中心点的右边
+            for (int i = second; i < ilength; i++) {
+                double          aa        = (i - second + 0.5) * a;
+                double          ax        = radius2 * Math.sin(aa);
+                double          ay        = radius2 - radius2 * Math.cos(aa);
+                AffineTransform transform = AffineTransform.getRotateInstance(aa);//,x0 + ax, y0 + ay);
+                Font            f2        = f.deriveFont(transform);
+                g2d.setFont(f2);
+                g2d.drawString(messages[i], (float) (x0 + ax - char_interval / 2 * Math.cos(aa)), (float) (y0 + ay - char_interval / 2 * Math.sin(aa)));
+            }
+
+            //中心点的左边
+            for (int i = first; i > -1; i--) {
+                double          aa        = (first - i + 0.5) * a;
+                double          ax        = radius2 * Math.sin(aa);
+                double          ay        = radius2 - radius2 * Math.cos(aa);
+                AffineTransform transform = AffineTransform.getRotateInstance(-aa);//,x0 + ax, y0 + ay);
+                Font            f2        = f.deriveFont(transform);
+                g2d.setFont(f2);
+                g2d.drawString(messages[i], (float) (x0 - ax - char_interval / 2 * Math.cos(aa)), (float) (y0 + ay + char_interval / 2 * Math.sin(aa)));
+            }
+        }
+    }
 
     /**
      * 绘制圆弧形文字
@@ -358,8 +535,8 @@ public class SealUtils {
      * @param g2d          Graphic2D
      */
     @SuppressWarnings("all")
-    private static void drawArcTextForCircle(SealText sealText, double left, double top,
-                                             int circleRadius, boolean isTop, Graphics2D g2d) {
+    private static void drawArcTextForCircle3(SealText sealText, double left, double top,
+                                              int circleRadius, boolean isTop, Graphics2D g2d) {
         if (sealText == null) {
             return;
         }
