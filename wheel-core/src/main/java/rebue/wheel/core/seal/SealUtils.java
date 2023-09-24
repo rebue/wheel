@@ -89,7 +89,7 @@ public class SealUtils {
             g2d.fill(new Polygon(xPoints, yPoints, 2 * starHornCount));
 
             // 绘制公章标题名称
-            double         captionTextTop        = (centerY - starRadius * Math.cos((270 - 36) / 180.0 * Math.PI));
+            double         captionTextTop        = (centerY - starRadius * Math.cos((3.0 / 2 - 1.0 / 5) * Math.PI));
             TextDimensions captionTextDimensions = drawCenterText(captionText, centerX, captionTextTop, g2d);
 
             // 绘制公章副标题名称
