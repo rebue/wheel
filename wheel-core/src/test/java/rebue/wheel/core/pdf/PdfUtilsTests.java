@@ -147,7 +147,7 @@ public class PdfUtilsTests {
                 SealText.builder()
                         .text(captionText)
                         .font(new Font("宋体", Font.PLAIN, 24))
-//                        .marginTop(15.0)
+                        .marginTop(15.0)
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
@@ -166,7 +166,7 @@ public class PdfUtilsTests {
                         .text(captionText)
                         .font(new Font("宋体", Font.BOLD, 32))
                         .space(10.0)
-                        .marginTop(5.0)
+                        .marginTop(15.0)
                         .scaleX(0.5)
                         .scaleY(1.2)
                         .build(),

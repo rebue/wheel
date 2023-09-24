@@ -73,7 +73,7 @@ public class SealUtils {
             g2d.draw(new Ellipse2D.Double(circleLeft, circleTop, circleWidth, circleWidth));
 
             // 绘制公章上部分弧形文字
-            drawArcTextForCircle1(topText, centerX, centerY, width / 2, g2d);
+            drawArcTextForCircle1(topText, centerX, centerY, width / 2, true, g2d);
 
             // 绘制中间的五角星
             float  starRadius    = starWidth / 2;               // 五角星圆的半径
@@ -89,11 +89,11 @@ public class SealUtils {
             g2d.fill(new Polygon(xPoints, yPoints, 2 * starHornCount));
 
             // 绘制公章标题名称
-            double         captionTextTop        = (centerY + starRadius + captionText.getMarginTop());
+            double         captionTextTop        = (centerY - starRadius * Math.cos((270 - 36) / 180.0 * Math.PI));
             TextDimensions captionTextDimensions = drawCenterText(captionText, centerX, captionTextTop, g2d);
 
             // 绘制公章副标题名称
-            drawCenterText(subcaptionText, centerX, captionTextTop + captionTextDimensions.getHeight(), g2d);
+            drawCenterText(subcaptionText, centerX, captionTextTop + captionText.getMarginTop() + captionTextDimensions.getHeight(), g2d);
         } finally {
             // Dispose the Graphics2D object
             g2d.dispose();
@@ -103,42 +103,6 @@ public class SealUtils {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
-    }
-
-    private static TextDimensions drawCenterText(SealText sealText, double centerX, double top, Graphics2D g2d) {
-        // Create an AffineTransform instance
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(sealText.getScaleX(), sealText.getScaleY());
-        g2d.setTransform(transform);
-
-        g2d.setFont(sealText.getFont());
-        String         text           = sealText.getText();
-        TextDimensions textDimensions = getTextDimensions(text, sealText.getFont(), g2d);
-        // 文本的宽度
-        double textWidth = textDimensions.getWidth();
-        // 一个字的宽度
-        double charWidth = textWidth / text.length();
-        // 字间距
-        double space = sealText.getSpace() == null ? 0 : sealText.getSpace();
-        // 总字间距
-        double totalSpace = space * (text.length() - 1);
-        // 行宽度
-        double lineWidth = textWidth + totalSpace;
-        // 上边距
-        Double marginTop = sealText.getMarginTop();
-        if (marginTop == null) marginTop = 0.0;
-
-        float x = (float) ((centerX / sealText.getScaleX() - lineWidth / 2));
-        float y = (float) ((top + marginTop + textDimensions.getLeading() / 2 + textDimensions.getAscent())
-                / sealText.getScaleY());
-        for (int i = 0; i < text.length(); i++) {
-            g2d.drawString(String.valueOf(text.charAt(i)), x, y);
-            x += charWidth + space;
-        }
-        // 重置Graphics2D的Transform
-        g2d.setTransform(new AffineTransform());
-
-        return textDimensions;
     }
 
     /**
@@ -342,6 +306,59 @@ public class SealUtils {
         return byteArrayOutputStream.toByteArray();
     }
 
+    /**
+     * 绘制文本并水平居中
+     *
+     * @param sealText 文本
+     * @param centerX  中心点X坐标
+     * @param top      顶部Y轴坐标
+     * @param g2d      Graphics2D
+     * @return 文本各项指标
+     */
+    private static TextDimensions drawCenterText(SealText sealText, double centerX, double top, Graphics2D g2d) {
+        // Create an AffineTransform instance
+        AffineTransform transform = new AffineTransform();
+        transform.setToScale(sealText.getScaleX(), sealText.getScaleY());
+        g2d.setTransform(transform);
+
+        centerX /= sealText.getScaleX();
+        top /= sealText.getScaleY();
+        g2d.setFont(sealText.getFont());
+        String         text           = sealText.getText();
+        TextDimensions textDimensions = getTextDimensions(text, sealText.getFont(), g2d);
+        // 文本的宽度
+        double textWidth = textDimensions.getWidth();
+        // 一个字的宽度
+        double charWidth = textWidth / text.length();
+        // 字间距
+        double space = sealText.getSpace() == null ? 0 : sealText.getSpace() / sealText.getScaleX();
+        // 总字间距
+        double totalSpace = space * (text.length() - 1);
+        // 行宽度
+        double lineWidth = textWidth + totalSpace;
+        // 上边距
+        Double marginTop = sealText.getMarginTop() == null ? 0.0 : sealText.getMarginTop() / sealText.getScaleY();
+
+        float x = (float) ((centerX - lineWidth / 2));
+        float y = (float) (top + marginTop + textDimensions.getLeading() / 2 + textDimensions.getAscent());
+        for (int i = 0; i < text.length(); i++) {
+            g2d.drawString(String.valueOf(text.charAt(i)), x, y);
+            x += charWidth + space;
+        }
+        // 重置Graphics2D的Transform
+        g2d.setTransform(new AffineTransform());
+
+        return textDimensions;
+    }
+
+    /**
+     * 获取文本的宽高及高的各项指标
+     *
+     * @param text     文本
+     * @param font     字体
+     * @param graphics graphics
+     * @return 文本各项指标
+     */
     private static TextDimensions getTextDimensions(String text, Font font, Graphics graphics) {
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
         return TextDimensions.builder()
@@ -377,8 +394,31 @@ public class SealUtils {
         }
     }
 
-    private static void drawArcTextForCircle1(SealText sealText, double centerX, double centerY, double circleRadius, Graphics2D g2d) {
+    private static void drawArcTextForCircle1(SealText sealText, double centerX, double centerY, double circleRadius, boolean isTop, Graphics2D g2d) {
+        Double scaleX = sealText.getScaleX();
+        Double scaleY = sealText.getScaleY();
+
+        // Create an AffineTransform instance
+        AffineTransform transform = new AffineTransform();
+        transform.setToScale(scaleX, scaleY);
+        g2d.setTransform(transform);
+
         g2d.setFont(sealText.getFont());
+        String         text           = sealText.getText();
+        TextDimensions textDimensions = getTextDimensions(text, sealText.getFont(), g2d);
+        // 文本的宽度
+        double textWidth = textDimensions.getWidth();
+        // 一个字的宽度
+        double charWidth = textWidth / text.length();
+        // 字间距
+        double space = sealText.getSpace() == null ? 0 : sealText.getSpace();
+        // 总字间距
+        double totalSpace = space * (text.length() - 1);
+        // 行宽度
+        double lineWidth = textWidth + totalSpace;
+        // 上边距
+        Double marginTop = sealText.getMarginTop();
+        if (marginTop == null) marginTop = 0.0;
 
         // 计算圆弧的半径和角度
         float  radius = (float) (circleRadius - 50);
@@ -386,11 +426,6 @@ public class SealUtils {
 
         // 将坐标原点移动到圆弧的中心
         g2d.translate(centerX, centerY);
-
-        // Create an AffineTransform instance
-        AffineTransform transform = new AffineTransform();
-        transform.scale(2, 0.5);
-        g2d.setTransform(transform);
 
         // 计算每个字符之间的角度间隔
         double anglePerChar = 2 * Math.PI / 2 / sealText.getText().length();
