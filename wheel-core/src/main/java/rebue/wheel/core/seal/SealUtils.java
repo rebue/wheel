@@ -433,10 +433,10 @@ public class SealUtils {
         } else {
             charRadian = (3.0 / 2 * Math.PI - beginRadian) * 2 / text.length();
         }
-        // 字体的弧度
-        double fontRadian = 2 * Math.asin(fontWidth / 2 / textRadius);
-        // 字间距的弧度
-        double spaceRadian = charRadian - fontRadian;
+//        // 字体的弧度
+//        double fontRadian = 2 * Math.asin(fontWidth / 2 / textRadius);
+//        // 字间距的弧度
+//        double spaceRadian = charRadian - fontRadian;
         // 计算第一个字旋转的弧度
         double firstRotateRadian;
         if (isTop) {
