@@ -123,48 +123,50 @@ public class PdfUtilsTests {
 
         ImageData imageData = ImageDataFactory.create(SealUtils.draw03(SealText.builder()
                         .text("中国很行")
-                        .font(new Font("宋体", Font.PLAIN, 36))
+                        .font(new Font("STSong", Font.PLAIN, 36))
                         .build(),
                 30, 20, 8, 0));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 50, 50, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw04(SealText.builder()
                         .text("中国")
-                        .font(new Font("宋体", Font.PLAIN, 36))
+                        .font(new Font("STSong", Font.PLAIN, 36))
                         .space(10.0)
                         .build(),
                 10, 10, 5, 10));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 300, 50, 0.9f);
 
-        String topText        = "中国电子公章测试有限责任公司";
+        String topText        = "电子公章测试中国有限责任公司";
         String captionText    = "电子公章演示";
         String subcaptionText = "演示专用章";
         imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
-                        .font(new Font("宋体", Font.PLAIN, 36))
-                        .marginTop(10.0)
+                        .font(new Font("STSong", Font.PLAIN, 36))
+                        .marginTop(5.0)
                         .build(),
                 SealText.builder()
                         .text(captionText)
-                        .font(new Font("宋体", Font.PLAIN, 24))
+                        .font(new Font("STSong", Font.PLAIN, 24))
                         .marginTop(10.0)
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
-                        .font(new Font("宋体", Font.BOLD, 24))
+                        .font(new Font("STSong", Font.BOLD, 24))
                         .build(),
-                300, 10, 100));
+                300, 10, 100, true));
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
                         .text(topText)
-                        .font(new Font("宋体", Font.PLAIN, 36))
-                        .marginTop(10.0)
+                        .font(new Font("STSong", Font.PLAIN, 36))
+                        .marginTop(5.0)
+                        .scaleX(0.5)
+                        .scaleY(1.2)
                         .build(),
                 SealText.builder()
                         .text(captionText)
-                        .font(new Font("宋体", Font.BOLD, 32))
+                        .font(new Font("STSong", Font.BOLD, 32))
                         .space(10.0)
                         .marginTop(10.0)
                         .scaleX(0.5)
@@ -172,26 +174,26 @@ public class PdfUtilsTests {
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
-                        .font(new Font("宋体", Font.BOLD, 32))
+                        .font(new Font("STSong", Font.BOLD, 32))
                         .space(5.0)
                         .marginTop(5.0)
                         .scaleX(0.5)
                         .scaleY(1.2)
                         .build(),
-                300, 10, 100));
+                300, 10, 100, true));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 250, 300, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw02(SealText.builder()
                         .text(topText)
-                        .font(new Font("宋体", Font.PLAIN, 20))
+                        .font(new Font("STSong", Font.PLAIN, 20))
                         .build(),
                 SealText.builder()
                         .text(captionText)
-                        .font(new Font("宋体", Font.BOLD, 16))
+                        .font(new Font("STSong", Font.BOLD, 16))
                         .build(),
                 SealText.builder()
                         .text(subcaptionText)
-                        .font(new Font("宋体", Font.BOLD, 16))
+                        .font(new Font("STSong", Font.BOLD, 16))
                         .marginBottom(4.0)
                         .marginLeft(2.0)
                         .build(),
