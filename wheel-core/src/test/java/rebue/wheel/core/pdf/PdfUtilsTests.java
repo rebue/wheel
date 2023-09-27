@@ -19,6 +19,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import rebue.wheel.core.QrcodeUtils;
+import rebue.wheel.core.seal.SealFactory;
 import rebue.wheel.core.seal.SealText;
 import rebue.wheel.core.seal.SealUtils;
 
@@ -153,7 +154,8 @@ public class PdfUtilsTests {
                         .text(subcaptionText)
                         .font(new Font("STSong", Font.BOLD, 24))
                         .build(),
-                300, 10, 100, true));
+                300, 10, 100,
+                (3.0 / 4 - 1.0 / 6) * 2 * Math.PI, (3.0 / 4 - 1.0 / 6) * 2 * Math.PI));
 //        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
@@ -180,7 +182,8 @@ public class PdfUtilsTests {
                         .scaleX(0.5)
                         .scaleY(1.2)
                         .build(),
-                300, 10, 100, true));
+                300, 10, 100,
+                (3.0 / 4 - 1.0 / 6) * 2 * Math.PI, (3.0 / 4 - 1.0 / 6) * 2 * Math.PI));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 250, 300, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw02(SealText.builder()
@@ -217,11 +220,13 @@ public class PdfUtilsTests {
         PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKeySignature, chain,
                 4, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
 
+        captionText = "测试演示印";
+        subcaptionText = "专用章";
         reason = "reason 2";
         location = "location 2";
-        imageData = ImageDataFactory.create(SealUtils.draw01(topText, captionText, subcaptionText));
+        imageData = SealFactory.create01(topText, captionText, subcaptionText, "STSong");
         PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKeySignature, chain,
-                4, new Rectangle(100, 300, imageData.getWidth(), imageData.getHeight()), 0.7f, imageData);
+                4, new Rectangle(100, 300, 119, 119), 0.7f, imageData);
 
     }
 }

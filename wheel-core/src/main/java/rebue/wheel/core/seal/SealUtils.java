@@ -17,42 +17,21 @@ import java.io.IOException;
  */
 public class SealUtils {
     /**
-     * 绘制圆形公章(TODO 转成工厂模式)
-     *
-     * @param topText        公章上部分弧形文字
-     * @param captionText    公章标题名称(五角星下方第一行文字)
-     * @param subcaptionText 公章副标题名称(五角星下方第二行文字)
-     * @return 公章图形的字节数组
-     */
-    public static byte[] draw01(String topText, String captionText, String subcaptionText) throws IOException {
-        return draw01(
-                SealText.builder()
-                        .text(topText)
-                        .font(new Font("STSong", Font.PLAIN, 16))
-                        .marginTop(10D)
-                        .build(),
-                SealText.builder()
-                        .text(captionText)
-                        .font(new Font("STSong", Font.PLAIN, 14))
-                        .marginTop(15D)
-                        .build(),
-                new SealText(subcaptionText, new Font("STSong", Font.PLAIN, 14)),
-                150, 8, 50, false);
-    }
-
-    /**
      * 绘制圆形公章
      *
-     * @param topText           公章上部分弧形文字
-     * @param captionText       公章标题名称(五角星下方第一行文字)
-     * @param subcaptionText    公章副标题名称(五角星下方第二行文字)
-     * @param width             公章的宽度
-     * @param circleBorderWidth 圆边框的宽度
-     * @param starWidth         五角星宽度
-     * @param subcaptionIsArc   公章副标题是否圆弧
+     * @param topText               公章上部分弧形文字
+     * @param captionText           公章标题名称(五角星下方第一行文字)
+     * @param subcaptionText        公章副标题名称(五角星下方第二行文字)
+     * @param width                 公章的宽度
+     * @param circleBorderWidth     圆边框的宽度
+     * @param starWidth             五角星宽度
+     * @param topBeginRadian        公章上部分弧形文字开始弧度
+     * @param subcaptionBeginRadian 公章副标题开始弧度，如为null，则为直线而不是圆弧
      * @return 公章图形的字节数组
      */
-    public static byte[] draw01(SealText topText, SealText captionText, SealText subcaptionText, int width, double circleBorderWidth, float starWidth, boolean subcaptionIsArc) throws IOException {
+    public static byte[] draw01(SealText topText, SealText captionText, SealText subcaptionText,
+                                int width, double circleBorderWidth, float starWidth,
+                                double topBeginRadian, Double subcaptionBeginRadian) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
         Graphics2D g2d = bufferedImage.createGraphics();
@@ -75,7 +54,7 @@ public class SealUtils {
 
             // 绘制公章上部分弧形文字
             drawArcTextForCircle1(topText, centerX, centerY, width / 2.0 - circleBorderWidth,
-                    (3.0 / 4 - 1.0 / 6) * 2 * Math.PI, true, g2d);
+                    topBeginRadian, true, g2d);
 
             // 绘制中间的五角星
             float  starRadius    = starWidth / 2;               // 五角星圆的半径
@@ -95,9 +74,9 @@ public class SealUtils {
             TextDimensions captionTextDimensions = drawCenterText(captionText, centerX, captionTextTop, g2d);
 
             // 绘制公章副标题名称
-            if (subcaptionIsArc) {
+            if (subcaptionBeginRadian != null) {
                 drawArcTextForCircle1(subcaptionText, centerX, centerY, width / 2.0 - circleBorderWidth,
-                        (3.0 / 4 - 1.0 / 6) * 2 * Math.PI, false, g2d);
+                        subcaptionBeginRadian, false, g2d);
             } else {
                 drawCenterText(subcaptionText, centerX,
                         captionTextTop + captionText.getMarginTop() + captionTextDimensions.getHeight(), g2d);
@@ -363,7 +342,7 @@ public class SealUtils {
      * @param graphics graphics
      * @return 文本各项指标
      */
-    private static TextDimensions getTextDimensions(String text, Font font, Graphics graphics) {
+    public static TextDimensions getTextDimensions(String text, Font font, Graphics graphics) {
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
         return TextDimensions.builder()
                 .width(fontMetrics.stringWidth(text))
