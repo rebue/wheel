@@ -24,7 +24,7 @@ public class ZkClientProperties {
 
     /**
      * 重试策略
-     * 计算公式: 当前sleep时间 = baseSleepTimeMs * Math.max(1, random.nextInt(1 << (retryCount + 1)))
+     * 计算公式: 当前sleep时间 = baseSleepTimeMs * Math.max(1, random.nextInt(1 &lt;&lt; (retryCount + 1)))
      */
     @Data
     public static class RetryPolicyProperties {
