@@ -15,8 +15,10 @@ public class SealFactory {
         int topTextLength = topText.length();
         // 顶部文字开始弧度
         double topBeginRadian;
-        if (topTextLength <= 11) {
-            topBeginRadian = (1.0 / 2 - 1.0 / 3) * 2 * Math.PI;
+        if (topTextLength <= 5) {
+            topBeginRadian = (1.0 / 2 - 1.0 / 12) * 2 * Math.PI;
+        } else if (topTextLength < 11) {
+            topBeginRadian = Math.PI;
         } else if (topTextLength < 17) {
             topBeginRadian = Math.PI + 0.25;
         } else {
