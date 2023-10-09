@@ -18,6 +18,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import rebue.wheel.core.ImageUtils;
 import rebue.wheel.core.QrcodeUtils;
 import rebue.wheel.core.seal.SealFactory;
 import rebue.wheel.core.seal.SealText;
@@ -202,6 +203,17 @@ public class PdfUtilsTests {
                         .build(),
                 300, 180, 10, 2));
         PdfUtils.addWaterMask1(pdfDoc, 4, imageData, 50, 500, 0.9f);
+
+        Rectangle pageSize = pdfDoc.getPage(1).getPageSize();
+        imageData = ImageDataFactory.create(ImageUtils.tileWaterMark1(
+                "测试平铺水印文字", new Font("STSong", Font.BOLD, 24),
+                -Math.PI / 9, 50, 150, (int) pageSize.getWidth(), (int) pageSize.getHeight()));
+        PdfUtils.addWaterMask2(pdfDoc, 1, imageData, 0, 0, 0.5f);
+
+        imageData = ImageDataFactory.create(ImageUtils.tileWaterMark2(
+                "测试平铺水印文字", new Font("STSong", Font.BOLD, 24),
+                -Math.PI / 9, -100, -100, 50, 50, (int) pageSize.getWidth(), (int) pageSize.getHeight()));
+        PdfUtils.addWaterMask2(pdfDoc, 2, imageData, 0, 0, 0.5f);
 
         pdfDoc.close();
 

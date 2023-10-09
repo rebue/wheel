@@ -280,6 +280,9 @@ public class PdfUtils {
      */
     private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
         PdfPage page = doc.getPage(pageNum);
+        if (rectangle == null) {
+            rectangle = page.getPageSize();
+        }
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), doc);
         canvas.saveState();
         PdfExtGState state = new PdfExtGState().setFillOpacity(fillOpacity);    // 设置填充的透明度

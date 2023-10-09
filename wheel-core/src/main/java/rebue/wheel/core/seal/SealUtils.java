@@ -1,5 +1,7 @@
 package rebue.wheel.core.seal;
 
+import rebue.wheel.core.ImageUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -146,7 +148,7 @@ public class SealUtils {
 
             // 绘制公章标题名称
             g2d.setFont(centerText.getFont());
-            TextDimensions centerTextDimensions = getTextDimensions(centerText.getText(), centerText.getFont(), g2d);
+            TextDimensions centerTextDimensions = ImageUtils.getTextDimensions(centerText.getText(), centerText.getFont(), g2d);
             g2d.drawString(centerText.getText(),
                     centerX - centerTextDimensions.getWidth() / 2,
                     centerY + centerTextDimensions.getHeight() / 2 - centerTextDimensions.getDescent());
@@ -181,7 +183,7 @@ public class SealUtils {
     public static byte[] draw03(SealText sealText, int paddingX, int paddingY, int borderSize, int cornerRadius) throws IOException {
         // Create a temporary Graphics object to get the FontMetrics
         Graphics       graphics       = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
-        TextDimensions textDimensions = getTextDimensions(sealText.getText(), sealText.getFont(), graphics);
+        TextDimensions textDimensions = ImageUtils.getTextDimensions(sealText.getText(), sealText.getFont(), graphics);
         int            width          = paddingX * 2 + borderSize * 2 + textDimensions.getWidth();
         int            height         = paddingY * 2 + borderSize * 2 + textDimensions.getHeight();
 
@@ -248,7 +250,7 @@ public class SealUtils {
 
         // Create a temporary Graphics object to get the FontMetrics
         Graphics       graphics       = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
-        TextDimensions textDimensions = getTextDimensions(char0, sealText.getFont(), graphics);
+        TextDimensions textDimensions = ImageUtils.getTextDimensions(char0, sealText.getFont(), graphics);
         int            width          = paddingX * 2 + borderSize * 2 + textDimensions.getWidth() * 2 + (int) Math.ceil(sealText.getSpace());
         int            height         = paddingY * 2 + borderSize * 2 + textDimensions.getHeight() * 2 + (int) Math.ceil(sealText.getSpace());
 
@@ -307,7 +309,7 @@ public class SealUtils {
         AffineTransform transform      = AffineTransform.getScaleInstance(sealText.getScaleX(), sealText.getScaleY());
         Font            scaleFont      = sealText.getFont().deriveFont(transform);
         String          text           = sealText.getText();
-        TextDimensions  textDimensions = getTextDimensions(text, scaleFont, g2d);
+        TextDimensions  textDimensions = ImageUtils.getTextDimensions(text, scaleFont, g2d);
         // 文本的宽度
         double textWidth = textDimensions.getWidth();
         // 一个字的宽度
@@ -332,25 +334,6 @@ public class SealUtils {
         }
 
         return textDimensions;
-    }
-
-    /**
-     * 获取文本的宽高及高的各项指标
-     *
-     * @param text     文本
-     * @param font     字体
-     * @param graphics graphics
-     * @return 文本各项指标
-     */
-    public static TextDimensions getTextDimensions(String text, Font font, Graphics graphics) {
-        FontMetrics fontMetrics = graphics.getFontMetrics(font);
-        return TextDimensions.builder()
-                .width(fontMetrics.stringWidth(text))
-                .height(fontMetrics.getHeight())
-                .ascent(fontMetrics.getAscent())
-                .descent(fontMetrics.getDescent())
-                .leading(fontMetrics.getLeading())
-                .build();
     }
 
     /**
@@ -385,7 +368,7 @@ public class SealUtils {
         g2d.setFont(scaleFont);
 
         String         text           = sealText.getText();
-        TextDimensions textDimensions = getTextDimensions(text, scaleFont, g2d);
+        TextDimensions textDimensions = ImageUtils.getTextDimensions(text, scaleFont, g2d);
         // 文本的宽度
         double textWidth = textDimensions.getWidth();
         // 字体的宽度
@@ -648,7 +631,7 @@ public class SealUtils {
         int   fontTextLen  = sealText.getText().length();
 
         g2d.setFont(sealText.getFont());
-        TextDimensions textDimensions = getTextDimensions(sealText.getText(), sealText.getFont(), g2d);
+        TextDimensions textDimensions = ImageUtils.getTextDimensions(sealText.getText(), sealText.getFont(), g2d);
         int            charWidth      = textDimensions.getWidth() / sealText.getText().length();
         int            charHeight     = textDimensions.getHeight();
         if (isTop) {
