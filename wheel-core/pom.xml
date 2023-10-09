@@ -75,7 +75,13 @@
             <artifactId>bouncy-castle-adapter</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

@@ -14,6 +14,8 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.PrivateKeySignature;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import rebue.wheel.core.seal.SealUtils;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -40,14 +43,18 @@ import java.util.Map;
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class PdfUtilsTests {
-    public static final String SRC   = "pdf/测试模板.pdf";
-    public static final String TEMP  = "target/pdf/temp.pdf";
-    public static final String DEST  = "target/pdf/result.pdf";
-    public static final String SIGN1 = "target/pdf/result-signed1.pdf";
-    public static final String SIGN2 = "target/pdf/result-signed2.pdf";
-    public static final String FONT1 = "pdf/FreeSans.ttf";
-    public static final String FONT2 = "pdf/AlimamaFangYuanTiVF-Thin.ttf";
-    public static final String FONT3 = "pdf/AlimamaShuHeiTi-Bold.ttf";
+    public static final String SRC        = "pdf/测试模板.pdf";
+    public static final String TEMP       = "target/pdf/temp.pdf";
+    public static final String DEST       = "target/pdf/result.pdf";
+    public static final String SIGN1      = "target/pdf/result-signed1.pdf";
+    public static final String SIGN2      = "target/pdf/result-signed2.pdf";
+    public static final String SIGN2_PNG1 = "target/pdf/result-signed-1.png";
+    public static final String SIGN2_PNG2 = "target/pdf/result-signed-2.png";
+    public static final String SIGN2_PNG3 = "target/pdf/result-signed-3.png";
+    public static final String SIGN2_PNG4 = "target/pdf/result-signed-4.png";
+    public static final String FONT1      = "pdf/FreeSans.ttf";
+    public static final String FONT2      = "pdf/AlimamaFangYuanTiVF-Thin.ttf";
+    public static final String FONT3      = "pdf/AlimamaShuHeiTi-Bold.ttf";
 
     public static final String SEAL1 = "src/test/resources/pdf/seal1.png";
     public static final String SEAL2 = "src/test/resources/pdf/seal2.png";
@@ -237,8 +244,16 @@ public class PdfUtilsTests {
         reason = "reason 2";
         location = "location 2";
         imageData = SealFactory.create01(topText, captionText, subcaptionText, "STSong");
-        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(Paths.get(SIGN2)), reason, location, privateKeySignature, chain,
+        Path sign2Path = Paths.get(SIGN2);
+        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(sign2Path), reason, location, privateKeySignature, chain,
                 4, new Rectangle(100, 300, 119, 119), 0.7f, imageData);
 
+
+        try (PDDocument pdDocument = Loader.loadPDF(new File(sign2Path.toUri()))) {
+            PdfUtils.pdfToPng(pdDocument, Files.newOutputStream(Paths.get(SIGN2_PNG1)), 1, 300);
+            PdfUtils.pdfToPng(pdDocument, Files.newOutputStream(Paths.get(SIGN2_PNG2)), 2, 300);
+            PdfUtils.pdfToPng(pdDocument, Files.newOutputStream(Paths.get(SIGN2_PNG3)), 3, 300);
+            PdfUtils.pdfToPng(pdDocument, Files.newOutputStream(Paths.get(SIGN2_PNG4)), 4, 300);
+        }
     }
 }
