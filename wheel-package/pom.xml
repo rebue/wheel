@@ -6,7 +6,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>2.2.10</version>
+    <version>2.2.11</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,7 +21,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <netty.version>4.1.93.Final</netty.version>
         <netty-tcnative.version>2.0.61.Final</netty-tcnative.version>
-        <bouncycastle18.version>1.73</bouncycastle18.version>
+        <bouncycastle18.version>1.76</bouncycastle18.version>
         <drools.version>9.44.0.Final</drools.version>
         <skywalking.version>8.16.0</skywalking.version>
         <scram.version>2.1</scram.version>
