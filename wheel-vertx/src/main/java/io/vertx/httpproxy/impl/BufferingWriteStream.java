@@ -1,5 +1,5 @@
 /**
- * XXX 复制4.4.3版本的io.vertx.httpproxy.impl.BufferingWriteStream类的代码
+ * XXX 复制4.4.6版本的io.vertx.httpproxy.impl.BufferingWriteStream类的代码
  * 原类不是public的，外部无法访问，未做任何改动
  *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation

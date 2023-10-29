@@ -1,5 +1,5 @@
 /**
- * XXX 复制4.4.3版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
+ * XXX 复制4.4.6版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
  *
  * This program and the accompanying materials are made available under the
@@ -21,11 +21,17 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.core.http.RequestOptions;
 import io.vertx.core.net.NetSocket;
-import io.vertx.httpproxy.*;
+import io.vertx.core.net.SocketAddress;
+import io.vertx.httpproxy.HttpProxy;
+import io.vertx.httpproxy.ProxyContext;
+import io.vertx.httpproxy.ProxyInterceptor;
+import io.vertx.httpproxy.ProxyOptions;
+import io.vertx.httpproxy.ProxyRequest;
+import io.vertx.httpproxy.ProxyResponse;
 import io.vertx.httpproxy.cache.CacheOptions;
 import io.vertx.httpproxy.spi.cache.Cache;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +39,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
-@Slf4j
 public class ReverseProxy implements HttpProxy {
 
     private final HttpClient client;
@@ -103,7 +109,6 @@ public class ReverseProxy implements HttpProxy {
                 // XXX 过滤器可能要改变目标请求的uri，所以这里用代理请求的URI，而不是用被代理请求的URI
                 // request.setURI(proxiedRequest.uri());
                 request.setURI(proxyRequest.getURI());
-                log.debug("handleWebSocketUpgrade: request.getURI()={}", request.getURI());
 
                 request.headers().addAll(proxiedRequest.headers());
                 Future<HttpClientResponse> fut2 = request.connect();
@@ -254,5 +259,4 @@ public class ReverseProxy implements HttpProxy {
             return sendResponse();
         }
     }
-
 }
