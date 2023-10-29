@@ -1,5 +1,6 @@
 package rebue.wheel.turing;
 
+import lombok.SneakyThrows;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -16,6 +17,13 @@ public class KeyUtils {
     static {
         // 添加BouncyCastle实现
         Security.addProvider(new BouncyCastleProvider());
+    }
+
+    @SneakyThrows
+    public static KeyPair generateKeyPair(String algorithm, int keySize) {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm, "BC");
+        keyPairGenerator.initialize(keySize);
+        return keyPairGenerator.generateKeyPair();
     }
 
     /**

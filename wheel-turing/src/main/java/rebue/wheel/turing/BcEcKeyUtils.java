@@ -7,6 +7,7 @@ import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.jce.spec.ECPrivateKeySpec;
@@ -17,7 +18,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
-import java.security.spec.ECGenParameterSpec;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Base64;
 
 /**
@@ -35,7 +36,8 @@ public class BcEcKeyUtils {
      */
     @Getter
     public enum EcAlgorithm {
-        SM2("sm2p256v1");
+        SM2("sm2p256v1"),
+        ECDSA("secp256k1");
 
         private final String code;
 
@@ -48,10 +50,14 @@ public class BcEcKeyUtils {
         return generateKeyPair(EcAlgorithm.SM2);
     }
 
-    @SneakyThrows
     public static KeyPair generateKeyPair(EcAlgorithm algorithm) {
-        KeyPairGenerator   keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
-        ECGenParameterSpec ecParameterSpec  = new ECGenParameterSpec(algorithm.getCode());
+        return generateKeyPair(algorithm.getCode());
+    }
+
+    @SneakyThrows
+    public static KeyPair generateKeyPair(String algorithm) {
+        KeyPairGenerator       keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
+        AlgorithmParameterSpec ecParameterSpec  = ECNamedCurveTable.getParameterSpec(algorithm);
         keyPairGenerator.initialize(ecParameterSpec);
         return keyPairGenerator.generateKeyPair();
     }
