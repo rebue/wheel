@@ -103,7 +103,7 @@ public class SignUtils {
             signature.update(data);
             return signature.sign();
         } catch (NoSuchProviderException e) {
-            throw new RuntimeException("没有导入BC库");
+            throw new RuntimeException("未加载BC库");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("错误的签名算法名称: " + signAlgorithm, e);
         } catch (InvalidKeyException e) {
@@ -135,7 +135,7 @@ public class SignUtils {
             signature.update(data);
             return signature.verify(sign);
         } catch (NoSuchProviderException e) {
-            throw new RuntimeException("没有导入BC库");
+            throw new RuntimeException("未加载BC库");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("错误的签名算法名称: " + signAlgorithm, e);
         } catch (InvalidKeyException e) {

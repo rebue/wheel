@@ -36,8 +36,8 @@ public class BcEcKeyUtils {
      */
     @Getter
     public enum EcAlgorithm {
-        SM2("sm2p256v1"),
-        ECDSA("secp256k1");
+        ECDSA("secp256k1"),
+        SM2("sm2p256v1");
 
         private final String code;
 

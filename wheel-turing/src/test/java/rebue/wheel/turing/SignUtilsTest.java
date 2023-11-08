@@ -23,7 +23,7 @@ public class SignUtilsTest {
      * 测试RSA签名与验签
      */
     @Test
-    public void test01() {
+    public void test01_RSA() {
         byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = KeyUtils.generateKeyPair("RSA", 2048);
         PrivateKey privateKey = keyPair.getPrivate();
@@ -42,7 +42,7 @@ public class SignUtilsTest {
      * 测试ECDSA签名与验签
      */
     @Test
-    public void test02() {
+    public void test02_ECDSA() {
         byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = BcEcKeyUtils.generateKeyPair(BcEcKeyUtils.EcAlgorithm.ECDSA);
         PrivateKey privateKey = keyPair.getPrivate();
@@ -61,7 +61,7 @@ public class SignUtilsTest {
      * 测试SM2签名与验签
      */
     @Test
-    public void test03() {
+    public void test03_SM2() {
         byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = BcEcKeyUtils.generateKeyPair(BcEcKeyUtils.EcAlgorithm.SM2);
         PrivateKey privateKey = keyPair.getPrivate();

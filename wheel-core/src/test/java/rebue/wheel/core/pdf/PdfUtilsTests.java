@@ -226,7 +226,7 @@ public class PdfUtilsTests {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
         keyStore.load(Files.newInputStream(Paths.get(KEYSTORE)), PASSWORD);
         String              alias               = keyStore.aliases().nextElement();
         PrivateKey          privateKey          = (PrivateKey) keyStore.getKey(alias, PASSWORD);

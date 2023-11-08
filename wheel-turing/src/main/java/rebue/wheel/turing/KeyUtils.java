@@ -40,7 +40,7 @@ public class KeyUtils {
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
         } catch (NoSuchProviderException e) {
-            throw new RuntimeException("没有导入BC库");
+            throw new RuntimeException("未加载BC库");
         }
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(AutoDecoder.decode(privateKeyEncode));
         return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
@@ -60,7 +60,7 @@ public class KeyUtils {
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
         } catch (NoSuchProviderException e) {
-            throw new RuntimeException("没有导入BC库");
+            throw new RuntimeException("未加载BC库");
         }
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(AutoDecoder.decode(publicKeyEncode));
         return keyFactory.generatePublic(x509EncodedKeySpec);
