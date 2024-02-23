@@ -1,4 +1,4 @@
-package drools.rules;
+package rebue.wheel.core.test;
 
 import java.util.Map;
 import rebue.wheel.core.fact.RequestFact;
@@ -9,8 +9,10 @@ function void rename(Map body, String oldName, String newName){
 }
 
 rule abc
-    no-loop true        // 防止死循环(当规则通过update之类的函数修改了Fact对象时，可能使当前规则再次被激活从而导致死循环)
-    lock-on-active true // 限制当前规则只会被执行一次(包括当前规则的重复执行不是本身触发的)
+    agenda-group "test"     // 议程分组
+    no-loop true            // 防止死循环(当规则通过update之类的函数修改了Fact对象时，可能使当前规则再次被激活从而导致死循环)
+    lock-on-active true     // 限制当前规则只会被执行一次(包括当前规则的重复执行不是本身触发的)
+    salience -1             // 执行的优先级(值越大优先级越高，可以为负数，不设置默认为0)
 when
     $fact: RequestFact(uri=="/abc", $body: body)
 then

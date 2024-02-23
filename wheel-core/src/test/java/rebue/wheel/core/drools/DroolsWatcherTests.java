@@ -1,4 +1,4 @@
-package rebue.wheel.core;
+package rebue.wheel.core.drools;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import rebue.wheel.core.drools.DroolsWatcher;
 import rebue.wheel.core.fact.RequestFact;
 import rebue.wheel.core.file.FileModifier;
 import rebue.wheel.core.file.FileUtils;
@@ -18,15 +19,16 @@ import java.util.UUID;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class DroolsUtilsTests {
+public class DroolsWatcherTests {
     @RepeatedTest(1)
     @Execution(ExecutionMode.CONCURRENT)
     public void test01() throws IOException, InterruptedException {
+        DroolsWatcher.init();
         String              random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
         Map<String, String> body   = execute(random);
         Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
 
-        String       drlPath      = FileUtils.getClassesPath() + "drools/rules/DefaultRules.drl";
+        String       drlPath      = FileUtils.getClassesPath() + "drools/rule/rebue/wheel/core/test/DefaultRules.drl";
         FileModifier fileModifier = new FileModifier(drlPath);
         fileModifier.modifyLine("IIIII", "IIIII IIIII IIIII");
         fileModifier.modifyLine("ABC OK!", "ABC OK!OK!OK!");
@@ -58,7 +60,7 @@ public class DroolsUtilsTests {
         body.put("e", "EEE");
         body.put("f", "FFF");
         body.put("g", "GGG");
-        int rulesCount = DroolsUtils.fireRules("test01", null, RequestFact.builder()
+        int rulesCount = DroolsWatcher.fireRules(null, "test", RequestFact.builder()
                 .uri("/abc")
                 .body(body)
                 .build());
