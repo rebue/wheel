@@ -1,0 +1,36 @@
+package rebue.wheel.core.db.meta;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 属性元数据
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PropertyMeta {
+    /**
+     * 属性名
+     */
+    private String    name;
+    /**
+     * 属性类名称
+     */
+    private String    className;
+    /**
+     * 属性类简名
+     */
+    private String    classSimpleName;
+    /**
+     * 属性注释
+     */
+    private String    remark;
+    /**
+     * 字段元数据
+     */
+    private FieldMeta field;
+}

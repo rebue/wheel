@@ -24,7 +24,7 @@ public class PomUtils {
                 } else if (line.startsWith("version")) {
                     pomProps.setVersion(line.split("=")[1]);
                 } else if (line.startsWith("timestamp")) {
-                    pomProps.setDatetime(line.split("=")[1]);
+                    pomProps.setTimestamp(line.split("=")[1]);
                 }
             }
         }
@@ -36,7 +36,7 @@ public class PomUtils {
         private String groupId;
         private String artifactId;
         private String version;
-        private String datetime;
+        private String timestamp;
     }
 
 }
