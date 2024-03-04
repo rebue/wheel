@@ -18,6 +18,10 @@ public class PropertyMeta {
      */
     private String    name;
     /**
+     * 标题
+     */
+    private String    title;
+    /**
      * 属性类名称
      */
     private String    className;

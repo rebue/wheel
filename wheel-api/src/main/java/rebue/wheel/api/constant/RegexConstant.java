@@ -4,6 +4,10 @@ import java.util.regex.Pattern;
 
 public class RegexConstant {
     /**
+     * 首行
+     */
+    public static final Pattern FIRST_LINE    = Pattern.compile("^(.+?)\n");
+    /**
      * 手机号码
      */
     public static final Pattern MOBILE        = Pattern.compile("1\\d{10}");

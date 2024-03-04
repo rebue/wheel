@@ -3,6 +3,7 @@ package rebue.wheel.core.db;
 import com.google.common.base.CaseFormat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.util.RegexUtils;
 import rebue.wheel.core.db.meta.*;
 
 import java.math.BigDecimal;
@@ -138,6 +139,7 @@ public class JdbcUtils {
             for (FieldMeta field : table.getFields()) {
                 PropertyMeta property = PropertyMeta.builder()
                         .name(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, field.getName()))
+                        .title(RegexUtils.findFirstLine(field.getRemark()))
                         .remark(field.getRemark())
                         .field(field)
                         .build();

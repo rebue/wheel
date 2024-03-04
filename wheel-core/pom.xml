@@ -4,11 +4,16 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.0.14</version>
+        <version>3.0.15</version>
     </parent>
     <artifactId>wheel-core</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.rebue.wheel</groupId>
+            <artifactId>wheel-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-core</artifactId>

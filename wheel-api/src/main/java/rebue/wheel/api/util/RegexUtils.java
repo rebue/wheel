@@ -1,8 +1,24 @@
 package rebue.wheel.api.util;
 
+import java.util.regex.Matcher;
+
 import static rebue.wheel.api.constant.RegexConstant.*;
 
 public class RegexUtils {
+    /**
+     * 获取文本的首行
+     *
+     * @param text 文本
+     * @return 首行，如果没有首行，返回null
+     */
+    public static String findFirstLine(final String text) {
+        Matcher matcher = FIRST_LINE.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
     /**
      * 判断是否匹配手机号码的格式
      *
