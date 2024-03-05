@@ -8,7 +8,7 @@
     </parent>
     <artifactId>wheel-serialization</artifactId>
     <name>wheel-serialization</name>
-    <description>对序列化的应用提供支持</description>
+    <description>wheel处理序列化与反序列化相关的工具库</description>
 
     <dependencies>
         <dependency>

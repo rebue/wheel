@@ -7,6 +7,7 @@
         <version>3.0.15</version>
     </parent>
     <artifactId>wheel-turing</artifactId>
+    <description>wheel处理加密相关的工具库</description>
 
     <dependencies>
         <dependency>

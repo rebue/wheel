@@ -30,6 +30,10 @@ public class PropertyMeta {
      */
     private String    classSimpleName;
     /**
+     * Js的类型
+     */
+    private String    jsType;
+    /**
      * 属性注释
      */
     private String    remark;

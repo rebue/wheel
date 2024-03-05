@@ -158,27 +158,58 @@ public class JdbcUtils {
      */
     private static void setPropertyTypeByFieldMeta(PropertyMeta property) {
         Class<?> clazz;
+        String   jsType;
         Integer  fieldType = property.getField().getType();
         switch (fieldType) {
-            case BOOLEAN -> clazz = Boolean.class;
+            case BOOLEAN -> {
+                clazz = Boolean.class;
+                jsType = "boolean";
+            }
             case TINYINT -> {
                 if (property.getField().getPrecision().equals(1)) {
                     clazz = Boolean.class;
+                    jsType = "boolean";
                 } else {
                     clazz = Short.class;
+                    jsType = "number";
                 }
             }
-            case SMALLINT -> clazz = Short.class;
-            case INTEGER -> clazz = Integer.class;
-            case BIGINT -> clazz = Long.class;
-            case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> clazz = BigDecimal.class;
-            case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> clazz = String.class;
-            case DATE -> clazz = LocalDate.class;
-            case TIME -> clazz = LocalTime.class;
-            case TIMESTAMP -> clazz = LocalDateTime.class;
+            case SMALLINT -> {
+                clazz = Short.class;
+                jsType = "number";
+            }
+            case INTEGER -> {
+                clazz = Integer.class;
+                jsType = "number";
+            }
+            case BIGINT -> {
+                clazz = Long.class;
+                jsType = "number";
+            }
+            case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
+                clazz = BigDecimal.class;
+                jsType = "number";
+            }
+            case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> {
+                clazz = String.class;
+                jsType = "string";
+            }
+            case DATE -> {
+                clazz = LocalDate.class;
+                jsType = "string";
+            }
+            case TIME -> {
+                clazz = LocalTime.class;
+                jsType = "string";
+            }
+            case TIMESTAMP -> {
+                clazz = LocalDateTime.class;
+                jsType = "string";
+            }
             default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
         property.setClassName(clazz.getName());
         property.setClassSimpleName(clazz.getSimpleName());
+        property.setJsType(jsType);
     }
 }
