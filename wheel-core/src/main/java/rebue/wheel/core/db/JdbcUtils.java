@@ -133,9 +133,15 @@ public class JdbcUtils {
             PojoMeta pojo = PojoMeta.builder()
                     .className(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()))
                     .instanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, table.getName()))
+                    .lowerHyphenName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, table.getName()))
+                    .title(RegexUtils.findFirstLine(table.getRemark()))
                     .remark(table.getRemark())
                     .table(table)
                     .build();
+            // 计算小写连字号名(不带项目前缀)
+            int beginIndex = pojo.getLowerHyphenName().indexOf("-") + 1;
+            pojo.setLowerHyphenNameWithoutPrefix(pojo.getLowerHyphenName().substring(beginIndex));
+
             for (FieldMeta field : table.getFields()) {
                 PropertyMeta property = PropertyMeta.builder()
                         .name(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, field.getName()))
@@ -161,7 +167,7 @@ public class JdbcUtils {
         String   jsType;
         Integer  fieldType = property.getField().getType();
         switch (fieldType) {
-            case BOOLEAN -> {
+            case BIT, BOOLEAN -> {
                 clazz = Boolean.class;
                 jsType = "boolean";
             }

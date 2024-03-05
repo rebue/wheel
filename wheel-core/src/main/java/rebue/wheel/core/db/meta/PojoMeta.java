@@ -21,9 +21,21 @@ public class PojoMeta {
      */
     private String             className;
     /**
+     * 标题
+     */
+    private String             title;
+    /**
      * 实例名
      */
     private String             instanceName;
+    /**
+     * 小写连字号名
+     */
+    private String             lowerHyphenName;
+    /**
+     * 小写连字号名(不带项目前缀)
+     */
+    private String             lowerHyphenNameWithoutPrefix;
     /**
      * 注释
      */
