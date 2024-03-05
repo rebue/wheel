@@ -1,11 +1,10 @@
 package rebue.wheel.serialization.kryo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.AbstractMessageConverter;
 import org.springframework.amqp.support.converter.MessageConversionException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class KryoAmqpMessageConverter extends AbstractMessageConverter {
@@ -17,11 +16,8 @@ public class KryoAmqpMessageConverter extends AbstractMessageConverter {
      * Convert from a Message to a Java object.
      *
      * @param message the message to convert
-     *
      * @return the converted Java object
-     *
      * @throws MessageConversionException in case of conversion failure
-     *
      */
     @Override
     public Object fromMessage(final Message message) throws MessageConversionException {

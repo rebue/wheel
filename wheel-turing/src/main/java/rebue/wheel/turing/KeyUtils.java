@@ -1,71 +1,149 @@
 package rebue.wheel.turing;
 
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import lombok.SneakyThrows;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
+/**
+ * 通用密钥工具类
+ */
 public class KeyUtils {
-	/**
-	 * 通过DER格式的公钥得到PublicKey对象
-	 */
-	public static PublicKey getPublicKeyByDer(String algorithm, byte[] publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, NoSuchProviderException {
-		// 获取公钥
-		KeySpec keySpec = new X509EncodedKeySpec(publicKey);
-		KeyFactory keyFactory = KeyFactory.getInstance(algorithm, "BC");
-		return keyFactory.generatePublic(keySpec);
-	}
+    static {
+        // 添加BouncyCastle实现
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
-	/**
-	 * 通过PEM格式的私钥得到PrivateKey对象
-	 *
-	 * @throws java.io.IOException
-	 */
-	public static PublicKey getPublicKeyByPem(byte[] pem) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, IOException {
-		Reader reader = new InputStreamReader(new ByteArrayInputStream(pem));
-		try (PEMParser pemReader = new PEMParser(reader)) {
-			SubjectPublicKeyInfo subjectPublicKeyInfo = (SubjectPublicKeyInfo) pemReader.readObject();
-			return new JcaPEMKeyConverter().setProvider("BC").getPublicKey(subjectPublicKeyInfo);
-		}
-	}
+    @SneakyThrows
+    public static KeyPair generateKeyPair(String algorithm, int keySize) {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm, "BC");
+        keyPairGenerator.initialize(keySize);
+        return keyPairGenerator.generateKeyPair();
+    }
 
-	/**
-	 * 通过DER格式的私钥得到PrivateKey对象
-	 */
-	public static PrivateKey getPrivateKeyByDer(String algorithm, byte[] privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, NoSuchProviderException {
-		// 获取私钥
-		KeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
-		KeyFactory keyFactory = KeyFactory.getInstance(algorithm, "BC");
-		return keyFactory.generatePrivate(keySpec);
-	}
+    /**
+     * 从编码的私钥字符串获取私钥对象
+     *
+     * @param privateKeyEncode 编码的私钥字符串
+     * @param algorithm        生成密钥的算法
+     * @return 私钥
+     * @throws NoSuchAlgorithmException 算法不支持
+     * @throws InvalidKeySpecException  私钥字符串不正确
+     */
+    public static PrivateKey getPrivateKeyFromStr(String privateKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory keyFactory;
+        try {
+            keyFactory = KeyFactory.getInstance(algorithm, "BC");
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException("未加载BC库");
+        }
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(AutoDecoder.decode(privateKeyEncode));
+        return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+    }
 
-	/**
-	 * 通过PEM格式的私钥得到PrivateKey对象
-	 *
-	 * @throws java.io.IOException
-	 */
-	public static PrivateKey getPrivateKeyByPem(byte[] pem) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, IOException {
-		Reader reader = new InputStreamReader(new ByteArrayInputStream(pem));
-		try (PEMParser pemReader = new PEMParser(reader)) {
-			Object keyPairObject = pemReader.readObject();
-			if (keyPairObject instanceof PEMEncryptedKeyPair) {
-				keyPairObject = ((PEMEncryptedKeyPair) keyPairObject).decryptKeyPair(new JcePEMDecryptorProviderBuilder().build("xxxxxxxx".toCharArray()));
-			}
-			PEMKeyPair pemKeyPair = (PEMKeyPair) keyPairObject;
-			KeyPair keyPair = new JcaPEMKeyConverter().setProvider("BC").getKeyPair(pemKeyPair);
-			return keyPair.getPrivate();
-		}
-	}
+    /**
+     * 从编码的公钥字符串获取公钥对象
+     *
+     * @param publicKeyEncode 编码的公钥字符串
+     * @param algorithm       生成密钥的算法
+     * @return 公钥
+     * @throws NoSuchAlgorithmException 算法不支持
+     * @throws InvalidKeySpecException  公钥字符串不正确
+     */
+    public static PublicKey getPublicKeyFromStr(String publicKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory keyFactory;
+        try {
+            keyFactory = KeyFactory.getInstance(algorithm, "BC");
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException("未加载BC库");
+        }
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(AutoDecoder.decode(publicKeyEncode));
+        return keyFactory.generatePublic(x509EncodedKeySpec);
+    }
+
+    /**
+     * 对密钥进行Base64编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encodeBase64ToStr(Key key) {
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
+
+    /**
+     * 对密钥进行16进制编码
+     *
+     * @param key 密钥
+     * @return 编码后的字节数据
+     */
+    public static byte[] encodeHex(Key key) {
+        return Hex.encode(key.getEncoded());
+    }
+
+    /**
+     * 对密钥进行16进制编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encodeHexToStr(Key key) {
+        return Hex.toHexString(key.getEncoded());
+    }
+
+    /**
+     * 对密钥进行16进制编码，再进行Base64编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encodeHexBase64ToStr(Key key) {
+        return Base64.getEncoder().encodeToString(encodeHex(key));
+    }
+
+    /**
+     * 对密钥进行Base64Url编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encodeBase64UrlToStr(Key key) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(key.getEncoded());
+    }
+
+    /**
+     * 对密钥进行编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encode(Key key) {
+        return encodeBase64ToStr(key);
+    }
+
+    /**
+     * 对密钥进行编码
+     *
+     * @param key 密钥
+     * @return 编码后的字符串
+     */
+    public static String encode(Key key, EncodeMode encodeMode) {
+        switch (encodeMode) {
+            case HEX:
+                return encodeHexToStr(key);
+            case BASE64:
+                return encodeBase64ToStr(key);
+            case HEX_BASE64:
+                return encodeHexBase64ToStr(key);
+            case BASE64URL:
+                return encodeBase64UrlToStr(key);
+        }
+        throw new RuntimeException();   // 代码不会运行到这里
+    }
+
 }

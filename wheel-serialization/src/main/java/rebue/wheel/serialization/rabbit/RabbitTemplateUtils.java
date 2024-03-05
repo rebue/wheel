@@ -1,8 +1,7 @@
 package rebue.wheel.serialization.rabbit;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Slf4j
 public class RabbitTemplateUtils {

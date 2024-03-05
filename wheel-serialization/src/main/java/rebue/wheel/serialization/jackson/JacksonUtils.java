@@ -1,12 +1,9 @@
 package rebue.wheel.serialization.jackson;
 
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,11 +12,12 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
+import java.util.TimeZone;
+
 /**
  * 泛型工具类
  *
  * @author zbz
- *
  */
 public class JacksonUtils {
 
@@ -49,13 +47,20 @@ public class JacksonUtils {
      * 序列化
      *
      * @param obj 要序列化的对象
-     * 
      * @return 序列化后的字符串
-     * 
-     * @throws JsonProcessingException
      */
     public static String serialize(final Object obj) throws JsonProcessingException {
         return _objectMapper.writeValueAsString(obj);
+    }
+
+    /**
+     * 序列化(美化)
+     *
+     * @param obj 要序列化的对象
+     * @return 序列化后的字符串
+     */
+    public static String serializeWithPretty(final Object obj) throws JsonProcessingException {
+        return _objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
     }
 
     /**
@@ -64,11 +69,9 @@ public class JacksonUtils {
      * @param jsonStr      JSON字符串
      * @param valueTypeRef 泛型的引用
      * @param <T>          反序列化的泛型
-     * 
      * @return 反序列化生成的对象
      */
-    public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef)
-            throws JsonProcessingException, JsonMappingException {
+    public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef) throws JsonProcessingException {
         return _objectMapper.readValue(jsonStr, valueTypeRef);
     }
 
@@ -78,13 +81,9 @@ public class JacksonUtils {
      * @param <T>     泛型
      * @param jsonStr JSON字符串
      * @param clazz   类的引用
-     * 
      * @return 反序列化生成的对象
-     * 
-     * @throws JsonProcessingException
-     * @throws JsonMappingException
      */
-    public static <T> T deserialize(final String jsonStr, final Class<T> clazz) throws JsonProcessingException, JsonMappingException {
+    public static <T> T deserialize(final String jsonStr, final Class<T> clazz) throws JsonProcessingException {
         return _objectMapper.readValue(jsonStr, clazz);
     }
 }

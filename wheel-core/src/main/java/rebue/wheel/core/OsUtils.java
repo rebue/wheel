@@ -1,14 +1,12 @@
 package rebue.wheel.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class OsUtils {
-    private final static Logger _log = LoggerFactory.getLogger(OsUtils.class);
-
     public static boolean isWin() {
-        String os = System.getProperty("os.name");
-        _log.info("当前操作系统是: {}", os);
+        final String os = System.getProperty("os.name");
+        log.info("当前操作系统是: {}", os);
         return (os.toLowerCase().startsWith("win"));
     }
 }

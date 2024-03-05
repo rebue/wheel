@@ -1,0 +1,37 @@
+= wheel
+:scripts: cjk
+:toc:
+:toc-title: 目录
+:toclevels: 2
+:doctype: book
+
+== 简介
+基础函数和工具库。对一些常用的方法和类进行封装，可以进行学习和使用，并形成开发规范。
+
+== 模块介绍
+=== wheel
+wheel所有模块的父pom，进行模块聚合，以及写好常用jar包和插件的版本和使用规范。
+
+=== wheel-api
+wheel的公共的API。在编写接口时常用的一些类型、接口及工具等。
+
+=== wheel-core
+wheel的核心库。
+
+=== wheel-net
+wheel处理网络相关的工具库。
+
+=== wheel-serialization
+wheel处理序列化与反序列化相关的工具库。
+
+=== wheel-turing
+wheel处理加密相关的工具库。
+
+=== wheel-vertx
+wheel利用vert.x框架进行开发常用的工具库。
+
+=== wheel-package
+利用maven将常用的jar包打到lib目录下，方便复制的模块。
+
+== 结尾
+本项目是从多个项目的应用中逐步总结形成，本着开源的精神，大家可以放心使用。如发现有问题的地方，欢迎提出和指正。

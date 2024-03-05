@@ -2,11 +2,8 @@ package rebue.wheel.core;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import rebue.wheel.core.util.OrikaUtils;
 
-import java.beans.IntrospectionException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.time.LocalDate;
@@ -16,7 +13,6 @@ import java.util.Map.Entry;
 
 @Slf4j
 public class MapUtils {
-
     /**
      * 将map转换为string(a:1,b:2,c:3)
      */
@@ -26,27 +22,38 @@ public class MapUtils {
             if (sb.length() > 0) {
                 sb.append(",");
             }
-            String value = "";
+            StringBuilder value = new StringBuilder();
             // request.getParameterMap()的返回值类型是Map<String,String[]>，因为像checkbox这样的组件会有一个name对应多个value的时候
             if (item.getValue().getClass().getName().equals("[Ljava.lang.String;")) {
                 final String[] values = (String[]) item.getValue();
                 for (final String val : values) {
-                    value += val + ",";
+                    value.append(val).append(",");
                 }
-                value = "[" + StrUtils.left(value, value.length() - 1) + "]";
+                value = new StringBuilder("[" + StringUtils.left(value.toString(), value.length() - 1) + "]");
+            } else {
+                value = new StringBuilder(item.getValue().toString());
             }
-            else {
-                value = item.getValue().toString();
-            }
-            sb.append(item.getKey() + ":" + value);
+            sb.append(item.getKey()).append(":").append(value);
         }
         return sb.toString();
     }
 
     /**
+     * Map转Properties
+     *
+     * @param map 要转换的map
+     * @return 转换后的properties
+     */
+    public static Properties map2Props(Map<?, ?> map) {
+        Properties properties = new Properties();
+        properties.putAll(map);
+        return properties;
+    }
+
+    /**
      * 将map转成Bean对象
      */
-    public static Object map2Bean(final Map<String, Object> map, final Class<?> beanClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    public static Object map2Bean(final Map<String, Object> map, final Class<?> beanClass) {
         if (map == null || map.isEmpty()) {
             return null;
         }
@@ -66,7 +73,7 @@ public class MapUtils {
     /**
      * 将Bean对象转成map
      */
-    public static Map<?, ?> bean2Map(final Object bean) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public static Map<?, ?> bean2Map(final Object bean) throws IllegalArgumentException {
         if (bean == null) {
             return null;
         }
@@ -126,7 +133,6 @@ public class MapUtils {
     /**
      * 将map转换成url参数("a=111&amp;b=222&amp;c=333")
      * 所有参数的值都进行URLEncoder的UTF-8编码
-     * 
      */
     public static String map2UrlParams(final Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
@@ -134,17 +140,22 @@ public class MapUtils {
         }
         final StringJoiner sj = new StringJoiner("&");
         map.forEach((key, value) -> {
-            if (value == null) return;
+            if (value == null) {
+                return;
+            }
             if (value instanceof List) {
                 ((List<?>) value).forEach(item -> {
-                    String valueStr = valueToString(item);
-                    if (valueStr == null) return;
+                    final String valueStr = valueToString(item);
+                    if (valueStr == null) {
+                        return;
+                    }
                     sj.add(key + "=" + valueStr);
                 });
-            }
-            else {
-                String valueStr = valueToString(value);
-                if (valueStr == null) return;
+            } else {
+                final String valueStr = valueToString(value);
+                if (valueStr == null) {
+                    return;
+                }
                 sj.add(key + "=" + valueStr);
             }
         });
@@ -155,19 +166,21 @@ public class MapUtils {
     /**
      * 将参数的值转换为字符串
      */
-    private static String valueToString(Object value) {
-        if (value == null) return null;
-        String valueStr = null;
+    private static String valueToString(final Object value) {
+        if (value == null) {
+            return null;
+        }
+        String valueStr;
         if (value instanceof LocalDate) {
-            valueStr = LocalDateTimeUtils.formatDate((LocalDate) value);
-        }
-        else if (value instanceof LocalDateTime) {
-            valueStr = LocalDateTimeUtils.formatDateTime((LocalDateTime) value);
-        }
-        else {
+            valueStr = LocalDateTimeUtils.format((LocalDate) value);
+        } else if (value instanceof LocalDateTime) {
+            valueStr = LocalDateTimeUtils.format((LocalDateTime) value);
+        } else {
             valueStr = value.toString();
         }
-        if (StringUtils.isBlank(valueStr)) return null;
+        if (StringUtils.isBlank(valueStr)) {
+            return null;
+        }
         try {
             return URLEncoder.encode(valueStr, "utf-8");
         } catch (final UnsupportedEncodingException e) {
@@ -192,5 +205,4 @@ public class MapUtils {
             }
         }
     }
-
 }

@@ -7,10 +7,10 @@ import java.util.UUID;
  */
 public class IdWorker1 {
 
-	/**
-	 * @return UUID（不带“-”）
-	 */
-	public static String getId() {
-		return UUID.randomUUID().toString().replaceAll("-", "");
-	}
+    /**
+     * @return UUID（不带“-”）
+     */
+    public static String getId() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
 }

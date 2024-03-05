@@ -1,33 +1,77 @@
 package rebue.wheel.core;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 public class LocalDateTimeUtils {
-
     /**
      * 默认的日期格式化工具(例如: 2021-09-09)
      */
-    public static DateTimeFormatter dtfDefaultDate     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static DateTimeFormatter dateFormatter     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /**
+     * 默认的日期格式化工具(例如: 2021-09-09)
+     */
+    public static DateTimeFormatter timeFormatter     = DateTimeFormatter.ofPattern("HH:mm:ss");
     /**
      * 默认的日期时间格式化工具(例如: 2021-09-09 09:45:23)
      */
-    public static DateTimeFormatter dtfDefaultDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 格式化日期时间
+     */
+    public static String format(final TemporalAccessor temporal, DateTimeFormatter dateTimeFormatter) {
+        return temporal == null ? null : dateTimeFormatter.format(temporal);
+    }
 
     /**
      * 格式化日期(例如: 2021-09-09)
      */
-    public static String formatDate(LocalDate date) {
-        return dtfDefaultDate.format(date);
+    public static String format(final LocalDate date) {
+        return format(date, dateFormatter);
+    }
+
+    /**
+     * 格式化日期(例如: 2021-09-09)
+     */
+    public static String format(final LocalTime time) {
+        return format(time, timeFormatter);
     }
 
     /**
      * 格式化日期时间(例如: 2021-09-09 09:45:23)
      */
-    public static String formatDateTime(LocalDateTime dateTime) {
-        return dtfDefaultDateTime.format(dateTime);
+    public static String format(final LocalDateTime dateTime) {
+        return format(dateTime, dateTimeFormatter);
+    }
+
+    public static LocalDate parseDate(String date, DateTimeFormatter dateTimeFormatter) {
+        return StringUtils.isBlank(date) ? null : LocalDate.parse(date, dateTimeFormatter);
+    }
+
+    public static LocalTime parseTime(String date, DateTimeFormatter dateTimeFormatter) {
+        return StringUtils.isBlank(date) ? null : LocalTime.parse(date, dateTimeFormatter);
+    }
+
+    public static LocalDateTime parseDateTime(String date, DateTimeFormatter dateTimeFormatter) {
+        return StringUtils.isBlank(date) ? null : LocalDateTime.parse(date, dateTimeFormatter);
+    }
+
+    public static LocalDate parseDate(String date) {
+        return parseDate(date, dateFormatter);
+    }
+
+    public static LocalTime parseTime(String date) {
+        return parseTime(date, timeFormatter);
+    }
+
+    public static LocalDateTime parseDateTime(String date) {
+        return parseDateTime(date, dateTimeFormatter);
     }
 
     /**
@@ -47,6 +91,13 @@ public class LocalDateTimeUtils {
         final ZonedDateTime zdt    = localDateTime.atZone(zoneId);// Combines this date-time with a time-zone to create a ZonedDateTime.
         return Date.from(zdt.toInstant());
 
+    }
+
+    /**
+     * 将long类型的timestamp转为LocalDate
+     */
+    public static LocalDate getDateOfTimestamp(final long timestamp) {
+        return getDateTimeOfTimestamp(timestamp).toLocalDate();
     }
 
     /**
@@ -70,7 +121,6 @@ public class LocalDateTimeUtils {
      *
      * @param dateTimeString 要判断的字符串
      * @param pattern        指定的日期格式
-     *
      * @return 返回字符串是否有效的日期格式
      */
     public static boolean isValid(final String dateTimeString, final String pattern) {
