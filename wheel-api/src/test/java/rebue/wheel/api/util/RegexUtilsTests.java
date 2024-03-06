@@ -13,5 +13,8 @@ public class RegexUtilsTests {
                 """;
         String firstLine = RegexUtils.findFirstLine(text);
         Assertions.assertEquals("abc", firstLine);
+        text = "abc";
+        firstLine = RegexUtils.findFirstLine(text);
+        Assertions.assertEquals("abc", firstLine);
     }
 }

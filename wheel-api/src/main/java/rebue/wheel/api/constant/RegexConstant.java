@@ -6,7 +6,7 @@ public class RegexConstant {
     /**
      * 首行
      */
-    public static final Pattern FIRST_LINE    = Pattern.compile("^(.+?)\n");
+    public static final Pattern FIRST_LINE    = Pattern.compile("^(.+)\n*");
     /**
      * 手机号码
      */
