@@ -150,7 +150,12 @@ public class JdbcUtils {
                         .field(field)
                         .build();
                 setPropertyTypeByFieldMeta(property);
+                // 添加到pojo的属性列表中
                 pojo.getProperties().add(property);
+                // 是否添加到pojo的ID列表中
+                if (field.getIsPrimaryKey()) {
+                    pojo.getIds().add(property);
+                }
             }
             pojoMetas.add(pojo);
         }

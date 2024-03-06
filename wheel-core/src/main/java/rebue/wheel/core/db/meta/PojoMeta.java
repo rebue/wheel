@@ -49,4 +49,9 @@ public class PojoMeta {
      */
     @Builder.Default
     private List<PropertyMeta> properties = new LinkedList<>();
+    /**
+     * ID列表
+     */
+    @Builder.Default
+    private List<PropertyMeta> ids        = new LinkedList<>();
 }
