@@ -1,4 +1,4 @@
-package rebue.wheel.core;
+package rebue.wheel.core.clone;
 
 import lombok.Data;
 
