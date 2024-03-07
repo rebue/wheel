@@ -44,7 +44,8 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring.version>5.3.22</spring.version>
+<!--        <spring.version>5.3.22</spring.version>-->
+        <spring-boot.version>3.2.3</spring-boot.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.76</bouncycastle18.version>
         <netty.version>4.1.93.Final</netty.version>
@@ -54,11 +55,12 @@
         <jackson.version>2.15.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mybatis.version>3.5.15</mybatis.version>
         <drools.version>9.44.0.Final</drools.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.8.1</zookeeper.version>
-        <curator.version>5.5.0</curator.version>
+        <curator.version>5.6.0</curator.version>
         <pulsar.version>3.1.0</pulsar.version>
         <ulid.version>5.2.0</ulid.version>
         <slf4j.version>2.0.7</slf4j.version>
@@ -67,7 +69,7 @@
         <vertx.version>4.5.3</vertx.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
-        <spring-amqp.version>2.4.5</spring-amqp.version>
+<!--        <spring-amqp.version>2.4.5</spring-amqp.version>-->
         <lombok.version>1.18.30</lombok.version>
         <junit.version>5.8.2</junit.version>
 
@@ -116,10 +118,40 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.amqp</groupId>-->
+<!--                <artifactId>spring-amqp</artifactId>-->
+<!--                <version>${spring-amqp.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.amqp</groupId>-->
+<!--                <artifactId>spring-rabbit</artifactId>-->
+<!--                <version>${spring-amqp.version}</version>-->
+<!--            </dependency>-->
+
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.data</groupId>-->
+<!--                <artifactId>spring-data-commons</artifactId>-->
+<!--                <version>3.2.3</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.data</groupId>-->
+<!--                <artifactId>spring-data-redis</artifactId>-->
+<!--                <version>2.7.0</version>-->
+<!--            </dependency>-->
+
+
+            <!--            <dependency>-->
+<!--                <groupId>org.springframework</groupId>-->
+<!--                <artifactId>spring-web</artifactId>-->
+<!--                <version>${spring.version}</version>-->
+<!--            </dependency>-->
 
             <!-- 解析Json格式 -->
             <dependency>
@@ -328,6 +360,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
             </dependency>
@@ -341,6 +378,35 @@
                 <groupId>com.github.f4b6a3</groupId>
                 <artifactId>ulid-creator</artifactId>
                 <version>${ulid.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.dynamic-sql</groupId>
+                <artifactId>mybatis-dynamic-sql</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>8.0.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.2.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>6.1.0</version>
             </dependency>
 
             <dependency>
@@ -536,23 +602,6 @@
                 <version>1.2.0</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.amqp</groupId>
-                <artifactId>spring-amqp</artifactId>
-                <version>${spring-amqp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.amqp</groupId>
-                <artifactId>spring-rabbit</artifactId>
-                <version>${spring-amqp.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-redis</artifactId>
-                <version>2.7.0</version>
-            </dependency>
-
             <!-- XML提供方法解析Servlet里的参数 -->
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -561,12 +610,12 @@
                 <scope>provided</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>2.7.0</version>
-                <scope>test</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-starter-test</artifactId>-->
+<!--                <version>2.7.0</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
