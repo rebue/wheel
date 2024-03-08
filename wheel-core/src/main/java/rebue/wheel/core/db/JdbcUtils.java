@@ -87,12 +87,34 @@ public class JdbcUtils {
                             field.setIsNullable(columnResultSet.getBoolean("IS_NULLABLE"));
                             field.setRemark(columnResultSet.getString("REMARKS"));
                             field.setIsForeignKey(false);
+                            // 判断是否是外键
                             for (ImportKeyMeta importKey : table.getImportedKeys()) {
                                 if (field.getName().equalsIgnoreCase(importKey.getFkFiledName())) {
+                                    String pkTableName = importKey.getPkTableName();
+                                    String pkFieldName = importKey.getPkFieldName();
                                     field.setIsForeignKey(true);
-                                    field.setReferencedTableName(importKey.getPkTableName());
-                                    field.setReferencedColumnName(importKey.getPkFieldName());
+                                    field.setReferencedTableName(pkTableName);
+                                    field.setReferencedTableClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkTableName));
+                                    field.setReferencedTableInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkTableName));
+                                    field.setReferencedColumnName(pkFieldName);
+                                    field.setReferencedColumnClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkFieldName));
+                                    field.setReferencedColumnInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkFieldName));
                                 }
+                            }
+                            // 如果是MySQL，判断是否是无符号
+                            if ("MySQL".equalsIgnoreCase(dbMeta.getProductName())) {
+                                PreparedStatement preparedStatement = conn.prepareStatement("""
+                                        select count(*) from information_schema.COLUMNS
+                                        where TABLE_NAME=? and COLUMN_NAME=? and COLUMN_TYPE LIKE '%unsigned'
+                                        """);
+                                preparedStatement.setString(1, tableName);
+                                preparedStatement.setString(2, field.getName());
+                                ResultSet resultSet = preparedStatement.executeQuery();
+                                int       count     = 0;
+                                if (resultSet.next()) {
+                                    count = resultSet.getInt(1);
+                                }
+                                field.setIsUnsigned(count > 0);
                             }
                         }
                     }

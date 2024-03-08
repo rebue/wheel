@@ -46,19 +46,41 @@ public class FieldMeta {
      */
     private Boolean isNullable;
     /**
+     * 是否无符号(仅在MySQL中有效)
+     */
+    @Builder.Default
+    private Boolean isUnsigned   = false;
+    /**
      * 列注释
      */
     private String  remark;
     /**
      * 是否外键
      */
-    private Boolean isForeignKey;
+    @Builder.Default
+    private Boolean isForeignKey = false;
     /**
      * 外键引用的表名
      */
     private String  referencedTableName;
     /**
+     * 外键引用的表类名
+     */
+    private String  referencedTableClassName;
+    /**
+     * 外键引用的表实例名
+     */
+    private String  referencedTableInstanceName;
+    /**
      * 外键引用的列名
      */
     private String  referencedColumnName;
+    /**
+     * 外键引用的列类名
+     */
+    private String  referencedColumnClassName;
+    /**
+     * 外键引用的列实例名
+     */
+    private String  referencedColumnInstanceName;
 }
