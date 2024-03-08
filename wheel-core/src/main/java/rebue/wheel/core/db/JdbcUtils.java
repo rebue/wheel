@@ -29,98 +29,109 @@ public class JdbcUtils {
     /**
      * 获取数据库元数据
      *
+     * @param connection       连接
+     * @param tableNamePattern 过滤表名的正则表达式
+     * @return 数据库元数据
+     */
+    public static DbMeta getDbMeta(Connection connection, String tableNamePattern) throws SQLException {
+        DbMeta           dbMeta   = new DbMeta();
+        DatabaseMetaData metaData = connection.getMetaData();
+        dbMeta.setName(connection.getCatalog());
+        dbMeta.setProductName(metaData.getDatabaseProductName());
+        // 获取所有表
+        try (ResultSet tables = metaData.getTables(null, null, tableNamePattern, new String[]{"TABLE"})) {
+            // 遍历表元数据并读出表名和结构
+            while (tables.next()) {
+                String    tableName = tables.getString("TABLE_NAME");
+                TableMeta table     = new TableMeta();
+                dbMeta.getTables().add(table);
+                table.setName(tableName);
+                table.setRemark(tables.getString("REMARKS"));
+                // 获取主键
+                ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(null, null, tableName);
+                while (primaryKeysResultSet.next()) {
+                    table.getPrimaryKeys().add(primaryKeysResultSet.getString("COLUMN_NAME"));
+                }
+                // 获取unique字段
+                ResultSet uniquesResultSet = metaData.getIndexInfo(null, null, tableName, true, false);
+                while (uniquesResultSet.next()) {
+                    String columnName = uniquesResultSet.getString("COLUMN_NAME");
+                    // 排除主键
+                    if (table.getPrimaryKeys().contains(columnName)) continue;
+                    table.getUniques().add(columnName);
+                }
+                // 获取外键
+                ResultSet importedKeyResultSet = metaData.getImportedKeys(null, null, tableName);
+                while (importedKeyResultSet.next()) {
+                    ForeignKeyMeta importKey = new ForeignKeyMeta();
+                    importKey.setFkTableName(importedKeyResultSet.getString("FKTABLE_NAME"));
+                    importKey.setFkFiledName(importedKeyResultSet.getString("FKCOLUMN_NAME"));
+                    importKey.setPkTableName(importedKeyResultSet.getString("PKTABLE_NAME"));
+                    importKey.setPkFieldName(importedKeyResultSet.getString("PKCOLUMN_NAME"));
+                    table.getImportedKeys().add(importKey);
+                }
+                // 获取表的列元数据
+                try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
+                    // 遍历列元数据并读出列名和数据类型
+                    while (columnResultSet.next()) {
+                        FieldMeta field = new FieldMeta();
+                        table.getFields().add(field);
+                        field.setName(columnResultSet.getString("COLUMN_NAME"));
+                        field.setType(columnResultSet.getInt("DATA_TYPE"));
+                        field.setTypeName(columnResultSet.getString("TYPE_NAME"));
+                        field.setPrecision(columnResultSet.getInt("COLUMN_SIZE"));
+                        field.setScale(columnResultSet.getInt("DECIMAL_DIGITS"));
+                        field.setIsPrimaryKey(table.getPrimaryKeys().contains(field.getName()));
+                        field.setIsUnique(table.getUniques().contains(field.getName()));
+                        field.setIsNullable(columnResultSet.getBoolean("IS_NULLABLE"));
+                        field.setRemark(columnResultSet.getString("REMARKS"));
+                        field.setIsForeignKey(false);
+                        // 判断是否是外键
+                        for (ForeignKeyMeta importKey : table.getImportedKeys()) {
+                            if (field.getName().equalsIgnoreCase(importKey.getFkFiledName())) {
+                                String pkTableName = importKey.getPkTableName();
+                                String pkFieldName = importKey.getPkFieldName();
+                                field.setIsForeignKey(true);
+                                field.setReferencedTableName(pkTableName);
+                                field.setReferencedTableClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkTableName));
+                                field.setReferencedTableInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkTableName));
+                                field.setReferencedColumnName(pkFieldName);
+                                field.setReferencedColumnClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkFieldName));
+                                field.setReferencedColumnInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkFieldName));
+                            }
+                        }
+                        // 如果是MySQL，判断是否是无符号
+                        if ("MySQL".equalsIgnoreCase(dbMeta.getProductName())) {
+                            PreparedStatement preparedStatement = connection.prepareStatement("""
+                                    select count(*) from information_schema.COLUMNS
+                                    where TABLE_NAME=? and COLUMN_NAME=? and COLUMN_TYPE LIKE '%unsigned'
+                                    """);
+                            preparedStatement.setString(1, tableName);
+                            preparedStatement.setString(2, field.getName());
+                            ResultSet resultSet = preparedStatement.executeQuery();
+                            int       count     = 0;
+                            if (resultSet.next()) {
+                                count = resultSet.getInt(1);
+                            }
+                            field.setIsUnsigned(count > 0);
+                        }
+                    }
+                }
+            }
+        }
+        return dbMeta;
+    }
+
+    /**
+     * 获取数据库元数据
+     *
      * @param connectParam     连接参数
      * @param tableNamePattern 过滤表名的正则表达式
      * @return 数据库元数据
      */
     public static DbMeta getDbMeta(ConnectParam connectParam, String tableNamePattern) throws SQLException {
-        DbMeta dbMeta = new DbMeta();
-        try (Connection conn = JdbcUtils.getConnection(connectParam)) {
-            DatabaseMetaData metaData = conn.getMetaData();
-            dbMeta.setName(conn.getCatalog());
-            dbMeta.setProductName(metaData.getDatabaseProductName());
-            // 获取所有表
-            try (ResultSet tables = metaData.getTables(null, null, tableNamePattern, new String[]{"TABLE"})) {
-                // 遍历表元数据并读出表名和结构
-                while (tables.next()) {
-                    String    tableName = tables.getString("TABLE_NAME");
-                    TableMeta table     = new TableMeta();
-                    dbMeta.getTables().add(table);
-                    table.setName(tableName);
-                    table.setRemark(tables.getString("REMARKS"));
-                    // 获取主键
-                    ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(null, null, tableName);
-                    while (primaryKeysResultSet.next()) {
-                        table.getPrimaryKeys().add(primaryKeysResultSet.getString("COLUMN_NAME"));
-                    }
-                    // 获取unique字段
-                    ResultSet uniquesResultSet = metaData.getIndexInfo(null, null, tableName, true, false);
-                    while (uniquesResultSet.next()) {
-                        String columnName = uniquesResultSet.getString("COLUMN_NAME");
-                        // 排除主键
-                        if (table.getPrimaryKeys().contains(columnName)) continue;
-                        table.getUniques().add(columnName);
-                    }
-                    // 获取外键
-                    ResultSet importedKeyResultSet = metaData.getImportedKeys(null, null, tableName);
-                    while (importedKeyResultSet.next()) {
-                        ImportKeyMeta importKey = new ImportKeyMeta();
-                        importKey.setFkTableName(importedKeyResultSet.getString("FKTABLE_NAME"));
-                        importKey.setFkFiledName(importedKeyResultSet.getString("FKCOLUMN_NAME"));
-                        importKey.setPkTableName(importedKeyResultSet.getString("PKTABLE_NAME"));
-                        importKey.setPkFieldName(importedKeyResultSet.getString("PKCOLUMN_NAME"));
-                        table.getImportedKeys().add(importKey);
-                    }
-                    // 获取表的列元数据
-                    try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
-                        // 遍历列元数据并读出列名和数据类型
-                        while (columnResultSet.next()) {
-                            FieldMeta field = new FieldMeta();
-                            table.getFields().add(field);
-                            field.setName(columnResultSet.getString("COLUMN_NAME"));
-                            field.setType(columnResultSet.getInt("DATA_TYPE"));
-                            field.setTypeName(columnResultSet.getString("TYPE_NAME"));
-                            field.setPrecision(columnResultSet.getInt("COLUMN_SIZE"));
-                            field.setScale(columnResultSet.getInt("DECIMAL_DIGITS"));
-                            field.setIsPrimaryKey(table.getPrimaryKeys().contains(field.getName()));
-                            field.setIsUnique(table.getUniques().contains(field.getName()));
-                            field.setIsNullable(columnResultSet.getBoolean("IS_NULLABLE"));
-                            field.setRemark(columnResultSet.getString("REMARKS"));
-                            field.setIsForeignKey(false);
-                            // 判断是否是外键
-                            for (ImportKeyMeta importKey : table.getImportedKeys()) {
-                                if (field.getName().equalsIgnoreCase(importKey.getFkFiledName())) {
-                                    String pkTableName = importKey.getPkTableName();
-                                    String pkFieldName = importKey.getPkFieldName();
-                                    field.setIsForeignKey(true);
-                                    field.setReferencedTableName(pkTableName);
-                                    field.setReferencedTableClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkTableName));
-                                    field.setReferencedTableInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkTableName));
-                                    field.setReferencedColumnName(pkFieldName);
-                                    field.setReferencedColumnClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkFieldName));
-                                    field.setReferencedColumnInstanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkFieldName));
-                                }
-                            }
-                            // 如果是MySQL，判断是否是无符号
-                            if ("MySQL".equalsIgnoreCase(dbMeta.getProductName())) {
-                                PreparedStatement preparedStatement = conn.prepareStatement("""
-                                        select count(*) from information_schema.COLUMNS
-                                        where TABLE_NAME=? and COLUMN_NAME=? and COLUMN_TYPE LIKE '%unsigned'
-                                        """);
-                                preparedStatement.setString(1, tableName);
-                                preparedStatement.setString(2, field.getName());
-                                ResultSet resultSet = preparedStatement.executeQuery();
-                                int       count     = 0;
-                                if (resultSet.next()) {
-                                    count = resultSet.getInt(1);
-                                }
-                                field.setIsUnsigned(count > 0);
-                            }
-                        }
-                    }
-                }
-            }
-            return dbMeta;
+        try (Connection connection = JdbcUtils.getConnection(connectParam)) {
+            return getDbMeta(connection, tableNamePattern);
         }
     }
 

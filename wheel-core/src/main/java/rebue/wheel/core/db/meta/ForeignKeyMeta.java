@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImportKeyMeta {
+public class ForeignKeyMeta {
     /**
      * 外键表名
      */

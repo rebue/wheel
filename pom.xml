@@ -52,6 +52,7 @@
         <netty-tcnative>2.0.61.Final</netty-tcnative>
         <guice.version>7.0.0</guice.version>
         <dagger.version>2.42</dagger.version>
+        <javaparser.version>3.25.9</javaparser.version>
         <jackson.version>2.15.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -124,34 +125,32 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.amqp</groupId>-->
-<!--                <artifactId>spring-amqp</artifactId>-->
-<!--                <version>${spring-amqp.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.amqp</groupId>-->
-<!--                <artifactId>spring-rabbit</artifactId>-->
-<!--                <version>${spring-amqp.version}</version>-->
-<!--            </dependency>-->
 
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.data</groupId>-->
-<!--                <artifactId>spring-data-commons</artifactId>-->
-<!--                <version>3.2.3</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.data</groupId>-->
-<!--                <artifactId>spring-data-redis</artifactId>-->
-<!--                <version>2.7.0</version>-->
-<!--            </dependency>-->
-
-
-            <!--            <dependency>-->
-<!--                <groupId>org.springframework</groupId>-->
-<!--                <artifactId>spring-web</artifactId>-->
-<!--                <version>${spring.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.google.googlejavaformat</groupId>
+                <artifactId>google-java-format</artifactId>
+                <version>1.21.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-core</artifactId>
+                <version>${javaparser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-symbol-solver-core</artifactId>
+                <version>${javaparser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>org.eclipse.jdt.core</artifactId>
+                <version>3.36.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>org.eclipse.jdt.ui</artifactId>
+                <version>3.31.0</version>
+            </dependency>
 
             <!-- 解析Json格式 -->
             <dependency>
@@ -193,6 +192,12 @@
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>${jackson-asl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>2.0.47</version>
             </dependency>
 
             <dependency>
@@ -391,6 +396,11 @@
                 <artifactId>mybatis-dynamic-sql</artifactId>
                 <version>1.5.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-core</artifactId>
+                <version>1.4.2</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
@@ -521,6 +531,11 @@
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
@@ -609,13 +624,11 @@
                 <version>4.0.1</version>
                 <scope>provided</scope>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-starter-test</artifactId>-->
-<!--                <version>2.7.0</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>2.0.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
