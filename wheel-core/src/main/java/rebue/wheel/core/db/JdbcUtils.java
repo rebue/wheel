@@ -38,6 +38,13 @@ public class JdbcUtils {
         DatabaseMetaData metaData = connection.getMetaData();
         dbMeta.setName(connection.getCatalog());
         dbMeta.setProductName(metaData.getDatabaseProductName());
+        dbMeta.setDriverName(metaData.getDriverName());
+        dbMeta.setDriverVersion(metaData.getDriverVersion());
+        dbMeta.setDriverMajorVersion(metaData.getDriverMajorVersion());
+        dbMeta.setDriverMinorVersion(metaData.getDriverMinorVersion());
+        dbMeta.setUrl(metaData.getURL());
+        dbMeta.setUserName(metaData.getUserName());
+        dbMeta.setTableNamePattern(tableNamePattern);
         // 获取所有表
         try (ResultSet tables = metaData.getTables(null, null, tableNamePattern, new String[]{"TABLE"})) {
             // 遍历表元数据并读出表名和结构
