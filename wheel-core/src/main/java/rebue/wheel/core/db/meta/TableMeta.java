@@ -19,16 +19,16 @@ public class TableMeta {
     /**
      * 表名
      */
-    private String              name;
+    private String               name;
     /**
      * 表注释
      */
-    private String              remark;
+    private String               remark;
     /**
      * 表的主键列表
      */
     @Builder.Default
-    private List<String>        primaryKeys  = new LinkedList<>();
+    private List<String>         primaryKeys  = new LinkedList<>();
     /**
      * 表的unique列表
      */

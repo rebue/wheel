@@ -53,7 +53,7 @@ public class JdbcUtils {
                 TableMeta table     = new TableMeta();
                 dbMeta.getTables().add(table);
                 table.setName(tableName);
-                table.setRemark(tables.getString("REMARKS"));
+                table.setRemark(tables.getString("REMARKS").replaceAll("\\\\n", "\n"));
                 // 获取主键
                 ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(null, null, tableName);
                 while (primaryKeysResultSet.next()) {
@@ -91,7 +91,7 @@ public class JdbcUtils {
                         field.setIsPrimaryKey(table.getPrimaryKeys().contains(field.getName()));
                         field.setIsUnique(table.getUniques().contains(field.getName()));
                         field.setIsNullable(columnResultSet.getBoolean("IS_NULLABLE"));
-                        field.setRemark(columnResultSet.getString("REMARKS"));
+                        field.setRemark(columnResultSet.getString("REMARKS").replaceAll("\\\\n", "\n"));
                         field.setIsForeignKey(false);
                         // 判断是否是外键
                         for (ForeignKeyMeta importKey : table.getImportedKeys()) {

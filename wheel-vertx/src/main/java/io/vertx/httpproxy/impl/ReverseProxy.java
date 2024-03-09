@@ -1,52 +1,33 @@
 /**
  * XXX 复制4.4.6版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
 package io.vertx.httpproxy.impl;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.http.HttpVersion;
-import io.vertx.core.http.RequestOptions;
+import io.vertx.core.http.*;
 import io.vertx.core.net.NetSocket;
-import io.vertx.core.net.SocketAddress;
-import io.vertx.httpproxy.HttpProxy;
-import io.vertx.httpproxy.ProxyContext;
-import io.vertx.httpproxy.ProxyInterceptor;
-import io.vertx.httpproxy.ProxyOptions;
-import io.vertx.httpproxy.ProxyRequest;
-import io.vertx.httpproxy.ProxyResponse;
+import io.vertx.httpproxy.*;
 import io.vertx.httpproxy.cache.CacheOptions;
 import io.vertx.httpproxy.spi.cache.Cache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class ReverseProxy implements HttpProxy {
 
-    private final HttpClient client;
-    private final boolean supportWebSocket;
-    private BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector = (req, client) -> Future.failedFuture("No origin available");
-    private final List<ProxyInterceptor> interceptors = new ArrayList<>();
+    private final HttpClient                                                           client;
+    private final boolean                                                              supportWebSocket;
+    private       BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector     = (req, client) -> Future.failedFuture("No origin available");
+    private final List<ProxyInterceptor>                                               interceptors = new ArrayList<>();
 
     public ReverseProxy(ProxyOptions options, HttpClient client) {
         CacheOptions cacheOptions = options.getCacheOptions();
@@ -125,7 +106,7 @@ public class ReverseProxy implements HttpProxy {
                             Future<NetSocket> otherso = proxiedRequest.toNetSocket();
                             otherso.onComplete(ar3 -> {
                                 if (ar3.succeeded()) {
-                                    NetSocket responseSocket = ar3.result();
+                                    NetSocket responseSocket      = ar3.result();
                                     NetSocket proxyResponseSocket = proxiedResponse.netSocket();
                                     responseSocket.handler(proxyResponseSocket::write);
                                     proxyResponseSocket.handler(responseSocket::write);
@@ -170,10 +151,10 @@ public class ReverseProxy implements HttpProxy {
 
     private class Proxy implements ProxyContext {
 
-        private final ProxyRequest request;
-        private ProxyResponse response;
-        private final Map<String, Object> attachments = new HashMap<>();
-        private ListIterator<ProxyInterceptor> filters;
+        private final ProxyRequest                   request;
+        private       ProxyResponse                  response;
+        private final Map<String, Object>            attachments = new HashMap<>();
+        private       ListIterator<ProxyInterceptor> filters;
 
         private Proxy(ProxyRequest request) {
             this.request = request;

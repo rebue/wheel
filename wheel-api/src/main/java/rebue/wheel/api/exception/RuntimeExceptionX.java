@@ -12,7 +12,7 @@ public class RuntimeExceptionX extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private final Long        errorCode;
+    private final Long errorCode;
 
     public RuntimeExceptionX(final String msg) {
         this(null, msg);
