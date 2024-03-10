@@ -19,6 +19,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- 模板 -->
+        <dependency>
+            <groupId>com.ibeetl</groupId>
+            <artifactId>beetl</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-core</artifactId>
