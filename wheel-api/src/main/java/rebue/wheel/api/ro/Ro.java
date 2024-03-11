@@ -21,29 +21,29 @@ public class Ro implements Serializable {
     /**
      * 返回结果的类型
      */
-    protected ResultDic result;
+    private ResultDic result;
 
     /**
      * 返回结果的信息
      */
-    protected String msg;
+    private String msg;
 
     /**
      * 详情
      */
-    protected String detail;
+    private String detail;
 
     /**
      * 附加的内容
      * (如果前面的属性已经能够满足需求，可不需要附加的内容，设为null或不设置即可)
      */
-    protected Object extra;
+    private Object extra;
 
     /**
      * 返回结果的自定义编码
      * (如果通过result已经能够满足需求，可不需要自定义编码，设为null或不设置即可)
      */
-    protected String code;
+    private String code;
 
     public Ro(final ResultDic result, final String msg) {
         this.result = result;
