@@ -125,6 +125,12 @@
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.ui</artifactId>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xml-apis-ext</artifactId>
+                    <groupId>xml-apis</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 解析XML格式 -->

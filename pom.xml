@@ -44,8 +44,6 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!--        <spring.version>5.3.22</spring.version>-->
-        <spring-framework.version>6.1.4</spring-framework.version>
         <spring-boot.version>3.2.3</spring-boot.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <dubbo.version>3.2.11</dubbo.version>
