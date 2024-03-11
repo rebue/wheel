@@ -217,7 +217,7 @@ public class JdbcUtils {
                 jsType = "boolean";
             }
             case TINYINT -> {
-                if (property.getField().getPrecision().equals(1)) {
+                if (property.getName().startsWith("is")) {
                     clazz = Boolean.class;
                     jsType = "boolean";
                 } else {

@@ -1,10 +1,10 @@
 package rebue.wheel.net;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import rebue.wheel.core.OsUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -137,8 +137,8 @@ public class AgentUtils {
     /**
      * 获取来访者的浏览器版本
      *
-     * @param req
-     * @return
+     * @param req 请求
+     * @return 浏览器版本
      */
     public static String getRequestBrowserInfo(final HttpServletRequest req) {
         String       browserVersion = null;
@@ -165,8 +165,8 @@ public class AgentUtils {
     /**
      * 获取系统版本信息
      *
-     * @param req
-     * @return
+     * @param req 请求
+     * @return 系统版本
      */
     public static String getRequestSystemInfo(final HttpServletRequest req) {
         String       systenInfo = null;
@@ -181,8 +181,6 @@ public class AgentUtils {
             systenInfo = "Windows Server 2003";
         } else if (header.indexOf("NT 5.1") > 0) {
             systenInfo = "Windows XP";
-        } else if (header.indexOf("NT 6.0") > 0) {
-            systenInfo = "Windows Vista";
         } else if (header.indexOf("NT 6.1") > 0) {
             systenInfo = "Windows 7";
         } else if (header.indexOf("NT 6.2") > 0) {
@@ -214,8 +212,8 @@ public class AgentUtils {
     /**
      * 获取来访者的主机名称
      *
-     * @param ip
-     * @return
+     * @param ip IP地址
+     * @return 主机名称
      */
     public static String getHostName(final String ip) {
         InetAddress inet;
@@ -229,36 +227,38 @@ public class AgentUtils {
     }
 
     /**
-     * 命令获取mac地址
+     * 执行命令
      *
-     * @param cmd
-     * @return
+     * @param cmd 获取的命令
+     * @return 命令打印信息
      */
     private static String callCmd(final String[] cmd) {
-        String result = "";
-        String line   = "";
+        StringBuilder result = new StringBuilder();
+        String        line;
         try {
             final Process           proc = Runtime.getRuntime().exec(cmd);
             final InputStreamReader is   = new InputStreamReader(proc.getInputStream());
             final BufferedReader    br   = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return result.toString();
     }
 
     /**
+     * 执行命令
+     *
      * @param cmd     第一个命令
      * @param another 第二个命令
      * @return 第二个命令的执行结果
      */
 
     private static String callCmd(final String[] cmd, final String[] another) {
-        String result = "";
-        String line   = "";
+        StringBuilder result = new StringBuilder();
+        String        line;
         try {
             final Runtime rt   = Runtime.getRuntime();
             Process       proc = rt.exec(cmd);
@@ -267,12 +267,12 @@ public class AgentUtils {
             final InputStreamReader is = new InputStreamReader(proc.getInputStream());
             final BufferedReader    br = new BufferedReader(is);
             while ((line = br.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -302,7 +302,7 @@ public class AgentUtils {
      */
 
     private static String getMacInWindows(final String ip) {
-        String result = "";
+        String result;
         final String[] cmd = {"cmd", "/c", "ping " + ip
         };
         final String[] another = {"cmd", "/c", "arp -a"
@@ -321,7 +321,7 @@ public class AgentUtils {
      * @return Mac Address
      */
     private static String getMacInLinux(final String ip) {
-        String result = "";
+        String result;
         final String[] cmd = {"/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a"
         };
         final String cmdResult = callCmd(cmd);
@@ -340,7 +340,7 @@ public class AgentUtils {
      */
     public static String getMacAddress(final String ip) {
         log.info("通过IP({})获取MAC地址", ip);
-        String macAddress = "";
+        String macAddress;
         if (OsUtils.isWin()) {
             macAddress = getMacInWindows(ip);
         } else {

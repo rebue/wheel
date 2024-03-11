@@ -46,6 +46,8 @@
 
         <!--        <spring.version>5.3.22</spring.version>-->
         <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <dubbo.version>3.2.11</dubbo.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.76</bouncycastle18.version>
         <netty.version>4.1.93.Final</netty.version>
@@ -122,6 +124,27 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2023.0.0.0-RC1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-bom</artifactId>
+                <version>${dubbo.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

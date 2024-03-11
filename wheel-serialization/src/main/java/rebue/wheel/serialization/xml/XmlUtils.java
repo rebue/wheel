@@ -1,5 +1,6 @@
 package rebue.wheel.serialization.xml;
 
+import jakarta.servlet.ServletRequest;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,12 +66,12 @@ public class XmlUtils {
     }
 
     public static String mapToXml(final Map<String, Object> map) {
-        String xmlResult = "";
+        String xmlResult;
 
         final StringBuilder sb = new StringBuilder();
         sb.append("<xml>");
         for (final String key : map.keySet()) {
-            sb.append("<" + key + ">" + "<![CDATA[" + map.get(key) + "]]>" + "</" + key + ">");
+            sb.append("<").append(key).append(">").append("<![CDATA[").append(map.get(key)).append("]]>").append("</").append(key).append(">");
         }
         sb.append("</xml>");
         xmlResult = sb.toString();

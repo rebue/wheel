@@ -95,8 +95,8 @@
 
         <!-- XML提供方法解析Servlet里的参数 -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <dependency>
