@@ -86,8 +86,24 @@ public class Rt<T> implements Serializable {
         this.extra = extra;
     }
 
+    public Rt(final ResultDic result, final String msg, final String detail, final String code, final T extra) {
+        this.result = result;
+        this.msg = msg;
+        this.detail = detail;
+        this.code = code;
+        this.extra = extra;
+    }
+
     public static Rt<?> success(final String msg) {
         return new Rt<>(ResultDic.SUCCESS, msg);
+    }
+
+    public static Rt<?> success(final String msg, String detail) {
+        return new Rt<>(ResultDic.SUCCESS, msg, detail);
+    }
+
+    public static Rt<?> success(final String msg, String detail, String code) {
+        return new Rt<>(ResultDic.SUCCESS, msg, detail, code);
     }
 
     public static <T> Rt<T> success(final T extra) {
@@ -98,12 +114,20 @@ public class Rt<T> implements Serializable {
         return new Rt<>(ResultDic.SUCCESS, msg, extra);
     }
 
+    public static <T> Rt<T> success(final String msg, String detail, String code, T extra) {
+        return new Rt<>(ResultDic.SUCCESS, msg, detail, code, extra);
+    }
+
     public static Rt<?> illegalArgument(final String msg) {
         return new Rt<>(ResultDic.ILLEGAL_ARGUMENT, msg);
     }
 
     public static Rt<?> illegalArgument(final String msg, final String detail) {
         return new Rt<>(ResultDic.ILLEGAL_ARGUMENT, msg, detail);
+    }
+
+    public static Rt<?> illegalArgument(final String msg, final String detail, String code) {
+        return new Rt<>(ResultDic.ILLEGAL_ARGUMENT, msg, detail, code);
     }
 
     public static <T> Rt<T> illegalArgument(final T extra) {
@@ -114,6 +138,10 @@ public class Rt<T> implements Serializable {
         return new Rt<>(ResultDic.ILLEGAL_ARGUMENT, msg, extra);
     }
 
+    public static <T> Rt<T> illegalArgument(final String msg, final String detail, String code, T extra) {
+        return new Rt<>(ResultDic.ILLEGAL_ARGUMENT, msg, detail, code, extra);
+    }
+
     public static Rt<?> warn(final String msg) {
         return new Rt<>(ResultDic.WARN, msg);
     }
@@ -122,12 +150,20 @@ public class Rt<T> implements Serializable {
         return new Rt<>(ResultDic.WARN, msg, detail);
     }
 
+    public static Rt<?> warn(final String msg, final String detail, String code) {
+        return new Rt<>(ResultDic.WARN, msg, detail, code);
+    }
+
     public static <T> Rt<T> warn(final T extra) {
         return new Rt<>(ResultDic.WARN, extra);
     }
 
     public static <T> Rt<T> warn(final String msg, final T extra) {
         return new Rt<>(ResultDic.WARN, msg, extra);
+    }
+
+    public static <T> Rt<T> warn(final String msg, final String detail, String code, T extra) {
+        return new Rt<>(ResultDic.WARN, msg, detail, code, extra);
     }
 
     public static Rt<?> fail(final String msg) {
@@ -144,6 +180,14 @@ public class Rt<T> implements Serializable {
 
     public static <T> Rt<T> fail(final String msg, final T extra) {
         return new Rt<>(ResultDic.FAIL, msg, extra);
+    }
+
+    public static <T> Rt<T> fail(final String msg, String detail, String code) {
+        return new Rt<>(ResultDic.FAIL, msg, detail, code);
+    }
+
+    public static <T> Rt<T> fail(final String msg, String detail, String code, final T extra) {
+        return new Rt<>(ResultDic.FAIL, msg, detail, code, extra);
     }
 
     /**
