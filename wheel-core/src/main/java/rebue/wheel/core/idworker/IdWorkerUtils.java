@@ -1,20 +1,17 @@
-package rebue.wheel.vertx.util;
+package rebue.wheel.core.idworker;
 
-import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
-import rebue.wheel.core.idworker.IdWorker3;
 
 import java.util.List;
 
 @Slf4j
 public class IdWorkerUtils {
 
-    public static IdWorker3 create3(Object thisObj, JsonObject config, CuratorFramework zkClient) {
+    public static IdWorker3 create3(Object thisObj, String options, CuratorFramework zkClient) {
         log.info("IdWorkerUtils.create3");
-        final String options = config.getString("idworker");
         if (StringUtils.isBlank(options)) {
             log.info("默认为单机模式创建IdWorker3");
             return new IdWorker3();
