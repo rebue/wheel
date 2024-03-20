@@ -376,7 +376,6 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
@@ -466,6 +465,12 @@
                 <groupId>org.hibernate.javax.persistence</groupId>
                 <artifactId>hibernate-jpa-2.1-api</artifactId>
                 <version>1.0.2.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.zhxu</groupId>
+                <artifactId>bean-searcher-boot-starter</artifactId>
+                <version>4.2.7</version>
             </dependency>
 
             <dependency>
