@@ -37,9 +37,13 @@ public class PojoMeta {
      */
     private String             lowerHyphenNameWithoutPrefix;
     /**
-     * 注释
+     * 类注释
      */
     private String             remark;
+    /**
+     * 类注释列表
+     */
+    private List<String>       remarks;
     /**
      * 对应的表元数据
      */

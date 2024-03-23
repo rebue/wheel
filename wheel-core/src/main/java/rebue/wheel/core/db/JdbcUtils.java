@@ -3,7 +3,6 @@ package rebue.wheel.core.db;
 import com.google.common.base.CaseFormat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.api.util.RegexUtils;
 import rebue.wheel.core.db.meta.*;
 
 import java.math.BigDecimal;
@@ -174,8 +173,9 @@ public class JdbcUtils {
                     .className(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()))
                     .instanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, table.getName()))
                     .lowerHyphenName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, table.getName()))
-                    .title(RegexUtils.findFirstLine(table.getRemark()))
                     .remark(table.getRemark())
+                    .remarks(RemarkUtils.getRemarks(table.getRemark()))
+                    .title(RemarkUtils.getTitle(table.getRemark()))
                     .table(table)
                     .build();
             // 计算小写连字号名(不带项目前缀)
@@ -185,10 +185,12 @@ public class JdbcUtils {
             for (FieldMeta field : table.getFields()) {
                 PropertyMeta property = PropertyMeta.builder()
                         .name(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, field.getName()))
-                        .title(RegexUtils.findFirstLine(field.getRemark()))
                         .remark(field.getRemark())
+                        .remarks(RemarkUtils.getRemarks(field.getRemark()))
+                        .title(RemarkUtils.getTitle(field.getRemark()))
                         .field(field)
                         .build();
+                // 根据属性的字段元数据设置属性类型
                 setPropertyTypeByFieldMeta(property);
                 // 添加到pojo的属性列表中
                 pojo.getProperties().add(property);

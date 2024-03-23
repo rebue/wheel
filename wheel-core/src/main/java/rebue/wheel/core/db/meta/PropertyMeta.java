@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 属性元数据
  */
@@ -16,29 +18,33 @@ public class PropertyMeta {
     /**
      * 属性名
      */
-    private String    name;
+    private String       name;
     /**
      * 标题
      */
-    private String    title;
+    private String       title;
     /**
      * 属性类名称
      */
-    private String    className;
+    private String       className;
     /**
      * 属性类简名
      */
-    private String    classSimpleName;
+    private String       classSimpleName;
     /**
      * Js的类型
      */
-    private String    jsType;
+    private String       jsType;
     /**
      * 属性注释
      */
-    private String    remark;
+    private String       remark;
+    /**
+     * 属性注释列表
+     */
+    private List<String> remarks;
     /**
      * 字段元数据
      */
-    private FieldMeta field;
+    private FieldMeta    field;
 }
