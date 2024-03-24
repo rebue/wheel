@@ -212,6 +212,7 @@ public class JdbcUtils {
     private static void setPropertyTypeByFieldMeta(PropertyMeta property) {
         Class<?> clazz;
         String   jsType;
+        boolean  isKeyWord = false;
         Integer  fieldType = property.getField().getType();
         switch (fieldType) {
             case BIT, BOOLEAN -> {
@@ -225,15 +226,18 @@ public class JdbcUtils {
                 } else {
                     clazz = Short.class;
                     jsType = "number";
+                    isKeyWord = true;
                 }
             }
             case SMALLINT -> {
                 clazz = Short.class;
                 jsType = "number";
+                isKeyWord = true;
             }
             case INTEGER -> {
                 clazz = Integer.class;
                 jsType = "number";
+                isKeyWord = true;
             }
             case BIGINT -> {
                 clazz = Long.class;
@@ -242,10 +246,12 @@ public class JdbcUtils {
             case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
                 clazz = BigDecimal.class;
                 jsType = "number";
+                isKeyWord = true;
             }
             case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> {
                 clazz = String.class;
                 jsType = "string";
+                isKeyWord = true;
             }
             case DATE -> {
                 clazz = LocalDate.class;
@@ -264,5 +270,6 @@ public class JdbcUtils {
         property.setClassName(clazz.getName());
         property.setClassSimpleName(clazz.getSimpleName());
         property.setJsType(jsType);
+        property.setIsKeyWord(isKeyWord);
     }
 }

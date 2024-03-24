@@ -36,6 +36,10 @@ public class PropertyMeta {
      */
     private String       jsType;
     /**
+     * 是否关键字
+     */
+    private Boolean      isKeyWord;
+    /**
      * 属性注释
      */
     private String       remark;
