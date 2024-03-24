@@ -28,20 +28,20 @@ public class TableMeta {
      * 表的主键列表
      */
     @Builder.Default
-    private List<String>         primaryKeys  = new LinkedList<>();
+    private List<String>         primaryKeys = new LinkedList<>();
     /**
      * 表的unique列表
      */
     @Builder.Default
-    private List<String>         uniques      = new LinkedList<>();
+    private List<String>         uniques     = new LinkedList<>();
     /**
      * 表的外键列表
      */
     @Builder.Default
-    private List<ForeignKeyMeta> importedKeys = new LinkedList<>();
+    private List<ForeignKeyMeta> foreignKeys = new LinkedList<>();
     /**
      * 字段集合
      */
     @Builder.Default
-    private List<FieldMeta>      fields       = new LinkedList<>();
+    private List<FieldMeta>      fields      = new LinkedList<>();
 }

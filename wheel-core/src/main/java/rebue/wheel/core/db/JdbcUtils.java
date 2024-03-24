@@ -67,14 +67,17 @@ public class JdbcUtils {
                     table.getUniques().add(columnName);
                 }
                 // 获取外键
-                ResultSet importedKeyResultSet = metaData.getImportedKeys(null, null, tableName);
-                while (importedKeyResultSet.next()) {
-                    ForeignKeyMeta importKey = new ForeignKeyMeta();
-                    importKey.setFkTableName(importedKeyResultSet.getString("FKTABLE_NAME"));
-                    importKey.setFkFiledName(importedKeyResultSet.getString("FKCOLUMN_NAME"));
-                    importKey.setPkTableName(importedKeyResultSet.getString("PKTABLE_NAME"));
-                    importKey.setPkFieldName(importedKeyResultSet.getString("PKCOLUMN_NAME"));
-                    table.getImportedKeys().add(importKey);
+                ResultSet foreignKeyResultSet = metaData.getImportedKeys(null, null, tableName);
+                char      c                   = 'a';
+                while (foreignKeyResultSet.next()) {
+                    ForeignKeyMeta foreignKey = new ForeignKeyMeta();
+                    foreignKey.setFkTableName(foreignKeyResultSet.getString("FKTABLE_NAME"));
+                    foreignKey.setFkFiledName(foreignKeyResultSet.getString("FKCOLUMN_NAME"));
+                    foreignKey.setPkTableName(foreignKeyResultSet.getString("PKTABLE_NAME"));
+                    foreignKey.setPkFieldName(foreignKeyResultSet.getString("PKCOLUMN_NAME"));
+                    foreignKey.setFkTableName(String.valueOf(c));
+                    table.getForeignKeys().add(foreignKey);
+                    c++;
                 }
                 // 获取表的列元数据
                 try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
@@ -93,7 +96,7 @@ public class JdbcUtils {
                         field.setRemark(columnResultSet.getString("REMARKS").replaceAll("\\\\n", "\n"));
                         field.setIsForeignKey(false);
                         // 判断是否是外键
-                        for (ForeignKeyMeta importKey : table.getImportedKeys()) {
+                        for (ForeignKeyMeta importKey : table.getForeignKeys()) {
                             if (field.getName().equalsIgnoreCase(importKey.getFkFiledName())) {
                                 String pkTableName = importKey.getPkTableName();
                                 String pkFieldName = importKey.getPkFieldName();

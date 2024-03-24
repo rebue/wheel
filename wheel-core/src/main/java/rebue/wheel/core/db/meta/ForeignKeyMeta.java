@@ -18,6 +18,10 @@ public class ForeignKeyMeta {
      */
     private String fkTableName;
     /**
+     * 外键表别名
+     */
+    private String fkTableAlias;
+    /**
      * 外键字段名
      */
     private String fkFiledName;
