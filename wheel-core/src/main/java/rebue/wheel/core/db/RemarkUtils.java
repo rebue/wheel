@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RemarkUtils {
+
     /**
      * 获取备注列表
      *
-     * @param remark 数据库的备注
+     * @param remark 备注
      * @return 备注列表
      */
     public static List<String> getRemarks(String remark) {

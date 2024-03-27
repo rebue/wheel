@@ -60,6 +60,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mybatis.version>3.5.15</mybatis.version>
+        <bean-searcher.version>4.2.7</bean-searcher.version>
         <drools.version>9.44.0.Final</drools.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
@@ -469,8 +470,13 @@
 
             <dependency>
                 <groupId>cn.zhxu</groupId>
+                <artifactId>bean-searcher</artifactId>
+                <version>${bean-searcher.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.zhxu</groupId>
                 <artifactId>bean-searcher-boot-starter</artifactId>
-                <version>4.2.7</version>
+                <version>${bean-searcher.version}</version>
             </dependency>
 
             <dependency>

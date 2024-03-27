@@ -68,16 +68,15 @@ public class JdbcUtils {
                 }
                 // 获取外键
                 ResultSet foreignKeyResultSet = metaData.getImportedKeys(null, null, tableName);
-                char      c                   = 'a';
+                char      c                   = 'a';    // 数据库别名(主键表别名为a，外键表按字母表顺序b、c、d......)
                 while (foreignKeyResultSet.next()) {
                     ForeignKeyMeta foreignKey = new ForeignKeyMeta();
                     foreignKey.setFkTableName(foreignKeyResultSet.getString("FKTABLE_NAME"));
-                    foreignKey.setFkFiledName(foreignKeyResultSet.getString("FKCOLUMN_NAME"));
+                    foreignKey.setFkFieldName(foreignKeyResultSet.getString("FKCOLUMN_NAME"));
                     foreignKey.setPkTableName(foreignKeyResultSet.getString("PKTABLE_NAME"));
                     foreignKey.setPkFieldName(foreignKeyResultSet.getString("PKCOLUMN_NAME"));
-                    foreignKey.setFkTableName(String.valueOf(c));
+                    foreignKey.setPkTableAlias(String.valueOf(++c));
                     table.getForeignKeys().add(foreignKey);
-                    c++;
                 }
                 // 获取表的列元数据
                 try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
@@ -96,10 +95,10 @@ public class JdbcUtils {
                         field.setRemark(columnResultSet.getString("REMARKS").replaceAll("\\\\n", "\n"));
                         field.setIsForeignKey(false);
                         // 判断是否是外键
-                        for (ForeignKeyMeta importKey : table.getForeignKeys()) {
-                            if (field.getName().equalsIgnoreCase(importKey.getFkFiledName())) {
-                                String pkTableName = importKey.getPkTableName();
-                                String pkFieldName = importKey.getPkFieldName();
+                        for (ForeignKeyMeta foreignKey : table.getForeignKeys()) {
+                            if (field.getName().equalsIgnoreCase(foreignKey.getFkFieldName())) {
+                                String pkTableName = foreignKey.getPkTableName();
+                                String pkFieldName = foreignKey.getPkFieldName();
                                 field.setIsForeignKey(true);
                                 field.setReferencedTableName(pkTableName);
                                 field.setReferencedTableClassName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, pkTableName));
@@ -181,16 +180,21 @@ public class JdbcUtils {
                     .title(RemarkUtils.getTitle(table.getRemark()))
                     .table(table)
                     .build();
+            // 计算实例简名(不带项目前缀)
+            String tableNameWithoutPrefix = table.getName();
+            int    beginIndex             = tableNameWithoutPrefix.indexOf("_") + 1;
+            pojo.setInstanceSimpleName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableNameWithoutPrefix.substring(beginIndex)));
             // 计算小写连字号名(不带项目前缀)
-            int beginIndex = pojo.getLowerHyphenName().indexOf("-") + 1;
+            beginIndex = pojo.getLowerHyphenName().indexOf("-") + 1;
             pojo.setLowerHyphenNameWithoutPrefix(pojo.getLowerHyphenName().substring(beginIndex));
 
             for (FieldMeta field : table.getFields()) {
                 PropertyMeta property = PropertyMeta.builder()
                         .name(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, field.getName()))
+                        .alias(pojo.getInstanceSimpleName() + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, field.getName()))
                         .remark(field.getRemark())
                         .remarks(RemarkUtils.getRemarks(field.getRemark()))
-                        .title(RemarkUtils.getTitle(field.getRemark()))
+                        .title(pojo.getTitle() + RemarkUtils.getTitle(field.getRemark()))
                         .field(field)
                         .build();
                 // 根据属性的字段元数据设置属性类型
@@ -229,7 +233,10 @@ public class JdbcUtils {
                 } else {
                     clazz = Short.class;
                     jsType = "number";
-                    isKeyWord = true;
+                    // 如果不是字典类字段，加入keyword
+                    if (!property.getField().getName().endsWith("_DIC")) {
+                        isKeyWord = true;
+                    }
                 }
             }
             case SMALLINT -> {
@@ -243,13 +250,17 @@ public class JdbcUtils {
                 isKeyWord = true;
             }
             case BIGINT -> {
+                // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
                 clazz = Long.class;
                 jsType = "number";
             }
             case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
                 clazz = BigDecimal.class;
                 jsType = "number";
-                isKeyWord = true;
+                // 如果不是UUID字段，则加入keyword(判断精度为32的字符串为UUID字段)
+                if (property.getField().getPrecision() != 32) {
+                    isKeyWord = true;
+                }
             }
             case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> {
                 clazz = String.class;

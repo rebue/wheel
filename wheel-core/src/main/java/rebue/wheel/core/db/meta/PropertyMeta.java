@@ -20,6 +20,10 @@ public class PropertyMeta {
      */
     private String       name;
     /**
+     * 属性别名
+     */
+    private String       alias;
+    /**
      * 标题
      */
     private String       title;

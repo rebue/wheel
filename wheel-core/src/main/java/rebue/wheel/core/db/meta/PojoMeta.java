@@ -29,6 +29,10 @@ public class PojoMeta {
      */
     private String             instanceName;
     /**
+     * 实例简名(不带项目前缀)
+     */
+    private String             instanceSimpleName;
+    /**
      * 小写连字号名
      */
     private String             lowerHyphenName;
