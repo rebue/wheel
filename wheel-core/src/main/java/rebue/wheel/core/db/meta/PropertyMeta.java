@@ -44,6 +44,11 @@ public class PropertyMeta {
      */
     private Boolean      isKeyWord;
     /**
+     * 是否密钥
+     */
+    @Builder.Default
+    private Boolean      isKey = false;
+    /**
      * 属性注释
      */
     private String       remark;

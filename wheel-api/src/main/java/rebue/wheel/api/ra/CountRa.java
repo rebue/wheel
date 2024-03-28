@@ -2,10 +2,9 @@ package rebue.wheel.api.ra;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
 
@@ -15,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor // 不知道@Data中默认包含的@RequiredArgsConstructor为何没起效
+@AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class CountRa implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,7 +22,6 @@ public class CountRa implements Serializable {
     /**
      * 返回数量
      */
-    @NonNull
     private Long count;
 
 }

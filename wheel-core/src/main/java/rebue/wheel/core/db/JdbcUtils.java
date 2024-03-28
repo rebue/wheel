@@ -197,8 +197,8 @@ public class JdbcUtils {
                         .title(pojo.getTitle() + RemarkUtils.getTitle(field.getRemark()))
                         .field(field)
                         .build();
-                // 根据属性的字段元数据设置属性类型
-                setPropertyTypeByFieldMeta(property);
+                // 根据属性的字段元数据设置属性
+                setPropertyByFieldMeta(property);
                 // 添加到pojo的属性列表中
                 pojo.getProperties().add(property);
                 // 是否添加到pojo的ID列表中
@@ -212,11 +212,11 @@ public class JdbcUtils {
     }
 
     /**
-     * 根据属性的字段元数据设置属性类型
+     * 根据属性的字段元数据设置属性
      *
      * @param property 属性元数据
      */
-    private static void setPropertyTypeByFieldMeta(PropertyMeta property) {
+    private static void setPropertyByFieldMeta(PropertyMeta property) {
         Class<?> clazz;
         String   jsType;
         boolean  isKeyWord = false;
@@ -280,6 +280,12 @@ public class JdbcUtils {
                 jsType = "string";
             }
             default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
+        }
+        if (property.getRemark().contains("@密钥")) {
+            property.setIsKey(true);
+        }
+        if (property.getIsKey() || property.getRemark().contains("@非关键字")) {
+            isKeyWord = false;
         }
         property.setClassName(clazz.getName());
         property.setClassSimpleName(clazz.getSimpleName());
