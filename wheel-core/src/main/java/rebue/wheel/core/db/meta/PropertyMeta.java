@@ -46,8 +46,7 @@ public class PropertyMeta {
     /**
      * 是否密钥
      */
-    @Builder.Default
-    private Boolean      isKey = false;
+    private Boolean      isKey;
     /**
      * 属性注释
      */

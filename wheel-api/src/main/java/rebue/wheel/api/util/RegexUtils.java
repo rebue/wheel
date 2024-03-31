@@ -1,10 +1,35 @@
 package rebue.wheel.api.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static rebue.wheel.api.constant.RegexConstant.*;
 
 public class RegexUtils {
+    /**
+     * 列出分组信息
+     *
+     * @param pattern 正则模式
+     * @param text    要查找的文本
+     * @return 分组列表(如果没有匹配 ， 返回null)
+     */
+    public static List<String> listGroup(Pattern pattern, String text) {
+        List<String> group      = new ArrayList<>();
+        Matcher      matcher    = pattern.matcher(text);
+        int          groupCount = matcher.groupCount();
+        matcher.find();
+        try {
+            for (int i = 1; i <= groupCount; i++) {
+                group.add(matcher.group(i));
+            }
+        } catch (IllegalStateException e) {
+            return null;
+        }
+        return group;
+    }
+
     /**
      * 获取文本的首行
      *

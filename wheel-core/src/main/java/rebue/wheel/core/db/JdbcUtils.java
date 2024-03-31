@@ -3,6 +3,7 @@ package rebue.wheel.core.db;
 import com.google.common.base.CaseFormat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.util.RegexUtils;
 import rebue.wheel.core.db.meta.*;
 
 import java.math.BigDecimal;
@@ -10,9 +11,8 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import static java.sql.Types.*;
 
@@ -281,9 +281,9 @@ public class JdbcUtils {
             }
             default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
-        if (property.getRemark().contains("@密钥")) {
-            property.setIsKey(true);
-        }
+        // 设置是否密钥
+        property.setIsKey(property.getRemark().contains("@密钥"));
+        // 是密钥或包含 @非关键字 注释的属性不是关键字
         if (property.getIsKey() || property.getRemark().contains("@非关键字")) {
             isKeyWord = false;
         }
@@ -291,5 +291,34 @@ public class JdbcUtils {
         property.setClassSimpleName(clazz.getSimpleName());
         property.setJsType(jsType);
         property.setIsKeyWord(isKeyWord);
+    }
+
+    private static Pattern DIC_REGEX = Pattern.compile("(\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
+
+    public static Set<DicMeta> getDicMetasFromPojoMetas(List<PojoMeta> pojoMetas) {
+        Set<DicMeta> dicMetas = new LinkedHashSet<>();
+        for (PojoMeta pojoMeta : pojoMetas) {
+            for (PropertyMeta property : pojoMeta.getProperties()) {
+                if (property.getName().endsWith("Dic")) {
+                    DicMeta dicMeta = DicMeta.builder()
+                            .name(property.getName())
+                            .className(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, property.getName()))
+                            .remarks(property.getRemarks())
+                            .build();
+                    for (String remark : property.getRemarks()) {
+                        List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, remark);
+                        if (dicGroup != null) {
+                            dicMeta.getItems().add(DicItemMeta.of(
+                                    Integer.valueOf(dicGroup.get(0)),
+                                    dicGroup.get(1),
+                                    dicGroup.get(2)
+                            ));
+                        }
+                    }
+                    dicMetas.add(dicMeta);
+                }
+            }
+        }
+        return dicMetas;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 public class PojoMeta {
     /**
-     * 类名
+     * 类名(其实是类的简名，不带包，因为从数据库中无法知道应该是哪个包)
      */
     private String             className;
     /**
