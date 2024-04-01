@@ -20,8 +20,7 @@ public class JavaParserUtils {
     /**
      * 移除没有用的import，并返回优化处理后的代码
      *
-     * @param sourceCode 源代码内容
-     * @return 优化处理后的代码内容
+     * @param compilationUnit 编译单元
      */
     public static void removeUnusedImports(final CompilationUnit compilationUnit) {
         // 先清空imports，避免查询节点的时候查到就不能判断是否使用过了
