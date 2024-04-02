@@ -252,7 +252,7 @@ public class JdbcUtils {
             case BIGINT -> {
                 // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
                 clazz = Long.class;
-                jsType = "number";
+                jsType = "string";
             }
             case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
                 clazz = BigDecimal.class;
