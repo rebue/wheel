@@ -792,8 +792,8 @@
                 <!-- smart-doc -->
                 <plugin>
                     <groupId>com.ly.smart-doc</groupId>
-                    <artifactId>smart-doc</artifactId>
-                    <version>3.0.2</version>
+                    <artifactId>smart-doc-maven-plugin</artifactId>
+                    <version>3.0.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
