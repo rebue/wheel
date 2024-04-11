@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.0.19</version>
+    <version>3.1.20</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -180,12 +180,12 @@
             <dependency>
                 <groupId>org.eclipse.jdt</groupId>
                 <artifactId>org.eclipse.jdt.core</artifactId>
-                <version>3.36.0</version>
+                <version>3.37.0</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jdt</groupId>
                 <artifactId>org.eclipse.jdt.ui</artifactId>
-                <version>3.31.0</version>
+                <version>3.32.0</version>
             </dependency>
 
             <!-- 解析Json格式 -->
@@ -516,6 +516,12 @@
                 <version>21.10.0.0</version>
             </dependency>
 
+            <!-- postgresql -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.7.3</version>
+            </dependency>
             <!-- 连接postgre需要使用 -->
             <dependency>
                 <groupId>com.ongres.scram</groupId>
@@ -526,6 +532,13 @@
                 <groupId>com.ongres.scram</groupId>
                 <artifactId>client</artifactId>
                 <version>${scram.version}</version>
+            </dependency>
+
+            <!-- postgis -->
+            <dependency>
+                <groupId>net.postgis</groupId>
+                <artifactId>postgis-jdbc</artifactId>
+                <version>2023.1.0</version>
             </dependency>
 
             <dependency>

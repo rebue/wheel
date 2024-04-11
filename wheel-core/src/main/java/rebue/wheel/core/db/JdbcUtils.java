@@ -3,6 +3,9 @@ package rebue.wheel.core.db;
 import com.google.common.base.CaseFormat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import net.postgis.jdbc.geometry.LineString;
+import net.postgis.jdbc.geometry.Point;
+import net.postgis.jdbc.geometry.Polygon;
 import rebue.wheel.api.util.RegexUtils;
 import rebue.wheel.core.db.meta.*;
 
@@ -217,10 +220,11 @@ public class JdbcUtils {
      * @param property 属性元数据
      */
     private static void setPropertyByFieldMeta(PropertyMeta property) {
-        Class<?> clazz;
-        String   jsType;
-        boolean  isKeyWord = false;
-        Integer  fieldType = property.getField().getType();
+        Class<?>     clazz;
+        String       jsType;
+        boolean      isKeyWord = false;
+        Integer      fieldType = property.getField().getType();
+        final String fieldName = property.getField().getName().toLowerCase();
         switch (fieldType) {
             case BIT, BOOLEAN -> {
                 clazz = Boolean.class;
@@ -234,7 +238,7 @@ public class JdbcUtils {
                     clazz = Short.class;
                     jsType = "number";
                     // 如果不是字典类字段，加入keyword
-                    if (!property.getField().getName().endsWith("_DIC")) {
+                    if (!fieldName.endsWith("_dic")) {
                         isKeyWord = true;
                     }
                 }
@@ -278,6 +282,20 @@ public class JdbcUtils {
             case TIMESTAMP -> {
                 clazz = LocalDateTime.class;
                 jsType = "string";
+            }
+            case OTHER -> {
+                if (fieldName.endsWith("point_coord")) {
+                    clazz = Point.class;
+                    jsType = "string";
+                } else if (fieldName.endsWith("line_coord")) {
+                    clazz = LineString.class;
+                    jsType = "string";
+                } else if (fieldName.endsWith("polygon_coord")) {
+                    clazz = Polygon.class;
+                    jsType = "string";
+                } else {
+                    throw new IllegalArgumentException("not support sql type: " + fieldType);
+                }
             }
             default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
