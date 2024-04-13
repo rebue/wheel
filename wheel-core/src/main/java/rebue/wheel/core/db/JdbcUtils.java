@@ -235,7 +235,7 @@ public class JdbcUtils {
                     clazz = Boolean.class;
                     jsType = "boolean";
                 } else {
-                    clazz = Short.class;
+                    clazz = Byte.class;
                     jsType = "number";
                     // 如果不是字典类字段，加入keyword
                     if (!fieldName.endsWith("_dic")) {
@@ -284,13 +284,13 @@ public class JdbcUtils {
                 jsType = "string";
             }
             case OTHER -> {
-                if (fieldName.endsWith("point_coord")) {
+                if (fieldName.endsWith("point_coord") || fieldName.endsWith("point_location")) {
                     clazz = Point.class;
                     jsType = "string";
-                } else if (fieldName.endsWith("line_coord")) {
+                } else if (fieldName.endsWith("line_coord") || fieldName.endsWith("line_location")) {
                     clazz = LineString.class;
                     jsType = "string";
-                } else if (fieldName.endsWith("polygon_coord")) {
+                } else if (fieldName.endsWith("polygon_coord") || fieldName.endsWith("polygon_location")) {
                     clazz = Polygon.class;
                     jsType = "string";
                 } else {
