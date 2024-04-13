@@ -246,7 +246,10 @@ public class JdbcUtils {
             case SMALLINT -> {
                 clazz = Short.class;
                 jsType = "number";
-                isKeyWord = true;
+                // 如果不是字典类字段，加入keyword
+                if (!fieldName.endsWith("_dic")) {
+                    isKeyWord = true;
+                }
             }
             case INTEGER -> {
                 clazz = Integer.class;
