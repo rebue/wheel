@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.2.22</version>
+    <version>3.2.23</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
