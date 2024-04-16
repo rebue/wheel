@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.2.23</version>
+        <version>3.3.24</version>
     </parent>
     <artifactId>wheel-core</artifactId>
 
