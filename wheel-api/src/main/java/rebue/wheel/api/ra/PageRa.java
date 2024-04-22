@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Builder
 @JsonInclude(Include.NON_NULL)
 public class PageRa<T> implements Serializable {

@@ -107,6 +107,23 @@ public class FileUtils {
     }
 
     /**
+     * 去掉文件名后缀
+     *
+     * @param fileName 文件名
+     * @return 去掉文件名后缀的字符串
+     */
+    public static String removeExtension(String fileName) {
+        if (fileName == null) {
+            return null;
+        }
+        int extensionIndex = fileName.lastIndexOf(".");
+        if (extensionIndex == -1) {
+            return fileName; // 没有找到文件后缀
+        }
+        return fileName.substring(0, extensionIndex);
+    }
+
+    /**
      * 读取文件内容到字符串
      *
      * @param file 文件

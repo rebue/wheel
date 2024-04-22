@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @JsonInclude(Include.NON_NULL)
 public class IntegerRa implements Serializable {
     private static final long serialVersionUID = 1L;

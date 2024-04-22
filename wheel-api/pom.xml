@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.3.26</version>
+        <version>3.4.27</version>
     </parent>
     <artifactId>wheel-api</artifactId>
     <description>公共的API</description>
