@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializerBase;
 
 public class LongToStringSerializer extends ToStringSerializerBase {
+    private static final long              serialVersionUID = 1L;
+
     /**
      * Singleton instance to use.
      */
-    public final static ToStringSerializer instance = new ToStringSerializer();
+    public final static ToStringSerializer instance         = new ToStringSerializer();
 
     /**
      * <p>

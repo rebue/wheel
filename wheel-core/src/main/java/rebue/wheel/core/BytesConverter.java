@@ -3,7 +3,7 @@ package rebue.wheel.core;
 import org.apache.commons.lang3.StringUtils;
 
 public class BytesConverter {
-    private static final String[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+    private static final String[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
     /**
      * long类型的字节大小转换为带单位的字符串
@@ -31,11 +31,11 @@ public class BytesConverter {
             String lastTwoBytes = StringUtils.right(size, 2);
             if (lastTwoBytes.equalsIgnoreCase(unit)) {
                 return Long.parseLong(size.substring(0, size.length() - 2))
-                        * new Double(Math.pow(1024, i)).longValue();
+                        * Double.valueOf(Math.pow(1024, i)).longValue();
             }
             if (StringUtils.right(lastTwoBytes, 1).equalsIgnoreCase(unit.substring(0, 1))) {
                 return Long.parseLong(size.substring(0, size.length() - 1))
-                        * new Double(Math.pow(1024, i)).longValue();
+                        * Double.valueOf(Math.pow(1024, i)).longValue();
             }
         }
         if (size.endsWith("B") || size.endsWith("b")) {

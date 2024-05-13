@@ -1,30 +1,5 @@
 package rebue.wheel.core.pdf;
 
-import com.itextpdf.barcodes.BarcodeQRCode;
-import com.itextpdf.barcodes.qrcode.EncodeHintType;
-import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.*;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
-import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.signatures.*;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,6 +8,51 @@ import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
+
+import javax.imageio.ImageIO;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
+
+import com.itextpdf.barcodes.BarcodeQRCode;
+import com.itextpdf.barcodes.qrcode.EncodeHintType;
+import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.EncryptionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.signatures.BouncyCastleDigest;
+import com.itextpdf.signatures.IExternalDigest;
+import com.itextpdf.signatures.PdfSignatureAppearance;
+import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
+
+import lombok.NonNull;
+import lombok.SneakyThrows;
 
 public class PdfUtils {
 
@@ -76,7 +96,6 @@ public class PdfUtils {
      * @return PDF文档
      */
     @SneakyThrows
-    @SuppressWarnings("unused")
     public static PdfDocument createPdfDoc(String srcPath, OutputStream outputStream) {
         return createPdfDoc(srcPath, outputStream, false, null);
     }
@@ -92,7 +111,7 @@ public class PdfUtils {
      */
     @SneakyThrows
     public static PdfDocument createPdfDoc(String srcPath, OutputStream outputStream,
-                                           boolean isReadOnly, byte[] ownerPassword) {
+            boolean isReadOnly, byte[] ownerPassword) {
         PdfWriter writer;
         if (isReadOnly) {
             writer = new PdfWriter(outputStream, createReadOnlyWriterProperties(ownerPassword));
@@ -121,47 +140,53 @@ public class PdfUtils {
     public static PdfAcroForm fillForm(PdfDocument pdfDoc, Map<String, ?> fields) {
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
 
-        // Being set as true, this parameter is responsible to generate an appearance Stream
-        // while flattening for all form fields that don't have one. Generating appearances will
-        // slow down form flattening, but otherwise Acrobat might render the pdf on its own rules.
+        // Being set as true, this parameter is responsible to generate an appearance
+        // Stream
+        // while flattening for all form fields that don't have one. Generating
+        // appearances will
+        // slow down form flattening, but otherwise Acrobat might render the pdf on its
+        // own rules.
         pdfAcroForm.setGenerateAppearance(true);
 
         for (Map.Entry<String, ?> field : fields.entrySet()) {
             PdfFormField pdfFormField = pdfAcroForm.getField(field.getKey());
-            if (pdfFormField == null) continue;
+            if (pdfFormField == null)
+                continue;
             if (field.getValue() instanceof PdfField) {
                 PdfField pdfField = (PdfField) field.getValue();
                 switch (pdfField.getFieldType()) {
-                    case TEXT:
-                        String text = pdfField.getValue().toString();
-                        if (StringUtils.isBlank(text)) continue;
-                        // 计算是否要折行
-                        float fontWidth = pdfField.getFont().getWidth(text.charAt(0), pdfField.getFontSize());
-                        PdfArray fieldRect = pdfFormField.getWidgets().get(0).getRectangle();
-                        float fieldWidth = ((PdfNumber) fieldRect.get(2)).floatValue()
-                                - ((PdfNumber) fieldRect.get(0)).floatValue();
-                        int count = (int) (fieldWidth / fontWidth);
-                        // 如果需要折行
-                        if (count < text.length()) {
-                            ((PdfTextFormField) pdfFormField).setMultiline(true);
-                            final StringJoiner sj         = new StringJoiner("\n");
-                            int                beginIndex = 0;
-                            int                endIndex   = count;
-                            while (endIndex < text.length()) {
-                                sj.add(text.substring(beginIndex, endIndex));
-                                beginIndex = endIndex;
-                                endIndex += count;
-                            }
+                case TEXT:
+                    String text = pdfField.getValue().toString();
+                    if (StringUtils.isBlank(text))
+                        continue;
+                    // 计算是否要折行
+                    float fontWidth = pdfField.getFont().getWidth(text.charAt(0), pdfField.getFontSize());
+                    PdfArray fieldRect = pdfFormField.getWidgets().get(0).getRectangle();
+                    float fieldWidth = ((PdfNumber) fieldRect.get(2)).floatValue()
+                            - ((PdfNumber) fieldRect.get(0)).floatValue();
+                    int count = (int) (fieldWidth / fontWidth);
+                    // 如果需要折行
+                    if (count < text.length()) {
+                        ((PdfTextFormField) pdfFormField).setMultiline(true);
+                        final StringJoiner sj         = new StringJoiner("\n");
+                        int                beginIndex = 0;
+                        int                endIndex   = count;
+                        while (endIndex < text.length()) {
+                            sj.add(text.substring(beginIndex, endIndex));
+                            beginIndex  = endIndex;
+                            endIndex   += count;
                         }
-                        pdfFormField.setValue(text, pdfField.getFont(), pdfField.getFontSize());
-                        break;
-                    case QRCODE:
-                        String qrCodeContent = pdfField.getValue().toString();
-                        if (StringUtils.isBlank(qrCodeContent)) continue;
-                        showQrcode(pdfDoc, pdfAcroForm, field.getKey(), qrCodeContent);
-                        break;
-                    default:
-                        throw new RuntimeException("不会运行到这里");
+                    }
+                    pdfFormField.setValue(text, pdfField.getFont(), pdfField.getFontSize());
+                    break;
+                case QRCODE:
+                    String qrCodeContent = pdfField.getValue().toString();
+                    if (StringUtils.isBlank(qrCodeContent))
+                        continue;
+                    showQrcode(pdfDoc, pdfAcroForm, field.getKey(), qrCodeContent);
+                    break;
+                default:
+                    throw new RuntimeException("不会运行到这里");
                 }
             } else {
                 pdfFormField.setValue(field.getValue().toString());
@@ -181,13 +206,13 @@ public class PdfUtils {
     public static void showImage1(PdfAcroForm form, String fieldName, String imagePath) throws IOException {
         PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
         buttonFormField.setImage(imagePath);
-//        PdfFormAnnotation  formAnnotation  = buttonFormField.getFirstFormAnnotation();
-//        formAnnotation.setBackgroundColor(WebColors.getCMYKColor("transparent"));
-//        PdfDictionary pdfObject    = buttonFormField.getPdfObject();
-//        PdfDictionary dictionaryMk = pdfObject.getAsDictionary(PdfName.MK);
-//        PdfObject     pdfObjectBg = dictionaryMk.get(PdfName.BG);
-//        dictionaryMk.entrySet().
-//        new Cell().setBackgroundColor(WebColors.getCMYKColor("transparent"), 0.1f);
+        // PdfFormAnnotation formAnnotation = buttonFormField.getFirstFormAnnotation();
+        // formAnnotation.setBackgroundColor(WebColors.getCMYKColor("transparent"));
+        // PdfDictionary pdfObject = buttonFormField.getPdfObject();
+        // PdfDictionary dictionaryMk = pdfObject.getAsDictionary(PdfName.MK);
+        // PdfObject pdfObjectBg = dictionaryMk.get(PdfName.BG);
+        // dictionaryMk.entrySet().
+        // new Cell().setBackgroundColor(WebColors.getCMYKColor("transparent"), 0.1f);
     }
 
     /**
@@ -198,16 +223,19 @@ public class PdfUtils {
      * @param fieldName 字段名
      * @param imagePath 图片路径
      */
-    public static void showImage2(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
+    public static void showImage2(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath)
+            throws IOException {
         PdfButtonFormField buttonFormField = (PdfButtonFormField) form.getField(fieldName);
         ImageData          imageData       = ImageDataFactory.create(imagePath);
         Image              image           = new Image(imageData, 0, 0);
-//        image.setOpacity(0.1f);
-        PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
-//        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
-        canvas.add(image);
-        buttonFormField.setImageAsForm(pdfFormXObject);
+        // image.setOpacity(0.1f);
+        PdfFormXObject     pdfFormXObject  = new PdfFormXObject(
+                new Rectangle(image.getImageWidth(), image.getImageHeight()));
+        try (Canvas canvas = new Canvas(pdfFormXObject, doc)) {
+            // canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
+            canvas.add(image);
+            buttonFormField.setImageAsForm(pdfFormXObject);
+        }
     }
 
     /**
@@ -218,32 +246,35 @@ public class PdfUtils {
      * @param fieldName 字段名
      * @param imagePath 图片路径
      */
-    public static void showImage3(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath) throws IOException {
+    public static void showImage3(PdfDocument doc, PdfAcroForm form, String fieldName, String imagePath)
+            throws IOException {
         PdfButtonFormField  buttonFormField = (PdfButtonFormField) form.getField(fieldName);
         PdfWidgetAnnotation widget          = buttonFormField.getFirstFormAnnotation().getWidget();
         Rectangle           rectangle       = widget.getRectangle().toRectangle();
         PdfPage             page            = widget.getPage();
-        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(doc, fieldName)
+        PdfButtonFormField  pushButton      = new PushButtonFormFieldBuilder(doc, fieldName)
                 .setWidgetRectangle(rectangle)
                 .setPage(page)
                 .createPushButton();
 
-//        // 设置图片背景透明(设置成功但是不起作用)
-//        PdfDictionary pdfDictionaryMk = new PdfDictionary();
-//        pdfDictionaryMk.put(PdfName.TP, new PdfNumber(1));
-//        pushButton.getPdfObject().put(PdfName.MK, pdfDictionaryMk);
+        // // 设置图片背景透明(设置成功但是不起作用)
+        // PdfDictionary pdfDictionaryMk = new PdfDictionary();
+        // pdfDictionaryMk.put(PdfName.TP, new PdfNumber(1));
+        // pushButton.getPdfObject().put(PdfName.MK, pdfDictionaryMk);
 
-        ImageData imageData = ImageDataFactory.create(imagePath);
-        Image     image     = new Image(imageData, 0, 0);
-//        image.setOpacity(0.1f);
-        PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(image.getImageWidth(), image.getImageHeight()));
-        Canvas         canvas         = new Canvas(pdfFormXObject, doc);
-//        canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
-        canvas.add(image);
-        pushButton.setImageAsForm(pdfFormXObject);
-//        pushButton.setImage(imagePath);
+        ImageData           imageData       = ImageDataFactory.create(imagePath);
+        Image               image           = new Image(imageData, 0, 0);
+        // image.setOpacity(0.1f);
+        PdfFormXObject      pdfFormXObject  = new PdfFormXObject(
+                new Rectangle(image.getImageWidth(), image.getImageHeight()));
+        try (Canvas canvas = new Canvas(pdfFormXObject, doc)) {
+            // canvas.setBackgroundColor(ColorConstants.WHITE, 0.1f);
+            canvas.add(image);
+            pushButton.setImageAsForm(pdfFormXObject);
+            // pushButton.setImage(imagePath);
 
-        form.replaceField(fieldName, pushButton);
+            form.replaceField(fieldName, pushButton);
+        }
     }
 
     /**
@@ -255,9 +286,10 @@ public class PdfUtils {
      * @param bottom    图片底边坐标(当前页面)
      */
     public static void addImage(PdfDocument pdfDoc, ImageData imageData, float left, float bottom) {
-        Image    image = new Image(imageData, left, bottom);
-        Document doc   = new Document(pdfDoc);
-        doc.add(image);
+        Image image = new Image(imageData, left, bottom);
+        try (Document doc = new Document(pdfDoc)) {
+            doc.add(image);
+        }
     }
 
     /**
@@ -282,7 +314,8 @@ public class PdfUtils {
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle,
+            float fillOpacity) {
         PdfPage page = doc.getPage(pageNum);
         if (rectangle == null) {
             rectangle = page.getPageSize();
@@ -306,8 +339,10 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
-        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+    private static void addWaterMask0(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom,
+            float fillOpacity) {
+        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()),
+                fillOpacity);
     }
 
     /**
@@ -320,7 +355,8 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle,
+            float fillOpacity) {
         addWaterMask0(doc, pageNum, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
     }
 
@@ -335,9 +371,11 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
+    private static void addWaterMask0(PdfDocument doc, int pageNum, String imagePath, float left, float bottom,
+            float fillOpacity) {
         ImageData imageData = ImageDataFactory.create(imagePath);
-        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+        addWaterMask0(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()),
+                fillOpacity);
     }
 
     /**
@@ -349,7 +387,8 @@ public class PdfUtils {
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle,
+            float fillOpacity) {
         addWaterMask0(doc, pageNum, imageData, rectangle, fillOpacity);
     }
 
@@ -363,7 +402,8 @@ public class PdfUtils {
      * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
+    public static void addWaterMask1(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom,
+            float fillOpacity) {
         addWaterMask0(doc, pageNum, imageData, left, bottom, fillOpacity);
     }
 
@@ -376,7 +416,8 @@ public class PdfUtils {
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+    public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle,
+            float fillOpacity) {
         addWaterMask0(doc, pageNum, imagePath, rectangle, fillOpacity);
     }
 
@@ -390,7 +431,8 @@ public class PdfUtils {
      * @param bottom      水印的底边坐标
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
+    public static void addWaterMask1(PdfDocument doc, int pageNum, String imagePath, float left, float bottom,
+            float fillOpacity) {
         addWaterMask0(doc, pageNum, imagePath, left, bottom, fillOpacity);
     }
 
@@ -403,14 +445,16 @@ public class PdfUtils {
      * @param rectangle   显示位置和范围
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
-    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle, float fillOpacity) {
+    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, Rectangle rectangle,
+            float fillOpacity) {
         // 监听结束绘制每一个页面的事件，在结束时再绘制图片，可使图片在顶层
         doc.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
             PdfDocumentEvent docEvent   = (PdfDocumentEvent) event;
             PdfDocument      pdfDoc     = docEvent.getDocument();
             PdfPage          curPage    = docEvent.getPage();
             int              curPageNum = pdfDoc.getPageNumber(curPage);
-            if (curPageNum != pageNum) return;
+            if (curPageNum != pageNum)
+                return;
 
             addWaterMask0(doc, pageNum, imageData, rectangle, fillOpacity);
         });
@@ -427,8 +471,10 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom, float fillOpacity) {
-        addWaterMask2(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()), fillOpacity);
+    public static void addWaterMask2(PdfDocument doc, int pageNum, ImageData imageData, float left, float bottom,
+            float fillOpacity) {
+        addWaterMask2(doc, pageNum, imageData, new Rectangle(left, bottom, imageData.getWidth(), imageData.getHeight()),
+                fillOpacity);
     }
 
     /**
@@ -441,7 +487,8 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle, float fillOpacity) {
+    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, Rectangle rectangle,
+            float fillOpacity) {
         addWaterMask2(doc, pageNum, ImageDataFactory.create(imagePath), rectangle, fillOpacity);
     }
 
@@ -456,7 +503,8 @@ public class PdfUtils {
      * @param fillOpacity 填充的透明度(0-1之间，0为完全透明，1为完全不透明)
      */
     @SneakyThrows
-    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, float left, float bottom, float fillOpacity) {
+    public static void addWaterMask2(PdfDocument doc, int pageNum, String imagePath, float left, float bottom,
+            float fillOpacity) {
         addWaterMask2(doc, pageNum, ImageDataFactory.create(imagePath), left, bottom, fillOpacity);
     }
 
@@ -493,8 +541,8 @@ public class PdfUtils {
      * @param imageData           签章的图像
      */
     public static void sign(PdfReader reader, OutputStream outputStream, String reason, String location,
-                            PrivateKeySignature privateKeySignature, Certificate[] chain,
-                            int pageNum, Rectangle rectangle, float fillOpacity, ImageData imageData)
+            PrivateKeySignature privateKeySignature, Certificate[] chain,
+            int pageNum, Rectangle rectangle, float fillOpacity, ImageData imageData)
             throws GeneralSecurityException, IOException {
         PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
         pdfSigner.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED); // 设置鉴定级别为不允许修改
@@ -506,7 +554,8 @@ public class PdfUtils {
         appearance.setPageNumber(pageNum); // 签名放到第几页
         appearance.setPageRect(rectangle);
 
-        // 将图片绘制到图层2(绘制文本的那一层，官方示例文档: https://kb.itextpdf.com/home/it7kb/examples/digital-signing-with-itext/part-iv-appearances#PartIVAppearances-CompletelyCustomAppearancesLayers)
+        // 将图片绘制到图层2(绘制文本的那一层，官方示例文档:
+        // https://kb.itextpdf.com/home/it7kb/examples/digital-signing-with-itext/part-iv-appearances#PartIVAppearances-CompletelyCustomAppearancesLayers)
         PdfFormXObject layer2         = appearance.getLayer2();
         Rectangle      imageRectangle = layer2.getBBox().toRectangle();
         PdfCanvas      canvas         = new PdfCanvas(layer2, pdfSigner.getDocument());
@@ -529,11 +578,11 @@ public class PdfUtils {
      * @param pageNum      页码(从1开始)
      * @param dpi          每英寸的点的数量
      */
-    public static void pdfToPng(PDDocument pdDoc, OutputStream outputStream, int pageNum, float dpi) throws IOException {
+    public static void pdfToPng(PDDocument pdDoc, OutputStream outputStream, int pageNum, float dpi)
+            throws IOException {
         PDFRenderer   pdfRenderer   = new PDFRenderer(pdDoc);
         BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(pageNum - 1, dpi);
         ImageIO.write(bufferedImage, "PNG", outputStream);
     }
-
 
 }

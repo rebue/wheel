@@ -1,14 +1,14 @@
 package rebue.wheel.vertx.util;
 
+import java.util.Map.Entry;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.oracleclient.OracleBuilder;
 import io.vertx.oracleclient.OracleConnectOptions;
-import io.vertx.oracleclient.OraclePool;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import rebue.wheel.vertx.config.OracleConfig;
-
-import java.util.Map.Entry;
 
 public class OracleUtils {
     /**
@@ -24,6 +24,6 @@ public class OracleUtils {
             }
         }
         final PoolOptions poolOptions = oracleConfig.getJsonObject(OracleConfig.POOL_PREFIX).mapTo(PoolOptions.class);
-        return OraclePool.pool(vertx, connectOptions, poolOptions.setShared(true));
+        return OracleBuilder.pool().using(vertx).with(poolOptions).connectingTo(connectOptions).build();
     }
 }

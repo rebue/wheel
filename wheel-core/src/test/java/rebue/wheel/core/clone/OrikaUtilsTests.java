@@ -1,12 +1,14 @@
 package rebue.wheel.core.clone;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-import rebue.wheel.core.OrikaUtils;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.core.OrikaUtils;
+
+@SuppressWarnings("deprecation")
 @Slf4j
 public class OrikaUtilsTests {
 
@@ -22,7 +24,7 @@ public class OrikaUtilsTests {
         pojoEntity.setPrice(BigDecimal.valueOf(11111111.111));
         pojoEntity.setStudentCode("sadfasdfsdaf");
 
-        @SuppressWarnings("deprecation") final Map<String, Object> map = OrikaUtils.mapToMap(pojoEntity);
+        final Map<String, Object> map = OrikaUtils.mapToMap(pojoEntity);
         log.info("map: {}", map);
     }
 

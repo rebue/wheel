@@ -1,15 +1,21 @@
 package rebue.wheel.core;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.StringJoiner;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MapUtils {
@@ -53,6 +59,7 @@ public class MapUtils {
     /**
      * 将map转成Bean对象
      */
+    @SuppressWarnings("deprecation")
     public static Object map2Bean(final Map<String, Object> map, final Class<?> beanClass) {
         if (map == null || map.isEmpty()) {
             return null;
@@ -73,6 +80,7 @@ public class MapUtils {
     /**
      * 将Bean对象转成map
      */
+    @SuppressWarnings("deprecation")
     public static Map<?, ?> bean2Map(final Object bean) throws IllegalArgumentException {
         if (bean == null) {
             return null;
@@ -89,7 +97,8 @@ public class MapUtils {
         // final Map<String, Object> map = new HashMap<>();
         //
         // final BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-        // final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        // final PropertyDescriptor[] propertyDescriptors =
+        // beanInfo.getPropertyDescriptors();
         // for (final PropertyDescriptor property : propertyDescriptors) {
         // final String key = property.getName();
         // if (key.compareToIgnoreCase("class") == 0) {

@@ -1,14 +1,14 @@
 package rebue.wheel.vertx.util;
 
+import java.util.Map.Entry;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
-import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import rebue.wheel.vertx.config.PostgreConfig;
-
-import java.util.Map.Entry;
 
 public class PostgreUtils {
     /**
@@ -24,6 +24,6 @@ public class PostgreUtils {
             }
         }
         final PoolOptions poolOptions = postgreConfig.getJsonObject(PostgreConfig.POOL_PREFIX).mapTo(PoolOptions.class);
-        return PgPool.pool(vertx, connectOptions, poolOptions.setShared(true));
+        return PgBuilder.pool().using(vertx).with(poolOptions).connectingTo(connectOptions).build();
     }
 }

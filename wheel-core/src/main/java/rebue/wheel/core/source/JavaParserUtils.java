@@ -1,18 +1,21 @@
 package rebue.wheel.core.source;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
-import com.github.javaparser.printer.configuration.PrettyPrinterConfiguration;
+import com.github.javaparser.printer.configuration.DefaultConfigurationOption;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import com.github.javaparser.printer.configuration.PrinterConfiguration;
 import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JavaParserUtils {
@@ -28,7 +31,7 @@ public class JavaParserUtils {
         final NodeList<ImportDeclaration> newImports = new NodeList<>();
         compilationUnit.setImports(newImports);
 
-        final Set<String> classNames = new HashSet<>();
+        final Set<String>      classNames  = new HashSet<>();
         // 获取类
         final List<SimpleName> simpleNames = compilationUnit.findAll(SimpleName.class);
         for (final SimpleName simpleName : simpleNames) {
@@ -46,8 +49,7 @@ public class JavaParserUtils {
             }
         }
         log.debug(classNames.toString());
-        OUTLOOP:
-        for (final ImportDeclaration oldImport : oldImports) {
+        OUTLOOP: for (final ImportDeclaration oldImport : oldImports) {
             if (oldImport.isAsterisk()) {
                 log.info("带*号的import，无法判断，直接添加");
                 newImports.add(oldImport);
@@ -93,8 +95,9 @@ public class JavaParserUtils {
      * @return 格式化后的代码
      */
     public static String format(final String sourceCode) {
-        final PrettyPrinterConfiguration prettyPrinterConfiguration = new PrettyPrinterConfiguration();
-        prettyPrinterConfiguration.setOrderImports(true); // 排序imports
+        PrinterConfiguration prettyPrinterConfiguration = new DefaultPrinterConfiguration();
+        prettyPrinterConfiguration
+                .addOption(new DefaultConfigurationOption(DefaultPrinterConfiguration.ConfigOption.ORDER_IMPORTS)); // 排序imports
         return StaticJavaParser.parse(sourceCode).toString(prettyPrinterConfiguration);
     }
 

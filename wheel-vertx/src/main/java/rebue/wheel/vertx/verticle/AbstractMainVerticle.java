@@ -1,5 +1,15 @@
 package rebue.wheel.vertx.verticle;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ServiceLoader;
+import java.util.TimeZone;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -10,11 +20,16 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
 import io.vertx.config.ConfigChange;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
-import io.vertx.core.*;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Verticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonArray;
@@ -28,12 +43,8 @@ import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.Map.Entry;
-
-//@SuppressWarnings("deprecation")
+// @SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation")
 @Slf4j
 public abstract class AbstractMainVerticle extends AbstractVerticle {
 
@@ -53,7 +64,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES   // 忽略没有的字段
                 )
                 .disable(
-                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS      // 按默认的时间格式 yyyy-MM-dd'T'HH:mm:ss.SSS 转换有时会报错
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS      // 按默认的时间格式 yyyy-MM-dd'T'HH:mm:ss.SSS
+                                                                            // 转换有时会报错
                 )
                 .enable(
                         MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES    // 忽略字段和属性的大小写
@@ -69,12 +81,11 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String                      mainId;
 
-    private final List<String> deploymentIds = new LinkedList<>();
+    private final List<String>          deploymentIds = new LinkedList<>();
 
     private MessageConsumer<JsonObject> configChangedConsumer;
-
 
     @Override
     public void start(Promise<Void> startPromise) {
@@ -83,8 +94,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 
-        String classpath                 = FileUtils.getClassesPath(this.getClass());
-        Path   defaultConfigYamlFilePath = Path.of(classpath, "conf", "config.yml");
+        String                 classpath                     = FileUtils.getClassesPath(this.getClass());
+        Path                   defaultConfigYamlFilePath     = Path.of(classpath, "conf", "config.yml");
         if (Files.exists(defaultConfigYamlFilePath)) {
             log.debug("加载conf/config.yml文件的配置");
             ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
@@ -95,7 +106,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             defaultConfigRetrieverOptions.addStore(defaultConfigStoreOptions);
         }
 
-        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx, defaultConfigRetrieverOptions);
+        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx,
+                defaultConfigRetrieverOptions);
         defaultConfigRetriever.getConfig(defaultConfigRes -> {
             if (defaultConfigRes.failed()) {
                 log.warn("Get config failed", defaultConfigRes.cause());
@@ -110,7 +122,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             }
 
             Long scanPeriod = defaultConfigJsonObject.getLong("scanPeriod");
-            if (scanPeriod == null) scanPeriod = 15000L;    // 默认15秒检查一下是否有更新
+            if (scanPeriod == null)
+                scanPeriod = 15000L;    // 默认15秒检查一下是否有更新
             JsonArray stores = defaultConfigJsonObject.getJsonArray("stores");
             if (stores == null) {
                 startWithConfig(startPromise, defaultConfigJsonObject);
@@ -222,7 +235,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                 deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName())
                         .onSuccess(deploymentIds::add));
             } else {
-                deployFutures.add(this.vertx.deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(configJsonObject))
+                deployFutures.add(this.vertx
+                        .deployVerticle("guice:" + entry.getValue().getName(), new DeploymentOptions(configJsonObject))
                         .onSuccess(deploymentIds::add));
             }
         }
@@ -238,15 +252,18 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                     log.info("监听配置改变的消息");
                     final String configChangedEventBusAddress = EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId;
                     log.info("MainVerticle.EVENT_BUS_CONFIG_CHANGED address is " + configChangedEventBusAddress);
-                    this.configChangedConsumer = this.vertx.eventBus().consumer(configChangedEventBusAddress, this::handleConfigChange);
+                    this.configChangedConsumer = this.vertx.eventBus().consumer(configChangedEventBusAddress,
+                            this::handleConfigChange);
 
                     log.info("是否开启 native transport: {}", vertx.isNativeTransportEnabled());
                     log.info("启动完成.");
-                    if (startPromise != null) startPromise.complete();
+                    if (startPromise != null)
+                        startPromise.complete();
                 })
                 .onFailure(err -> {
                     log.error("启动失败.", err);
-                    if (startPromise != null) startPromise.fail(err);
+                    if (startPromise != null)
+                        startPromise.fail(err);
                     this.vertx.close();
                 });
     }

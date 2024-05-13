@@ -1,8 +1,12 @@
 package rebue.wheel.turing;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Security;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.Base64;
+
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
@@ -14,17 +18,12 @@ import org.bouncycastle.jce.spec.ECPrivateKeySpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.util.encoders.Hex;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Security;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.Base64;
+import lombok.Getter;
+import lombok.SneakyThrows;
 
 /**
  * BC库的EC算法密钥工具类
  */
-@Slf4j
 public class BcEcKeyUtils {
     static {
         // 添加BouncyCastle实现
@@ -144,14 +143,14 @@ public class BcEcKeyUtils {
      */
     public static String getPrivateKeyToStr(final KeyPair keyPair, EncodeMode encodeMode) {
         switch (encodeMode) {
-            case HEX:
-                return getPrivateKeyToHexStr(keyPair);
-            case BASE64:
-                return getPrivateKeyToBase64Str(keyPair);
-            case HEX_BASE64:
-                return getPrivateKeyToHexBase64Str(keyPair);
-            case BASE64URL:
-                return getPrivateKeyToBase64UrlStr(keyPair);
+        case HEX:
+            return getPrivateKeyToHexStr(keyPair);
+        case BASE64:
+            return getPrivateKeyToBase64Str(keyPair);
+        case HEX_BASE64:
+            return getPrivateKeyToHexBase64Str(keyPair);
+        case BASE64URL:
+            return getPrivateKeyToBase64UrlStr(keyPair);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -257,7 +256,6 @@ public class BcEcKeyUtils {
         return Base64.getEncoder().encodeToString(getPublicKey(keyPair, compressed));
     }
 
-
     /**
      * 从密钥对中获取公钥，并编码生成字符串
      * 先进行16进制编码，再进行BASE64编码
@@ -265,6 +263,7 @@ public class BcEcKeyUtils {
      * @param keyPair 密钥对
      * @return 编码后的字符串
      */
+    @SuppressWarnings("unused")
     private static String getPublicKeyToHexBaseStr(KeyPair keyPair) {
         return getPublicKeyToHexBaseStr(keyPair, true);
     }
@@ -335,14 +334,14 @@ public class BcEcKeyUtils {
      */
     public static String getPublicKeyToStr(final KeyPair keyPair, EncodeMode encodeMode, boolean compressed) {
         switch (encodeMode) {
-            case HEX:
-                return getPublicKeyToHexStr(keyPair, compressed);
-            case BASE64:
-                return getPublicKeyToBase64Str(keyPair, compressed);
-            case HEX_BASE64:
-                return getPublicKeyToHexBaseStr(keyPair, compressed);
-            case BASE64URL:
-                return getPublicKeyToBase64UrlStr(keyPair, compressed);
+        case HEX:
+            return getPublicKeyToHexStr(keyPair, compressed);
+        case BASE64:
+            return getPublicKeyToBase64Str(keyPair, compressed);
+        case HEX_BASE64:
+            return getPublicKeyToHexBaseStr(keyPair, compressed);
+        case BASE64URL:
+            return getPublicKeyToBase64UrlStr(keyPair, compressed);
         }
         throw new RuntimeException("unsupported encode mode");
     }
@@ -368,7 +367,8 @@ public class BcEcKeyUtils {
         byte[]                publicKey       = AutoDecoder.decode(publicKeyEncode);
         X9ECParameters        x9ECParameters  = GMNamedCurves.getByName(ecAlgorithm.getCode());
         ECParameterSpec       ecParameterSpec = newEcParameterSpec(x9ECParameters);
-        final ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(x9ECParameters.getCurve().decodePoint(publicKey), ecParameterSpec);
+        final ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(x9ECParameters.getCurve().decodePoint(publicKey),
+                ecParameterSpec);
         return new BCECPublicKey("EC", ecPublicKeySpec, BouncyCastleProvider.CONFIGURATION);
     }
 
@@ -379,8 +379,8 @@ public class BcEcKeyUtils {
      * @return 椭圆曲线参数
      */
     private static ECParameterSpec newEcParameterSpec(X9ECParameters x9ECParameters) {
-        return new ECParameterSpec(x9ECParameters.getCurve(), x9ECParameters.getG(), x9ECParameters.getN(), x9ECParameters.getH(), x9ECParameters.getSeed());
+        return new ECParameterSpec(x9ECParameters.getCurve(), x9ECParameters.getG(), x9ECParameters.getN(),
+                x9ECParameters.getH(), x9ECParameters.getSeed());
     }
-
 
 }

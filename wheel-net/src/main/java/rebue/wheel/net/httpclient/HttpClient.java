@@ -1,17 +1,20 @@
 package rebue.wheel.net.httpclient;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.SneakyThrows;
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import lombok.SneakyThrows;
 import rebue.wheel.core.MapUtils;
 import rebue.wheel.core.OrikaUtils;
 import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
 
-import java.io.IOException;
-import java.util.Map;
-
+@SuppressWarnings("deprecation")
 public interface HttpClient {
 
     /**
@@ -70,7 +73,8 @@ public interface HttpClient {
      * @param <T>           要转换对象的泛型
      */
     @SneakyThrows
-    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final TypeReference<T> valueTypeRef) {
+    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams,
+            final TypeReference<T> valueTypeRef) {
         String resp = get(url, requestParams);
         return JacksonUtils.deserialize(resp, valueTypeRef);
     }
@@ -99,7 +103,8 @@ public interface HttpClient {
      * @param encoding      转码
      */
     @SneakyThrows
-    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final Class<T> clazz, final String encoding) {
+    default <T> T getWithJsonResponse(final String url, final Map<String, Object> requestParams, final Class<T> clazz,
+            final String encoding) {
         String resp = get(url, requestParams);
         // 转码
         resp = new String(resp.getBytes(encoding), "UTF-8");
@@ -157,7 +162,8 @@ public interface HttpClient {
      * @param requestParams 请求的参数
      * @return 响应的字符串
      */
-    default Map<String, Object> postByXmlParams(final String url, final Map<String, Object> requestParams) throws IOException, DocumentException {
+    default Map<String, Object> postByXmlParams(final String url, final Map<String, Object> requestParams)
+            throws IOException, DocumentException {
         return postByXmlParams(url, XmlUtils.mapToXml(requestParams));
     }
 

@@ -1,18 +1,16 @@
 package rebue.wheel.turing;
 
-import lombok.extern.slf4j.Slf4j;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 import org.bouncycastle.jcajce.spec.SM2ParameterSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
-@Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SignUtilsTest {
     // 固定值，SM2签名的标识
@@ -24,7 +22,8 @@ public class SignUtilsTest {
      */
     @Test
     public void test01_RSA() {
-        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
+        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五"
+                .getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = KeyUtils.generateKeyPair("RSA", 2048);
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey  publicKey  = keyPair.getPublic();
@@ -34,7 +33,7 @@ public class SignUtilsTest {
         sign[sign.length - 3] = 'a';
         sign[sign.length - 2] = 'b';
         sign[sign.length - 1] = 'c';
-        verified = SignUtils.verifyByRsa(publicKey, data, sign);
+        verified              = SignUtils.verifyByRsa(publicKey, data, sign);
         Assertions.assertFalse(verified);
     }
 
@@ -43,7 +42,8 @@ public class SignUtilsTest {
      */
     @Test
     public void test02_ECDSA() {
-        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
+        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五"
+                .getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = BcEcKeyUtils.generateKeyPair(BcEcKeyUtils.EcAlgorithm.ECDSA);
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey  publicKey  = keyPair.getPublic();
@@ -53,7 +53,7 @@ public class SignUtilsTest {
         sign[sign.length - 3] = 'a';
         sign[sign.length - 2] = 'b';
         sign[sign.length - 1] = 'c';
-        verified = SignUtils.verifyByEcdsa(publicKey, data, sign);
+        verified              = SignUtils.verifyByEcdsa(publicKey, data, sign);
         Assertions.assertFalse(verified);
     }
 
@@ -62,7 +62,8 @@ public class SignUtilsTest {
      */
     @Test
     public void test03_SM2() {
-        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五".getBytes(StandardCharsets.UTF_8);
+        byte[]     data       = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ张三李四王五"
+                .getBytes(StandardCharsets.UTF_8);
         KeyPair    keyPair    = BcEcKeyUtils.generateKeyPair(BcEcKeyUtils.EcAlgorithm.SM2);
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey  publicKey  = keyPair.getPublic();
@@ -72,7 +73,7 @@ public class SignUtilsTest {
         sign[sign.length - 3] = 'a';
         sign[sign.length - 2] = 'b';
         sign[sign.length - 1] = 'c';
-        verified = SignUtils.verifyBySm2(publicKey, data, sign, sm2Params);
+        verified              = SignUtils.verifyBySm2(publicKey, data, sign, sm2Params);
         Assertions.assertFalse(verified);
     }
 }
