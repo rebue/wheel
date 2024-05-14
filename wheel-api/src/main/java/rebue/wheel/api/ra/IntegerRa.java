@@ -21,6 +21,6 @@ public class IntegerRa implements Serializable {
     /**
      * 返回Integer的值
      */
-    private Integer value;
+    private Integer           value;
 
 }

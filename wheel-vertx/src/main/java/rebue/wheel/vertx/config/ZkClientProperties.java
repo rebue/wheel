@@ -8,15 +8,18 @@ public class ZkClientProperties {
     /**
      * 连接字符串
      */
-    private String                connectString       = System.getProperty("curator-default-connect-string", "127.0.0.1:2181");
+    private String                connectString       = System.getProperty("curator-default-connect-string",
+            "127.0.0.1:2181");
     /**
      * 会话超时毫秒数
      */
-    private Integer               sessionTimeoutMs    = Integer.getInteger("curator-default-session-timeout", 60 * 1000);
+    private Integer               sessionTimeoutMs    = Integer.getInteger("curator-default-session-timeout",
+            60 * 1000);
     /**
      * 连接超时毫秒数
      */
-    private Integer               connectionTimeoutMs = Integer.getInteger("curator-default-connection-timeout", 15 * 1000);
+    private Integer               connectionTimeoutMs = Integer.getInteger("curator-default-connection-timeout",
+            15 * 1000);
     /**
      * 重试策略
      */
@@ -24,7 +27,8 @@ public class ZkClientProperties {
 
     /**
      * 重试策略
-     * 计算公式: 当前sleep时间 = baseSleepTimeMs * Math.max(1, random.nextInt(1 &lt;&lt; (retryCount + 1)))
+     * 计算公式: 当前sleep时间 = baseSleepTimeMs * Math.max(1, random.nextInt(1 &lt;&lt;
+     * (retryCount + 1)))
      */
     @Data
     public static class RetryPolicyProperties {
@@ -39,7 +43,8 @@ public class ZkClientProperties {
         /**
          * 最大sleep时间，如果上述的当前sleep计算出来比这个大，那么sleep用这个时间(这里设为为1小时)
          */
-        private Integer maxSleepMs      = Integer.getInteger("curator-default-retry-policy-max-sleep-ms", Integer.MAX_VALUE);
+        private Integer maxSleepMs      = Integer.getInteger("curator-default-retry-policy-max-sleep-ms",
+                Integer.MAX_VALUE);
     }
 
 }

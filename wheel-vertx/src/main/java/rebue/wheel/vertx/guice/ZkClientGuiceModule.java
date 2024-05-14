@@ -23,15 +23,15 @@ public class ZkClientGuiceModule extends AbstractModule {
     CuratorFramework getZkClient(@Named("config") final JsonObject config) {
         log.info("ZkClientGuiceModule.getZkClient");
 
-        final JsonObject zkClientPropertiesJsonObject = config.getJsonObject("zkClient");
+        final JsonObject         zkClientPropertiesJsonObject = config.getJsonObject("zkClient");
 
-        final ZkClientProperties zkClientProperties = zkClientPropertiesJsonObject == null
+        final ZkClientProperties zkClientProperties           = zkClientPropertiesJsonObject == null
                 ? new ZkClientProperties()
                 : zkClientPropertiesJsonObject.mapTo(ZkClientProperties.class);
 
         log.debug("配置zkClient的失败重试策略");
         final ZkClientProperties.RetryPolicyProperties retryPolicyProperties = zkClientProperties.getRetryPolicy();
-        final ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(
+        final ExponentialBackoffRetry                  retryPolicy           = new ExponentialBackoffRetry(
                 retryPolicyProperties.getBaseSleepTimeMs(),
                 retryPolicyProperties.getMaxRetries(),
                 retryPolicyProperties.getMaxSleepMs());

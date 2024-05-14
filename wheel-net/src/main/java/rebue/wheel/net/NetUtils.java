@@ -22,7 +22,7 @@ public class NetUtils {
     /**
      * 指定第一网卡的名称
      */
-    private static String _firstNetworkInterfaceName;
+    private static String       _firstNetworkInterfaceName;
 
     /**
      * 指定第一网卡的名称
@@ -66,11 +66,11 @@ public class NetUtils {
                 final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
                 if (networkInterfaces != null) {
                     while (networkInterfaces.hasMoreElements()) {
-                        final NetworkInterface networkInterface     = networkInterfaces.nextElement();
-                        final String           networkInterfaceName = networkInterface.getName();
+                        final NetworkInterface         networkInterface     = networkInterfaces.nextElement();
+                        final String                   networkInterfaceName = networkInterface.getName();
                         // 获取网卡的所有IP地址
-                        final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                        String                         ip            = null, firstIp = null;
+                        final Enumeration<InetAddress> inetAddresses        = networkInterface.getInetAddresses();
+                        String                         ip                   = null, firstIp = null;
                         if (inetAddresses != null) {
                             while (inetAddresses.hasMoreElements()) {
                                 final InetAddress address = inetAddresses.nextElement();
@@ -118,7 +118,8 @@ public class NetUtils {
                         if (ip == null) {
                             ip = "(none)";
                         }
-                        _log.info("网卡: {} IP: {} MAC: {}", StringUtils.rightPad(networkInterfaceName, 20), StringUtils.rightPad(ip, 16), StringUtils.rightPad(mac, 18));
+                        _log.info("网卡: {} IP: {} MAC: {}", StringUtils.rightPad(networkInterfaceName, 20),
+                                StringUtils.rightPad(ip, 16), StringUtils.rightPad(mac, 18));
                     }
                     if (_ips.isEmpty() || _macs.isEmpty()) {
                         final String msg = "没有找到IP地址或MAC地址";

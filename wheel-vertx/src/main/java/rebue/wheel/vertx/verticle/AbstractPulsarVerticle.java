@@ -16,10 +16,10 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String                  mainId;
 
     @Inject
-    private PulsarClient pulsarClient;
+    private PulsarClient            pulsarClient;
 
     private MessageConsumer<Void>   startConsumer;
     private ConsumerBuilder<String> consumerBuilder;
@@ -82,7 +82,8 @@ public abstract class AbstractPulsarVerticle extends AbstractVerticle {
     @Override
     public void stop() {
         log.info("PulsarVerticle stop");
-        if (this._consumer != null) this._consumer.close();
+        if (this._consumer != null)
+            this._consumer.close();
     }
 
     private void handleStart(final Message<Void> message) {

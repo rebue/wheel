@@ -14,14 +14,14 @@ public class RegexUtilsTests {
      */
     @Test
     public void test01_findFirstLine() {
-        String text = """
+        String text      = """
                 abc
                 def
                 ghi
                 """;
         String firstLine = RegexUtils.findFirstLine(text);
         Assertions.assertEquals("abc", firstLine);
-        text = "abc";
+        text      = "abc";
         firstLine = RegexUtils.findFirstLine(text);
         Assertions.assertEquals("abc", firstLine);
     }

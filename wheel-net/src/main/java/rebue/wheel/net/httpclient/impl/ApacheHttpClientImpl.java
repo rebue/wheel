@@ -70,7 +70,8 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#postByFormParams(java.lang.String, java.util.Map)
+     * @see rebue.wheel.http.impl.HttpClient#postByFormParams(java.lang.String,
+     * java.util.Map)
      */
     @Override
     public String postByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
@@ -92,13 +93,15 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#postByJsonParams(java.lang.String, java.lang.String)
+     * @see rebue.wheel.http.impl.HttpClient#postByJsonParams(java.lang.String,
+     * java.lang.String)
      */
     @Override
     public String postByJsonParams(final String url, final String jsonParams) throws IOException {
         log.info("发送带JSON_BODY的POST请求: {} {}", url, jsonParams);
         try {
-            final String result = Request.Post(url).bodyString(jsonParams, ContentType.APPLICATION_JSON).execute().returnContent().asString();
+            final String result = Request.Post(url).bodyString(jsonParams, ContentType.APPLICATION_JSON).execute()
+                    .returnContent().asString();
             log.info("接收到response的信息: {}", result);
             return result;
         } catch (final IOException e) {
@@ -110,7 +113,8 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#postByJsonParams(java.lang.String, java.lang.Object)
+     * @see rebue.wheel.http.impl.HttpClient#postByJsonParams(java.lang.String,
+     * java.lang.Object)
      */
     @Override
     public String postByJsonParams(final String url, final Object requestParams) throws IOException {
@@ -120,13 +124,16 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#postByXmlParams(java.lang.String, java.lang.String)
+     * @see rebue.wheel.http.impl.HttpClient#postByXmlParams(java.lang.String,
+     * java.lang.String)
      */
     @Override
-    public Map<String, Object> postByXmlParams(final String url, final String xmlParams) throws IOException, DocumentException {
+    public Map<String, Object> postByXmlParams(final String url, final String xmlParams)
+            throws IOException, DocumentException {
         log.info("发送带XML_BODY的POST请求: {} {}", url, xmlParams);
         try {
-            final String result = Request.Post(url).bodyString(xmlParams, ContentType.create("text/xml", Consts.UTF_8)).execute().returnContent().asString();
+            final String result = Request.Post(url).bodyString(xmlParams, ContentType.create("text/xml", Consts.UTF_8))
+                    .execute().returnContent().asString();
             log.info("接收到response的信息: {}", result);
             return XmlUtils.xmlToMap(result);
         } catch (final IOException e) {
@@ -156,7 +163,8 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#putByFormParams(java.lang.String, java.util.Map)
+     * @see rebue.wheel.http.impl.HttpClient#putByFormParams(java.lang.String,
+     * java.util.Map)
      */
     @Override
     public String putByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {
@@ -179,13 +187,15 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#putByJsonParams(java.lang.String, java.lang.String)
+     * @see rebue.wheel.http.impl.HttpClient#putByJsonParams(java.lang.String,
+     * java.lang.String)
      */
     @Override
     public String putByJsonParams(final String url, final String jsonParams) throws IOException {
         log.info("发送带JSON_BODY的PUT请求: {} {}", url, jsonParams);
         try {
-            final String result = Request.Put(url).bodyString(jsonParams, ContentType.APPLICATION_JSON).execute().returnContent().asString();
+            final String result = Request.Put(url).bodyString(jsonParams, ContentType.APPLICATION_JSON).execute()
+                    .returnContent().asString();
             log.info("接收到response的信息: {}", result);
             return result;
         } catch (final IOException e) {
@@ -197,7 +207,8 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#putByJsonParams(java.lang.String, java.lang.Object)
+     * @see rebue.wheel.http.impl.HttpClient#putByJsonParams(java.lang.String,
+     * java.lang.Object)
      */
     @Override
     public String putByJsonParams(final String url, final Object requestParams) throws IOException {
@@ -225,7 +236,8 @@ public class ApacheHttpClientImpl implements HttpClient {
     /*
      * (non-Javadoc)
      *
-     * @see rebue.wheel.http.impl.HttpClient#deleteByFormParams(java.lang.String, java.util.Map)
+     * @see rebue.wheel.http.impl.HttpClient#deleteByFormParams(java.lang.String,
+     * java.util.Map)
      */
     @Override
     public String deleteByFormParams(final String url, final Map<String, Object> requestParams) throws IOException {

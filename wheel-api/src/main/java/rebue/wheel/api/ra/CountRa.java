@@ -22,6 +22,6 @@ public class CountRa implements Serializable {
     /**
      * 返回数量
      */
-    private Long count;
+    private Long              count;
 
 }

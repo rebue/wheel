@@ -19,11 +19,11 @@ public abstract class AbstractXxlJobVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String                mainId;
 
     private MessageConsumer<Void> startConsumer;
 
-    private XxlJobSimpleExecutor xxlJobExecutor = null;
+    private XxlJobSimpleExecutor  xxlJobExecutor = null;
 
     @Override
     public void start(Promise<Void> startPromise) {

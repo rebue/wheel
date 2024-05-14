@@ -37,7 +37,8 @@ public class FileUtils {
      */
     public static String getClassesPath(Class<?> clazz) {
         URL resource = clazz.getResource(File.separator);
-        if (resource == null) throw new RuntimeException("获取类资源为null");
+        if (resource == null)
+            throw new RuntimeException("获取类资源为null");
         String result = resource.getPath();
         // windows系统中取得的路径如/D:/workspace/abc/， 去掉第一个字母'/'
         if (result.charAt(0) == '/' && result.charAt(2) == ':') {
@@ -169,7 +170,8 @@ public class FileUtils {
     public static List<String> readResourceFileToList(String resourceFilePath, Class<?> clazz) throws IOException {
         List<String> list        = new LinkedList<>();
         InputStream  inputStream = clazz.getResourceAsStream(resourceFilePath);
-        if (inputStream == null) throw new RuntimeException("获取类资源为null");
+        if (inputStream == null)
+            throw new RuntimeException("获取类资源为null");
         try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = in.readLine()) != null) {

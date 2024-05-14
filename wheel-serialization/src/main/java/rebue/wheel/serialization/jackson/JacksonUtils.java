@@ -71,7 +71,8 @@ public class JacksonUtils {
      * @param <T>          反序列化的泛型
      * @return 反序列化生成的对象
      */
-    public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef) throws JsonProcessingException {
+    public static <T> T deserialize(final String jsonStr, final TypeReference<T> valueTypeRef)
+            throws JsonProcessingException {
         return _objectMapper.readValue(jsonStr, valueTypeRef);
     }
 

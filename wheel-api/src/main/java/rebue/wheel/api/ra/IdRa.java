@@ -23,6 +23,6 @@ public class IdRa<T> implements Serializable {
     /**
      * 返回系统生成的ID
      */
-    private T id;
+    private T                 id;
 
 }

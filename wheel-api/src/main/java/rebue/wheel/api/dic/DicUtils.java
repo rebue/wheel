@@ -33,7 +33,8 @@ public class DicUtils {
         }
 
         // 如果缓存中没有，则利用反射获取
-        items = Stream.of(dicClass.getEnumConstants()).map(item -> (Dic) item).collect(Collectors.toMap(Dic::getCode, item -> item));
+        items = Stream.of(dicClass.getEnumConstants()).map(item -> (Dic) item)
+                .collect(Collectors.toMap(Dic::getCode, item -> item));
 
         // 放入缓存
         caches.put(dicClass.getName(), items);

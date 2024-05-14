@@ -48,7 +48,8 @@ public class JwtUtilsTests {
         log.info("publicKey.jwk.toJSONString: {}", publicKeyJwk.toJSONString());
         JWSSigner jwsSigner = JwtUtils.toJwsSigner(privateKeyJwk);
 
-        String sign = JwtUtils.sign(jwsSigner, "{\"userId\":\"1000\",\"userName\":\"管理员\",\"deptId\":\"10000\",\"deptName\":\"运维部\"}");
+        String    sign      = JwtUtils.sign(jwsSigner,
+                "{\"userId\":\"1000\",\"userName\":\"管理员\",\"deptId\":\"10000\",\"deptName\":\"运维部\"}");
         log.info("sign: {}", sign);
         String[] signSplit = sign.split("\\.");
         String   header    = new String(Base64.getUrlDecoder().decode(signSplit[0]));
@@ -63,7 +64,7 @@ public class JwtUtilsTests {
         log.info("claims: {}", JwtUtils.getClaims(sign));
         log.info("修改签名");
         signature[7] = 'a';
-        sign = Base64.getUrlEncoder().withoutPadding().encodeToString(header.getBytes())
+        sign         = Base64.getUrlEncoder().withoutPadding().encodeToString(header.getBytes())
                 + "." + Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes())
                 + "." + Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
         log.info("sign: {}", sign);
@@ -117,7 +118,8 @@ class JwtConcurrentTests {
     @RepeatedTest(10000)
     @Execution(ExecutionMode.CONCURRENT)
     void test01() throws ParseException, JOSEException {
-        String sign = JwtUtils.sign(jwsSigner, "{\"userId\":\"1000\",\"userName\":\"管理员\",\"deptId\":\"10000\",\"deptName\":\"运维部\"}");
+        String sign = JwtUtils.sign(jwsSigner,
+                "{\"userId\":\"1000\",\"userName\":\"管理员\",\"deptId\":\"10000\",\"deptName\":\"运维部\"}");
         log.info("sign: {}", sign);
         String[] signSplit = sign.split("\\.");
         String   header    = new String(Base64.getUrlDecoder().decode(signSplit[0]));

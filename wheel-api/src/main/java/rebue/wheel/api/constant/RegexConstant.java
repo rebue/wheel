@@ -26,7 +26,8 @@ public class RegexConstant {
     /**
      * 身份证号
      */
-    public static final Pattern ID_CARD       = Pattern.compile("[1-9]\\d{5}(19|20)\\d{2}((0[1-9])|(1[012]))((0[1-9])|([12]\\d)|(3[01]))\\d{3}[\\dXx]");
+    public static final Pattern ID_CARD       = Pattern
+            .compile("[1-9]\\d{5}(19|20)\\d{2}((0[1-9])|(1[012]))((0[1-9])|([12]\\d)|(3[01]))\\d{3}[\\dXx]");
     /**
      * IP:port地址(IPv4)
      */
@@ -49,7 +50,8 @@ public class RegexConstant {
      * 在Base64编码中，字符集是[A-Z, a-z, 0-9, +, /, =]
      * 如果剩余长度小于4，则使用'='字符填充字符串
      */
-    public static final Pattern BASE64        = Pattern.compile("^([A-Za-z\\d+/]{4})*([A-Za-z\\d+/]{3}=|[A-Za-z\\d+/]{2}==)?$");
+    public static final Pattern BASE64        = Pattern
+            .compile("^([A-Za-z\\d+/]{4})*([A-Za-z\\d+/]{3}=|[A-Za-z\\d+/]{2}==)?$");
     /**
      * Base64Url字符串
      * 在Base64uUrl编码中，字符集是[A-Z, a-z, 0-9, -, _]

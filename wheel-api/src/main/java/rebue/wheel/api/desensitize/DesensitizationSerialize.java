@@ -27,17 +27,18 @@ public class DesensitizationSerialize extends JsonSerializer<String> implements 
     /**
      * @return 匹配的正则表达式
      */
-    private String regex;
+    private String              regex;
 
     /**
      * @return 要替换的表达式
      */
-    private String replacement;
+    private String              replacement;
 
     @Override
     public void serialize(String value, JsonGenerator generator, SerializerProvider provider) throws IOException {
         if (DesensitizeStrategy.CUSTOM == desensitizeStrategy) {
-            if (StringUtils.isBlank(value)) value = "";
+            if (StringUtils.isBlank(value))
+                value = "";
             value = value.trim();
             generator.writeString(value.replaceAll(regex, replacement));
         } else {
@@ -48,16 +49,20 @@ public class DesensitizationSerialize extends JsonSerializer<String> implements 
     /**
      * 从上下文信息中获取注解的参数通过构造传递给序列化器
      *
-     * @param provider     Serializer provider to use for accessing config, other serializers
+     * @param provider     Serializer provider to use for accessing config, other
+     *                     serializers
      * @param beanProperty Method or field that represents the property
      *                     (and is used to access value to serialize).
-     *                     Should be available; but there may be cases where caller cannot provide it and
-     *                     null is passed instead (in which case impls usually pass 'this' serializer as is)
+     *                     Should be available; but there may be cases where caller
+     *                     cannot provide it and
+     *                     null is passed instead (in which case impls usually pass
+     *                     'this' serializer as is)
      * @return JsonSerializer
      * @throws JsonMappingException
      */
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty beanProperty) throws JsonMappingException {
+    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty beanProperty)
+            throws JsonMappingException {
         if (beanProperty == null) {
             return provider.findNullValueSerializer(null);
         }

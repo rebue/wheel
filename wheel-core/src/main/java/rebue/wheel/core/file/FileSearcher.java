@@ -125,7 +125,8 @@ public final class FileSearcher {
     public static void searchFiles(File searchDir, Predicate<File> isMatch, Consumer<File> onMatched) {
         Stream.of(Objects.requireNonNull(searchDir.listFiles())).forEach(file -> {
             // 不匹配则返回
-            if (!isMatch.test(file)) return;
+            if (!isMatch.test(file))
+                return;
             // 是否是目录
             if (file.isDirectory()) {
                 searchFiles(file, isMatch, onMatched);

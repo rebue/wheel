@@ -19,7 +19,6 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
-
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class CaUtilsTest {
@@ -35,7 +34,6 @@ public class CaUtilsTest {
     // 固定值，SM2签名的标识
     private final static byte[]           USER_ID        = "1234567812345678".getBytes(StandardCharsets.UTF_8);
     private final static SM2ParameterSpec sm2Params      = new SM2ParameterSpec(USER_ID);
-
 
     /**
      * 测试用RSA算法生成keypair并存储到密钥库中
@@ -54,7 +52,8 @@ public class CaUtilsTest {
         calendar.setTime(now);
         calendar.add(Calendar.DAY_OF_YEAR, 365);
         Date endDate = calendar.getTime();
-        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-rsa", privateSubject, now, endDate, new File(STORE_PATH), STORE_PASSWORD);
+        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-rsa", privateSubject, now, endDate, new File(STORE_PATH),
+                STORE_PASSWORD);
     }
 
     /**
@@ -74,7 +73,8 @@ public class CaUtilsTest {
         calendar.setTime(now);
         calendar.add(Calendar.DAY_OF_YEAR, 365);
         Date endDate = calendar.getTime();
-        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-ecdsa", privateSubject, now, endDate, new File(STORE_PATH), STORE_PASSWORD);
+        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-ecdsa", privateSubject, now, endDate, new File(STORE_PATH),
+                STORE_PASSWORD);
     }
 
     /**
@@ -94,7 +94,8 @@ public class CaUtilsTest {
         calendar.setTime(now);
         calendar.add(Calendar.DAY_OF_YEAR, 365);
         Date endDate = calendar.getTime();
-        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-sm2", privateSubject, now, endDate, new File(STORE_PATH), STORE_PASSWORD);
+        KeyStoreUtils.putCert(keyPair, signAlgorithm, "test-sm2", privateSubject, now, endDate, new File(STORE_PATH),
+                STORE_PASSWORD);
     }
 
     /**
@@ -108,11 +109,14 @@ public class CaUtilsTest {
     @Test
     @SneakyThrows
     public void test05_generate_csr_rsa() {
-//        String                     signAlgorithm              = "SHA256withRSA";     // 签名算法
-//        X500Name                   subject                    = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
-//        KeyPair                    keyPair                    = KeyStoreUtils.getKeyPair("test-rsa", new File(STORE_PATH), STORE_PASSWORD);
-//        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr(subject, signAlgorithm, keyPair, null);
-        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-rsa", new File(STORE_PATH), STORE_PASSWORD, null);
+        // String signAlgorithm = "SHA256withRSA"; // 签名算法
+        // X500Name subject = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
+        // KeyPair keyPair = KeyStoreUtils.getKeyPair("test-rsa", new File(STORE_PATH),
+        // STORE_PASSWORD);
+        // PKCS10CertificationRequest pkcs10CertificationRequest =
+        // CaUtils.generateCsr(subject, signAlgorithm, keyPair, null);
+        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-rsa", new File(STORE_PATH),
+                STORE_PASSWORD, null);
         log.info("生成CSR to BASE64: {}", Base64.getEncoder().encodeToString(pkcs10CertificationRequest.getEncoded()));
         log.info("生成CSR to PEM: {}", getPemStr(pkcs10CertificationRequest));
     }
@@ -120,11 +124,14 @@ public class CaUtilsTest {
     @Test
     @SneakyThrows
     public void test06_generate_csr_ecdsa() {
-//        String                     signAlgorithm              = "SHA256withECDSA";     // 签名算法
-//        X500Name                   subject                    = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
-//        KeyPair                    keyPair                    = KeyStoreUtils.getKeyPair("test-ecdsa", new File(STORE_PATH), STORE_PASSWORD);
-//        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr(subject, signAlgorithm, keyPair, null);
-        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-ecdsa", new File(STORE_PATH), STORE_PASSWORD, null);
+        // String signAlgorithm = "SHA256withECDSA"; // 签名算法
+        // X500Name subject = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
+        // KeyPair keyPair = KeyStoreUtils.getKeyPair("test-ecdsa", new
+        // File(STORE_PATH), STORE_PASSWORD);
+        // PKCS10CertificationRequest pkcs10CertificationRequest =
+        // CaUtils.generateCsr(subject, signAlgorithm, keyPair, null);
+        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-ecdsa", new File(STORE_PATH),
+                STORE_PASSWORD, null);
         log.info("生成CSR to BASE64: {}", Base64.getEncoder().encodeToString(pkcs10CertificationRequest.getEncoded()));
         log.info("生成CSR to PEM: {}", getPemStr(pkcs10CertificationRequest));
     }
@@ -132,11 +139,14 @@ public class CaUtilsTest {
     @Test
     @SneakyThrows
     public void test07_generate_csr_sm2() {
-//        String                     signAlgorithm              = "SM3withSM2";     // 签名算法
-//        X500Name                   subject                    = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
-//        KeyPair                    keyPair                    = KeyStoreUtils.getKeyPair("test-sm2", new File(STORE_PATH), STORE_PASSWORD);
-//        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr(subject, signAlgorithm, keyPair, sm2Params);
-        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-sm2", new File(STORE_PATH), STORE_PASSWORD, sm2Params);
+        // String signAlgorithm = "SM3withSM2"; // 签名算法
+        // X500Name subject = new X500Name("CN=公用名称,OU=组织部门,O=组织名称,L=城市,ST=省份,C=CN");
+        // KeyPair keyPair = KeyStoreUtils.getKeyPair("test-sm2", new File(STORE_PATH),
+        // STORE_PASSWORD);
+        // PKCS10CertificationRequest pkcs10CertificationRequest =
+        // CaUtils.generateCsr(subject, signAlgorithm, keyPair, sm2Params);
+        PKCS10CertificationRequest pkcs10CertificationRequest = CaUtils.generateCsr("test-sm2", new File(STORE_PATH),
+                STORE_PASSWORD, sm2Params);
         log.info("生成CSR to BASE64: {}", Base64.getEncoder().encodeToString(pkcs10CertificationRequest.getEncoded()));
         log.info("生成CSR to PEM: {}", getPemStr(pkcs10CertificationRequest));
     }
@@ -144,13 +154,12 @@ public class CaUtilsTest {
     @SneakyThrows
     public static String getPemStr(Object obj) {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream);
-             JcaPEMWriter pemWriter = new JcaPEMWriter(outputStreamWriter)) {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream);
+                JcaPEMWriter pemWriter = new JcaPEMWriter(outputStreamWriter)) {
             pemWriter.writeObject(obj);
             pemWriter.flush();
             return byteArrayOutputStream.toString();
         }
     }
-
 
 }

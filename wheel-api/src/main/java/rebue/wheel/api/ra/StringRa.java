@@ -21,6 +21,6 @@ public class StringRa implements Serializable {
     /**
      * 返回String的值
      */
-    private String value;
+    private String            value;
 
 }

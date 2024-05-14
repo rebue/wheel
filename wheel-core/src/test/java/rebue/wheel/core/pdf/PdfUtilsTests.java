@@ -43,29 +43,30 @@ import java.util.Map;
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class PdfUtilsTests {
-    public static final String SRC        = "pdf/测试模板.pdf";
-    public static final String TEMP       = "target/pdf/temp.pdf";
-    public static final String DEST       = "target/pdf/result.pdf";
-    public static final String SIGN1      = "target/pdf/result-signed1.pdf";
-    public static final String SIGN2      = "target/pdf/result-signed2.pdf";
-    public static final String SIGN2_PNG1 = "target/pdf/result-signed-1.png";
-    public static final String SIGN2_PNG2 = "target/pdf/result-signed-2.png";
-    public static final String SIGN2_PNG3 = "target/pdf/result-signed-3.png";
-    public static final String SIGN2_PNG4 = "target/pdf/result-signed-4.png";
-    public static final String FONT1      = "pdf/FreeSans.ttf";
-    public static final String FONT2      = "pdf/AlimamaFangYuanTiVF-Thin.ttf";
-    public static final String FONT3      = "pdf/AlimamaShuHeiTi-Bold.ttf";
+    public static final String      SRC               = "pdf/测试模板.pdf";
+    public static final String      TEMP              = "target/pdf/temp.pdf";
+    public static final String      DEST              = "target/pdf/result.pdf";
+    public static final String      SIGN1             = "target/pdf/result-signed1.pdf";
+    public static final String      SIGN2             = "target/pdf/result-signed2.pdf";
+    public static final String      SIGN2_PNG1        = "target/pdf/result-signed-1.png";
+    public static final String      SIGN2_PNG2        = "target/pdf/result-signed-2.png";
+    public static final String      SIGN2_PNG3        = "target/pdf/result-signed-3.png";
+    public static final String      SIGN2_PNG4        = "target/pdf/result-signed-4.png";
+    public static final String      FONT1             = "pdf/FreeSans.ttf";
+    public static final String      FONT2             = "pdf/AlimamaFangYuanTiVF-Thin.ttf";
+    public static final String      FONT3             = "pdf/AlimamaShuHeiTi-Bold.ttf";
 
-    public static final String SEAL1 = "src/test/resources/pdf/seal1.png";
-    public static final String SEAL2 = "src/test/resources/pdf/seal2.png";
-    public static final String SEAL3 = "src/test/resources/pdf/seal3.png";
+    public static final String      SEAL1             = "src/test/resources/pdf/seal1.png";
+    public static final String      SEAL2             = "src/test/resources/pdf/seal2.png";
+    public static final String      SEAL3             = "src/test/resources/pdf/seal3.png";
 
     /**
      * 用下面命令可以生成密钥库文件
-     * keytool -genkeypair -alias demo -validity 365 -keyalg RSA -keysize 2048 -keystore keystore.jks
+     * keytool -genkeypair -alias demo -validity 365 -keyalg RSA -keysize 2048
+     * -keystore keystore.jks
      */
-    public static final String KEYSTORE = "src/test/resources/pdf/ks.jks";
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final String      KEYSTORE          = "src/test/resources/pdf/ks.jks";
+    public static final char[]      PASSWORD          = "password".toCharArray();
 
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -76,18 +77,19 @@ public class PdfUtilsTests {
         File dstFile = new File(DEST);
         log.debug("mkdirs dstFile: {}", dstFile.getParentFile().mkdirs());
 
-        PdfDocument pdfDoc = PdfUtils.createPdfDoc(SRC, TEMP);
+        PdfDocument         pdfDoc   = PdfUtils.createPdfDoc(SRC, TEMP);
 
-        PdfFont pdfFont1 = PdfFontFactory.createFont(FONT1, PdfEncodings.IDENTITY_H);
-        PdfFont pdfFont2 = PdfFontFactory.createFont(FONT2, PdfEncodings.IDENTITY_H);
-        PdfFont pdfFont3 = PdfFontFactory.createFont(FONT3, PdfEncodings.IDENTITY_H);
+        PdfFont             pdfFont1 = PdfFontFactory.createFont(FONT1, PdfEncodings.IDENTITY_H);
+        PdfFont             pdfFont2 = PdfFontFactory.createFont(FONT2, PdfEncodings.IDENTITY_H);
+        PdfFont             pdfFont3 = PdfFontFactory.createFont(FONT3, PdfEncodings.IDENTITY_H);
 
-        Map<String, Object> fields = new LinkedHashMap<>();
+        Map<String, Object> fields   = new LinkedHashMap<>();
         fields.put("param1", PdfField.builder().value("1234567890一二三四五六七八九十").font(pdfFont1).fontSize(12).build());   // 字体不对，乱码
         fields.put("param2", PdfField.builder().value("2234567890二二三四五六七八九十").font(pdfFont2).fontSize(12).build());   // 字体正确，不乱码
         fields.put("param3", "男");
         fields.put("param4", "1234567890一二三四五六七八九十");
-        fields.put("param5", PdfField.builder().value(LocalDateTime.now().format(dateTimeFormatter)).font(pdfFont3).fontSize(12).build());   // 时间
+        fields.put("param5", PdfField.builder().value(LocalDateTime.now().format(dateTimeFormatter)).font(pdfFont3)
+                .fontSize(12).build());   // 时间
         fields.put("param6", true);
         fields.put("param7", "1234567890一二三四五六七八九十");
         fields.put("param8", "1234567890一二三四五六七八九十");
@@ -103,9 +105,12 @@ public class PdfUtilsTests {
         pdfDoc = PdfUtils.createPdfDoc(TEMP, DEST);
         PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
 
-        // Being set as true, this parameter is responsible to generate an appearance Stream
-        // while flattening for all form fields that don't have one. Generating appearances will
-        // slow down form flattening, but otherwise Acrobat might render the pdf on its own rules.
+        // Being set as true, this parameter is responsible to generate an appearance
+        // Stream
+        // while flattening for all form fields that don't have one. Generating
+        // appearances will
+        // slow down form flattening, but otherwise Acrobat might render the pdf on its
+        // own rules.
         pdfAcroForm.setGenerateAppearance(true);
 
         // 展平表单的所有字段，这样图片才能覆盖在这些字段的上面
@@ -131,17 +136,17 @@ public class PdfUtilsTests {
         PdfUtils.addWaterMask2(pdfDoc, 2, SEAL3, new Rectangle(250, 0, 100, 100), 0.9f);
 
         ImageData imageData = ImageDataFactory.create(SealUtils.draw03(SealText.builder()
-                        .text("中国很行")
-                        .font(new Font("STSong", Font.PLAIN, 36))
-                        .build(),
+                .text("中国很行")
+                .font(new Font("STSong", Font.PLAIN, 36))
+                .build(),
                 30, 20, 8, 0));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 50, 50, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw04(SealText.builder()
-                        .text("中国")
-                        .font(new Font("STSong", Font.PLAIN, 36))
-                        .space(10.0)
-                        .build(),
+                .text("中国")
+                .font(new Font("STSong", Font.PLAIN, 36))
+                .space(10.0)
+                .build(),
                 10, 10, 5, 10));
         PdfUtils.addWaterMask1(pdfDoc, 1, imageData, 300, 50, 0.9f);
 
@@ -149,10 +154,10 @@ public class PdfUtilsTests {
         String captionText    = "电子公章演示";
         String subcaptionText = "演示专用章";
         imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
-                        .text(topText)
-                        .font(new Font("STSong", Font.PLAIN, 36))
-                        .marginTop(5.0)
-                        .build(),
+                .text(topText)
+                .font(new Font("STSong", Font.PLAIN, 36))
+                .marginTop(5.0)
+                .build(),
                 SealText.builder()
                         .text(captionText)
                         .font(new Font("STSong", Font.PLAIN, 24))
@@ -164,16 +169,16 @@ public class PdfUtilsTests {
                         .build(),
                 300, 10, 100,
                 (3.0 / 4 - 1.0 / 6) * 2 * Math.PI, (3.0 / 4 - 1.0 / 6) * 2 * Math.PI));
-//        imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
+        // imageData = ImageDataFactory.create(SealUtils.draw01(title, name, date));
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 0, 500, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw01(SealText.builder()
-                        .text(topText)
-                        .font(new Font("STSong", Font.PLAIN, 36))
-                        .marginTop(5.0)
-                        .scaleX(0.5)
-                        .scaleY(1.2)
-                        .build(),
+                .text(topText)
+                .font(new Font("STSong", Font.PLAIN, 36))
+                .marginTop(5.0)
+                .scaleX(0.5)
+                .scaleY(1.2)
+                .build(),
                 SealText.builder()
                         .text(captionText)
                         .font(new Font("STSong", Font.BOLD, 32))
@@ -195,9 +200,9 @@ public class PdfUtilsTests {
         PdfUtils.addWaterMask1(pdfDoc, 3, imageData, 250, 300, 0.9f);
 
         imageData = ImageDataFactory.create(SealUtils.draw02(SealText.builder()
-                        .text(topText)
-                        .font(new Font("STSong", Font.PLAIN, 20))
-                        .build(),
+                .text(topText)
+                .font(new Font("STSong", Font.PLAIN, 20))
+                .build(),
                 SealText.builder()
                         .text(captionText)
                         .font(new Font("STSong", Font.BOLD, 16))
@@ -231,23 +236,25 @@ public class PdfUtilsTests {
         String              alias               = keyStore.aliases().nextElement();
         PrivateKey          privateKey          = (PrivateKey) keyStore.getKey(alias, PASSWORD);
         Certificate[]       chain               = keyStore.getCertificateChain(alias);
-        PrivateKeySignature privateKeySignature = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256, provider.getName());
+        PrivateKeySignature privateKeySignature = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256,
+                provider.getName());
 
-        String reason   = "reason 1";
-        String location = "location 1";
+        String              reason              = "reason 1";
+        String              location            = "location 1";
         imageData = ImageDataFactory.create(SEAL1);
-        PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location, privateKeySignature, chain,
+        PdfUtils.sign(new PdfReader(DEST), Files.newOutputStream(Paths.get(SIGN1)), reason, location,
+                privateKeySignature, chain,
                 4, new Rectangle(300, 300, imageData.getWidth(), imageData.getHeight()), 0.9f, imageData);
 
-        captionText = "测试演示印";
+        captionText    = "测试演示印";
         subcaptionText = "专用章";
-        reason = "reason 2";
-        location = "location 2";
-        imageData = SealFactory.create01(topText, captionText, subcaptionText, "STSong");
+        reason         = "reason 2";
+        location       = "location 2";
+        imageData      = SealFactory.create01(topText, captionText, subcaptionText, "STSong");
         Path sign2Path = Paths.get(SIGN2);
-        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(sign2Path), reason, location, privateKeySignature, chain,
+        PdfUtils.sign(new PdfReader(SIGN1), Files.newOutputStream(sign2Path), reason, location, privateKeySignature,
+                chain,
                 4, new Rectangle(100, 300, 119, 119), 0.7f, imageData);
-
 
         try (PDDocument pdDocument = Loader.loadPDF(new File(sign2Path.toUri()))) {
             PdfUtils.pdfToPng(pdDocument, Files.newOutputStream(Paths.get(SIGN2_PNG1)), 1, 300);

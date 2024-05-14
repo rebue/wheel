@@ -35,7 +35,8 @@ public class KeyUtils {
      * @throws NoSuchAlgorithmException 算法不支持
      * @throws InvalidKeySpecException  私钥字符串不正确
      */
-    public static PrivateKey getPrivateKeyFromStr(String privateKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PrivateKey getPrivateKeyFromStr(String privateKeyEncode, String algorithm)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory keyFactory;
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
@@ -55,7 +56,8 @@ public class KeyUtils {
      * @throws NoSuchAlgorithmException 算法不支持
      * @throws InvalidKeySpecException  公钥字符串不正确
      */
-    public static PublicKey getPublicKeyFromStr(String publicKeyEncode, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PublicKey getPublicKeyFromStr(String publicKeyEncode, String algorithm)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory keyFactory;
         try {
             keyFactory = KeyFactory.getInstance(algorithm, "BC");
@@ -134,14 +136,14 @@ public class KeyUtils {
      */
     public static String encode(Key key, EncodeMode encodeMode) {
         switch (encodeMode) {
-            case HEX:
-                return encodeHexToStr(key);
-            case BASE64:
-                return encodeBase64ToStr(key);
-            case HEX_BASE64:
-                return encodeHexBase64ToStr(key);
-            case BASE64URL:
-                return encodeBase64UrlToStr(key);
+        case HEX:
+            return encodeHexToStr(key);
+        case BASE64:
+            return encodeBase64ToStr(key);
+        case HEX_BASE64:
+            return encodeHexBase64ToStr(key);
+        case BASE64URL:
+            return encodeBase64UrlToStr(key);
         }
         throw new RuntimeException();   // 代码不会运行到这里
     }

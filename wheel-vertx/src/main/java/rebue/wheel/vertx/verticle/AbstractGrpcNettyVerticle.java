@@ -20,7 +20,7 @@ public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String      mainId;
 
     private VertxServer rpcServer;
 
@@ -61,7 +61,8 @@ public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
     @Override
     public void stop() {
         log.info("GrpcNettyVerticle stop");
-        if (this.rpcServer != null) this.rpcServer.shutdown();
+        if (this.rpcServer != null)
+            this.rpcServer.shutdown();
     }
 
     private void handleStart(final Message<Void> message) {

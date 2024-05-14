@@ -302,12 +302,12 @@ public class AgentUtils {
      */
 
     private static String getMacInWindows(final String ip) {
-        String result;
-        final String[] cmd = {"cmd", "/c", "ping " + ip
+        String         result;
+        final String[] cmd       = { "cmd", "/c", "ping " + ip
         };
-        final String[] another = {"cmd", "/c", "arp -a"
+        final String[] another   = { "cmd", "/c", "arp -a"
         };
-        final String cmdResult = callCmd(cmd, another);
+        final String   cmdResult = callCmd(cmd, another);
         log.info("ping的结果: {}", cmdResult);
         if (StringUtils.isBlank(cmdResult)) {
             return null;
@@ -321,10 +321,10 @@ public class AgentUtils {
      * @return Mac Address
      */
     private static String getMacInLinux(final String ip) {
-        String result;
-        final String[] cmd = {"/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a"
+        String         result;
+        final String[] cmd       = { "/bin/sh", "-c", "ping " + ip + " -c 2 && arp -a"
         };
-        final String cmdResult = callCmd(cmd);
+        final String   cmdResult = callCmd(cmd);
         log.info("ping的结果: {}", cmdResult);
         if (StringUtils.isBlank(cmdResult)) {
             return null;

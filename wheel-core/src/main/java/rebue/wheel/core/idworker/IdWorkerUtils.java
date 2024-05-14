@@ -34,7 +34,7 @@ public class IdWorkerUtils {
         if (key.equals("auto")) {
             nodeIdBits = 5;
         } else if (key.startsWith("auto:")) {
-            key = key.replaceFirst("auto:", "").trim();
+            key        = key.replaceFirst("auto:", "").trim();
             nodeIdBits = Integer.getInteger(key);
         } else {
             throw new RuntimeException("idworker值应该是整数、”auto“或以”auto:“开头的字符串");
@@ -46,10 +46,9 @@ public class IdWorkerUtils {
         final String reduceClassName   = className.replaceAll("SvcImpl", "");
         final String zkNodePath        = "/idworker/" + reducePackageName + "/" + reduceClassName;
 
-        Integer nodeId;
+        Integer      nodeId;
         try {
-            LOOP:
-            while (true) {
+            LOOP: while (true) {
                 log.debug("准备连接zookeeper获取路径全名: zkNodePath-{}", zkNodePath);
                 final String zkNodeFullName;
                 zkNodeFullName = zkClient.create()

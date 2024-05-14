@@ -32,7 +32,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     @Inject
     @Named("mainId")
-    private String mainId;
+    private String     mainId;
 
     protected Injector injector;
 
@@ -46,12 +46,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     public void start(Promise<Void> startPromise) {
         log.info("WebVerticle start deployed");
 
-        WebProperties webProperties = config().mapTo(WebProperties.class);
+        WebProperties           webProperties     = config().mapTo(WebProperties.class);
         final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
                 : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
 
         log.info("创建路由");
-        final Router router = Router.router(this.vertx);
+        final Router        router              = Router.router(this.vertx);
 
         AllowForwardHeaders allowForwardHeaders = AllowForwardHeaders.valueOf(webProperties.getAllowForward());
         log.info("设置allow forward: {}", allowForwardHeaders);
@@ -69,8 +69,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
         }
         // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
-//        log.info("开启响应内容类型处理");
-//        globalRoute.handler(ResponseContentTypeHandler.create());
+        // log.info("开启响应内容类型处理");
+        // globalRoute.handler(ResponseContentTypeHandler.create());
         // 全局返回响应时间
         if (webProperties.getIsResponseTime()) {
             log.info("开启返回响应时间");
@@ -109,7 +109,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         // 添加全局子路由处理器
         addGlobalRouteSubHandler(globalRoute);
 
-
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
             log.info("实现自签名证书");
@@ -127,7 +126,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         Map<String, Object> http2https = webProperties.getHttp2https();
         if (http2https != null) {
-            final HttpServerOptions http2httpsServerOptions = new HttpServerOptions(JsonObject.mapFrom(webProperties.getHttp2https()));
+            final HttpServerOptions http2httpsServerOptions = new HttpServerOptions(
+                    JsonObject.mapFrom(webProperties.getHttp2https()));
             int                     http2httpsPort          = http2httpsServerOptions.getPort();
             int                     httpsPort               = httpServerOptions.getPort();
             Arguments.require(http2httpsPort != 0, "web.config.http2https.port不能为null或0");
@@ -138,8 +138,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                             .setStatusCode(301)
                             .putHeader("Location", req.absoluteURI()
                                     .replace("http", "https")
-                                    .replace(":" + http2httpsPort, ":" + httpsPort)
-                            )
+                                    .replace(":" + http2httpsPort, ":" + httpsPort))
                             .end());
         }
 
@@ -180,7 +179,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     @Override
     public void stop() {
         log.info("WebVerticle stop");
-        if (http2httpsServer != null) http2httpsServer.close();
+        if (http2httpsServer != null)
+            http2httpsServer.close();
         this.httpServer.close();
     }
 
@@ -201,13 +201,14 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                     log.error("HTTP server start fail", res.cause());
                 }
             });
-            if (http2httpsServer != null) http2httpsServer.listen(res -> {
-                if (res.succeeded()) {
-                    log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
-                } else {
-                    log.error("HTTP to HTTPS server start fail", res.cause());
-                }
-            });
+            if (http2httpsServer != null)
+                http2httpsServer.listen(res -> {
+                    if (res.succeeded()) {
+                        log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
+                    } else {
+                        log.error("HTTP to HTTPS server start fail", res.cause());
+                    }
+                });
         });
     }
 

@@ -24,10 +24,11 @@ import java.util.function.BiFunction;
 
 public class ReverseProxy implements HttpProxy {
 
-    private final HttpClient                                                           client;
-    private final boolean                                                              supportWebSocket;
-    private       BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector     = (req, client) -> Future.failedFuture("No origin available");
-    private final List<ProxyInterceptor>                                               interceptors = new ArrayList<>();
+    private final HttpClient                                                     client;
+    private final boolean                                                        supportWebSocket;
+    private BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector     = (req, client) -> Future
+            .failedFuture("No origin available");
+    private final List<ProxyInterceptor>                                         interceptors = new ArrayList<>();
 
     public ReverseProxy(ProxyOptions options, HttpClient client) {
         CacheOptions cacheOptions = options.getCacheOptions();
@@ -35,12 +36,13 @@ public class ReverseProxy implements HttpProxy {
             Cache<String, Resource> cache = cacheOptions.newCache();
             addInterceptor(new CachingFilter(cache));
         }
-        this.client = client;
+        this.client           = client;
         this.supportWebSocket = options.getSupportWebSocket();
     }
 
     @Override
-    public HttpProxy originRequestProvider(BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider) {
+    public HttpProxy originRequestProvider(
+            BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider) {
         selector = provider;
         return this;
     }
@@ -51,13 +53,12 @@ public class ReverseProxy implements HttpProxy {
         return this;
     }
 
-
     @Override
     public void handle(HttpServerRequest request) {
         ProxyRequest proxyRequest = ProxyRequest.reverseProxy(request);
 
         // Encoding sanity check
-        Boolean chunked = HttpUtils.isChunked(request.headers());
+        Boolean      chunked      = HttpUtils.isChunked(request.headers());
         if (chunked == null) {
             end(proxyRequest, 400);
             return;
@@ -151,10 +152,10 @@ public class ReverseProxy implements HttpProxy {
 
     private class Proxy implements ProxyContext {
 
-        private final ProxyRequest                   request;
-        private       ProxyResponse                  response;
-        private final Map<String, Object>            attachments = new HashMap<>();
-        private       ListIterator<ProxyInterceptor> filters;
+        private final ProxyRequest             request;
+        private ProxyResponse                  response;
+        private final Map<String, Object>      attachments = new HashMap<>();
+        private ListIterator<ProxyInterceptor> filters;
 
         private Proxy(ProxyRequest request) {
             this.request = request;

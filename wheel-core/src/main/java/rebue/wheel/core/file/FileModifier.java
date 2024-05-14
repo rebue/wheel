@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
  */
 public final class FileModifier {
 
-    private boolean mIsModified = false;
+    private boolean              mIsModified = false;
 
-    private final Path mFilePath;
+    private final Path           mFilePath;
 
-    private final List<Adder>    mAdders    = new LinkedList<>();
-    private final List<Modifier> mModifiers = new LinkedList<>();
-    private final List<String>   mDeleters  = new LinkedList<>();
+    private final List<Adder>    mAdders     = new LinkedList<>();
+    private final List<Modifier> mModifiers  = new LinkedList<>();
+    private final List<String>   mDeleters   = new LinkedList<>();
 
     public FileModifier(String fileName) {
         mFilePath = Paths.get(fileName);
@@ -108,7 +108,7 @@ public final class FileModifier {
                 Matcher matcher = modifier.getPatten().matcher(line);
                 if (matcher.find()) {
                     mIsModified = true;
-                    line = line.replaceAll(modifier.getOlder(), modifier.getNewer());
+                    line        = line.replaceAll(modifier.getOlder(), modifier.getNewer());
                     break;
                 }
             }

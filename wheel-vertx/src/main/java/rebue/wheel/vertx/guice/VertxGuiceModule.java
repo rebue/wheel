@@ -13,12 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class VertxGuiceModule extends AbstractModule {
 
-    protected     Vertx      vertx;
+    protected Vertx          vertx;
     private final JsonObject config;
 
     public VertxGuiceModule(final Vertx vertx, final JsonObject config) {
         log.info("new VertxGuiceModule");
-        this.vertx = vertx;
+        this.vertx  = vertx;
         this.config = config;
     }
 

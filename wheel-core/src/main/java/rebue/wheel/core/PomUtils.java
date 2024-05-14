@@ -11,7 +11,8 @@ public class PomUtils {
 
     public static PomProps getPomProps(String pomPropsPath, Class<?> clazz) throws IOException {
         InputStream resource = clazz.getResourceAsStream(pomPropsPath);
-        if (resource == null) throw new RuntimeException("missing " + pomPropsPath);
+        if (resource == null)
+            throw new RuntimeException("missing " + pomPropsPath);
         PomProps pomProps = new PomProps();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource))) {
             String line;

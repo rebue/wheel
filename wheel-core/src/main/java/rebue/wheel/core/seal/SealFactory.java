@@ -10,9 +10,10 @@ import java.io.IOException;
  * 印章工厂类
  */
 public class SealFactory {
-    public static ImageData create01(String topText, String captionText, String subcaptionText, String fontName) throws IOException {
+    public static ImageData create01(String topText, String captionText, String subcaptionText, String fontName)
+            throws IOException {
         // 顶部文字字数
-        int topTextLength = topText.length();
+        int    topTextLength = topText.length();
         // 顶部文字开始弧度
         double topBeginRadian;
         if (topTextLength <= 5) {
@@ -26,11 +27,11 @@ public class SealFactory {
         }
 
         return ImageDataFactory.create(SealUtils.draw01(SealText.builder()
-                        .text(topText)
-                        .font(new Font(fontName, Font.BOLD, 100))
-                        .marginTop(30.0)
-                        .scaleY(2.0)
-                        .build(),
+                .text(topText)
+                .font(new Font(fontName, Font.BOLD, 100))
+                .marginTop(30.0)
+                .scaleY(2.0)
+                .build(),
                 SealText.builder()
                         .text(captionText)
                         .font(new Font(fontName, Font.BOLD, 120))

@@ -79,7 +79,6 @@ public class Sm2UtilsTest {
         Assertions.assertNotNull(compressedPublicKey);
     }
 
-
     /**
      * 加密与解密
      */

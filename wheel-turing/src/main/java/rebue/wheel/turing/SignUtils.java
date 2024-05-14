@@ -80,7 +80,8 @@ public class SignUtils {
      * @param initParams 校验签名算法的初始化参数
      * @return 签名是否正确
      */
-    public static boolean verifyBySm2(PublicKey publicKey, byte[] data, byte[] sign, AlgorithmParameterSpec initParams) {
+    public static boolean verifyBySm2(PublicKey publicKey, byte[] data, byte[] sign,
+            AlgorithmParameterSpec initParams) {
         return verify("SM3withSM2", publicKey, data, sign, initParams);
     }
 
@@ -93,7 +94,8 @@ public class SignUtils {
      * @param initParams    签名算法的初始化参数
      * @return 签名
      */
-    public static byte[] sign(String signAlgorithm, PrivateKey privateKey, byte[] data, AlgorithmParameterSpec initParams) {
+    public static byte[] sign(String signAlgorithm, PrivateKey privateKey, byte[] data,
+            AlgorithmParameterSpec initParams) {
         try {
             Signature signature = Signature.getInstance(signAlgorithm, "BC");
             signature.initSign(privateKey);
@@ -125,7 +127,8 @@ public class SignUtils {
      * @param initParams    校验签名算法的初始化参数
      * @return 签名是否正确
      */
-    public static boolean verify(String signAlgorithm, PublicKey publicKey, byte[] data, byte[] sign, AlgorithmParameterSpec initParams) {
+    public static boolean verify(String signAlgorithm, PublicKey publicKey, byte[] data, byte[] sign,
+            AlgorithmParameterSpec initParams) {
         try {
             Signature signature = Signature.getInstance(signAlgorithm, "BC");
             signature.initVerify(publicKey);

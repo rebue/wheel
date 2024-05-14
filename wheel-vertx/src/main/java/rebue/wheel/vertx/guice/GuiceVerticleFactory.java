@@ -25,7 +25,8 @@ public class GuiceVerticleFactory implements VerticleFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void createVerticle(final String verticleName, final ClassLoader classLoader, final Promise<Callable<Verticle>> promise) {
+    public void createVerticle(final String verticleName, final ClassLoader classLoader,
+            final Promise<Callable<Verticle>> promise) {
         log.info("GuiceVerticleFactory.createVerticle");
         String                verticleClassName = VerticleFactory.removePrefix(verticleName);
         final Class<Verticle> clazz;
@@ -33,7 +34,7 @@ public class GuiceVerticleFactory implements VerticleFactory {
             ClassLoader verticleClassLoader = classLoader;
             if (verticleName.endsWith(".java")) {
                 final CompilingClassLoader compilingLoader = new CompilingClassLoader(classLoader, verticleClassName);
-                verticleClassName = compilingLoader.resolveMainClassName();
+                verticleClassName   = compilingLoader.resolveMainClassName();
                 verticleClassLoader = compilingLoader;
             }
             clazz = (Class<Verticle>) verticleClassLoader.loadClass(verticleClassName);

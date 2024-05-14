@@ -34,7 +34,7 @@ public class SkyWalkingUtils {
         log.debug("TraceContext.spanId(): {}", TraceContext.spanId());
         String TID = "TID:%s".formatted(traceId);
         MDC.put(SkyWalkingUtils.TRACE_ID_KEY, TID);
-//        MDC.put("tid", TID);
+        // MDC.put("tid", TID);
         log.debug("put trace id in MDC: {}", TID);
     }
 

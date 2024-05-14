@@ -88,7 +88,8 @@ public class LocalDateTimeUtils {
      */
     public static Date localDateTime2Date(final LocalDateTime localDateTime) {
         final ZoneId        zoneId = ZoneId.systemDefault();
-        final ZonedDateTime zdt    = localDateTime.atZone(zoneId);// Combines this date-time with a time-zone to create a ZonedDateTime.
+        final ZonedDateTime zdt    = localDateTime.atZone(zoneId);// Combines this date-time with a time-zone to create
+                                                                  // a ZonedDateTime.
         return Date.from(zdt.toInstant());
 
     }

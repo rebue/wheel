@@ -17,7 +17,8 @@ public enum DesensitizeStrategy {
      * 名称
      */
     NAME(str -> {
-        if (StringUtils.isBlank(str)) return "*";
+        if (StringUtils.isBlank(str))
+            return "*";
         str = str.trim();
         return str.replaceAll("(\\S)\\S*", "$1*");
     }),
@@ -26,7 +27,8 @@ public enum DesensitizeStrategy {
      * 电话号码
      */
     TEL(str -> {
-        if (StringUtils.isBlank(str)) return "*";
+        if (StringUtils.isBlank(str))
+            return "*";
         str = str.trim();
         return str.replaceAll("\\S*(\\d{3})", "****$1");
     }),
@@ -34,7 +36,8 @@ public enum DesensitizeStrategy {
      * 手机号码
      */
     MOBILE(str -> {
-        if (StringUtils.isBlank(str)) return "*";
+        if (StringUtils.isBlank(str))
+            return "*";
         str = str.trim();
         if (str.length() > 8)
             return str.replaceAll("(\\d{3})\\d*(\\d{4})", "$1****$2");
@@ -45,18 +48,22 @@ public enum DesensitizeStrategy {
      * 电子邮箱
      */
     EMAIL(str -> {
-        if (StringUtils.isBlank(str)) return "*";
+        if (StringUtils.isBlank(str))
+            return "*";
         str = str.trim();
-        if (!RegexUtils.matchEmail(str)) return "*";
+        if (!RegexUtils.matchEmail(str))
+            return "*";
         return str.replaceAll("(\\S{3})\\S*@(\\S*)", "$1***@$2");
     }),
     /**
      * 身份证号
      */
     ID_CARD(str -> {
-        if (StringUtils.isBlank(str)) return "*";
+        if (StringUtils.isBlank(str))
+            return "*";
         str = str.trim();
-        if (!RegexUtils.matchIdCard(str)) return "*";
+        if (!RegexUtils.matchIdCard(str))
+            return "*";
         return str.replaceAll("(\\d{3})\\d{12}(\\w{3})", "$1****$2");
     }),
     /**
@@ -67,7 +74,8 @@ public enum DesensitizeStrategy {
      * 车牌号码
      */
     CAR_LICENSE(str -> {
-        if (StringUtils.isBlank(str)) return "********";
+        if (StringUtils.isBlank(str))
+            return "********";
         str = str.trim();
         return str.replaceAll("(\\d{2})\\d{2}(\\d{3})", "$1**$2");
     }),
@@ -75,7 +83,8 @@ public enum DesensitizeStrategy {
      * 银行卡号
      */
     BANK_CARD_NO(str -> {
-        if (StringUtils.isBlank(str)) return "********";
+        if (StringUtils.isBlank(str))
+            return "********";
         str = str.trim();
         return str.replaceAll("(\\d{4})\\d*(\\d{4})", "$1****$2");
     }),

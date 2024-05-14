@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 public @interface Desensitize {
     /**
      * @return 脱敏策略
-     * 如果要自定义策略，则不要设置此属性，且填写regex和replacement属性
+     *         如果要自定义策略，则不要设置此属性，且填写regex和replacement属性
      */
     DesensitizeStrategy value() default DesensitizeStrategy.CUSTOM;
 

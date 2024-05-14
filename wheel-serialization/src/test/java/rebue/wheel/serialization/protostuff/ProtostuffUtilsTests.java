@@ -25,8 +25,9 @@ public class ProtostuffUtilsTests {
         map1.put("b", 1);
         map1.put("c", true);
         map1.put("d", now);
-        final byte[]                                             data = ProtostuffUtils.serialize(map1);
-        @SuppressWarnings("unchecked") final Map<String, Object> map2 = ProtostuffUtils.deserialize(data, Map.class);
+        final byte[]              data = ProtostuffUtils.serialize(map1);
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> map2 = ProtostuffUtils.deserialize(data, Map.class);
         Assertions.assertEquals(map1, map2);
     }
 

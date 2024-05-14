@@ -36,7 +36,8 @@ public class XmlUtils {
         return getReader().read(inputStream);
     }
 
-    public static String getXmlFromRequest(final ServletRequest servletRequest) throws DocumentException, SAXException, IOException {
+    public static String getXmlFromRequest(final ServletRequest servletRequest)
+            throws DocumentException, SAXException, IOException {
         return getDocument(servletRequest.getInputStream()).asXML();
     }
 
@@ -50,12 +51,12 @@ public class XmlUtils {
 
     private static Map<String, Object> xmlToMap(final Document document) {
         // 将解析结果存储在HashMap中
-        final Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map         = new HashMap<>();
 
         // 得到xml根元素
-        final Element root = document.getRootElement();
+        final Element             root        = document.getRootElement();
         // 得到根元素的所有子节点
-        final List<Element> elementList = root.elements();
+        final List<Element>       elementList = root.elements();
 
         // 遍历所有子节点
         for (final Element e : elementList) {
@@ -66,12 +67,13 @@ public class XmlUtils {
     }
 
     public static String mapToXml(final Map<String, Object> map) {
-        String xmlResult;
+        String              xmlResult;
 
         final StringBuilder sb = new StringBuilder();
         sb.append("<xml>");
         for (final String key : map.keySet()) {
-            sb.append("<").append(key).append(">").append("<![CDATA[").append(map.get(key)).append("]]>").append("</").append(key).append(">");
+            sb.append("<").append(key).append(">").append("<![CDATA[").append(map.get(key)).append("]]>").append("</")
+                    .append(key).append(">");
         }
         sb.append("</xml>");
         xmlResult = sb.toString();

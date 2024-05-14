@@ -26,7 +26,8 @@ public class NetUtilsTests {
 
     @Test
     public void test02() {
-        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
+        final ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(), new AbortPolicy());
         final int             iTaskCount      = 1;
         for (int i = 0; i < iTaskCount; i++) {
             executorService.execute(() -> {

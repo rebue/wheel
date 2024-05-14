@@ -26,20 +26,21 @@ public class QrcodeUtils {
      * @param errorCorrectionLevel 二维码的容错率
      * @return 二维码图形的字节数组
      */
-    public static byte[] genQrcode(String text, int width, int borderSize, int padding, ErrorCorrectionLevel errorCorrectionLevel) throws IOException, WriterException {
+    public static byte[] genQrcode(String text, int width, int borderSize, int padding,
+            ErrorCorrectionLevel errorCorrectionLevel) throws IOException, WriterException {
         // 设置二维码参数
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");                   // 防止乱码
         hints.put(EncodeHintType.ERROR_CORRECTION, errorCorrectionLevel);   // 设置二维码的容错率
         // 生成二维码矩阵
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, width, hints);
+        BitMatrix bitMatrix          = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, width, hints);
         // 获取实际的二维码边界
-        int[] enclosingRectangle = bitMatrix.getEnclosingRectangle();
+        int[]     enclosingRectangle = bitMatrix.getEnclosingRectangle();
         // 计算二维码裁剪白边后的图像尺寸
-        int croppedLeft   = enclosingRectangle[0];
-        int croppedTop    = enclosingRectangle[1];
-        int croppedWidth  = enclosingRectangle[2];
-        int croppedHeight = enclosingRectangle[3];
+        int       croppedLeft        = enclosingRectangle[0];
+        int       croppedTop         = enclosingRectangle[1];
+        int       croppedWidth       = enclosingRectangle[2];
+        int       croppedHeight      = enclosingRectangle[3];
 
         // 计算图像的宽度(默认等于二维码裁剪白边后的宽度)
         width = croppedWidth;

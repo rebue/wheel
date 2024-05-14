@@ -42,11 +42,11 @@ public class ImageUtils {
      * @return 水印图形的字节数组
      */
     public static byte[] tileWaterMark1(String waterMarkText, Font font, double rotateRadian,
-                                        double spaceX, double spaceY,
-                                        int canvasWidth, int canvasHeight) throws IOException {
+            double spaceX, double spaceY,
+            int canvasWidth, int canvasHeight) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
-        Graphics2D g2d = bufferedImage.createGraphics();
+        Graphics2D    g2d           = bufferedImage.createGraphics();
         try {
             // 设置抗锯齿
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -57,23 +57,23 @@ public class ImageUtils {
             // 获取文本的宽高及高的各项指标
             TextDimensions textDimensions = getTextDimensions(waterMarkText, font, g2d);
             // 计算中心点
-            double centerX = canvasWidth / 2.0;
-            double centerY = canvasHeight / 2.0;
+            double         centerX        = canvasWidth / 2.0;
+            double         centerY        = canvasHeight / 2.0;
             // 移动到中心点
             g2d.translate(centerX, centerY);
             // 旋转弧度
             g2d.rotate(rotateRadian);
             // 计算旋转后的宽和高
-            double targetWidth = Math.cos(-rotateRadian) * canvasWidth
+            double targetWidth  = Math.cos(-rotateRadian) * canvasWidth
                     - Math.sin(rotateRadian) * canvasHeight;
             double targetHeight = Math.sin(-rotateRadian) * canvasWidth
                     + Math.cos(rotateRadian) * canvasHeight;
             // X轴递增
-            double stepX = textDimensions.getWidth() + spaceX;
+            double stepX        = textDimensions.getWidth() + spaceX;
             // Y轴递增
-            double stepY = textDimensions.getDescent() + textDimensions.getDescent() + spaceY;
+            double stepY        = textDimensions.getDescent() + textDimensions.getDescent() + spaceY;
             // 初始化第一个文本的的x轴坐标
-            double x = -targetWidth / 2;
+            double x            = -targetWidth / 2;
             // 开始平铺
             for (double y = -targetHeight / 2 - spaceY; y < targetHeight / 2; y += stepY) {
                 for (; x < targetWidth / 2; x += stepX) {
@@ -108,12 +108,12 @@ public class ImageUtils {
      * @return 水印图形的字节数组
      */
     public static byte[] tileWaterMark2(String waterMarkText, Font font, double rotateRadian,
-                                        double marginX, double marginY,
-                                        double spaceX, double spaceY,
-                                        int canvasWidth, int canvasHeight) throws IOException {
+            double marginX, double marginY,
+            double spaceX, double spaceY,
+            int canvasWidth, int canvasHeight) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
         // Create a Graphics2D object from the BufferedImage
-        Graphics2D g2d = bufferedImage.createGraphics();
+        Graphics2D    g2d           = bufferedImage.createGraphics();
         try {
             // 设置抗锯齿
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -124,14 +124,15 @@ public class ImageUtils {
             // 获取文本的宽高及高的各项指标
             TextDimensions textDimensions = getTextDimensions(waterMarkText, font, g2d);
             // 计算画水印完整的宽和高
-            double targetWidth  = canvasWidth - marginX * 2;
-            double targetHeight = canvasHeight - marginY * 2;
+            double         targetWidth    = canvasWidth - marginX * 2;
+            double         targetHeight   = canvasHeight - marginY * 2;
             // 计算旋转后的文本高度
-            double rotateHeight = Math.sin(-rotateRadian) * textDimensions.getWidth() + Math.sin(Math.PI / 2.0 + rotateRadian) * textDimensions.getHeight();
+            double         rotateHeight   = Math.sin(-rotateRadian) * textDimensions.getWidth()
+                    + Math.sin(Math.PI / 2.0 + rotateRadian) * textDimensions.getHeight();
             // X轴递增
-            double stepX = Math.cos(-rotateRadian) * textDimensions.getWidth() + spaceX;
+            double         stepX          = Math.cos(-rotateRadian) * textDimensions.getWidth() + spaceX;
             // Y轴递增
-            double stepY = rotateHeight + spaceY;
+            double         stepY          = rotateHeight + spaceY;
             // 移动坐标原点到完整图形的左上角
             g2d.translate(marginX, marginY + rotateHeight);
             // 开始平铺

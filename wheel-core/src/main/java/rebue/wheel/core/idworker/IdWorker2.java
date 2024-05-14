@@ -12,42 +12,45 @@ import org.slf4j.LoggerFactory;
  */
 public class IdWorker2 {
 
-    protected static Logger _logger = LoggerFactory.getLogger(IdWorker2.class);
+    protected static Logger _logger             = LoggerFactory.getLogger(IdWorker2.class);
 
-    private final long _datacenterId;
-    private final long _workerId;
+    private final long      _datacenterId;
+    private final long      _workerId;
 
-    private final long _twepoch = 1413942127819L;
+    private final long      _twepoch            = 1413942127819L;
 
-    private final long _datacenterIdBits = 5L;
-    private final long _workerIdBits     = 5L;
-    private final long _sequenceBits     = 12L;
+    private final long      _datacenterIdBits   = 5L;
+    private final long      _workerIdBits       = 5L;
+    private final long      _sequenceBits       = 12L;
 
-    private final long _maxDatacenterId = -1L ^ -1L << _datacenterIdBits;
-    private final long _maxWorkerId     = -1L ^ -1L << _workerIdBits;
+    private final long      _maxDatacenterId    = -1L ^ -1L << _datacenterIdBits;
+    private final long      _maxWorkerId        = -1L ^ -1L << _workerIdBits;
 
-    private final long _sequenceMask     = -1L ^ -1L << _sequenceBits;
-    private final long _workerIdMask     = -1L ^ -1L << _workerIdBits;
-    private final long _datacenterIdMask = -1L ^ -1L << _datacenterIdBits;
+    private final long      _sequenceMask       = -1L ^ -1L << _sequenceBits;
+    private final long      _workerIdMask       = -1L ^ -1L << _workerIdBits;
+    private final long      _datacenterIdMask   = -1L ^ -1L << _datacenterIdBits;
 
-    private final long _workerIdShift      = _sequenceBits;
-    private final long _datacenterIdShift  = _sequenceBits + _workerIdBits;
-    private final long _timestampLeftShift = _sequenceBits + _workerIdBits + _datacenterIdBits;
+    private final long      _workerIdShift      = _sequenceBits;
+    private final long      _datacenterIdShift  = _sequenceBits + _workerIdBits;
+    private final long      _timestampLeftShift = _sequenceBits + _workerIdBits + _datacenterIdBits;
 
-    private int  _sequence      = -1;
-    private long _lastTimestamp = -1L;
+    private int             _sequence           = -1;
+    private long            _lastTimestamp      = -1L;
 
     public IdWorker2(final long datacenterId, final long workerId) {
         if (datacenterId < 0 || datacenterId > _maxDatacenterId) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", _maxDatacenterId));
+            throw new IllegalArgumentException(
+                    String.format("datacenter Id can't be greater than %d or less than 0", _maxDatacenterId));
         }
         if (workerId < 0 || workerId > _maxWorkerId) {
-            throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", _maxWorkerId));
+            throw new IllegalArgumentException(
+                    String.format("worker Id can't be greater than %d or less than 0", _maxWorkerId));
         }
         _datacenterId = datacenterId;
-        _workerId = workerId;
+        _workerId     = workerId;
         _logger.info(String.format(
-                "worker starting. timestamp bits %d, datacenter id bits %d, worker id bits %d, sequence bits %d, datacenterId %d, workerid %d", 64
+                "worker starting. timestamp bits %d, datacenter id bits %d, worker id bits %d, sequence bits %d, datacenterId %d, workerid %d",
+                64
                         - _datacenterIdBits - _workerIdBits - _sequenceBits,
                 _datacenterIdBits, _workerIdBits, _sequenceBits, datacenterId, workerId));
     }

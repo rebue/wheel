@@ -117,5 +117,4 @@ public class RegexUtils {
         return BASE64URL.matcher(text).matches();
     }
 
-
 }

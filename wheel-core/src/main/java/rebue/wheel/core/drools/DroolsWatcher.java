@@ -20,16 +20,16 @@ public class DroolsWatcher {
 
     private static final FileAlterationMonitor monitor = new FileAlterationMonitor(5 * 1000);
 
-    private static       KieContainer kieContainer;
-    //    private static final Path         configFileDirPath;
-    private static final Path         ruleFileDirPath;
+    private static KieContainer                kieContainer;
+    // private static final Path configFileDirPath;
+    private static final Path                  ruleFileDirPath;
 
     static {
         log.info("初始化drools");
         String classesPath = FileUtils.getClassesPath();
         ruleFileDirPath = Path.of(classesPath, "drools", "rule");
         // 初始化时创建容器
-        kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
+        kieContainer    = newKieContainer(null, readRuleFiles(ruleFileDirPath));
         // 监听drools目录是否有文件变化，如果有就重新创建新的容器
         watchDroolsDir();
     }
@@ -49,24 +49,24 @@ public class DroolsWatcher {
     private static void watchDroolsDir() {
         FileAlterationObserver observer = new FileAlterationObserver(ruleFileDirPath.toFile());
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
-            @Override
-            public void onFileCreate(File file) {
-                log.info("Drools目录下有新建的文件: {}", file);
-                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
-            }
+                                            @Override
+                                            public void onFileCreate(File file) {
+                                                log.info("Drools目录下有新建的文件: {}", file);
+                                                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
+                                            }
 
-            @Override
-            public void onFileDelete(File file) {
-                log.info("Drools目录下有文件被删除: {}", file);
-                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
-            }
+                                            @Override
+                                            public void onFileDelete(File file) {
+                                                log.info("Drools目录下有文件被删除: {}", file);
+                                                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
+                                            }
 
-            @Override
-            public void onFileChange(File file) {
-                log.info("Drools目录下有文件发生改变: {}", file);
-                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
-            }
-        };
+                                            @Override
+                                            public void onFileChange(File file) {
+                                                log.info("Drools目录下有文件发生改变: {}", file);
+                                                kieContainer = newKieContainer(null, readRuleFiles(ruleFileDirPath));
+                                            }
+                                        };
         observer.addListener(listener);
         monitor.addObserver(observer);
         monitor.start();

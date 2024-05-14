@@ -12,7 +12,7 @@ public class GrpcNettyProperties {
         /**
          * 主机
          */
-        private String host;
+        private String  host;
 
         /**
          * 主机端口号

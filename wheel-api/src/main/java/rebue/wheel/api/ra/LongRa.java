@@ -21,6 +21,6 @@ public class LongRa implements Serializable {
     /**
      * 返回Long的值
      */
-    private Long value;
+    private Long              value;
 
 }

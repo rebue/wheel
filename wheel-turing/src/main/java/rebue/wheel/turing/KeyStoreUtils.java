@@ -93,11 +93,11 @@ public class KeyStoreUtils {
      */
     @SneakyThrows
     public static void putCert(KeyPair keyPair, String signAlgorithm,
-                               String certAlias, X500Name subject, Date notBefore, Date notAfter,
-                               File storeFile, char[] storePassword) {
+            String certAlias, X500Name subject, Date notBefore, Date notAfter,
+            File storeFile, char[] storePassword) {
         log.debug("存储keypair到密钥库中");
         log.debug("生成存储key需要的证书链");
-        Certificate[] certificates = new Certificate[]{
+        Certificate[] certificates = new Certificate[] {
                 CaUtils.generateCertificate(signAlgorithm, subject, subject, keyPair, notBefore, notAfter)
         };
 
@@ -133,12 +133,15 @@ public class KeyStoreUtils {
         return (KeyStore.PrivateKeyEntry) entry;
     }
 
-    public static void importCert(String certAlias, InputStream certInputStream, File storeFile, char[] storePassword) throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException {
+    public static void importCert(String certAlias, InputStream certInputStream, File storeFile, char[] storePassword)
+            throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException,
+            NoSuchProviderException {
         log.debug("存储证书到密钥库中");
-        KeyStore keyStore = getKeyStore(storeFile, storePassword, true);
-//        KeyStore.PrivateKeyEntry privateKeyEntry = getPrivateKeyEntry(certAlias, keyStore);
-//        PrivateKey               privateKey      = privateKeyEntry.getPrivateKey();
-////        Certificate              innerCertificate   = privateKeyEntry.getCertificate();
+        KeyStore           keyStore           = getKeyStore(storeFile, storePassword, true);
+        // KeyStore.PrivateKeyEntry privateKeyEntry = getPrivateKeyEntry(certAlias,
+        // keyStore);
+        // PrivateKey privateKey = privateKeyEntry.getPrivateKey();
+        //// Certificate innerCertificate = privateKeyEntry.getCertificate();
         KeyPair            keyPair            = KeyUtils.generateKeyPair("RSA", 2048);
         PrivateKey         privateKey         = keyPair.getPrivate();
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", "BC");
@@ -152,18 +155,18 @@ public class KeyStoreUtils {
             text = sb.toString();
         }
         if (!text.startsWith("-----")) {
-//            text = "-----BEGIN CERTIFICATE-----\n" + text + "\n-----END CERTIFICATE-----";
+            // text = "-----BEGIN CERTIFICATE-----\n" + text + "\n-----END
+            // CERTIFICATE-----";
             certInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(text));
         }
         Collection<? extends Certificate> outerCertificates = certificateFactory.generateCertificates(certInputStream);
-//        Certificate[]                     certificates      = new Certificate[]{innerCertificate};
-        Certificate[] certificates = new Certificate[outerCertificates.size()];
+        // Certificate[] certificates = new Certificate[]{innerCertificate};
+        Certificate[]                     certificates      = new Certificate[outerCertificates.size()];
         outerCertificates.toArray(certificates);
         keyStore.setKeyEntry(certAlias, privateKey, storePassword, certificates);
         try (FileOutputStream fileOutputStream = new FileOutputStream(storeFile)) {
             keyStore.store(fileOutputStream, storePassword);
         }
     }
-
 
 }

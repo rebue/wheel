@@ -25,14 +25,14 @@ public class PageRa<T> implements Serializable {
     /**
      * 当前页
      */
-    private   Integer pageNum;
+    private Integer           pageNum;
     /**
      * 总记录数
      */
-    protected Long    total;
+    protected Long            total;
     /**
      * 结果集
      */
-    private   List<T> list;
+    private List<T>           list;
 
 }

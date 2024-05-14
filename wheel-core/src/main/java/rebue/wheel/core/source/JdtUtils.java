@@ -35,7 +35,8 @@ public class JdtUtils {
         }
 
         final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
-        final TextEdit      textEdit      = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, sourceCode, 0, sourceCode.length(), 0, null);
+        final TextEdit      textEdit      = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, sourceCode, 0,
+                sourceCode.length(), 0, null);
         final IDocument     doc           = new Document(sourceCode);
         textEdit.apply(doc);
         return doc.get();

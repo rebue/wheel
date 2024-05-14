@@ -15,12 +15,13 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
  * and singleton instances.
  * <p>
  * Added in Jackson 2.12 to resolve issue
- * <a href="https://github.com/FasterXML/jackson-databind/issues/2715">databind#2715</a>.
+ * <a href=
+ * "https://github.com/FasterXML/jackson-databind/issues/2715">databind#2715</a>.
  *
  * @since 2.12
  */
 public abstract class PropertyNamingStrategiesEx implements java.io.Serializable {
-    private static final long serialVersionUID = 2L;
+    private static final long                  serialVersionUID = 2L;
 
     /*
      * /**********************************************************************
@@ -30,20 +31,25 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
 
     /**
      * Naming convention used in Java, where words other than first are capitalized
-     * and no separator is used between words. Since this is the native Java naming convention,
-     * naming strategy will not do any transformation between names in data (JSON) and
+     * and no separator is used between words. Since this is the native Java naming
+     * convention,
+     * naming strategy will not do any transformation between names in data (JSON)
+     * and
      * POJOS.
      * <p>
-     * Example external property names would be "numberValue", "namingStrategy", "theDefiniteProof".
+     * Example external property names would be "numberValue", "namingStrategy",
+     * "theDefiniteProof".
      */
     public static final PropertyNamingStrategy LOWER_CAMEL_CASE = new LowerCamelCaseStrategy();
 
     /**
-     * Naming convention used in languages like Pascal, where all words are capitalized
+     * Naming convention used in languages like Pascal, where all words are
+     * capitalized
      * and no separator is used between words.
      * See {@link UpperCamelCaseStrategy} for details.
      * <p>
-     * Example external property names would be "NumberValue", "NamingStrategy", "TheDefiniteProof".
+     * Example external property names would be "NumberValue", "NamingStrategy",
+     * "TheDefiniteProof".
      */
     public static final PropertyNamingStrategy UPPER_CAMEL_CASE = new UpperCamelCaseStrategy();
 
@@ -52,45 +58,52 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * letters, separated by underscores.
      * See {@link SnakeCaseStrategy} for details.
      * <p>
-     * Example external property names would be "number_value", "naming_strategy", "the_definite_proof".
+     * Example external property names would be "number_value", "naming_strategy",
+     * "the_definite_proof".
      */
-    public static final PropertyNamingStrategy SNAKE_CASE = new SnakeCaseStrategy();
+    public static final PropertyNamingStrategy SNAKE_CASE       = new SnakeCaseStrategy();
 
     /**
-     * Naming convention in which the words are in upper-case letters, separated by underscores.
+     * Naming convention in which the words are in upper-case letters, separated by
+     * underscores.
      * See {@link UpperSnakeCaseStrategy} for details.
      *
      * @since 2.13
-     * <p>
+     *        <p>
      */
     public static final PropertyNamingStrategy UPPER_SNAKE_CASE = new UpperSnakeCaseStrategy();
 
     /**
-     * Naming convention in which all words of the logical name are in lower case, and
+     * Naming convention in which all words of the logical name are in lower case,
+     * and
      * no separator is used between words.
      * See {@link LowerCaseStrategy} for details.
      * <p>
-     * Example external property names would be "numbervalue", "namingstrategy", "thedefiniteproof".
+     * Example external property names would be "numbervalue", "namingstrategy",
+     * "thedefiniteproof".
      */
-    public static final PropertyNamingStrategy LOWER_CASE = new LowerCaseStrategy();
+    public static final PropertyNamingStrategy LOWER_CASE       = new LowerCaseStrategy();
 
     /**
      * Naming convention used in languages like Lisp, where words are in lower-case
      * letters, separated by hyphens.
      * See {@link KebabCaseStrategy} for details.
      * <p>
-     * Example external property names would be "number-value", "naming-strategy", "the-definite-proof".
+     * Example external property names would be "number-value", "naming-strategy",
+     * "the-definite-proof".
      */
-    public static final PropertyNamingStrategy KEBAB_CASE = new KebabCaseStrategy();
+    public static final PropertyNamingStrategy KEBAB_CASE       = new KebabCaseStrategy();
 
     /**
-     * Naming convention widely used as configuration properties name, where words are in
+     * Naming convention widely used as configuration properties name, where words
+     * are in
      * lower-case letters, separated by dots.
      * See {@link LowerDotCaseStrategy} for details.
      * <p>
-     * Example external property names would be "number.value", "naming.strategy", "the.definite.proof".
+     * Example external property names would be "number.value", "naming.strategy",
+     * "the.definite.proof".
      */
-    public static final PropertyNamingStrategy LOWER_DOT_CASE = new LowerDotCaseStrategy();
+    public static final PropertyNamingStrategy LOWER_DOT_CASE   = new LowerDotCaseStrategy();
 
     /*
      * /**********************************************************************
@@ -111,7 +124,8 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
 
         // XXX 此处注释掉，序列化时不变
         // @Override
-        // public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+        // public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod
+        // method, String defaultName) {
         // return translate(defaultName);
         // }
 
@@ -122,7 +136,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
 
         @Override
         public String nameForConstructorParameter(MapperConfig<?> config, AnnotatedParameter ctorParam,
-                                                  String defaultName) {
+                String defaultName) {
             return translate(defaultName);
         }
 
@@ -226,7 +240,8 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
      * <li>&quot;userName&quot; is translated to &quot;user_name&quot;</li>
      * <li>&quot;UserName&quot; is translated to &quot;user_name&quot;</li>
      * <li>&quot;USER_NAME&quot; is translated to &quot;user_name&quot;</li>
-     * <li>&quot;user_name&quot; is translated to &quot;user_name&quot; (unchanged)</li>
+     * <li>&quot;user_name&quot; is translated to &quot;user_name&quot;
+     * (unchanged)</li>
      * <li>&quot;user&quot; is translated to &quot;user&quot; (unchanged)</li>
      * <li>&quot;User&quot; is translated to &quot;user&quot;</li>
      * <li>&quot;USER&quot; is translated to &quot;user&quot;</li>
@@ -259,7 +274,7 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
                             result.append('_');
                             resultLength++;
                         }
-                        c = Character.toLowerCase(c);
+                        c                 = Character.toLowerCase(c);
                         wasPrevTranslated = true;
                     } else {
                         wasPrevTranslated = false;
@@ -273,8 +288,10 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
     }
 
     /**
-     * A {@link PropertyNamingStrategy} that translates an input to the equivalent upper case snake
-     * case. The class extends {@link PropertyNamingStrategies.SnakeCaseStrategy} to retain the
+     * A {@link PropertyNamingStrategy} that translates an input to the equivalent
+     * upper case snake
+     * case. The class extends {@link PropertyNamingStrategies.SnakeCaseStrategy} to
+     * retain the
      * snake case conversion functionality offered by the strategy.
      *
      * @since 2.13
@@ -354,7 +371,8 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
     /**
      * Simple strategy where external name simply only uses lower-case characters,
      * and no separators.
-     * Conversion from internal name like "someOtherValue" would be into external name
+     * Conversion from internal name like "someOtherValue" would be into external
+     * name
      * if "someothervalue".
      */
     public static class LowerCaseStrategy extends NamingBase {
@@ -367,9 +385,11 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
     }
 
     /**
-     * Naming strategy similar to {@link PropertyNamingStrategies.SnakeCaseStrategy},
+     * Naming strategy similar to
+     * {@link PropertyNamingStrategies.SnakeCaseStrategy},
      * but instead of underscores
-     * as separators, uses hyphens. Naming convention traditionally used for languages
+     * as separators, uses hyphens. Naming convention traditionally used for
+     * languages
      * like Lisp.
      */
     public static class KebabCaseStrategy extends NamingBase {
@@ -382,9 +402,11 @@ public abstract class PropertyNamingStrategiesEx implements java.io.Serializable
     }
 
     /**
-     * Naming strategy similar to {@link PropertyNamingStrategies.KebabCaseStrategy},
+     * Naming strategy similar to
+     * {@link PropertyNamingStrategies.KebabCaseStrategy},
      * but instead of hyphens
-     * as separators, uses dots. Naming convention widely used as configuration properties name.
+     * as separators, uses dots. Naming convention widely used as configuration
+     * properties name.
      */
     public static class LowerDotCaseStrategy extends NamingBase {
         private static final long serialVersionUID = 2L;

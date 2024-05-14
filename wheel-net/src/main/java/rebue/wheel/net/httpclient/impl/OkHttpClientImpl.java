@@ -21,9 +21,9 @@ public class OkHttpClientImpl implements HttpClient {
     private static final MediaType XML_MEDIA_TYPE  = MediaType.get("text/xml; charset=utf-8");
 
     // private static OkHttpClient _client = new OkHttpClient();
-    private final OkHttpClient _client;
+    private final OkHttpClient     _client;
 
-    private final ObjectMapper _objejctMapper = JacksonUtils.getObjectMapper();
+    private final ObjectMapper     _objejctMapper  = JacksonUtils.getObjectMapper();
 
     public OkHttpClientImpl() {
         _client = new OkHttpClient().newBuilder().hostnameVerifier((hostname, session) -> {
@@ -152,7 +152,8 @@ public class OkHttpClientImpl implements HttpClient {
      * @return 响应的字符串
      */
     @Override
-    public Map<String, Object> postByXmlParams(final String url, final String xmlParams) throws IOException, DocumentException {
+    public Map<String, Object> postByXmlParams(final String url, final String xmlParams)
+            throws IOException, DocumentException {
         log.info("发送带XML_BODY的POST请求: {} {}", url, xmlParams);
         final RequestBody body     = RequestBody.create(xmlParams, XML_MEDIA_TYPE);
         final Request     request  = new Request.Builder().url(url).post(body).build();

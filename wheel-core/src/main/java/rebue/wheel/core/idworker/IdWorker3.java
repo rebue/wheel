@@ -17,24 +17,24 @@ public final class IdWorker3 {
     /**
      * 起始的时间
      */
-    private final long _twepoch = 1413942127819L;
+    private final long          _twepoch       = 1413942127819L;
 
     /**
      * 在分布式中通过传入节点Id来唯一区别不同的worker<br>
      * 默认传值范围应该在0-31之间(也就是5bit)<br>
      * 同一个服务不同的实例必须是不同的worker<br>
      */
-    private final int _nodeId;
+    private final int           _nodeId;
 
-    private final long _nodeIdBits;
-    private final long _sequenceBits;
+    private final long          _nodeIdBits;
+    private final long          _sequenceBits;
 
-    private final long _maxNodeId;
+    private final long          _maxNodeId;
 
-    private final long _sequenceMask;
+    private final long          _sequenceMask;
 
-    private final long _appidShift;
-    private final long _timestampLeftShift;
+    private final long          _appidShift;
+    private final long          _timestampLeftShift;
 
     private final AtomicInteger _sequence      = new AtomicInteger(-1);
     private final AtomicLong    _lastTimestamp = new AtomicLong(-1L);
@@ -44,12 +44,12 @@ public final class IdWorker3 {
      */
     public IdWorker3(final int nodeId, final long nodeIdBits) {
         log.info("开始创建IdWorker3的对象，传入的nodeId为{}，nodeId分配长度为{}", nodeId, nodeIdBits);
-        _nodeId = nodeId;
-        _nodeIdBits = nodeIdBits;
-        _maxNodeId = -1L ^ -1L << _nodeIdBits;
-        _sequenceBits = 22 - _nodeIdBits;
-        _sequenceMask = -1L ^ -1L << _sequenceBits;
-        _appidShift = _sequenceBits;
+        _nodeId             = nodeId;
+        _nodeIdBits         = nodeIdBits;
+        _maxNodeId          = -1L ^ -1L << _nodeIdBits;
+        _sequenceBits       = 22 - _nodeIdBits;
+        _sequenceMask       = -1L ^ -1L << _sequenceBits;
+        _appidShift         = _sequenceBits;
         _timestampLeftShift = _sequenceBits + _nodeIdBits;
         if (_nodeId == 0) {
             log.warn("节点Id默认为0，如果在分布式环境中可能会造成生成的id重复，请按规范做好规划");
@@ -86,7 +86,8 @@ public final class IdWorker3 {
             throw new ClockBackwardsException(_lastTimestamp.get() - timestamp);
         }
 
-        return timestamp - _twepoch << _timestampLeftShift | _nodeId << _appidShift | _sequence.incrementAndGet() & _sequenceMask;
+        return timestamp - _twepoch << _timestampLeftShift | _nodeId << _appidShift
+                | _sequence.incrementAndGet() & _sequenceMask;
     }
 
     /**

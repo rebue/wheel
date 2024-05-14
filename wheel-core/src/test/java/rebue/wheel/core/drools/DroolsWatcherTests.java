@@ -25,7 +25,9 @@ public class DroolsWatcherTests {
         DroolsWatcher.init();
         String              random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
         Map<String, String> body   = execute(random);
-        Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
+        Assertions.assertEquals(
+                "{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}",
+                body.toString());
 
         String       drlPath      = FileUtils.getClassesPath() + "drools/rule/rebue/wheel/core/test/DefaultRules.drl";
         FileModifier fileModifier = new FileModifier(drlPath);
@@ -35,8 +37,11 @@ public class DroolsWatcherTests {
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
-        body = execute(random);
-        Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII IIIII IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
+        body   = execute(random);
+        Assertions.assertEquals(
+                "{0=" + random
+                        + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII IIIII IIIII, j=CCCCC, k=EEE, l=EEE}",
+                body.toString());
 
         fileModifier = new FileModifier(drlPath);
         fileModifier.modifyLine("IIIII IIIII IIIII", "IIIII");
@@ -45,8 +50,10 @@ public class DroolsWatcherTests {
         Thread.sleep(10000);
 
         random = System.nanoTime() + UUID.randomUUID().toString().replaceAll("-", "");
-        body = execute(random);
-        Assertions.assertEquals("{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}", body.toString());
+        body   = execute(random);
+        Assertions.assertEquals(
+                "{0=" + random + ", c=CCCCC, d=DDDDD, f=FFF, g=GGG, h=HHHHH, i=IIIII, j=CCCCC, k=EEE, l=EEE}",
+                body.toString());
     }
 
     public Map<String, String> execute(String random) {

@@ -6,7 +6,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 @Slf4j
 public class RabbitTemplateUtils {
 
-    public static boolean send(final RabbitTemplate rabbitTemplate, final String exchange, final String routingKey, final Object msg, final long timeout) {
+    public static boolean send(final RabbitTemplate rabbitTemplate, final String exchange, final String routingKey,
+            final Object msg, final long timeout) {
         log.info("开始发送消息: exchange-{}, routingKey-{}, msg-{}, timeout-{}", exchange, routingKey, msg, timeout);
         try {
             return rabbitTemplate.invoke(operations -> {
