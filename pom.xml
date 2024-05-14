@@ -50,7 +50,7 @@
 
         <dubbo.version>3.2.11</dubbo.version>
         <bouncycastle.version>1.70</bouncycastle.version>
-        <bouncycastle18.version>1.76</bouncycastle18.version>
+        <bouncycastle18.version>1.78</bouncycastle18.version>
         <netty.version>4.1.93.Final</netty.version>
         <netty-tcnative>2.0.61.Final</netty-tcnative>
         <guice.version>7.0.0</guice.version>
