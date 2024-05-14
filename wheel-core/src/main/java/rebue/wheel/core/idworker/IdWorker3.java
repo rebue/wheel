@@ -1,9 +1,9 @@
 package rebue.wheel.core.idworker;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <b>说明：</b>产生ID（最简洁、灵活且快速的算法）

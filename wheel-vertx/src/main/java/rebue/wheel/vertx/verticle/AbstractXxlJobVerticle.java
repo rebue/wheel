@@ -1,6 +1,12 @@
 package rebue.wheel.vertx.verticle;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.xxl.job.core.executor.impl.XxlJobSimpleExecutor;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -8,11 +14,7 @@ import io.vertx.core.eventbus.MessageConsumer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import rebue.wheel.vertx.config.XxlJobProperties;
-
-import java.util.LinkedList;
-import java.util.List;
 
 @Slf4j
 public abstract class AbstractXxlJobVerticle extends AbstractVerticle {

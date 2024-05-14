@@ -1,9 +1,17 @@
 package rebue.wheel.turing;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Security;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.AlgorithmParameterSpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * 签名工具

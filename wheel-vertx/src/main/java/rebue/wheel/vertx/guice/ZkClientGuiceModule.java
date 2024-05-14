@@ -1,14 +1,16 @@
 package rebue.wheel.vertx.guice;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import rebue.wheel.vertx.config.ZkClientProperties;
 
 @Slf4j

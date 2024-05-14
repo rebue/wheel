@@ -1,7 +1,11 @@
 package rebue.wheel.vertx.guice;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import io.grpc.ManagedChannel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -9,9 +13,6 @@ import io.vertx.grpc.VertxChannelBuilder;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Slf4j
 public class GrpcNettyGuiceModule extends AbstractModule {

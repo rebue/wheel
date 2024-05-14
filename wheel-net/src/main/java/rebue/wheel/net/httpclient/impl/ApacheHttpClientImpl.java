@@ -1,19 +1,21 @@
 package rebue.wheel.net.httpclient.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.http.Consts;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.dom4j.DocumentException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.net.httpclient.HttpClient;
 import rebue.wheel.serialization.jackson.JacksonUtils;
 import rebue.wheel.serialization.xml.XmlUtils;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * <pre>

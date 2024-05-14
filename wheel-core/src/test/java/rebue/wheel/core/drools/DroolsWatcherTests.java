@@ -1,20 +1,21 @@
 package rebue.wheel.core.drools;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.core.fact.RequestFact;
 import rebue.wheel.core.file.FileModifier;
 import rebue.wheel.core.file.FileUtils;
-
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)

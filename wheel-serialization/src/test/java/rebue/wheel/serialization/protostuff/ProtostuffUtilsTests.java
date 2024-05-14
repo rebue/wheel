@@ -1,11 +1,11 @@
 package rebue.wheel.serialization.protostuff;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ProtostuffUtilsTests {
 

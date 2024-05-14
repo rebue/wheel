@@ -1,11 +1,20 @@
 package rebue.wheel.api.util;
 
+import static rebue.wheel.api.constant.RegexConstant.BASE64;
+import static rebue.wheel.api.constant.RegexConstant.BASE64URL;
+import static rebue.wheel.api.constant.RegexConstant.EMAIL;
+import static rebue.wheel.api.constant.RegexConstant.FIRST_LINE;
+import static rebue.wheel.api.constant.RegexConstant.HEX;
+import static rebue.wheel.api.constant.RegexConstant.ID_CARD;
+import static rebue.wheel.api.constant.RegexConstant.IPv4;
+import static rebue.wheel.api.constant.RegexConstant.IPv4_OF_LOCAL;
+import static rebue.wheel.api.constant.RegexConstant.IPv4_PORT;
+import static rebue.wheel.api.constant.RegexConstant.MOBILE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static rebue.wheel.api.constant.RegexConstant.*;
 
 public class RegexUtils {
     /**

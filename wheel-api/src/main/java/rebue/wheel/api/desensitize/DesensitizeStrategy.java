@@ -1,9 +1,10 @@
 package rebue.wheel.api.desensitize;
 
-import org.apache.commons.lang3.StringUtils;
-import rebue.wheel.api.util.RegexUtils;
-
 import java.util.function.Function;
+
+import org.apache.commons.lang3.StringUtils;
+
+import rebue.wheel.api.util.RegexUtils;
 
 /**
  * 脱敏策略

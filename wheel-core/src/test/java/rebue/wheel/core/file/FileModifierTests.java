@@ -1,11 +1,12 @@
 package rebue.wheel.core.file;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import rebue.wheel.core.file.FileModifier.AddPosition;
 
-import java.io.IOException;
+import rebue.wheel.core.file.FileModifier.AddPosition;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FileModifierTests {

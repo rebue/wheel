@@ -1,6 +1,9 @@
 package rebue.wheel.vertx.ro;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
@@ -10,8 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.api.dic.HttpStatusCodeDic;
 import rebue.wheel.api.dic.ResultDic;
-
-import java.io.Serializable;
 
 /**
  * Vert.x的返回结果

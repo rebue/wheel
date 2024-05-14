@@ -1,10 +1,10 @@
 package rebue.wheel.core.seal;
 
+import java.awt.Font;
+import java.io.IOException;
+
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-
-import java.awt.*;
-import java.io.IOException;
 
 /**
  * 印章工厂类

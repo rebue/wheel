@@ -1,12 +1,13 @@
 package rebue.wheel.vertx.skywalking;
 
-import io.vertx.core.MultiMap;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Base64;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.apm.toolkit.trace.TraceContext;
 import org.slf4j.MDC;
 
-import java.util.Base64;
+import io.vertx.core.MultiMap;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SkyWalkingUtils {

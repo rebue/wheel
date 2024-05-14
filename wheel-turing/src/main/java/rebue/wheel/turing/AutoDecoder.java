@@ -1,11 +1,12 @@
 package rebue.wheel.turing;
 
-import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.util.encoders.Hex;
-import rebue.wheel.api.util.RegexUtils;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
+import org.bouncycastle.util.encoders.Hex;
+
+import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.util.RegexUtils;
 
 /**
  * 自动解码器

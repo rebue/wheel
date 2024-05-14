@@ -1,10 +1,10 @@
 package rebue.wheel.core.db;
 
-import rebue.wheel.api.util.RegexUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import rebue.wheel.api.util.RegexUtils;
 
 public class RemarkUtils {
 

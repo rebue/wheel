@@ -1,11 +1,11 @@
 package rebue.wheel.core;
 
-import lombok.Data;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import lombok.Data;
 
 public class PomUtils {
 

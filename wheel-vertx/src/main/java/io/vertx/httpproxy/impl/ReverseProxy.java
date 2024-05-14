@@ -11,16 +11,32 @@
  */
 package io.vertx.httpproxy.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.function.BiFunction;
+
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.http.*;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.HttpVersion;
 import io.vertx.core.net.NetSocket;
-import io.vertx.httpproxy.*;
+import io.vertx.httpproxy.HttpProxy;
+import io.vertx.httpproxy.ProxyContext;
+import io.vertx.httpproxy.ProxyInterceptor;
+import io.vertx.httpproxy.ProxyOptions;
+import io.vertx.httpproxy.ProxyRequest;
+import io.vertx.httpproxy.ProxyResponse;
 import io.vertx.httpproxy.cache.CacheOptions;
 import io.vertx.httpproxy.spi.cache.Cache;
-
-import java.util.*;
-import java.util.function.BiFunction;
 
 public class ReverseProxy implements HttpProxy {
 

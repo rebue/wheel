@@ -2,6 +2,7 @@ package rebue.wheel.vertx.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;

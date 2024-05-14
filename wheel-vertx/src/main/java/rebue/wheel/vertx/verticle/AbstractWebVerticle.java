@@ -1,6 +1,9 @@
 package rebue.wheel.vertx.verticle;
 
+import java.util.Map;
+
 import com.google.inject.Injector;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -13,7 +16,11 @@ import io.vertx.core.net.SelfSignedCertificate;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.*;
+import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.handler.ErrorHandler;
+import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.ResponseTimeHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +29,6 @@ import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
 import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
-
-import java.util.Map;
 
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {

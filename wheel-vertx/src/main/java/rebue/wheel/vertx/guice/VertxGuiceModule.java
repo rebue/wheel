@@ -3,6 +3,7 @@ package rebue.wheel.vertx.guice;
 import com.github.f4b6a3.ulid.UlidCreator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;

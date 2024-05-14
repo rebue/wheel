@@ -1,11 +1,12 @@
 package rebue.wheel.api.util;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class RegexUtilsTests {

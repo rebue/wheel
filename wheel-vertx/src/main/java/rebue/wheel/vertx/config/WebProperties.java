@@ -1,9 +1,9 @@
 package rebue.wheel.vertx.config;
 
+import java.util.Map;
+
 import io.vertx.ext.web.handler.LoggerFormat;
 import lombok.Data;
-
-import java.util.Map;
 
 @Data
 public class WebProperties {

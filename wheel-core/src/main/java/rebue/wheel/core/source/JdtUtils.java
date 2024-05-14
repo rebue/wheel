@@ -1,6 +1,9 @@
 package rebue.wheel.core.source;
 
-import lombok.SneakyThrows;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.eclipse.jdt.core.ToolFactory;
@@ -8,11 +11,9 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-import rebue.wheel.serialization.xml.XmlUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.SneakyThrows;
+import rebue.wheel.serialization.xml.XmlUtils;
 
 public class JdtUtils {
 

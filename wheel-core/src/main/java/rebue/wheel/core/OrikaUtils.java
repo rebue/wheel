@@ -1,9 +1,9 @@
 package rebue.wheel.core;
 
+import java.util.Map;
+
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-
-import java.util.Map;
 
 /**
  * Orika的工具类

@@ -1,13 +1,14 @@
 package rebue.wheel.vertx.guice;
 
+import java.util.concurrent.Callable;
+
 import com.google.inject.Injector;
+
 import io.vertx.core.Promise;
 import io.vertx.core.Verticle;
 import io.vertx.core.impl.verticle.CompilingClassLoader;
 import io.vertx.core.spi.VerticleFactory;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.Callable;
 
 @Slf4j
 public class GuiceVerticleFactory implements VerticleFactory {

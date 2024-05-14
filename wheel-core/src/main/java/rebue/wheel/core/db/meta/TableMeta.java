@@ -1,12 +1,12 @@
 package rebue.wheel.core.db.meta;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 表元数据

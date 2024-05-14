@@ -1,8 +1,8 @@
 package rebue.wheel.vertx.config;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class GuiceProperties {

@@ -1,10 +1,5 @@
 package rebue.wheel.net;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rebue.wheel.api.util.RegexUtils;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -15,6 +10,12 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rebue.wheel.api.util.RegexUtils;
 
 public class NetUtils {
     private final static Logger _log = LoggerFactory.getLogger(NetUtils.class);

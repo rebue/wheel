@@ -1,19 +1,20 @@
 package rebue.wheel.core.drools;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import static rebue.wheel.core.drools.DroolsUtils.newKieContainer;
+import static rebue.wheel.core.drools.DroolsUtils.readRuleFiles;
+
+import java.io.File;
+import java.nio.file.Path;
+
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.kie.api.runtime.KieContainer;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.core.file.FileUtils;
-
-import java.io.File;
-import java.nio.file.Path;
-
-import static rebue.wheel.core.drools.DroolsUtils.newKieContainer;
-import static rebue.wheel.core.drools.DroolsUtils.readRuleFiles;
 
 @Slf4j
 public class DroolsWatcher {

@@ -1,6 +1,12 @@
 package rebue.wheel.serialization.xml;
 
-import jakarta.servlet.ServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -10,12 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.servlet.ServletRequest;
 
 public class XmlUtils {
     private static final Logger _log = LoggerFactory.getLogger(XmlUtils.class);

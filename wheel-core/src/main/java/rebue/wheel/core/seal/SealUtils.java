@@ -1,9 +1,12 @@
 package rebue.wheel.core.seal;
 
-import rebue.wheel.core.ImageUtils;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -12,6 +15,10 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import rebue.wheel.core.ImageUtils;
 
 /**
  * 生成公章图像工具类

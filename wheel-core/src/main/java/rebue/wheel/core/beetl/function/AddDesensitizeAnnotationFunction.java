@@ -1,8 +1,9 @@
 package rebue.wheel.core.beetl.function;
 
-import lombok.SneakyThrows;
 import org.beetl.core.Context;
 import org.beetl.core.Function;
+
+import lombok.SneakyThrows;
 
 /**
  * 添加脱敏注解的函数

@@ -1,5 +1,8 @@
 package rebue.wheel.vertx.verticle;
 
+import java.io.IOException;
+import java.util.List;
+
 import io.grpc.ServerServiceDefinition;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -11,9 +14,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.GrpcNettyProperties;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 public abstract class AbstractGrpcNettyVerticle extends AbstractVerticle {
