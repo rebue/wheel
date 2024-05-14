@@ -1,12 +1,12 @@
 /**
- * XXX 复制4.4.6版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
+ * XXX 复制4.5.7版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
- * <p>
+ *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- * <p>
+ *
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
 package io.vertx.httpproxy.impl;
@@ -27,7 +27,6 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.http.HttpVersion;
 import io.vertx.core.net.NetSocket;
 import io.vertx.httpproxy.HttpProxy;
 import io.vertx.httpproxy.ProxyContext;
@@ -81,10 +80,7 @@ public class ReverseProxy implements HttpProxy {
         }
 
         // WebSocket upgrade tunneling
-        if (supportWebSocket &&
-                request.version() == HttpVersion.HTTP_1_1 &&
-                request.method() == HttpMethod.GET &&
-                request.headers().contains(HttpHeaders.CONNECTION, HttpHeaders.UPGRADE, true)) {
+        if (supportWebSocket && io.vertx.core.http.impl.HttpUtils.canUpgradeToWebSocket(request)) {
             handleWebSocketUpgrade(proxyRequest);
             return;
         }

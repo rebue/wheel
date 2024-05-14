@@ -1,6 +1,6 @@
 /**
  * XXX
- * 复制4.4.6版本的io.vertx.httpproxy.impl.ProxyInterceptor接口的代码，让websocket也支持代理拦截器
+ * 复制4.5.7版本的io.vertx.httpproxy.impl.ProxyInterceptor接口的代码，让websocket也支持代理拦截器
  * 扩展ProxyInterceptor接口，添加修改代理请求的方法
  */
 package io.vertx.httpproxy;
@@ -16,7 +16,7 @@ public interface ProxyInterceptor {
 
     /**
      * XXX 默认调用modifyProxyRequest方法
-     * <p>
+     * 
      * Handle the proxy request at the stage of this interceptor.
      *
      * @param context the proxy context
