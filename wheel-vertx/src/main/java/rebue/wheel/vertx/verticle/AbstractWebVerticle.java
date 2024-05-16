@@ -19,6 +19,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.ResponseContentTypeHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import jakarta.inject.Inject;
@@ -26,8 +27,6 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
-import rebue.wheel.vertx.skywalking.SkyWalkingUtils;
-import rebue.wheel.vertx.skywalking.handler.SkyWalkingTraceIdWriteHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
@@ -63,21 +62,16 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         router.allowForward(allowForwardHeaders);
 
         // 全局route
-        final Route globalRoute = router.route();
+        final Route        globalRoute  = router.route();
 
-        // 添加全局路由处理器
-        addGlobalRouteHandler(globalRoute);
-
-        // 是否启用SkyWalking Agent支持
-        if (SkyWalkingUtils.isEnabled()) {
-            log.info("开启SkyWalking Agent支持");
-            globalRoute.handler(new SkyWalkingTraceIdWriteHandler());
-        }
-        // 响应内容类型处理(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
-        // log.info("开启响应内容类型处理");
-        // globalRoute.handler(ResponseContentTypeHandler.create());
-        // 全局返回响应时间
-        if (webProperties.getIsResponseTime()) {
+        // 全局路由错误处理
+        final ErrorHandler errorHandler = ErrorHandler.create(this.vertx);
+        globalRoute.failureHandler(ctx -> {
+            log.error("全局路由错误处理: {}", ctx.statusCode());
+            errorHandler.handle(ctx);
+        });
+        // 全局返回响应时间(写入x-response-time到响应头)
+        if (webProperties.getReturnResponseTime()) {
             log.info("开启返回响应时间");
             globalRoute.handler(ResponseTimeHandler.create());
         }
@@ -91,7 +85,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         }
         // 记录日志
         if (webProperties.getIsLogging()) {
-            log.info("开启Web日志记录");
+            log.info("开启日志记录");
             globalRoute.handler(LoggerHandler.create(webProperties.getLoggerFormat()));
         }
         // CORS
@@ -99,20 +93,19 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("开启CORS");
             globalRoute.handler(CorsHandler.create());
         }
-        // 全局路由错误处理
-        final ErrorHandler errorHandler = ErrorHandler.create(this.vertx);
-        globalRoute.failureHandler(ctx -> {
-            log.error("全局路由错误处理: {}", ctx.statusCode());
-            errorHandler.handle(ctx);
-        });
         // 是否打印来源的IP
         if (webProperties.getPrintSrcIp()) {
             log.info("开启打印来源的IP");
             globalRoute.handler(new PrintSrcIpHandler());
         }
+        // 自动响应内容类型(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
+        if (webProperties.getIsAutoResponseContentType()) {
+            log.info("开启自动响应内容类型");
+            globalRoute.handler(ResponseContentTypeHandler.create());
+        }
 
-        // 添加全局子路由处理器
-        addGlobalRouteSubHandler(globalRoute);
+        // 添加全局路由处理器
+        addGlobalRouteHandler(globalRoute);
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
@@ -169,16 +162,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
      * @param globalRoute 全局路由
      */
     protected void addGlobalRouteHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteHandler方法:{}", globalRoute.getName());
-    }
-
-    /**
-     * 添加全局路由子处理器
-     *
-     * @param globalRoute 全局路由
-     */
-    protected void addGlobalRouteSubHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteSubHandler方法: {}", globalRoute.getName());
+        log.info("未重写addGlobalRouteHandler方法");
     }
 
     @Override

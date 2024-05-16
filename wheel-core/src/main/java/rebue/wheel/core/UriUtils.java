@@ -9,9 +9,7 @@ public class UriUtils {
      * @return 填补好的uri字符串
      */
     public static String padEndSlash(String uri) {
-        return uri.charAt(uri.length() - 1) == '/'
-                ? uri + '/'
-                : uri;
+        return uri.charAt(uri.length() - 1) == '/' ? uri + '/' : uri;
     }
 
     /**
@@ -21,8 +19,6 @@ public class UriUtils {
      * @return 删除斜杠后的uri字符串
      */
     public static String removeEndSlash(String uri) {
-        return uri.charAt(uri.length() - 1) == '/'
-                ? uri.substring(0, uri.length() - 1)
-                : uri;
+        return uri.charAt(uri.length() - 1) == '/' ? uri.substring(0, uri.length() - 1) : uri;
     }
 }

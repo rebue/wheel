@@ -96,8 +96,14 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 
         String                 classpath                     = FileUtils.getClassesPath(this.getClass());
         Path                   defaultConfigYamlFilePath     = Path.of(classpath, "conf", "config.yml");
+        if (!Files.exists(defaultConfigYamlFilePath)) {
+            defaultConfigYamlFilePath = Path.of(classpath, "config", "config.yml");
+        }
+        if (!Files.exists(defaultConfigYamlFilePath)) {
+            defaultConfigYamlFilePath = Path.of(classpath, "config", "application.yml");
+        }
         if (Files.exists(defaultConfigYamlFilePath)) {
-            log.debug("加载conf/config.yml文件的配置");
+            log.info("加载默认的配置文件: {}", defaultConfigYamlFilePath);
             ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
                     .setType("file")
                     .setFormat("yaml")
@@ -128,7 +134,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             if (stores == null) {
                 startWithConfig(startPromise, defaultConfigJsonObject);
             } else {
-                log.info("配置仓库数量: {}", stores.size());
+                log.info("配置仓库的数量: {}", stores.size());
                 final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
                 configRetrieverOptions.setScanPeriod(scanPeriod);
                 stores.forEach(store -> configRetrieverOptions.addStore(new ConfigStoreOptions((JsonObject) store)));
