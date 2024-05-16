@@ -1,10 +1,12 @@
 package rebue.wheel.vertx.verticle;
 
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import com.google.inject.Injector;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -104,8 +106,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             globalRoute.handler(ResponseContentTypeHandler.create());
         }
 
-        // 添加全局路由处理器
+        log.info("添加全局路由处理器");
         addGlobalRouteHandler(globalRoute);
+        log.info("通过SPI加载全局路由处理器");
+        @SuppressWarnings("rawtypes")
+        ServiceLoader<Handler> globalRouteHandlerServiceLoader = ServiceLoader.load(Handler.class);
+        globalRouteHandlerServiceLoader.forEach(globalRoute::handler);
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
