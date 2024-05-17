@@ -6,7 +6,6 @@ import java.util.ServiceLoader;
 import com.google.inject.Injector;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -29,6 +28,7 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
+import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
@@ -109,9 +109,10 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         log.info("添加全局路由处理器");
         addGlobalRouteHandler(globalRoute);
         log.info("通过SPI加载全局路由处理器");
-        @SuppressWarnings("rawtypes")
-        ServiceLoader<Handler> globalRouteHandlerServiceLoader = ServiceLoader.load(Handler.class);
-        globalRouteHandlerServiceLoader.forEach(globalRoute::handler);
+        ServiceLoader<GlobalRouteHandlerFactory> globalRouteHandlerServiceLoader = ServiceLoader.load(GlobalRouteHandlerFactory.class);
+        globalRouteHandlerServiceLoader.forEach(factory -> {
+            globalRoute.handler(factory.create(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name())));
+        });
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {

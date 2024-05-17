@@ -1,5 +1,6 @@
 package rebue.wheel.vertx.config;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.vertx.ext.web.handler.LoggerFormat;
@@ -65,5 +66,9 @@ public class WebProperties {
      * httpServerOptions
      */
     private Map<String, Object> server;
+    /**
+     * 全局路由处理器列表
+     */
+    private Map<String, Object> globalRouteHandlers       = new LinkedHashMap<>();
 
 }
