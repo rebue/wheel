@@ -318,7 +318,15 @@ public class JdbcUtils {
             isKeyWord = true;
         }
         case DATE                                        -> {
-            clazz  = LocalDate.class;
+            if (fieldName.endsWith("_time")) {
+                clazz = LocalTime.class;
+            } else if (fieldName.endsWith("_date")) {
+                clazz = LocalDate.class;
+            } else if (fieldName.endsWith("_datetime")) {
+                clazz = LocalDateTime.class;
+            } else {
+                throw new IllegalStateException("日期类型字段未按规范进行命名");
+            }
             jsType = "string";
         }
         case TIME                                        -> {
@@ -343,8 +351,7 @@ public class JdbcUtils {
                 throw new IllegalArgumentException("not support sql type: " + fieldType);
             }
         }
-        default                                          ->
-            throw new IllegalArgumentException("not support sql type: " + fieldType);
+        default                                          -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
         // 设置是否密钥
         property.setIsKey(property.getRemark().contains("@密钥"));
