@@ -28,7 +28,8 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
-import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
+import rebue.wheel.vertx.spi.GlobalRoutePostHandlerFactory;
+import rebue.wheel.vertx.spi.GlobalRoutePreHandlerFactory;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
@@ -108,9 +109,19 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("添加全局路由处理器");
         addGlobalRouteHandler(globalRoute);
-        log.info("通过SPI加载全局路由处理器");
-        ServiceLoader<GlobalRouteHandlerFactory> globalRouteHandlerServiceLoader = ServiceLoader.load(GlobalRouteHandlerFactory.class);
-        globalRouteHandlerServiceLoader.forEach(factory -> {
+
+        log.info("通过SPI加载全局路由前置处理器");
+        ServiceLoader<GlobalRoutePreHandlerFactory> globalRoutePreHandlerServiceLoader = ServiceLoader.load(GlobalRoutePreHandlerFactory.class);
+        globalRoutePreHandlerServiceLoader.forEach(factory -> {
+            globalRoute.handler(factory.create(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name())));
+        });
+
+        log.info("配置路由器");
+        configRouter(router);
+
+        log.info("通过SPI加载全局路由后置处理器");
+        ServiceLoader<GlobalRoutePostHandlerFactory> globalRoutePostHandlerServiceLoader = ServiceLoader.load(GlobalRoutePostHandlerFactory.class);
+        globalRoutePostHandlerServiceLoader.forEach(factory -> {
             globalRoute.handler(factory.create(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name())));
         });
 
@@ -123,9 +134,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                     .setKeyCertOptions(certificate.keyCertOptions())
                     .setTrustOptions(certificate.trustOptions());
         }
-
-        log.info("配置路由器");
-        configRouter(router);
 
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 

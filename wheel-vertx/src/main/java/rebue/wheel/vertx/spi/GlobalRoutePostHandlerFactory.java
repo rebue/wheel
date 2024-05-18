@@ -7,11 +7,11 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.RoutingContext;
 
 /**
- * 全局路由处理器工厂
+ * 全局路由后置处理器工厂
  *
  * @author zbz
  */
-public interface GlobalRouteHandlerFactory {
+public interface GlobalRoutePostHandlerFactory {
 
     /**
      * @return 工厂名称
@@ -19,12 +19,12 @@ public interface GlobalRouteHandlerFactory {
     String name();
 
     /**
-     * 创建全局路由处理器
+     * 创建全局路由后置处理器
      *
      * @param vertx    vertx实例
      * @param injector 注入器
-     * @param options  代理拦截器的配置选项
-     * @return 全局路由处理器
+     * @param options  处理器的配置选项
+     * @return 全局路由后置处理器
      */
     Handler<RoutingContext> create(Vertx vertx, Injector injector, Object options);
 
