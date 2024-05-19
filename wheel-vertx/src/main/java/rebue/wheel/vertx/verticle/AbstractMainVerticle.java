@@ -94,7 +94,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 
-        String                 classpath                     = FileUtils.getClassesPath(this.getClass());
+        // String classpath = FileUtils.getClassesPath(this.getClass());
+        String                 classpath                     = FileUtils.getProjectPath();
         Path                   defaultConfigYamlFilePath     = Path.of(classpath, "conf", "config.yml");
         if (!Files.exists(defaultConfigYamlFilePath)) {
             defaultConfigYamlFilePath = Path.of(classpath, "config", "config.yml");
