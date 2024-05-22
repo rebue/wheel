@@ -380,13 +380,18 @@ public class JdbcUtils {
                     for (String remark : property.getRemarks()) {
                         List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, remark);
                         if (dicGroup != null) {
+                            if (dicGroup.get(0).equals("import")) {
+                                break;
+                            }
                             dicMeta.getItems().add(DicItemMeta.of(
-                                    Integer.valueOf(dicGroup.get(0)),
+                                    dicGroup.get(0),
                                     dicGroup.get(1),
                                     dicGroup.get(2)));
                         }
                     }
-                    dicMetas.add(dicMeta);
+                    if (!dicMeta.getItems().isEmpty()) {
+                        dicMetas.add(dicMeta);
+                    }
                 }
             }
         }

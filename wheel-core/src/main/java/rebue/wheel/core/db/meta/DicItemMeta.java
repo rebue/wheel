@@ -16,13 +16,13 @@ public class DicItemMeta {
     /**
      * 字典项编码
      */
-    private Integer code;
+    private String code;
     /**
      * 字典项名称
      */
-    private String  name;
+    private String name;
     /**
      * 字典项描述
      */
-    private String  desc;
+    private String desc;
 }
