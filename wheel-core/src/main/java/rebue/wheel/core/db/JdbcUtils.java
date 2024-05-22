@@ -365,7 +365,7 @@ public class JdbcUtils {
         property.setIsKeyWord(isKeyWord);
     }
 
-    private static Pattern DIC_REGEX = Pattern.compile("(\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
+    private static Pattern DIC_REGEX = Pattern.compile("(-?\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
 
     public static Set<DicMeta> getDicMetasFromPojoMetas(List<PojoMeta> pojoMetas) {
         Set<DicMeta> dicMetas = new LinkedHashSet<>();
