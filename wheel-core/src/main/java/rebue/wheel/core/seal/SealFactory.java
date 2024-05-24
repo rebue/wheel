@@ -1,6 +1,6 @@
 package rebue.wheel.core.seal;
 
-import java.awt.Font;
+import java.awt.*;
 import java.io.IOException;
 
 import com.itextpdf.io.image.ImageData;

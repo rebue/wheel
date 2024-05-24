@@ -26,7 +26,7 @@ public class AutoDecoder {
         } else if (RegexUtils.matchBase64(encode)) {
             byte[] key = Base64.getDecoder().decode(encode);
             if (RegexUtils.matchHex(new String(key, StandardCharsets.UTF_8).trim())) {  // XXX
-                                                                                        // 这里去空格是为了兼容某家国有大银行给的key居然把回车编码进来的情况
+                // 这里去空格是为了兼容某家国有大银行给的key居然把回车编码进来的情况
                 log.debug("编码为Hex_Base64格式");
                 return Hex.decode(key);
             }
@@ -35,7 +35,7 @@ public class AutoDecoder {
         } else if (RegexUtils.matchBase64Url(encode)) {
             byte[] key = Base64.getUrlDecoder().decode(encode);
             if (RegexUtils.matchHex(new String(key, StandardCharsets.UTF_8).trim())) {  // XXX
-                                                                                        // 这里去空格是为了兼容某家国有大银行给的key居然把回车编码进来的情况
+                // 这里去空格是为了兼容某家国有大银行给的key居然把回车编码进来的情况
                 log.debug("编码为Hex_Base64Url格式");
                 return Hex.decode(key);
             }

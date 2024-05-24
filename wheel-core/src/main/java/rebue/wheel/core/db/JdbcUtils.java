@@ -1,41 +1,13 @@
 package rebue.wheel.core.db;
 
-import static java.sql.Types.BIGINT;
-import static java.sql.Types.BIT;
-import static java.sql.Types.BOOLEAN;
-import static java.sql.Types.CHAR;
-import static java.sql.Types.DATE;
-import static java.sql.Types.DECIMAL;
-import static java.sql.Types.DOUBLE;
-import static java.sql.Types.FLOAT;
-import static java.sql.Types.INTEGER;
-import static java.sql.Types.LONGVARCHAR;
-import static java.sql.Types.NCHAR;
-import static java.sql.Types.NUMERIC;
-import static java.sql.Types.NVARCHAR;
-import static java.sql.Types.OTHER;
-import static java.sql.Types.REAL;
-import static java.sql.Types.SMALLINT;
-import static java.sql.Types.TIME;
-import static java.sql.Types.TIMESTAMP;
-import static java.sql.Types.TINYINT;
-import static java.sql.Types.VARCHAR;
+import static java.sql.Types.*;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import com.google.common.base.CaseFormat;
@@ -45,14 +17,7 @@ import net.postgis.jdbc.geometry.LineString;
 import net.postgis.jdbc.geometry.Point;
 import net.postgis.jdbc.geometry.Polygon;
 import rebue.wheel.api.util.RegexUtils;
-import rebue.wheel.core.db.meta.DbMeta;
-import rebue.wheel.core.db.meta.DicItemMeta;
-import rebue.wheel.core.db.meta.DicMeta;
-import rebue.wheel.core.db.meta.FieldMeta;
-import rebue.wheel.core.db.meta.ForeignKeyMeta;
-import rebue.wheel.core.db.meta.PojoMeta;
-import rebue.wheel.core.db.meta.PropertyMeta;
-import rebue.wheel.core.db.meta.TableMeta;
+import rebue.wheel.core.db.meta.*;
 
 public class JdbcUtils {
     public static Connection getConnection(ConnectParam connectParam) throws SQLException {
@@ -269,11 +234,11 @@ public class JdbcUtils {
         Integer      fieldType = property.getField().getType();
         final String fieldName = property.getField().getName().toLowerCase();
         switch (fieldType) {
-        case BIT, BOOLEAN                                -> {
+        case BIT, BOOLEAN -> {
             clazz  = Boolean.class;
             jsType = "boolean";
         }
-        case TINYINT                                     -> {
+        case TINYINT -> {
             if (property.getName().startsWith("is")) {
                 clazz  = Boolean.class;
                 jsType = "boolean";
@@ -286,7 +251,7 @@ public class JdbcUtils {
                 }
             }
         }
-        case SMALLINT                                    -> {
+        case SMALLINT -> {
             clazz  = Short.class;
             jsType = "number";
             // 如果不是字典类字段，加入keyword
@@ -294,17 +259,17 @@ public class JdbcUtils {
                 isKeyWord = true;
             }
         }
-        case INTEGER                                     -> {
+        case INTEGER -> {
             clazz     = Integer.class;
             jsType    = "number";
             isKeyWord = true;
         }
-        case BIGINT                                      -> {
+        case BIGINT -> {
             // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
             clazz  = Long.class;
             jsType = "string";
         }
-        case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL       -> {
+        case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
             clazz  = BigDecimal.class;
             jsType = "number";
             // 如果不是UUID字段，则加入keyword(判断精度为32的字符串为UUID字段)
@@ -317,7 +282,7 @@ public class JdbcUtils {
             jsType    = "string";
             isKeyWord = true;
         }
-        case DATE                                        -> {
+        case DATE -> {
             if (fieldName.endsWith("_time")) {
                 clazz = LocalTime.class;
             } else if (fieldName.endsWith("_date")) {
@@ -329,15 +294,15 @@ public class JdbcUtils {
             }
             jsType = "string";
         }
-        case TIME                                        -> {
+        case TIME -> {
             clazz  = LocalTime.class;
             jsType = "string";
         }
-        case TIMESTAMP                                   -> {
+        case TIMESTAMP -> {
             clazz  = LocalDateTime.class;
             jsType = "string";
         }
-        case OTHER                                       -> {
+        case OTHER -> {
             if (fieldName.endsWith("point_coord") || fieldName.endsWith("point_location")) {
                 clazz  = Point.class;
                 jsType = "string";
@@ -351,7 +316,7 @@ public class JdbcUtils {
                 throw new IllegalArgumentException("not support sql type: " + fieldType);
             }
         }
-        default                                          -> throw new IllegalArgumentException("not support sql type: " + fieldType);
+        default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
         // 设置是否密钥
         property.setIsKey(property.getRemark().contains("@密钥"));
@@ -365,7 +330,7 @@ public class JdbcUtils {
         property.setIsKeyWord(isKeyWord);
     }
 
-    private static Pattern DIC_REGEX = Pattern.compile("(-?\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
+    private static final Pattern DIC_REGEX = Pattern.compile("(-?\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
 
     public static Set<DicMeta> getDicMetasFromPojoMetas(List<PojoMeta> pojoMetas) {
         Set<DicMeta> dicMetas = new LinkedHashSet<>();

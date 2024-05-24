@@ -1,15 +1,6 @@
 package rebue.wheel.api.util;
 
-import static rebue.wheel.api.constant.RegexConstant.BASE64;
-import static rebue.wheel.api.constant.RegexConstant.BASE64URL;
-import static rebue.wheel.api.constant.RegexConstant.EMAIL;
-import static rebue.wheel.api.constant.RegexConstant.FIRST_LINE;
-import static rebue.wheel.api.constant.RegexConstant.HEX;
-import static rebue.wheel.api.constant.RegexConstant.ID_CARD;
-import static rebue.wheel.api.constant.RegexConstant.IPv4;
-import static rebue.wheel.api.constant.RegexConstant.IPv4_OF_LOCAL;
-import static rebue.wheel.api.constant.RegexConstant.IPv4_PORT;
-import static rebue.wheel.api.constant.RegexConstant.MOBILE;
+import static rebue.wheel.api.constant.RegexConstant.*;
 
 import java.util.ArrayList;
 import java.util.List;

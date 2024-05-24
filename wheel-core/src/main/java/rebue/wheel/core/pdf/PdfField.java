@@ -2,12 +2,7 @@ package rebue.wheel.core.pdf;
 
 import com.itextpdf.kernel.font.PdfFont;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor

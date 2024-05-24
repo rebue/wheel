@@ -1,6 +1,6 @@
 package rebue.wheel.core.pdf;
 
-import java.awt.Font;
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;

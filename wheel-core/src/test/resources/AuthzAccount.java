@@ -23,21 +23,21 @@ public class AuthzAccount implements java.io.Serializable {
     }
 
     public AuthzAccount(long id, String name, String code, String password, boolean enabled, boolean app) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
+        this.id       = id;
+        this.name     = name;
+        this.code     = code;
         this.password = password;
-        this.enabled = enabled;
-        this.app = app;
+        this.enabled  = enabled;
+        this.app      = app;
     }
 
     public AuthzAccount(long id, String name, String code, String password, boolean enabled, boolean app, Set<AuthcRole> authcRoles) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-        this.password = password;
-        this.enabled = enabled;
-        this.app = app;
+        this.id         = id;
+        this.name       = name;
+        this.code       = code;
+        this.password   = password;
+        this.enabled    = enabled;
+        this.app        = app;
         this.authcRoles = authcRoles;
     }
 
@@ -97,7 +97,8 @@ public class AuthzAccount implements java.io.Serializable {
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "AUTHC_ACCOUNT_ROLE", catalog = "mincms", joinColumns = {@JoinColumn(name = "ACCOUNT_ID", nullable = false, updatable = false)}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", nullable = false, updatable = false)})
+    @JoinTable(name = "AUTHC_ACCOUNT_ROLE", catalog = "mincms", joinColumns = { @JoinColumn(name = "ACCOUNT_ID", nullable = false, updatable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "ROLE_ID", nullable = false, updatable = false) })
     public Set<AuthcRole> getAuthcRoles() {
         return this.authcRoles;
     }
