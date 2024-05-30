@@ -110,6 +110,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         ServiceLoader<GlobalRouteHandlerFactory> globalRouteHandlerServiceLoader = ServiceLoader.load(GlobalRouteHandlerFactory.class);
         log.info("添加全局路由前置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
+            log.info("添加全局路由前置处理器: {}", factory.name());
             factory.init(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name()));
             Handler<RoutingContext> preHandler = factory.createPreHandler();
             if (preHandler != null) {
@@ -122,6 +123,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("添加全局路由后置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
+            log.info("添加全局路由后置处理器: {}", factory.name());
             Handler<RoutingContext> postHandler = factory.createPostHandler();
             if (postHandler != null) {
                 globalRoute.handler(postHandler);
