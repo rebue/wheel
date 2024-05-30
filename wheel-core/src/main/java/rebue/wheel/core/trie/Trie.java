@@ -3,6 +3,21 @@ package rebue.wheel.core.trie;
 import java.util.List;
 
 public interface Trie<V> {
+    /**
+     * 获取叶子数量
+     * 
+     * @return 叶子数量
+     */
+    int size();
+
+    /**
+     * 是否没有叶子
+     *
+     * @return 是否没有叶子
+     */
+    default boolean isEmpty() {
+        return size() == 0;
+    }
 
     /**
      * 加入元素

@@ -6,6 +6,16 @@ import java.util.List;
 public class PatriciaTrie<V> implements Trie<V> {
     private TrieNode<V> root = new TrieNode<>();
 
+    /**
+     * 叶子数量
+     */
+    private int         size = 0;
+
+    @Override
+    public int size() {
+        return size;
+    }
+
     @Override
     public void put(String key, V value) {
         if (key == null || key.length() == 0 || key.isEmpty()) {
@@ -53,12 +63,14 @@ public class PatriciaTrie<V> implements Trie<V> {
                 else if (compared < 0) {
                     // 如果第一个字符就小了，直接在最前面插入一个新的子节点
                     if (j == 0) {
+                        size++;
                         node.getChildren().add(j, TrieNode.of(true, key, value));
                         return;
                     }
                     // 如果之前有相同的字符，那么在此处插入一个新的叶子节点，并将当前子节点移动到新的叶子节点下
                     node.getChildren().remove(i);
                     TrieNode<V> newNode = TrieNode.of(childKey.substring(0, j));
+                    size++;
                     newNode.getChildren().add(TrieNode.of(true, key.substring(j), value));
                     child.setKey(childKey.substring(j));
                     newNode.getChildren().add(child);
@@ -74,6 +86,7 @@ public class PatriciaTrie<V> implements Trie<V> {
                     // 如果之前有相同的字符，那么在此处插入一个新的叶子节点，并将当前子节点移动到新的叶子节点下
                     node.getChildren().remove(i);
                     TrieNode<V> newNode = TrieNode.of(childKey.substring(0, j));
+                    size++;
                     newNode.getChildren().add(TrieNode.of(true, key.substring(j), value));
                     child.setKey(childKey.substring(j));
                     newNode.getChildren().add(child);
@@ -91,6 +104,7 @@ public class PatriciaTrie<V> implements Trie<V> {
                 child.setValue(value);
                 return;
             } else if (compared < 0) {
+                size++;
                 TrieNode<V> newNode = TrieNode.of(true, key, value);
                 node.getChildren().remove(i);
                 child.setKey(childKey.substring(minLength));
