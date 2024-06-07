@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.5.32</version>
+        <version>3.5.33</version>
     </parent>
     <artifactId>wheel-vertx</artifactId>
     <description>wheel利用vert.x框架进行开发常用的工具库</description>
@@ -85,6 +85,11 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-kafka-client</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-amqp-client</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -182,11 +187,11 @@
             <scope>provided</scope>
         </dependency>
         <!-- oracle数据库的调试日志用的是jul-->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jul</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-jul</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>

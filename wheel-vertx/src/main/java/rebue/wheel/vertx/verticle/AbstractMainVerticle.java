@@ -34,7 +34,6 @@ import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
-// @SuppressWarnings("deprecation")
 @SuppressWarnings("deprecation")
 @Slf4j
 public abstract class AbstractMainVerticle extends AbstractVerticle {
@@ -81,7 +80,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> startPromise) {
         log.info("MainVerticle start");
-
         ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
                 .setIncludeDefaultStores(true);
 

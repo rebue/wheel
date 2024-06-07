@@ -2,10 +2,10 @@ package rebue.wheel.vertx.web;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.PlatformHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author zbz
  */
 @Slf4j
-public class PrintSrcIpHandler implements Handler<RoutingContext> {
+public class PrintSrcIpHandler implements PlatformHandler {
 
     @Override
     public void handle(RoutingContext ctx) {

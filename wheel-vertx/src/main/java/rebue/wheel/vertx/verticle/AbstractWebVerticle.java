@@ -1,11 +1,15 @@
 package rebue.wheel.vertx.verticle;
 
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 import com.google.inject.Injector;
 
+import io.netty.handler.codec.compression.StandardCompressionOptions;
+import io.vertx.amqp.AmqpClient;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -20,24 +24,31 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.*;
+import io.vertx.kafka.client.consumer.KafkaConsumer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
+import rebue.wheel.vertx.spi.VertxWebPluginFactory;
+import rebue.wheel.vertx.web.CompressResponseHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {
-    private HttpServer httpServer;
-    private HttpServer http2httpsServer;
+
+    private HttpServer      httpServer;
+    private HttpServer      http2httpsServer;
 
     @Inject
     @Named("mainId")
-    private String     mainId;
+    private String          mainId;
 
-    protected Injector injector;
+    protected Injector      injector;
+
+    protected WebProperties webProperties;
+    protected Router        router;
 
     public void setInjector(Injector injector) {
         this.injector = injector;
@@ -49,26 +60,57 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     public void start(Promise<Void> startPromise) {
         log.info("WebVerticle start deployed");
 
-        WebProperties           webProperties     = config().mapTo(WebProperties.class);
-        final HttpServerOptions httpServerOptions = webProperties.getServer() == null ? new HttpServerOptions()
-                : new HttpServerOptions(JsonObject.mapFrom(webProperties.getServer()));
+        webProperties = config().mapTo(WebProperties.class);
+        Map<String, Object>     httpServerConfig  = webProperties.getServer();
+        final HttpServerOptions httpServerOptions = httpServerConfig == null ? new HttpServerOptions()
+                : new HttpServerOptions(JsonObject.mapFrom(httpServerConfig));
 
         log.info("创建路由");
-        final Router        router              = Router.router(this.vertx);
+        router = Router.router(this.vertx);
+
+        log.info("通过SPI加载web插件工厂");
+        ServiceLoader<VertxWebPluginFactory> webPluginFactoryServiceLoader = ServiceLoader.load(VertxWebPluginFactory.class);
+        log.info("初始化web插件工厂");
+        webPluginFactoryServiceLoader.forEach(factory -> {
+            log.info("初始化web插件工厂: {}", factory.name());
+            factory.init(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name()));
+        });
 
         AllowForwardHeaders allowForwardHeaders = AllowForwardHeaders.valueOf(webProperties.getAllowForward());
         log.info("设置allow forward: {}", allowForwardHeaders);
         router.allowForward(allowForwardHeaders);
 
         // 全局route
-        final Route        globalRoute  = router.route();
+        final Route globalRoute = router.route();
 
-        // 全局路由错误处理
-        final ErrorHandler errorHandler = ErrorHandler.create(this.vertx);
-        globalRoute.failureHandler(ctx -> {
-            log.error("全局路由错误处理: {}", ctx.statusCode());
-            errorHandler.handle(ctx);
-        });
+        // 支持压缩与解压缩算法
+        Object      compressors = httpServerConfig.get("compressors");
+        if (compressors != null) {
+            log.info("开启压缩与解压缩");
+            httpServerOptions.setCompressionSupported(true);
+            httpServerOptions.setDecompressionSupported(true);
+            List<String> list = (List<String>) compressors;
+            for (String compressor : list) {
+                log.info("add compressor: {}", compressor);
+                switch (compressor) {
+                case "brotli" -> httpServerOptions.addCompressor(StandardCompressionOptions.brotli());
+                case "deflate" -> httpServerOptions.addCompressor(StandardCompressionOptions.deflate());
+                case "gzip" -> httpServerOptions.addCompressor(StandardCompressionOptions.gzip());
+                case "snappy" -> httpServerOptions.addCompressor(StandardCompressionOptions.snappy());
+                case "zstd" -> httpServerOptions.addCompressor(StandardCompressionOptions.zstd());
+                }
+            }
+
+            // globalRoute.handler(routingContext -> {
+            // if (routingContext.normalizedPath().endsWith(".br")) {
+            // routingContext.request().headers().set("Accept-Encoding", "br");
+            // }
+            // routingContext.next();
+            // });
+
+            globalRoute.handler(new CompressResponseHandler());
+        }
+
         // 全局返回响应时间(写入x-response-time到响应头)
         if (webProperties.getReturnResponseTime()) {
             log.info("开启返回响应时间");
@@ -87,11 +129,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("开启日志记录");
             globalRoute.handler(LoggerHandler.create(webProperties.getLoggerFormat()));
         }
-        // CORS
-        if (webProperties.getIsCors()) {
-            log.info("开启CORS");
-            globalRoute.handler(CorsHandler.create());
-        }
         // 是否打印来源的IP
         if (webProperties.getPrintSrcIp()) {
             log.info("开启打印来源的IP");
@@ -102,6 +139,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("开启自动响应内容类型");
             globalRoute.handler(ResponseContentTypeHandler.create());
         }
+        // CORS
+        if (webProperties.getIsCors()) {
+            log.info("开启CORS");
+            globalRoute.handler(CorsHandler.create());
+        }
 
         log.info("添加全局路由处理器");
         addGlobalRouteHandler(globalRoute);
@@ -111,7 +153,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         log.info("添加全局路由前置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
             log.info("添加全局路由前置处理器: {}", factory.name());
-            factory.init(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name()));
             Handler<RoutingContext> preHandler = factory.createPreHandler();
             if (preHandler != null) {
                 globalRoute.handler(preHandler);
@@ -119,7 +160,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         });
 
         log.info("配置路由器");
-        configRouter(router);
+        configRouter();
 
         log.info("添加全局路由后置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
@@ -129,6 +170,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                 globalRoute.handler(postHandler);
             }
         });
+
+        log.info("添加全局路由错误处理");
+        globalRoute.failureHandler(ErrorHandler.create(this.vertx));
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
@@ -182,7 +226,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
      * @param globalRoute 全局路由
      */
     protected void addGlobalRouteHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteHandler方法");
+        log.info("未重写addGlobalRouteHandler方法: {}", globalRoute.getName());
     }
 
     @Override
@@ -195,10 +239,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     /**
      * 配置路由
-     *
-     * @param router 路由器
      */
-    protected abstract void configRouter(Router router);
+    protected abstract void configRouter();
 
     private void handleStart(final Message<Void> message) {
         log.info("WebVerticle start");
@@ -208,6 +250,39 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                     log.info("HTTP server started on port " + res.result().actualPort());
                 } else {
                     log.error("HTTP server start fail", res.cause());
+                }
+                // 是否开启动态路由
+                if (webProperties.getDynamicRoute().getEnabled()) {
+                    log.info("开启动态路由");
+                    switch (webProperties.getDynamicRoute().getMqType().toLowerCase()) {
+                    case "rabbitmq" -> {
+                        AmqpClient amqpClient = injector.getInstance(AmqpClient.class);
+                        amqpClient.createReceiver(webProperties.getDynamicRoute().getMqName())
+                                .compose(receiver -> {
+                                    log.info("订阅动态路由成功");
+                                    // 刷新动态路由
+                                    configRouter();
+                                    return Future.succeededFuture();
+                                }).recover(err -> {
+                                    log.error("订阅动态路由失败", err);
+                                    return Future.failedFuture(err);
+                                });
+                    }
+                    case "kafka" -> {
+                        // noinspection unchecked
+                        KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
+                        kafkaConsumer.subscribe(webProperties.getDynamicRoute().getMqName())
+                                .compose(receiver -> {
+                                    log.info("订阅动态路由成功");
+                                    // 刷新动态路由
+                                    configRouter();
+                                    return Future.succeededFuture();
+                                }).recover(err -> {
+                                    log.error("订阅动态路由失败", err);
+                                    return Future.failedFuture(err);
+                                });
+                    }
+                    }
                 }
             });
             if (http2httpsServer != null)

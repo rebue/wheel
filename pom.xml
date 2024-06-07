@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.5.32</version>
+    <version>3.5.33</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -48,8 +48,9 @@
         <spring-cloud.version>2023.0.1</spring-cloud.version>
         <spring-boot-admin.version>3.2.2</spring-boot-admin.version>
 
-        <vertx.version>4.5.7</vertx.version>
+        <vertx.version>4.5.8</vertx.version>
 
+        <brotli4j.version>1.16.0</brotli4j.version>
         <dubbo.version>3.2.11</dubbo.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.78.1</bouncycastle18.version>
@@ -63,7 +64,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mybatis.version>3.5.15</mybatis.version>
-        <bean-searcher.version>4.2.7</bean-searcher.version>
+        <bean-searcher.version>4.2.9</bean-searcher.version>
         <drools.version>9.44.0.Final</drools.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
@@ -73,7 +74,7 @@
         <ulid.version>5.2.3</ulid.version>
         <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
-        <logback.version>1.4.7</logback.version>
+        <logback.version>1.5.6</logback.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <!--        <spring-amqp.version>2.4.5</spring-amqp.version>-->
@@ -287,6 +288,23 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.aayushatharva.brotli4j</groupId>
+                <artifactId>brotli4j</artifactId>
+                <version>${brotli4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aayushatharva.brotli4j</groupId>
+                <artifactId>native-linux-x86_64</artifactId>
+                <version>${brotli4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.luben</groupId>
+                <artifactId>zstd-jni</artifactId>
+                <version>1.5.6-3</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.drools</groupId>
@@ -660,6 +678,11 @@
 
             <dependency>
                 <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
@@ -714,7 +737,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.19</version>
+                <version>1.4.20</version>
             </dependency>
             <!-- dom4j依赖jaxen项目以提供对XPath的支持 -->
             <dependency>

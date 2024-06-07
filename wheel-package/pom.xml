@@ -6,7 +6,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>3.5.32</version>
+    <version>3.5.33</version>
     <description>利用maven将常用的jar包打到lib目录下，方便复制的模块</description>
 
     <properties>
@@ -19,7 +19,7 @@
         <!-- <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes> -->
 
         <slf4j.version>2.0.7</slf4j.version>
-        <logback.version>1.4.7</logback.version>
+        <logback.version>1.5.6</logback.version>
         <jackson.version>2.15.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <netty.version>4.1.93.Final</netty.version>
@@ -36,7 +36,7 @@
         <guice.version>7.0.0</guice.version>
         <pulsar.version>3.2.2</pulsar.version>
         <hazelcast.version>5.4.0</hazelcast.version>
-        <vertx.version>4.5.7</vertx.version>
+        <vertx.version>4.5.8</vertx.version>
     </properties>
 
     <dependencyManagement>
@@ -82,6 +82,12 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-config-git</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -202,6 +208,11 @@
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
@@ -288,6 +299,16 @@
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>${zookeeper.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-core</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
