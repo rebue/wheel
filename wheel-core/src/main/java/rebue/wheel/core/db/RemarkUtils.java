@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.api.util.RegexUtils;
 
+@Slf4j
 public class RemarkUtils {
 
     /**
@@ -37,6 +39,7 @@ public class RemarkUtils {
      * @return 标题
      */
     public static String getTitle(String remark) {
+        log.debug("备注：{}", remark);
         String title = RegexUtils.findFirstLine(remark);
         int    index = title.indexOf('@');
         if (index != -1) {

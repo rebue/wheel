@@ -11,7 +11,7 @@ import lombok.Getter;
  * 1:GET(GET)
  * 2:POST(POST)
  * 3:PUT(PUT)
- * 4.DELETE(DELETE)
+ * 4:DELETE(DELETE)
  */
 @AllArgsConstructor
 @Getter
