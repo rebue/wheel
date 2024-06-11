@@ -2,19 +2,16 @@ package rebue.wheel.vertx.web;
 
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.PlatformHandler;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 压缩响应的处理器
  *
  * @author zbz
  */
-@Slf4j
 public class CompressResponseHandler implements PlatformHandler {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        log.debug("CompressResponseHandler.handle");
         routingContext.next();
 
         if (routingContext.normalizedPath().endsWith(".gz")) {
