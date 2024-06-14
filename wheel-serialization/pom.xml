@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.5.34</version>
+        <version>3.5.35</version>
     </parent>
     <artifactId>wheel-serialization</artifactId>
     <name>wheel-serialization</name>
