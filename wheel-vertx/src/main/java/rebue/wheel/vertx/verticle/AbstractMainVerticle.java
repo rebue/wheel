@@ -85,7 +85,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 
         // String classpath = FileUtils.getClassesPath(this.getClass());
         String                 classpath                     = FileUtils.getProjectPath();
-        Path                   defaultConfigYamlFilePath     = Path.of(classpath, "conf", "config.yml");
+        log.info("当前classpath: {}", classpath);
+        Path defaultConfigYamlFilePath = Path.of(classpath, "conf", "config.yml");
         if (!Files.exists(defaultConfigYamlFilePath)) {
             defaultConfigYamlFilePath = Path.of(classpath, "config", "config.yml");
         }

@@ -84,7 +84,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         final Route globalRoute = router.route();
 
         // 支持压缩与解压缩算法
-        Object      compressors = httpServerConfig.get("compressors");
+        Object      compressors = httpServerConfig == null ? null : httpServerConfig.get("compressors");
         if (compressors != null) {
             log.info("开启压缩与解压缩");
             httpServerOptions.setCompressionSupported(true);
