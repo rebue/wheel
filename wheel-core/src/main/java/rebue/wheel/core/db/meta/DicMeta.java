@@ -21,9 +21,13 @@ public class DicMeta {
      */
     private String            name;
     /**
-     * 字典类名(其实是类的简名，不带包，因为从数据库中无法知道应该是哪个包)
+     * 字典类全名(不一定能获取，因为从数据库中无法知道应该是哪个包，除非备注中有import:xxx.xxx.类简名)
      */
     private String            className;
+    /**
+     * 字典类简名(其实是类的简名，不带包，因为从数据库中无法知道应该是哪个包)
+     */
+    private String            classSimpleName;
     /**
      * 字典备注
      */

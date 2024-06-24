@@ -17,6 +17,7 @@ import net.postgis.jdbc.geometry.LineString;
 import net.postgis.jdbc.geometry.Point;
 import net.postgis.jdbc.geometry.Polygon;
 import rebue.wheel.api.util.RegexUtils;
+import rebue.wheel.core.ClassUtils;
 import rebue.wheel.core.db.meta.*;
 
 public class JdbcUtils {
@@ -229,10 +230,12 @@ public class JdbcUtils {
      */
     private static void setPropertyByFieldMeta(PropertyMeta property) {
         Class<?>     clazz;
+        String       className       = null;
+        String       classSimpleName = null;
         String       jsType;
-        boolean      isKeyWord = false;
-        Integer      fieldType = property.getField().getType();
-        final String fieldName = property.getField().getName().toLowerCase();
+        boolean      isKeyWord       = false;
+        Integer      fieldType       = property.getField().getType();
+        final String fieldName       = property.getField().getName().toLowerCase();
         switch (fieldType) {
         case BIT, BOOLEAN -> {
             clazz  = Boolean.class;
@@ -245,8 +248,13 @@ public class JdbcUtils {
             } else {
                 clazz  = Byte.class;
                 jsType = "number";
+                if (fieldName.endsWith("_dic")) {
+                    DicMeta dicMeta = getDicMetaByProperty(property);
+                    className       = dicMeta.getClassName();
+                    classSimpleName = dicMeta.getClassSimpleName();
+                }
                 // 如果不是字典类字段，加入keyword
-                if (!fieldName.endsWith("_dic")) {
+                else {
                     isKeyWord = true;
                 }
             }
@@ -254,8 +262,14 @@ public class JdbcUtils {
         case SMALLINT -> {
             clazz  = Short.class;
             jsType = "number";
+            // 如果是字典类字段，获取字典类的全名和简称(全名不一定能获取)
+            if (fieldName.endsWith("_dic")) {
+                DicMeta dicMeta = getDicMetaByProperty(property);
+                className       = dicMeta.getClassName();
+                classSimpleName = dicMeta.getClassSimpleName();
+            }
             // 如果不是字典类字段，加入keyword
-            if (!fieldName.endsWith("_dic")) {
+            else {
                 isKeyWord = true;
             }
         }
@@ -324,8 +338,14 @@ public class JdbcUtils {
         if (property.getIsKey() || property.getRemark().contains("@非关键字")) {
             isKeyWord = false;
         }
-        property.setClassName(clazz.getName());
-        property.setClassSimpleName(clazz.getSimpleName());
+        if (className == null) {
+            className = clazz.getName();
+        }
+        if (classSimpleName == null) {
+            classSimpleName = clazz.getSimpleName();
+        }
+        property.setClassName(className);
+        property.setClassSimpleName(classSimpleName);
         property.setJsType(jsType);
         property.setIsKeyWord(isKeyWord);
     }
@@ -339,7 +359,8 @@ public class JdbcUtils {
                 if (property.getName().endsWith("Dic")) {
                     DicMeta dicMeta = DicMeta.builder()
                             .name(property.getName())
-                            .className(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, property.getName()))
+                            .className(property.getClassName())
+                            .classSimpleName(property.getClassSimpleName())
                             .remarks(property.getRemarks())
                             .build();
                     for (String remark : property.getRemarks()) {
@@ -361,5 +382,33 @@ public class JdbcUtils {
             }
         }
         return dicMetas;
+    }
+
+    /**
+     * 通过属性获取字典类元数据
+     * 
+     * @param property 属性
+     * @return 字典类元数据
+     */
+    public static DicMeta getDicMetaByProperty(PropertyMeta property) {
+        List<String> remarks   = property.getRemarks();
+        // 类全名不一定能获取，因为从数据库中无法知道应该是哪个包，除非备注中有import:xxx.xxx.类简名
+        String       className = null;
+        String       classSimpleName;
+        // 如何注释标题下的第1行为导入语句，获取全名
+        String       firstLine = remarks.get(1).strip();
+        if (firstLine.startsWith("import:")) {
+            String[] split = firstLine.split(":");
+            className       = split[1];
+            classSimpleName = ClassUtils.getClassSimpleName(className);
+        } else {
+            classSimpleName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, property.getName());
+        }
+        return DicMeta.builder()
+                .name(property.getName())
+                .className(className)
+                .classSimpleName(classSimpleName)
+                .remarks(remarks)
+                .build();
     }
 }
