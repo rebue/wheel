@@ -17,7 +17,6 @@ import net.postgis.jdbc.geometry.LineString;
 import net.postgis.jdbc.geometry.Point;
 import net.postgis.jdbc.geometry.Polygon;
 import rebue.wheel.api.util.RegexUtils;
-import rebue.wheel.core.ClassUtils;
 import rebue.wheel.core.db.meta.*;
 
 public class JdbcUtils {
@@ -350,7 +349,7 @@ public class JdbcUtils {
         property.setIsKeyWord(isKeyWord);
     }
 
-    private static final Pattern DIC_REGEX = Pattern.compile("(-?\\d+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
+    private static final Pattern DIC_REGEX = Pattern.compile("(.+)\\s*:\\s*(.+?)\\s*\\(\\s*(.+?)\\s*\\)");
 
     public static Set<DicMeta> getDicMetasFromPojoMetas(List<PojoMeta> pojoMetas) {
         Set<DicMeta> dicMetas = new LinkedHashSet<>();
@@ -364,7 +363,7 @@ public class JdbcUtils {
                             .remarks(property.getRemarks())
                             .build();
                     for (String remark : property.getRemarks()) {
-                        List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, remark);
+                        List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, remark.strip());
                         if (dicGroup != null) {
                             if (dicGroup.get(0).equals("import")) {
                                 break;
@@ -398,9 +397,9 @@ public class JdbcUtils {
         // 如何注释标题下的第1行为导入语句，获取全名
         String       firstLine = remarks.get(1).strip();
         if (firstLine.startsWith("import:")) {
-            String[] split = firstLine.split(":");
-            className       = split[1];
-            classSimpleName = ClassUtils.getClassSimpleName(className);
+            List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, firstLine);
+            className       = dicGroup.get(1) + "." + dicGroup.get(2);
+            classSimpleName = dicGroup.get(2);
         } else {
             classSimpleName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, property.getName());
         }
