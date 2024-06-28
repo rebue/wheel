@@ -89,6 +89,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             log.info("开启压缩与解压缩");
             httpServerOptions.setCompressionSupported(true);
             httpServerOptions.setDecompressionSupported(true);
+            @SuppressWarnings("unchecked")
             List<String> list = (List<String>) compressors;
             for (String compressor : list) {
                 log.info("add compressor: {}", compressor);
@@ -100,13 +101,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                 case "zstd" -> httpServerOptions.addCompressor(StandardCompressionOptions.zstd());
                 }
             }
-
-            // globalRoute.handler(routingContext -> {
-            // if (routingContext.normalizedPath().endsWith(".br")) {
-            // routingContext.request().headers().set("Accept-Encoding", "br");
-            // }
-            // routingContext.next();
-            // });
 
             globalRoute.handler(new CompressResponseHandler());
         }
@@ -145,16 +139,15 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             globalRoute.handler(CorsHandler.create());
         }
 
-        log.info("添加全局路由处理器");
+        log.info("添加子类中的全局路由处理器");
         addGlobalRouteHandler(globalRoute);
-
         log.info("通过SPI加载全局路由处理器");
         ServiceLoader<GlobalRouteHandlerFactory> globalRouteHandlerServiceLoader = ServiceLoader.load(GlobalRouteHandlerFactory.class);
         log.info("添加全局路由前置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
-            log.info("添加全局路由前置处理器: {}", factory.name());
             Handler<RoutingContext> preHandler = factory.createPreHandler();
             if (preHandler != null) {
+                log.info("添加全局路由前置处理器: {}", factory.name());
                 globalRoute.handler(preHandler);
             }
         });
@@ -164,9 +157,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("添加全局路由后置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {
-            log.info("添加全局路由后置处理器: {}", factory.name());
             Handler<RoutingContext> postHandler = factory.createPostHandler();
             if (postHandler != null) {
+                log.info("添加全局路由后置处理器: {}", factory.name());
                 globalRoute.handler(postHandler);
             }
         });
