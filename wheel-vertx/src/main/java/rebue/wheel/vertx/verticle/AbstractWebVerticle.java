@@ -16,6 +16,8 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SelfSignedCertificate;
@@ -27,7 +29,9 @@ import io.vertx.ext.web.handler.*;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.dic.HttpStatusCodeDic;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
@@ -45,14 +49,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     @Named("mainId")
     private String          mainId;
 
+    @Setter
     protected Injector      injector;
 
     protected WebProperties webProperties;
     protected Router        router;
-
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
 
     private MessageConsumer<Void> startConsumer;
 
@@ -166,6 +167,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("添加全局路由错误处理");
         globalRoute.failureHandler(ErrorHandler.create(this.vertx));
+        globalRoute.failureHandler(routingContext -> {
+            HttpServerRequest request = routingContext.request();
+            HttpServerResponse response = routingContext.response();
+            if ("GET".equals(request.method().name()) && HttpStatusCodeDic.NOT_FOUND.getCode() == response.getStatusCode()) {
+                routingContext.reroute("index.html");
+            }
+        });
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
@@ -240,7 +248,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         this.startConsumer.unregister(result -> {
             this.httpServer.listen(res -> {
                 if (res.succeeded()) {
-                    log.info("HTTP server started on port " + res.result().actualPort());
+                    log.info("HTTP server started on port {}", res.result().actualPort());
                 } else {
                     log.error("HTTP server start fail", res.cause());
                 }
@@ -252,12 +260,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                         AmqpClient amqpClient = injector.getInstance(AmqpClient.class);
                         amqpClient.createReceiver(webProperties.getDynamicRoute().getMqName())
                                 .compose(receiver -> {
-                                    log.info("订阅动态路由成功");
+                                    log.info("订阅动态路由刷新队列成功-rabbitmq");
                                     // 刷新动态路由
                                     configRouter();
                                     return Future.succeededFuture();
                                 }).recover(err -> {
-                                    log.error("订阅动态路由失败", err);
+                                    log.error("订阅动态路由刷新队列失败", err);
                                     return Future.failedFuture(err);
                                 });
                     }
@@ -265,13 +273,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                         // noinspection unchecked
                         KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
                         kafkaConsumer.subscribe(webProperties.getDynamicRoute().getMqName())
-                                .compose(receiver -> {
-                                    log.info("订阅动态路由成功");
+                                .compose(v -> {
+                                    log.info("订阅动态路由刷新队列成功-kafka");
                                     // 刷新动态路由
                                     configRouter();
                                     return Future.succeededFuture();
                                 }).recover(err -> {
-                                    log.error("订阅动态路由失败", err);
+                                    log.error("订阅动态路由刷新队列失败", err);
                                     return Future.failedFuture(err);
                                 });
                     }
@@ -281,7 +289,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             if (http2httpsServer != null)
                 http2httpsServer.listen(res -> {
                     if (res.succeeded()) {
-                        log.info("HTTP to HTTPS server started on port " + res.result().actualPort());
+                        log.info("HTTP to HTTPS server started on port {}", res.result().actualPort());
                     } else {
                         log.error("HTTP to HTTPS server start fail", res.cause());
                     }

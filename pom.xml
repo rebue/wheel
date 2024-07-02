@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.5.39</version>
+    <version>3.5.40</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -634,7 +634,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel-core</artifactId>
-                <version>3.2.0</version>
+                <version>4.0.1</version>
             </dependency>
 
             <dependency>
