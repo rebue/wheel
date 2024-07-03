@@ -70,6 +70,7 @@
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.9.2</zookeeper.version>
         <curator.version>5.6.0</curator.version>
+        <easyexcel.version>4.0.1</easyexcel.version>
         <pulsar.version>3.2.2</pulsar.version>
         <ulid.version>5.2.3</ulid.version>
         <slf4j.version>2.0.7</slf4j.version>
@@ -633,8 +634,13 @@
 
             <dependency>
                 <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel-core</artifactId>
-                <version>4.0.1</version>
+                <version>${easyexcel.version}</version>
             </dependency>
 
             <dependency>

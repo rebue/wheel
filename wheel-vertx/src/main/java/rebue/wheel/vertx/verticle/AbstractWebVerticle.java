@@ -42,18 +42,18 @@ import rebue.wheel.vertx.web.PrintSrcIpHandler;
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {
 
-    private HttpServer      httpServer;
-    private HttpServer      http2httpsServer;
+    private HttpServer            httpServer;
+    private HttpServer            http2httpsServer;
 
     @Inject
     @Named("mainId")
-    private String          mainId;
+    private String                mainId;
 
     @Setter
-    protected Injector      injector;
+    protected Injector            injector;
 
-    protected WebProperties webProperties;
-    protected Router        router;
+    protected WebProperties       webProperties;
+    protected Router              router;
 
     private MessageConsumer<Void> startConsumer;
 
@@ -167,13 +167,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         log.info("添加全局路由错误处理");
         globalRoute.failureHandler(ErrorHandler.create(this.vertx));
-        globalRoute.failureHandler(routingContext -> {
-            HttpServerRequest request = routingContext.request();
-            HttpServerResponse response = routingContext.response();
-            if ("GET".equals(request.method().name()) && HttpStatusCodeDic.NOT_FOUND.getCode() == response.getStatusCode()) {
-                routingContext.reroute("index.html");
-            }
-        });
 
         // 是否实现自签名证书
         if (webProperties.getSelfSignedCertificate()) {
