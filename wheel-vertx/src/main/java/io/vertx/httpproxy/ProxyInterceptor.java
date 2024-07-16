@@ -41,6 +41,7 @@ public interface ProxyInterceptor {
 
     /**
      * XXX 修改代理请求
+     * 本方法用于执行同步的过程，如要执行异步的过程，请继承handleProxyRequest方法来执行
      *
      * @param proxyRequest 要修改的代理请求
      */
