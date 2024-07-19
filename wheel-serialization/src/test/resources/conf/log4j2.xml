@@ -6,7 +6,7 @@
         <Console name="console" target="SYSTEM_OUT">
             <!-- 需要记录的级别 -->
             <!-- <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" /> -->
-            <PatternLayout pattern="%d{HH:mm:ss,sss}[%5p]%m---%c%n" charset="UTF-8"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS}[%5p]%m---%c%n" charset="UTF-8"/>
 
         </Console>
 
@@ -15,7 +15,7 @@
                      filepattern="logs/$${date:yyyyMM}/%d{yyyyMMdd}-%i.log.gz">
             <!-- 需要记录的级别 -->
             <!-- <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" /> -->
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS}[%5p]%m---%c %t%n" charset="UTF-8"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}[%5p]%m---%c %t%n" charset="UTF-8"/>
             <Policies>
                 <!-- <OnStartupTriggeringPolicy /> -->
                 <TimeBasedTriggeringPolicy/>
@@ -28,7 +28,7 @@
                      filepattern="logs/$${date:yyyyMM}/%d{yyyyMMdd}-%i.error.gz">
             <!-- 需要记录的级别 -->
             <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS}[%5p]%m---%l %t%n" charset="UTF-8"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}[%5p]%m---%l %t%n" charset="UTF-8"/>
             <Policies>
                 <!-- <OnStartupTriggeringPolicy /> -->
                 <TimeBasedTriggeringPolicy/>
