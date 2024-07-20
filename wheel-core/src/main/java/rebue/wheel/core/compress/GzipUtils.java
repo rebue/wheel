@@ -1,14 +1,13 @@
-package rebue.wheel.core;
+package rebue.wheel.core.compress;
 
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class GzipHelper {
+public class GzipUtils {
 
     @SneakyThrows
     public static byte[] compress(String data) {
@@ -33,12 +32,4 @@ public class GzipHelper {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        String originalData   = "Hello, this is some data to compress with gzip.中文";
-        byte[] compressedData = compress(originalData);
-        System.out.println("Compressed data: " + new String(compressedData));
-
-        String decompressedData = decompress(compressedData);
-        System.out.println("Decompressed data: " + decompressedData);
-    }
 }
