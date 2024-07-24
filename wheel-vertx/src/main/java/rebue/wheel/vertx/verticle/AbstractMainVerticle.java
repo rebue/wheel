@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
+import org.yaml.snakeyaml.Yaml;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -23,14 +26,12 @@ import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.*;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.jackson.DatabindCodec;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.core.file.FileUtils;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
 
@@ -80,78 +81,87 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> startPromise) {
         log.info("MainVerticle start");
-        ConfigRetrieverOptions defaultConfigRetrieverOptions = new ConfigRetrieverOptions()
-                .setIncludeDefaultStores(true);
-
-        // String classpath = FileUtils.getClassesPath(this.getClass());
-        String                 classpath                     = FileUtils.getProjectPath();
-        log.info("当前classpath: {}", classpath);
-        Path defaultConfigYamlFilePath = Path.of(classpath, "conf", "config.yml");
-        if (!Files.exists(defaultConfigYamlFilePath)) {
-            defaultConfigYamlFilePath = Path.of(classpath, "config", "config.yml");
-        }
-        if (!Files.exists(defaultConfigYamlFilePath)) {
-            defaultConfigYamlFilePath = Path.of(classpath, "config", "application.yml");
-        }
-        if (Files.exists(defaultConfigYamlFilePath)) {
-            log.info("加载默认的配置文件: {}", defaultConfigYamlFilePath);
-            ConfigStoreOptions defaultConfigStoreOptions = new ConfigStoreOptions()
+        log.info("准备读取stores配置文件");
+        Path storesConfigFilePath = Path.of("config", "stores.yml");
+        if (!Files.exists(storesConfigFilePath)) {
+            log.info("config/stores.yml 文件不存在，自动生成stores配置: {}", storesConfigFilePath);
+            ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
+            configRetrieverOptions.addStore(new ConfigStoreOptions()
+                    .setType("file")
+                    .setOptional(true)
+                    .setConfig(new JsonObject().put("path", Path.of("config", "config.json"))));
+            configRetrieverOptions.addStore(new ConfigStoreOptions()
+                    .setType("file")
+                    .setOptional(true)
+                    .setConfig(new JsonObject().put("path", Path.of("config", "application.json"))));
+            configRetrieverOptions.addStore(new ConfigStoreOptions()
                     .setType("file")
                     .setFormat("yaml")
                     .setOptional(true)
-                    .setConfig(new JsonObject().put("path", defaultConfigYamlFilePath));
-            defaultConfigRetrieverOptions.addStore(defaultConfigStoreOptions);
+                    .setConfig(new JsonObject().put("path", Path.of("config", "config.yml"))));
+            configRetrieverOptions.addStore(new ConfigStoreOptions()
+                    .setType("file")
+                    .setFormat("yaml")
+                    .setOptional(true)
+                    .setConfig(new JsonObject().put("path", Path.of("config", "application.yml"))));
+            loadConfig(startPromise, configRetrieverOptions);
+            return;
         }
 
-        final ConfigRetriever defaultConfigRetriever = ConfigRetriever.create(this.vertx,
-                defaultConfigRetrieverOptions);
-        defaultConfigRetriever.getConfig(defaultConfigRes -> {
-            if (defaultConfigRes.failed()) {
-                log.warn("Get config failed", defaultConfigRes.cause());
-                startPromise.fail(defaultConfigRes.cause());
-                return;
-            }
-
-            final JsonObject defaultConfigJsonObject = defaultConfigRes.result();
-            if (defaultConfigJsonObject == null || defaultConfigJsonObject.isEmpty()) {
-                startPromise.fail("Get config is empty");
-                return;
-            }
-
-            Long scanPeriod = defaultConfigJsonObject.getLong("scanPeriod");
-            if (scanPeriod == null)
-                scanPeriod = 15000L;    // 默认15秒检查一下是否有更新
-            JsonArray stores = defaultConfigJsonObject.getJsonArray("stores");
-            if (stores == null) {
-                startWithConfig(startPromise, defaultConfigJsonObject);
-            } else {
-                log.info("配置仓库的数量: {}", stores.size());
-                final ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
-                configRetrieverOptions.setScanPeriod(scanPeriod);
-                stores.forEach(store -> configRetrieverOptions.addStore(new ConfigStoreOptions((JsonObject) store)));
-
-                ConfigRetriever storeConfigRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
-                storeConfigRetriever.getConfig(storeConfigRes -> {
-                    if (storeConfigRes.failed()) {
-                        log.warn("Get store config failed", storeConfigRes.cause());
-                        startPromise.fail(storeConfigRes.cause());
-                        return;
-                    }
-
-                    final JsonObject storeConfigJsonObject = storeConfigRes.result();
-                    if (storeConfigJsonObject == null || storeConfigJsonObject.isEmpty()) {
-                        startPromise.fail("Get store config is empty");
-                        return;
-                    }
-
-                    startWithConfig(startPromise, storeConfigJsonObject);
-                });
-
-                storeConfigRetriever.listen(this::listenConfigChange);
-            }
-
-            defaultConfigRetriever.listen(this::listenConfigChange);
+        log.info("加载stores配置文件: {}", storesConfigFilePath);
+        ConfigStoreOptions     storesConfigStoreOptions     = new ConfigStoreOptions()
+                .setType("file")
+                .setFormat("yaml")
+                .setConfig(new JsonObject().put("path", storesConfigFilePath));
+        ConfigRetrieverOptions storesConfigRetrieverOptions = new ConfigRetrieverOptions().addStore(storesConfigStoreOptions);
+        ConfigRetriever        storesConfigRetriever        = ConfigRetriever.create(this.vertx, storesConfigRetrieverOptions);
+        storesConfigRetriever.getConfig().compose(configRetrieverOptions -> {
+            log.info("configRetrieverOptions: {}", configRetrieverOptions);
+            return loadConfig(startPromise, new ConfigRetrieverOptions(configRetrieverOptions));
+        }).onSuccess(v -> storesConfigRetriever.listen(this::listenConfigChange)).recover(err -> {
+            log.error("加载stores配置文件失败", err);
+            startPromise.fail(err);
+            return Future.failedFuture(err);
         });
+    }
+
+    private Future<?> loadConfig(Promise<Void> startPromise, ConfigRetrieverOptions configRetrieverOptions) {
+        log.info("加载配置选项");
+        ConfigRetriever configRetriever = ConfigRetriever.create(this.vertx, configRetrieverOptions);
+        configRetriever.setConfigurationProcessor(config -> {
+            String key        = "config.json";
+            String jsonConfig = config.getString(key);
+            if (StringUtils.isBlank(jsonConfig)) {
+                key        = "application.json";
+                jsonConfig = config.getString(key);
+            }
+            if (StringUtils.isNotBlank(jsonConfig)) {
+                config.mergeIn(new JsonObject(jsonConfig));
+                config.remove(key);
+            }
+
+            key = "config.yml";
+            String yamlConfig = config.getString(key);
+            if (StringUtils.isBlank(yamlConfig)) {
+                key        = "application.yml";
+                yamlConfig = config.getString(key);
+            }
+            if (StringUtils.isNotBlank(yamlConfig)) {
+                Yaml yaml = new Yaml();
+                config.mergeIn(JsonObject.mapFrom(yaml.load(yamlConfig)));
+                config.remove(key);
+            }
+            return config;
+        });
+        return configRetriever.getConfig().compose(config -> startWithConfig(startPromise, config))
+                .onSuccess(v -> configRetriever.listen(this::listenConfigChange))
+                .recover(err -> {
+                    log.error("启动失败.", err);
+                    if (startPromise != null) {
+                        startPromise.fail(err);
+                    }
+                    return this.vertx.close().compose(v -> Future.failedFuture(err));
+                });
     }
 
     /**
@@ -163,8 +173,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("配置有变动");
         JsonObject previousConfiguration = configChange.getPreviousConfiguration();
         JsonObject newConfiguration      = configChange.getNewConfiguration();
-        log.info("上一次的配置: \n{}", previousConfiguration.encode());
-        log.info("新配置: \n{}", newConfiguration.encode());
+        log.trace("上一次的配置: \n{}", previousConfiguration.encode());
+        log.trace("新配置: \n{}", newConfiguration.encode());
         log.info("发布配置改变的消息");
         this.vertx.eventBus().publish(EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId, newConfiguration);
     }
@@ -200,7 +210,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * @param startPromise 运行状态控制
      * @param config       配置项
      */
-    private void startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
+    private Future<?> startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
         log.info("start with config");
         log.info("添加注入模块");
         final List<Module> guiceModules = new LinkedList<>();
@@ -239,29 +249,24 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         }
 
         // 部署成功或失败事件
-        Future.all(deployFutures)
+        return Future.all(deployFutures)
                 .onSuccess(handle -> {
                     log.info("部署Verticle完成，发布部署成功的消息");
                     final String deploySuccessEventBusAddress = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
-                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is " + deploySuccessEventBusAddress);
+                    log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is {}", deploySuccessEventBusAddress);
                     this.vertx.eventBus().publish(deploySuccessEventBusAddress, null);
 
                     log.info("监听配置改变的消息");
                     final String configChangedEventBusAddress = EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId;
-                    log.info("MainVerticle.EVENT_BUS_CONFIG_CHANGED address is " + configChangedEventBusAddress);
+                    log.info("MainVerticle.EVENT_BUS_CONFIG_CHANGED address is {}", configChangedEventBusAddress);
                     this.configChangedConsumer = this.vertx.eventBus().consumer(configChangedEventBusAddress,
                             this::handleConfigChange);
 
                     log.info("是否开启 native transport: {}", vertx.isNativeTransportEnabled());
                     log.info("启动完成.");
-                    if (startPromise != null)
+                    if (startPromise != null) {
                         startPromise.complete();
-                })
-                .onFailure(err -> {
-                    log.error("启动失败.", err);
-                    if (startPromise != null)
-                        startPromise.fail(err);
-                    this.vertx.close();
+                    }
                 });
     }
 
@@ -270,7 +275,7 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      *
      * @param guiceModules 添加guice模块到此列表
      */
-    protected void addGuiceModules(final List<Module> guiceModules) {
+    protected void addGuiceModules(List<Module> guiceModules) {
     }
 
     /**
