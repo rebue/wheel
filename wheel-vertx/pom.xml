@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.5.40</version>
+        <version>3.5.41</version>
     </parent>
     <artifactId>wheel-vertx</artifactId>
     <description>wheel利用vert.x框架进行开发常用的工具库</description>
