@@ -86,35 +86,18 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         if (!Files.exists(storesConfigFilePath)) {
             log.info("config/stores.yml 文件不存在，自动生成stores配置: {}", storesConfigFilePath);
             ConfigRetrieverOptions configRetrieverOptions = new ConfigRetrieverOptions();
-            configRetrieverOptions.addStore(new ConfigStoreOptions()
-                    .setType("file")
-                    .setOptional(true)
-                    .setConfig(new JsonObject().put("path", Path.of("config", "config.json"))));
-            configRetrieverOptions.addStore(new ConfigStoreOptions()
-                    .setType("file")
-                    .setOptional(true)
-                    .setConfig(new JsonObject().put("path", Path.of("config", "application.json"))));
-            configRetrieverOptions.addStore(new ConfigStoreOptions()
-                    .setType("file")
-                    .setFormat("yaml")
-                    .setOptional(true)
-                    .setConfig(new JsonObject().put("path", Path.of("config", "config.yml"))));
-            configRetrieverOptions.addStore(new ConfigStoreOptions()
-                    .setType("file")
-                    .setFormat("yaml")
-                    .setOptional(true)
-                    .setConfig(new JsonObject().put("path", Path.of("config", "application.yml"))));
+            addStoreWithFile(configRetrieverOptions, Path.of("config", "config.json"));
+            addStoreWithFile(configRetrieverOptions, Path.of("config", "application.json"));
+            addStoreWithFile(configRetrieverOptions, Path.of("config", "config.yml"));
+            addStoreWithFile(configRetrieverOptions, Path.of("config", "application.yml"));
             loadConfig(startPromise, configRetrieverOptions);
             return;
         }
 
         log.info("加载stores配置文件: {}", storesConfigFilePath);
-        ConfigStoreOptions     storesConfigStoreOptions     = new ConfigStoreOptions()
-                .setType("file")
-                .setFormat("yaml")
-                .setConfig(new JsonObject().put("path", storesConfigFilePath));
-        ConfigRetrieverOptions storesConfigRetrieverOptions = new ConfigRetrieverOptions().addStore(storesConfigStoreOptions);
-        ConfigRetriever        storesConfigRetriever        = ConfigRetriever.create(this.vertx, storesConfigRetrieverOptions);
+        ConfigRetrieverOptions storesConfigRetrieverOptions = new ConfigRetrieverOptions();
+        addStoreWithFile(storesConfigRetrieverOptions, storesConfigFilePath);
+        ConfigRetriever storesConfigRetriever = ConfigRetriever.create(this.vertx, storesConfigRetrieverOptions);
         storesConfigRetriever.getConfig().compose(configRetrieverOptions -> {
             log.info("configRetrieverOptions: {}", configRetrieverOptions);
             return loadConfig(startPromise, new ConfigRetrieverOptions(configRetrieverOptions));
@@ -123,6 +106,27 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
             startPromise.fail(err);
             return Future.failedFuture(err);
         });
+    }
+
+    private static void addStoreWithFile(ConfigRetrieverOptions configRetrieverOptions, Path filePath) {
+        if (Files.exists(filePath)) {
+            String fileName = filePath.toString();
+            String fileExt  = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String fileFormat;
+            switch (fileExt) {
+            case "json" ->
+                fileFormat = "json";
+            case "yml" ->
+                fileFormat = "yaml";
+            default ->
+                throw new IllegalArgumentException("不支持的配置文件类型: " + fileName);
+            }
+            configRetrieverOptions.addStore(new ConfigStoreOptions()
+                    .setType("file")
+                    .setFormat(fileFormat)
+                    .setOptional(true)
+                    .setConfig(new JsonObject().put("path", filePath)));
+        }
     }
 
     private Future<?> loadConfig(Promise<Void> startPromise, ConfigRetrieverOptions configRetrieverOptions) {

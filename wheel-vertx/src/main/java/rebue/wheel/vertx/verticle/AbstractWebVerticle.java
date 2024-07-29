@@ -16,8 +16,6 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SelfSignedCertificate;
@@ -31,7 +29,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import rebue.wheel.api.dic.HttpStatusCodeDic;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
@@ -140,8 +137,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             globalRoute.handler(CorsHandler.create());
         }
 
-        log.info("添加子类中的全局路由处理器");
-        addGlobalRouteHandler(globalRoute);
+        log.info("添加全局路由处理器");
+        addGlobalRouteHandler();
         log.info("通过SPI加载全局路由处理器");
         ServiceLoader<GlobalRouteHandlerFactory> globalRouteHandlerServiceLoader = ServiceLoader.load(GlobalRouteHandlerFactory.class);
         log.info("添加全局路由前置处理器");
@@ -216,11 +213,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
     /**
      * 添加全局路由处理器
-     *
-     * @param globalRoute 全局路由
      */
-    protected void addGlobalRouteHandler(Route globalRoute) {
-        log.info("未重写addGlobalRouteHandler方法: {}", globalRoute.getName());
+    protected void addGlobalRouteHandler() {
+        log.info("未重写addGlobalRouteHandler方法");
     }
 
     @Override
@@ -234,7 +229,12 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
     /**
      * 配置路由
      */
-    protected abstract void configRouter();
+    protected void configRouter() {
+        log.info("配置路由前清空之前配置的路由，因为可能是刷新路由配置触发");
+        if (router != null && router.getRoutes() != null) {
+            router.getRoutes().clear();
+        }
+    }
 
     private void handleStart(final Message<Void> message) {
         log.info("WebVerticle start");
