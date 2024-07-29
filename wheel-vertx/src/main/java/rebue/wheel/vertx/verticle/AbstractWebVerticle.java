@@ -32,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
+import rebue.wheel.vertx.spi.RoutePostConfigurator;
+import rebue.wheel.vertx.spi.RoutePreConfigurator;
 import rebue.wheel.vertx.spi.VertxWebPluginFactory;
 import rebue.wheel.vertx.web.CompressResponseHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
@@ -71,7 +73,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         log.info("初始化web插件工厂");
         webPluginFactoryServiceLoader.forEach(factory -> {
             log.info("初始化web插件工厂: {}", factory.name());
-            factory.init(vertx, injector, webProperties.getGlobalRouteHandlers().get(factory.name()));
+            factory.init(vertx, router, injector, webProperties.getGlobalRouteHandlers().get(factory.name()));
         });
 
         AllowForwardHeaders allowForwardHeaders = AllowForwardHeaders.valueOf(webProperties.getAllowForward());
@@ -150,8 +152,18 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             }
         });
 
+        log.info("通过SPI加载路由前置配置器");
+        ServiceLoader<RoutePreConfigurator> routePreConfiguratorServiceLoader = ServiceLoader.load(RoutePreConfigurator.class);
+        log.info("前置配置路由");
+        routePreConfiguratorServiceLoader.forEach(factory -> factory.config(router));
+
         log.info("配置路由器");
         configRouter();
+
+        log.info("通过SPI加载路由后置配置器");
+        ServiceLoader<RoutePostConfigurator> routePostConfiguratorServiceLoader = ServiceLoader.load(RoutePostConfigurator.class);
+        log.info("后置配置路由");
+        routePostConfiguratorServiceLoader.forEach(factory -> factory.config(router));
 
         log.info("添加全局路由后置处理器");
         globalRouteHandlerServiceLoader.forEach(factory -> {

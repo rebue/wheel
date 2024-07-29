@@ -3,6 +3,7 @@ package rebue.wheel.vertx.spi;
 import com.google.inject.Injector;
 
 import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
 
 /**
  * Vert.x web插件工厂
@@ -23,6 +24,6 @@ public interface VertxWebPluginFactory {
      * @param injector 注入器
      * @param options  处理器的配置选项
      */
-    void init(Vertx vertx, Injector injector, Object options);
+    void init(Vertx vertx, Router router, Injector injector, Object options);
 
 }
