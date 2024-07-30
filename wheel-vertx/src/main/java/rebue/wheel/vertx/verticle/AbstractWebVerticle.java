@@ -31,17 +31,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
-import rebue.wheel.vertx.spi.GlobalRouteHandlerFactory;
-import rebue.wheel.vertx.spi.RoutePostConfigurator;
-import rebue.wheel.vertx.spi.RoutePreConfigurator;
-import rebue.wheel.vertx.spi.VertxWebPluginFactory;
+import rebue.wheel.vertx.spi.*;
 import rebue.wheel.vertx.web.CompressResponseHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
 public abstract class AbstractWebVerticle extends AbstractVerticle implements InjectorVerticle {
 
-    private HttpServer            httpServer;
+    protected HttpServer          httpServer;
     private HttpServer            http2httpsServer;
 
     @Inject
@@ -207,6 +204,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                             .end());
         }
 
+        configHttpServer(httpServer);
+
+        log.info("通过SPI加载Http服务器配置器");
+        ServiceLoader<HttpServerConfigurator> httpServerConfiguratorServiceLoader = ServiceLoader.load(HttpServerConfigurator.class);
+        log.info("配置Http服务器");
+        httpServerConfiguratorServiceLoader.forEach(factory -> factory.config(httpServer));
+
         final String address = AbstractMainVerticle.EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
         log.info("WebVerticle注册消费EventBus事件-MainVerticle部署成功事件: {}", address);
         this.startConsumer = this.vertx.eventBus().consumer(address, this::handleStart);
@@ -246,6 +250,13 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (router != null && router.getRoutes() != null) {
             router.getRoutes().clear();
         }
+    }
+
+    /**
+     * @param httpServer 配置http服务器
+     */
+    protected void configHttpServer(HttpServer httpServer) {
+        log.info("AbstractWebVerticle的子类未继承实现configHttpServer方法");
     }
 
     private void handleStart(final Message<Void> message) {
