@@ -5,6 +5,7 @@ import java.security.Security;
 import java.util.Arrays;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -52,6 +53,13 @@ public class DigestUtils {
     }
 
     /**
+     * 将摘要的结果(byte[])转成Base64的字符串
+     */
+    public static String digestToBase64Str(String algorithm, byte[] data) {
+        return Base64.toBase64String(digest(algorithm, data));
+    }
+
+    /**
      * SM3
      */
     public static byte[] sm3(byte[] data) {
@@ -66,6 +74,13 @@ public class DigestUtils {
     }
 
     /**
+     * SM3
+     */
+    public static String sm3ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SM3, data);
+    }
+
+    /**
      * MD4
      */
     public static byte[] md4(byte[] data) {
@@ -77,6 +92,13 @@ public class DigestUtils {
      */
     public static String md4ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_MD4, data);
+    }
+
+    /**
+     * MD4
+     */
+    public static String md4ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_MD4, data);
     }
 
     /**
@@ -115,24 +137,52 @@ public class DigestUtils {
         return md5ToHexStrX32(data).substring(8, 24);
     }
 
+    /**
+     * MD5 输出Base64的字符串
+     *
+     */
+    public static String md5ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_MD5, data);
+    }
+
     public static String sha1ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA1, data);
+    }
+
+    public static String sha1ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SHA1, data);
     }
 
     public static String sha224ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA224, data);
     }
 
+    public static String sha224ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SHA224, data);
+    }
+
     public static String sha256ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA256, data);
+    }
+
+    public static String sha256ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SHA256, data);
     }
 
     public static String sha384ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA384, data);
     }
 
+    public static String sha384ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SHA384, data);
+    }
+
     public static String sha512ToHexStr(byte[] data) {
         return digestToHexStr(ALGORITHM_SHA512, data);
+    }
+
+    public static String sha512ToBase64Str(byte[] data) {
+        return digestToBase64Str(ALGORITHM_SHA512, data);
     }
 
     public static void main(String[] args) {

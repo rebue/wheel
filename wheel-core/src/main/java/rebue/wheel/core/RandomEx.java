@@ -28,6 +28,7 @@ public class RandomEx {
     private static final String factor2 = "1234567890";
     private static final String factor3 = "1234567890abcdefghijklmnopqrstuvwxyz";
     private static final String factor4 = "abcdefghijklmnopqrstuvwxyz";
+    private static final String factor5 = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-._~";
     private static SecureRandom random;
 
     static {
@@ -89,6 +90,17 @@ public class RandomEx {
         final StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < resultSize; i++) {
             stringBuilder.append(factor4.charAt(random.nextInt(factor4.length())));
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 生成resultSize位的随机数(只包含数字、大小写的字母、-、_、.、~)
+     */
+    public static String random5(final int resultSize) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < resultSize; i++) {
+            stringBuilder.append(factor5.charAt(random.nextInt(factor5.length())));
         }
         return stringBuilder.toString();
     }
