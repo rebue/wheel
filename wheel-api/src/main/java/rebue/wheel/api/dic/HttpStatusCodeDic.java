@@ -42,9 +42,9 @@ public enum HttpStatusCodeDic implements Dic {
      */
     FOUND(302, "要求客户端临时跳转到新的地址"),
     /**
-     * 400: 请求格式错误
+     * 400: 无效的请求
      */
-    BAD_REQUEST(400, "请求格式错误"),
+    BAD_REQUEST(400, "无效的请求"),
     /**
      * 401: 用户认证失败
      */
@@ -73,6 +73,10 @@ public enum HttpStatusCodeDic implements Dic {
      * 422: 请求格式正确，但是由于含有语义错误，无法响应
      */
     UNPROCESSABLE_ENTITY(422, "请求格式正确，但是由于含有语义错误，无法响应"),
+    /**
+     * 请求过多，请稍候再试
+     */
+    TOO_MANY_REQUESTS(429, "请求过多，请稍候再试"),
     /**
      * 500: 服务器内部发生错误
      */
