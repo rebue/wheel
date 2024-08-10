@@ -25,6 +25,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.*;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
+import io.vertx.redis.client.RedisAPI;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Setter;
@@ -32,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.*;
+import rebue.wheel.vertx.web.BlackListHandler;
 import rebue.wheel.vertx.web.CompressResponseHandler;
+import rebue.wheel.vertx.web.LimitRateHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
@@ -129,6 +132,18 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (webProperties.getIsAutoResponseContentType()) {
             log.info("开启自动响应内容类型");
             globalRoute.handler(ResponseContentTypeHandler.create());
+        }
+        // 是否开启黑名单
+        if (webProperties.getBlackList().getEnabled()) {
+            log.info("开启黑名单");
+            RedisAPI redisClient = injector.getInstance(RedisAPI.class);
+            globalRoute.handler(new BlackListHandler(webProperties.getBlackList(), redisClient));
+        }
+        // 是否限流
+        if (webProperties.getLimitRate().getEnabled()) {
+            log.info("开启限流");
+            RedisAPI redisClient = injector.getInstance(RedisAPI.class);
+            globalRoute.handler(new LimitRateHandler(webProperties.getLimitRate(), webProperties.getBlackList(), redisClient));
         }
         // CORS
         if (webProperties.getIsCors()) {

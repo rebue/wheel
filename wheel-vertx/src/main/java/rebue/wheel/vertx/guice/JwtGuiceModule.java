@@ -22,7 +22,13 @@ public class JwtGuiceModule extends AbstractModule {
     @Provides
     JWTAuth getJwtAuth(Vertx vertx, @Named("config") final JsonObject config) {
         log.info("JwtGuiceModule.getJwtAuth");
-        JWTAuthOptions options = new JWTAuthOptions(config.getJsonObject("jwt"));
+        JsonObject jwtConfig = config.getJsonObject("jwt");
+        if (jwtConfig == null) {
+            log.warn("未配置JWT选项");
+            return null;
+        }
+
+        JWTAuthOptions options = new JWTAuthOptions(jwtConfig);
         return JWTAuth.create(vertx, options);
     }
 

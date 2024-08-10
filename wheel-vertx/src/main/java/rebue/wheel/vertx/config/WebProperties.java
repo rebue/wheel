@@ -55,6 +55,14 @@ public class WebProperties {
      */
     private Boolean                isCors                    = false;
     /**
+     * 是否开启黑名单
+     */
+    private BlackListProperties    blackList                 = new BlackListProperties();
+    /**
+     * 是否限流
+     */
+    private LimitRateProperties    limitRate                 = new LimitRateProperties();
+    /**
      * 动态路由
      */
     private DynamicRouteProperties dynamicRoute              = new DynamicRouteProperties();
@@ -74,6 +82,30 @@ public class WebProperties {
      * 全局路由处理器列表
      */
     private Map<String, Object>    globalRouteHandlers       = new LinkedHashMap<>();
+
+    /**
+     * 黑名单
+     */
+    @Data
+    public static class BlackListProperties {
+        private Boolean enabled     = false;
+        /**
+         * redis中key的前缀，默认是 rebue.wheel.vertx.web.black-list:
+         */
+        private String  redisPrefix = "rebue.wheel.vertx.web.black-list:";
+    }
+
+    /**
+     * 限流
+     */
+    @Data
+    public static class LimitRateProperties {
+        private Boolean enabled     = false;
+        /**
+         * redis中key的前缀，默认是 rebue.wheel.vertx.web.limit-rate:
+         */
+        private String  redisPrefix = "rebue.wheel.vertx.web.limit-rate:";
+    }
 
     /**
      * 动态路由
