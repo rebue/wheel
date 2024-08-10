@@ -161,7 +161,7 @@ public class FileUtils {
     }
 
     /**
-     * 读取资源文件内容到字符串
+     * 读取资源文件内容到字符串列表
      *
      * @param resourceFilePath 文件路径
      * @return 文件内容的字符串
@@ -179,6 +179,27 @@ public class FileUtils {
             }
         }
         return list;
+    }
+
+    /**
+     * 读取资源文件内容到字符串列表
+     *
+     * @param resourceFilePath 文件路径
+     * @return 文件内容的字符串
+     * @throws IOException IO异常
+     */
+    public static String readResourceFileToString(String resourceFilePath, Class<?> clazz) throws IOException {
+        StringBuilder sb          = new StringBuilder();
+        InputStream   inputStream = clazz.getResourceAsStream(resourceFilePath);
+        if (inputStream == null)
+            throw new RuntimeException("获取类资源为null");
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        return sb.toString();
     }
 
     public static byte[] getBytesFromFile(String filePath) throws IOException {
