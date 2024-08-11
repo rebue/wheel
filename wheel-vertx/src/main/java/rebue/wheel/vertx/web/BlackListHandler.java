@@ -2,6 +2,7 @@ package rebue.wheel.vertx.web;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.SecurityPolicyHandler;
 import io.vertx.redis.client.RedisAPI;
@@ -31,13 +32,27 @@ public class BlackListHandler implements SecurityPolicyHandler {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        String srcIp = routingContext.request().remoteAddress().host();
-        this.redisApi.get(this.redisPrefix + srcIp + "{" + srcIp + "}").onSuccess(result -> {
-            if (result == null) {
-                routingContext.next();
-            } else {
-                routingContext.fail(HttpStatusCodeDic.FORBIDDEN.getCode());
-            }
-        }).onFailure(err -> log.error("Redis获取黑名单出错", err));
+        log.debug("进入黑名单处理器");
+        HttpServerRequest request = routingContext.request();
+        if (!request.isEnded()) {
+            String srcIp = request.remoteAddress().host();
+            log.debug("暂停请求");
+            request.pause();
+            this.redisApi.get(this.redisPrefix + srcIp + "{" + srcIp + "}").onSuccess(result -> {
+                log.debug("获取黑名单结果：{}", result);
+                if (!request.isEnded()) {
+                    log.debug("恢复请求");
+                    request.resume();
+                }
+                if (result == null) {
+                    routingContext.next();
+                } else {
+                    routingContext.fail(HttpStatusCodeDic.FORBIDDEN.getCode());
+                }
+            }).onFailure(err -> log.error("Redis获取黑名单出错", err));
+        } else {
+            routingContext.next();
+        }
+
     }
 }
