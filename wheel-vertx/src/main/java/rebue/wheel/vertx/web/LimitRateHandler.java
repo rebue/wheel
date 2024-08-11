@@ -72,14 +72,20 @@ public class LimitRateHandler implements SecurityPolicyHandler {
 
     @Override
     public void handle(RoutingContext routingContext) {
+        log.debug("进入限流处理器");
+        HttpServerRequest request = routingContext.request();
+        if (!request.isEnded()) {
+            log.debug("暂停请求");
+            request.pause();
+        }
+
         limitRate(redisPrefix + "size{" + redisPrefix + "global}",
                 redisPrefix + "limit{" + redisPrefix + "global}",
                 redisPrefix + "window{" + redisPrefix + "global}",
                 redisPrefix + "expires{" + redisPrefix + "global}").onSuccess(globalRes -> {
                     if (globalRes) {
-                        HttpServerRequest request = routingContext.request();
-                        String    srcIp   = request.remoteAddress().host();
-                        String[]  args;
+                        String srcIp = request.remoteAddress().host();
+                        String[] args;
                         if (blackListRedisPrefix == null) {
                             args = new String[] {
                                     redisPrefix + srcIp + "-size{" + srcIp + "}",
@@ -96,16 +102,38 @@ public class LimitRateHandler implements SecurityPolicyHandler {
                         }
 
                         limitRate(args).onSuccess(ipRes -> {
+                            if (!request.isEnded()) {
+                                log.debug("恢复请求");
+                                request.resume();
+                            }
                             if (ipRes) {
                                 routingContext.next();
                             } else {
                                 routingContext.fail(HttpStatusCodeDic.TOO_MANY_REQUESTS.getCode());
                             }
-                        }).onFailure(err -> log.error("Redis 执行IP限流的 Lua 脚本出错", err));
+                        }).onFailure(err -> {
+                            log.error("Redis 执行IP限流的 Lua 脚本出错", err);
+                            if (!request.isEnded()) {
+                                log.debug("恢复请求");
+                                request.resume();
+                            }
+                            routingContext.fail(HttpStatusCodeDic.BAD_GATEWAY.getCode());
+                        });
                     } else {
+                        if (!request.isEnded()) {
+                            log.debug("恢复请求");
+                            request.resume();
+                        }
                         routingContext.fail(HttpStatusCodeDic.TOO_MANY_REQUESTS.getCode());
                     }
-                }).onFailure(err -> log.error("Redis 执行全局限流的 Lua 脚本出错", err));
+                }).onFailure(err -> {
+                    log.error("Redis 执行全局限流的 Lua 脚本出错", err);
+                    if (!request.isEnded()) {
+                        log.debug("恢复请求");
+                        request.resume();
+                    }
+                    routingContext.fail(HttpStatusCodeDic.BAD_GATEWAY.getCode());
+                });
     }
 
     private Future<Boolean> limitRate(String... args) {

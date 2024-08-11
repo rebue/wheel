@@ -35,24 +35,30 @@ public class BlackListHandler implements SecurityPolicyHandler {
         log.debug("进入黑名单处理器");
         HttpServerRequest request = routingContext.request();
         if (!request.isEnded()) {
-            String srcIp = request.remoteAddress().host();
             log.debug("暂停请求");
             request.pause();
-            this.redisApi.get(this.redisPrefix + srcIp + "{" + srcIp + "}").onSuccess(result -> {
-                log.debug("获取黑名单结果：{}", result);
-                if (!request.isEnded()) {
-                    log.debug("恢复请求");
-                    request.resume();
-                }
-                if (result == null) {
-                    routingContext.next();
-                } else {
-                    routingContext.fail(HttpStatusCodeDic.FORBIDDEN.getCode());
-                }
-            }).onFailure(err -> log.error("Redis获取黑名单出错", err));
-        } else {
-            routingContext.next();
         }
+
+        String srcIp = request.remoteAddress().host();
+        this.redisApi.get(this.redisPrefix + srcIp + "{" + srcIp + "}").onSuccess(result -> {
+            log.debug("获取黑名单结果：{}", result);
+            if (!request.isEnded()) {
+                log.debug("恢复请求");
+                request.resume();
+            }
+            if (result == null) {
+                routingContext.next();
+            } else {
+                routingContext.fail(HttpStatusCodeDic.FORBIDDEN.getCode());
+            }
+        }).onFailure(err -> {
+            log.error("Redis获取黑名单出错", err);
+            if (!request.isEnded()) {
+                log.debug("恢复请求");
+                request.resume();
+            }
+            routingContext.fail(HttpStatusCodeDic.BAD_GATEWAY.getCode());
+        });
 
     }
 }
