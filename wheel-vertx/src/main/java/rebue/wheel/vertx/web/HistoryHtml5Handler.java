@@ -29,8 +29,9 @@ public class HistoryHtml5Handler implements PlatformHandler {
         HttpServerResponse response = routingContext.response();
         if ("GET".equals(request.method().name()) && HttpStatusCodeDic.NOT_FOUND.getCode() == response.getStatusCode()) {
             routingContext.reroute(subPath + "index.html");
+        } else {
+            routingContext.next();
         }
-        routingContext.next();
     }
 
 }
