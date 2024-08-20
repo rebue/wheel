@@ -24,6 +24,7 @@ import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.*;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
@@ -34,6 +35,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.vertx.guice.GuiceVerticleFactory;
 import rebue.wheel.vertx.guice.VertxGuiceModule;
+import rebue.wheel.vertx.spi.MessageCodecAdapter;
 
 @SuppressWarnings("deprecation")
 @Slf4j
@@ -232,6 +234,15 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         log.info("注册GuiceVerticleFactory工厂");
         this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
 
+        log.info("注册事件总线解码器");
+        ServiceLoader<MessageCodecAdapter> messageCodecAdapterServiceLoader = ServiceLoader.load(MessageCodecAdapter.class);
+        for (MessageCodecAdapter messageCodecAdapter : messageCodecAdapterServiceLoader) {
+            log.info("注册事件总线解码器: {}", messageCodecAdapter.name());
+            // noinspection unchecked
+            this.vertx.eventBus().registerDefaultCodec(
+                    messageCodecAdapter.messageClass(), messageCodecAdapter.messageCodec());
+        }
+
         log.info("部署前事件");
         beforeDeploy();
 
@@ -258,12 +269,13 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
                     log.info("部署Verticle完成，发布部署成功的消息");
                     final String deploySuccessEventBusAddress = EVENT_BUS_DEPLOY_SUCCESS + "::" + this.mainId;
                     log.info("MainVerticle.EVENT_BUS_DEPLOY_SUCCESS address is {}", deploySuccessEventBusAddress);
-                    this.vertx.eventBus().publish(deploySuccessEventBusAddress, null);
+                    EventBus eventBus = this.vertx.eventBus();
+                    eventBus.publish(deploySuccessEventBusAddress, null);
 
                     log.info("监听配置改变的消息");
                     final String configChangedEventBusAddress = EVENT_BUS_CONFIG_CHANGED + "::" + this.mainId;
                     log.info("MainVerticle.EVENT_BUS_CONFIG_CHANGED address is {}", configChangedEventBusAddress);
-                    this.configChangedConsumer = this.vertx.eventBus().consumer(configChangedEventBusAddress,
+                    this.configChangedConsumer = eventBus.consumer(configChangedEventBusAddress,
                             this::handleConfigChange);
 
                     log.info("是否开启 native transport: {}", vertx.isNativeTransportEnabled());
