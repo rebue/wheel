@@ -271,7 +271,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
      * @param httpServer 配置http服务器
      */
     protected void configHttpServer(HttpServer httpServer) {
-        log.info("AbstractWebVerticle的子类未继承实现configHttpServer方法");
+        log.info("AbstractWebVerticle的子类未继承实现configHttpServer方法: {}", httpServer.actualPort());
     }
 
     private void handleStart(final Message<Void> message) {
