@@ -1,10 +1,13 @@
 package rebue.wheel.vertx.guice;
 
+import java.util.Optional;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 import jakarta.inject.Named;
@@ -20,13 +23,25 @@ public class SockjsGuiceModule extends AbstractModule {
 
     @Singleton
     @Provides
-    SockJSHandler getSockjs(final Vertx vertx, @Named("config") final JsonObject config) {
+    SockJSHandler getSockjsHandle(final Vertx vertx, @Named("config") final JsonObject config) {
+        log.info("SockjsGuiceModule.getSockjsHandle");
+        SockJSHandlerOptions sockjsHandlerOptions = Optional
+                .ofNullable(config.getJsonObject("sockjs"))
+                .map(options -> options.getJsonObject("sockjsHandlerOptions"))
+                .map(SockJSHandlerOptions::new)
+                .orElse(new SockJSHandlerOptions());
+        return SockJSHandler.create(vertx, sockjsHandlerOptions);
+    }
+
+    @Singleton
+    @Provides
+    SockJSBridgeOptions getSockjsBridgeOptions(@Named("config") final JsonObject config) {
         log.info("SockjsGuiceModule.getSockjs");
-        final JsonObject     optionsJsonObject = config.getJsonObject("sockjs");
-        SockJSHandlerOptions options           = optionsJsonObject == null
-                ? new SockJSHandlerOptions()
-                : new SockJSHandlerOptions(optionsJsonObject);
-        return SockJSHandler.create(vertx, options);
+        return Optional
+                .ofNullable(config.getJsonObject("sockjs"))
+                .map(options -> options.getJsonObject("sockjsBridgeOptions"))
+                .map(SockJSBridgeOptions::new)
+                .orElse(new SockJSBridgeOptions());
     }
 
 }
