@@ -168,6 +168,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             // noinspection unchecked
             KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
             KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
+            // 独立的组来使用广播模式
+            kafkaClientOptions.setConfig("group.id", UlidCreator.getUlid().toLowerCase());
             for (WebProperties.SseRouteProperties sseRoute : webProperties.getWebsocketRoutes()) {
                 log.info("配置WebSocket路由: {}", sseRoute.getPath());
                 router.route(sseRoute.getPath())
@@ -187,6 +189,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             // noinspection unchecked
             KafkaProducer<String, Buffer> kafkaProducer       = injector.getInstance(KafkaProducer.class);
             KafkaClientOptions            kafkaClientOptions  = injector.getInstance(KafkaClientOptions.class);
+            // 独立的组来使用广播模式
+            kafkaClientOptions.setConfig("group.id", UlidCreator.getUlid().toLowerCase());
             for (WebProperties.SseRouteProperties sseRoute : webProperties.getSockjsRoutes()) {
                 log.info("配置SockJS路由: {}", sseRoute.getPath());
                 router.route(sseRoute.getPath() + "*")
