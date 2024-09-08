@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.google.inject.Injector;
 
 import io.netty.handler.codec.compression.StandardCompressionOptions;
@@ -12,6 +13,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
@@ -19,17 +21,27 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.SelfSignedCertificate;
+import io.vertx.core.streams.ReadStream;
+import io.vertx.core.streams.StreamBase;
+import io.vertx.core.streams.WriteStream;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.*;
+import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import io.vertx.kafka.client.common.KafkaClientOptions;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
+import io.vertx.kafka.client.producer.KafkaProducer;
+import io.vertx.kafka.client.producer.KafkaProducerRecord;
 import io.vertx.redis.client.RedisAPI;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.api.cst.SsmCst;
+import rebue.wheel.api.ssm.StringSsm;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.*;
@@ -149,6 +161,42 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (webProperties.getIsCors()) {
             log.info("开启CORS");
             globalRoute.handler(CorsHandler.create());
+        }
+
+        // 配置websocket路由
+        if (!webProperties.getWebsocketRoutes().isEmpty()) {
+            // noinspection unchecked
+            KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
+            KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
+            for (WebProperties.SseRouteProperties sseRoute : webProperties.getWebsocketRoutes()) {
+                log.info("配置WebSocket路由: {}", sseRoute.getPath());
+                router.route(sseRoute.getPath())
+                        .handler(routingContext -> routingContext.request().toWebSocket()
+                                .onSuccess(socket -> this.handleSocket(socket,
+                                        sseRoute.getSendTopic(), sseRoute.getReceiveTopic(),
+                                        sseRoute.getUserAgentIdCookieKey(),
+                                        kafkaProducer, KafkaConsumer.create(vertx, kafkaClientOptions)))
+                                .onFailure(err -> log.error("websocket处理发生异常", err)));
+            }
+        }
+
+        // 配置sockjs路由
+        if (!webProperties.getSockjsRoutes().isEmpty()) {
+            SockJSHandler                 sockjsHandler       = injector.getInstance(SockJSHandler.class);
+            SockJSBridgeOptions           sockjsBridgeOptions = injector.getInstance(SockJSBridgeOptions.class);
+            // noinspection unchecked
+            KafkaProducer<String, Buffer> kafkaProducer       = injector.getInstance(KafkaProducer.class);
+            KafkaClientOptions            kafkaClientOptions  = injector.getInstance(KafkaClientOptions.class);
+            for (WebProperties.SseRouteProperties sseRoute : webProperties.getSockjsRoutes()) {
+                log.info("配置SockJS路由: {}", sseRoute.getPath());
+                router.route(sseRoute.getPath() + "*")
+                        .handler(BodyHandler.create())
+                        .subRouter(sockjsHandler.bridge(sockjsBridgeOptions,
+                                bridgeEvent -> this.handleSocket(bridgeEvent.socket(),
+                                        sseRoute.getSendTopic(), sseRoute.getReceiveTopic(),
+                                        sseRoute.getUserAgentIdCookieKey(),
+                                        kafkaProducer, KafkaConsumer.create(vertx, kafkaClientOptions))));
+            }
         }
 
         log.info("添加全局路由处理器");
@@ -328,4 +376,45 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         });
     }
 
+    /**
+     * 处理socket
+     *
+     * @param socketStream socket流
+     */
+    private void handleSocket(StreamBase socketStream,
+            String sendTopic, String receiveTopic, String userAgentIdCookieKey,
+            KafkaProducer<String, Buffer> kafkaProducer,
+            KafkaConsumer<String, Buffer> kafkaConsumer) {
+        log.info("接收到新的浏览器连接");
+        // noinspection unchecked
+        ReadStream<Buffer>  readStream  = (ReadStream<Buffer>) socketStream;
+        // noinspection unchecked
+        WriteStream<Buffer> writeStream = (WriteStream<Buffer>) socketStream;
+        String              userAgentId = UlidCreator.getUlid().toLowerCase();
+        kafkaConsumer.handler(record -> {
+            Buffer buffer = record.record().value();
+            log.debug("接收到发送浏览器事件({}): {}", userAgentId, buffer);
+            writeStream.write(buffer);
+        });
+        readStream.handler(buffer -> {
+            log.debug("接收到浏览器发送过来的消息: {}-{}", userAgentId, buffer);
+            kafkaProducer.write(KafkaProducerRecord.create(receiveTopic, buffer));
+        }).exceptionHandler(err -> log.error("socket处理发生异常", err)
+        // 断开连接
+        ).endHandler(v -> {
+            log.info("浏览器断开连接: {}", userAgentId);
+            kafkaConsumer.unsubscribe().onComplete(vv -> kafkaConsumer.close());
+        });
+
+        JsonObject data = new JsonObject()
+                .put("userAgentIdCookieKey", userAgentIdCookieKey)
+                .put("userAgentId", userAgentId);
+        writeStream.write(JsonObject.mapFrom(StringSsm.of(SsmCst.USER_AGENT_ID, data)).toBuffer())
+                .onSuccess(v -> {
+                    log.info("订阅发送浏览器事件: {}", userAgentId);
+                    kafkaConsumer.subscribe(sendTopic)
+                            .onSuccess(vv -> log.info("订阅发送浏览器事件成功: {}", userAgentId))
+                            .onFailure(err -> log.error("订阅发送浏览器事件失败: {}", userAgentId, err));
+                });
+    }
 }

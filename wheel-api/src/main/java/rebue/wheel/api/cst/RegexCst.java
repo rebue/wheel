@@ -1,8 +1,8 @@
-package rebue.wheel.api.constant;
+package rebue.wheel.api.cst;
 
 import java.util.regex.Pattern;
 
-public class RegexConstant {
+public class RegexCst {
     /**
      * 首行
      */

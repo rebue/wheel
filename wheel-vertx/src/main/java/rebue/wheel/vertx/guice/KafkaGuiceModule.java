@@ -12,10 +12,10 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class KafkaClientGuiceModule extends AbstractModule {
+public class KafkaGuiceModule extends AbstractModule {
 
-    public KafkaClientGuiceModule() {
-        log.info("new KafkaClientGuiceModule");
+    public KafkaGuiceModule() {
+        log.info("new KafkaGuiceModule");
     }
 
     @Singleton

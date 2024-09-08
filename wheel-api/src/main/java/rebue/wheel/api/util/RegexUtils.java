@@ -1,6 +1,6 @@
 package rebue.wheel.api.util;
 
-import static rebue.wheel.api.constant.RegexConstant.*;
+import static rebue.wheel.api.cst.RegexCst.*;
 
 import java.util.ArrayList;
 import java.util.List;

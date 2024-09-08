@@ -27,7 +27,7 @@ public class SockjsGuiceModule extends AbstractModule {
         log.info("SockjsGuiceModule.getSockjsHandle");
         SockJSHandlerOptions sockjsHandlerOptions = Optional
                 .ofNullable(config.getJsonObject("sockjs"))
-                .map(options -> options.getJsonObject("sockjsHandlerOptions"))
+                .map(options -> options.getJsonObject("handlerOptions"))
                 .map(SockJSHandlerOptions::new)
                 .orElse(new SockJSHandlerOptions());
         return SockJSHandler.create(vertx, sockjsHandlerOptions);
@@ -39,7 +39,7 @@ public class SockjsGuiceModule extends AbstractModule {
         log.info("SockjsGuiceModule.getSockjs");
         return Optional
                 .ofNullable(config.getJsonObject("sockjs"))
-                .map(options -> options.getJsonObject("sockjsBridgeOptions"))
+                .map(options -> options.getJsonObject("bridgeOptions"))
                 .map(SockJSBridgeOptions::new)
                 .orElse(new SockJSBridgeOptions());
     }
