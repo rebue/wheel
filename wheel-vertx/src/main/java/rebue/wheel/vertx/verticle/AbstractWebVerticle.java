@@ -29,7 +29,6 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.*;
-import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.kafka.client.common.KafkaClientOptions;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
@@ -184,22 +183,23 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         // 配置sockjs路由
         if (!webProperties.getSockjsRoutes().isEmpty()) {
-            SockJSHandler                 sockjsHandler       = injector.getInstance(SockJSHandler.class);
-            SockJSBridgeOptions           sockjsBridgeOptions = injector.getInstance(SockJSBridgeOptions.class);
+            SockJSHandler                 sockjsHandler      = injector.getInstance(SockJSHandler.class);
+            // SockJSBridgeOptions sockjsBridgeOptions = injector.getInstance(SockJSBridgeOptions.class);
             // noinspection unchecked
-            KafkaProducer<String, Buffer> kafkaProducer       = injector.getInstance(KafkaProducer.class);
-            KafkaClientOptions            kafkaClientOptions  = injector.getInstance(KafkaClientOptions.class);
+            KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
+            KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
             // 独立的组来使用广播模式
             kafkaClientOptions.setConfig("group.id", UlidCreator.getUlid().toLowerCase());
             for (WebProperties.SseRouteProperties sseRoute : webProperties.getSockjsRoutes()) {
                 log.info("配置SockJS路由: {}", sseRoute.getPath());
                 router.route(sseRoute.getPath() + "*")
                         .handler(BodyHandler.create())
-                        .subRouter(sockjsHandler.bridge(sockjsBridgeOptions,
-                                bridgeEvent -> this.handleSocket(bridgeEvent.socket(),
-                                        sseRoute.getSendTopic(), sseRoute.getReceiveTopic(),
-                                        sseRoute.getUserAgentIdCookieKey(),
-                                        kafkaProducer, KafkaConsumer.create(vertx, kafkaClientOptions))));
+                        // .subRouter(sockjsHandler.bridge(sockjsBridgeOptions,
+                        // bridgeEvent -> this.handleSocket(bridgeEvent.socket(),
+                        .subRouter(sockjsHandler.socketHandler(socket -> this.handleSocket(socket,
+                                sseRoute.getSendTopic(), sseRoute.getReceiveTopic(),
+                                sseRoute.getUserAgentIdCookieKey(),
+                                kafkaProducer, KafkaConsumer.create(vertx, kafkaClientOptions))));
             }
         }
 
