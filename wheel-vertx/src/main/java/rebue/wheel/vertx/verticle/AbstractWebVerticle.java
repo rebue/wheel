@@ -41,6 +41,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.api.cst.SsmCst;
 import rebue.wheel.api.ssm.StringSsm;
+import rebue.wheel.vertx.CtxCst;
 import rebue.wheel.vertx.config.WebProperties;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.*;
@@ -251,6 +252,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                     .setTrustOptions(certificate.trustOptions());
         }
 
+        vertx.getOrCreateContext().put(CtxCst.HTTP_SERVER_SSL, httpServerOptions.isSsl());
+
         this.httpServer = this.vertx.createHttpServer(httpServerOptions).requestHandler(router);
 
         Map<String, Object> http2https = webProperties.getHttp2https();
@@ -331,7 +334,9 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         this.startConsumer.unregister(result -> {
             this.httpServer.listen(res -> {
                 if (res.succeeded()) {
-                    log.info("HTTP server started on port {}", res.result().actualPort());
+                    int port = res.result().actualPort();
+                    vertx.getOrCreateContext().put(CtxCst.HTTP_SERVER_PORT, port);
+                    log.info("HTTP server started on port {}", port);
                 } else {
                     log.error("HTTP server start fail", res.cause());
                 }
