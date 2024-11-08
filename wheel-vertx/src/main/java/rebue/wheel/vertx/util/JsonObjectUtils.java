@@ -10,7 +10,7 @@ import io.vertx.core.json.JsonObject;
 public class JsonObjectUtils {
     /**
      * 将 JsonObject 对象参数化成 GET 请求的 queryParams 字符串
-     * 如: name=black_neck&sex=male
+     * 例如: name=black_neck&amp;sex=male
      * 
      * @param params 表示 JsonObject 对象的参数
      * @return GET 请求的 queryParams 字符串
