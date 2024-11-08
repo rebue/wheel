@@ -10,7 +10,7 @@ import io.vertx.core.json.JsonObject;
 public class JsonObjectUtils {
     /**
      * 将 JsonObject 对象参数化成 GET 请求的 queryParams 字符串
-     * 如: ?name=black_neck&sex=male
+     * 如: name=black_neck&sex=male
      * 
      * @param params 表示 JsonObject 对象的参数
      * @return GET 请求的 queryParams 字符串
@@ -18,9 +18,7 @@ public class JsonObjectUtils {
     public static String parameterize(JsonObject params) {
         StringBuilder result = new StringBuilder();
         for (Map.Entry<String, Object> entry : params) {
-            if (result.isEmpty()) {
-                result.append("?");
-            } else {
+            if (!result.isEmpty()) {
                 result.append("&");
             }
             String key   = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
