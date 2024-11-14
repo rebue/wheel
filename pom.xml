@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.5.45</version>
+    <version>3.5.46</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -35,6 +35,7 @@
         <module>wheel-serialization</module>
         <module>wheel-turing</module>
         <module>wheel-vertx</module>
+        <module>wheel-kafka</module>
         <!-- <module>wheel-package</module> -->
     </modules>
 
