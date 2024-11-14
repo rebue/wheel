@@ -1,0 +1,71 @@
+= 懋特
+
+== 注册 source 连接器
+[source,json]
+----
+{
+    "name": "mt-beacon-source-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+        "tasks.max": "1",
+        "database.hostname": "mysql",
+        "database.port": "3306",
+        "database.user": "root",
+        "database.password": "LHlj990813",
+        "database.server.id": "184054",
+        "database.server.name": "mt_beacon",
+        "topic.prefix": "mt_beacon",
+        "database.include.list": "beacon",
+        "table.include.list": "beacon.bcon",
+        "schema.history.internal.kafka.bootstrap.servers": "kafka1:9092,kafka2:9092,kafka3:9092",
+        "schema.history.internal.kafka.topic": "schema-changes_beacon_bcon"
+    }
+}
+----
+- tasks.max: 应该只有 1 个任务。因为 MySQL 连接器读取 MySQL 服务器的 binlog，使用单一的连接器确保正确的顺序和事件处理。用连接器启动一个或多个任务工作的 Kafka 连接服务，会自动分发运行中的任务到 Kafka 连接服务集群中。如果任意的服务停止或挂掉，这些任务将被重新分发到运行中的服务中
+- database.server.id 与 topic.prefix: 唯一识别的主题前缀
+- database.include.list 与 table.include.list: 只检测此数据库的此表
+- schema.history.internal.kafka.bootstrap.servers 与 schema.history.internal.kafka.topic: 连接器将在 Kafka 中存储数据库 schemas 的历史和主题名称。在重启的时候，当连接器将要开始读取数据的时候，连接器将恢复这一时刻存在于 binlog 中的数据库的 schemas
+
+[source,curl]
+----
+curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" 127.0.0.1:30083/connectors/ -d @/usr/local/kafka/mt/mt-beacon-source-connector.json
+----
+
+== 注册 sink 连接器
+[source,json]
+----
+{
+    "name": "mt-beacon-sink-connector",
+    "config": {
+        "connector.class": "debeziumx.http.sink.connector.HttpSinkConnector",
+        "tasks.max": "1",
+        "topics": "mt_beacon.beacon.bcon",
+        "http.api.url": "http://magic-api_svr:9999/test/test02",
+        "http.method": "POST",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter.schemas.enable": "false"
+    }
+}
+----
+
+[source,curl]
+----
+curl -i -X POST -H "Content-Type:application/json" 127.0.0.1:30083/connectors/ -d @/usr/local/kafka/mt/mt-beacon-sink-connector.json
+----
+
+== 注销连接器
+[source,curl]
+----
+curl -i -X DELETE -H "Accept:application/json" 127.0.0.1:30083/connectors/mt-beacon-source-connector
+curl -i -X DELETE -H "Accept:application/json" 127.0.0.1:30083/connectors/mt-beacon-sink-connector
+----
+
+== 查看连接器
+[source,curl]
+----
+curl -H "Accept:application/json" 127.0.0.1:30083/connectors/
+curl -i -X GET -H "Accept:application/json" 127.0.0.1:30083/connectors/mt-beacon-source-connector
+curl -i -X GET -H "Accept:application/json" 127.0.0.1:30083/connectors/mt-beacon-sink-connector
+----
+
