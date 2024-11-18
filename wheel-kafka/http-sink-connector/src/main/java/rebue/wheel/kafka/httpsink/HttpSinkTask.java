@@ -49,14 +49,25 @@ public class HttpSinkTask extends SinkTask {
     @Override
     public void put(Collection<SinkRecord> records) {
         for (final SinkRecord record : records) {
-            log.debug("{} put record: {}", PLUGIN_NAME, record);
+            log.trace("{} put record: {}", PLUGIN_NAME, record);
             try {
-                HttpRequest httpRequest = HttpRequest.newBuilder()
+                Object value = record.value();
+                if (value == null) {
+                    continue;
+                }
+                String valueStr = objectMapper.writeValueAsString(value);
+                log.info("record value: {}", valueStr);
+                if (valueStr.isEmpty()) {
+                    continue;
+                }
+                HttpRequest          httpRequest  = HttpRequest.newBuilder()
                         .uri(httpApiUrl)
                         .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(record.value())))
+                        .POST(HttpRequest.BodyPublishers.ofString(valueStr))
                         .build();
-                httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> httpResponse = httpClient.send(
+                        httpRequest, HttpResponse.BodyHandlers.ofString());
+                log.info("response: {},{}", httpResponse.statusCode(), httpResponse.body());
             } catch (IOException | InterruptedException e) {
                 throw new RetriableException(e);
             }
