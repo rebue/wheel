@@ -50,6 +50,9 @@ public class JacksonUtils {
      * @return 序列化后的字符串
      */
     public static String serialize(final Object obj) throws JsonProcessingException {
+        if (obj == null) {
+            return null;
+        }
         return _objectMapper.writeValueAsString(obj);
     }
 
@@ -60,6 +63,9 @@ public class JacksonUtils {
      * @return 序列化后的字符串
      */
     public static String serializeWithPretty(final Object obj) throws JsonProcessingException {
+        if (obj == null) {
+            return null;
+        }
         return _objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
     }
 
