@@ -1,7 +1,6 @@
 package rebue.wheel.kafka.httpsink;
 
-import static rebue.wheel.kafka.httpsink.HttpSinkCst.CONFIG_KEY_HTTP_API_URL;
-import static rebue.wheel.kafka.httpsink.HttpSinkCst.CONFIG_KEY_HTTP_VERSION;
+import static rebue.wheel.kafka.httpsink.HttpSinkCst.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,20 +15,24 @@ import org.apache.kafka.connect.errors.RetriableException;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HttpSinkTask extends SinkTask {
-    private URI        httpApiUrl;
-    private HttpClient httpClient;
+    private URI                httpApiUrl;
+    private HttpClient         httpClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String version() {
-        return getClass().getPackage().getImplementationVersion();
+        return PLUGIN_VERSION;
     }
 
     @Override
     public void start(Map<String, String> props) {
+        log.info("starting task: {}\n{}", PLUGIN_NAME, props);
         HttpSinkConfig config = new HttpSinkConfig(props);
         try {
             httpApiUrl = new URI(config.getString(CONFIG_KEY_HTTP_API_URL));
@@ -41,19 +44,18 @@ public class HttpSinkTask extends SinkTask {
         httpClient = HttpClient.newBuilder()
                 .version(httpVersion)
                 .build();
-
     }
 
     @Override
     public void put(Collection<SinkRecord> records) {
         for (final SinkRecord record : records) {
-            log.debug("sink record: {}", record);
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(httpApiUrl)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString((String) record.value()))
-                    .build();
+            log.debug("{} put record: {}", PLUGIN_NAME, record);
             try {
+                HttpRequest httpRequest = HttpRequest.newBuilder()
+                        .uri(httpApiUrl)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(record.value())))
+                        .build();
                 httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             } catch (IOException | InterruptedException e) {
                 throw new RetriableException(e);
@@ -63,6 +65,8 @@ public class HttpSinkTask extends SinkTask {
 
     @Override
     public void stop() {
-        httpClient.close();
+        if (httpClient != null) {
+            httpClient.close();
+        }
     }
 }

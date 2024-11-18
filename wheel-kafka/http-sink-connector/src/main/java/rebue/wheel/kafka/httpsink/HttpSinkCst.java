@@ -6,6 +6,10 @@ public interface HttpSinkCst {
      */
     String PLUGIN_NAME             = "http-sink-connector";
     /**
+     * Kafka 插件的版本
+     */
+    String PLUGIN_VERSION          = "3.5.46";
+    /**
      * 配置的默认组
      */
     String CONFIG_DEFAULT_GROUP    = "default";

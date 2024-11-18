@@ -1,7 +1,9 @@
 package rebue.wheel.kafka.httpsink;
 
 import static rebue.wheel.kafka.httpsink.HttpSinkCst.PLUGIN_NAME;
+import static rebue.wheel.kafka.httpsink.HttpSinkCst.PLUGIN_VERSION;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpSinkConnector extends SinkConnector {
 
+    private Map<String, String> props;
+
+    @Override
+    public String version() {
+        return PLUGIN_VERSION;
+    }
+
     @Override
     public void start(Map<String, String> props) {
-        log.info("Starting connector {}", PLUGIN_NAME);
+        log.info("Starting connector {}\n{}", PLUGIN_NAME, props);
+        this.props = props;
+
     }
 
     @Override
@@ -25,8 +36,10 @@ public class HttpSinkConnector extends SinkConnector {
     }
 
     @Override
-    public List<Map<String, String>> taskConfigs(int i) {
-        return List.of();
+    public List<Map<String, String>> taskConfigs(int maxTasks) {
+        List<Map<String, String>> configs = new LinkedList<>();
+        configs.add(props);
+        return configs;
     }
 
     @Override
@@ -37,10 +50,5 @@ public class HttpSinkConnector extends SinkConnector {
     @Override
     public ConfigDef config() {
         return HttpSinkConfig.configDef();
-    }
-
-    @Override
-    public String version() {
-        return getClass().getPackage().getImplementationVersion();
     }
 }

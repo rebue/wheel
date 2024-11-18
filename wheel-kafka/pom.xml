@@ -14,6 +14,7 @@
     <description>Kafka 的工具库</description>
     <modules>
         <module>http-sink-connector</module>
+        <module>connector-tests</module>
     </modules>
 
     <properties>
@@ -21,6 +22,19 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <wheel.version>3.5.46</wheel.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.rebue.wheel</groupId>
+                <artifactId>wheel</artifactId>
+                <version>${wheel.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
