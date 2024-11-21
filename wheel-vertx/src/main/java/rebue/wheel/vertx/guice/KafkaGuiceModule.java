@@ -1,5 +1,7 @@
 package rebue.wheel.vertx.guice;
 
+import javax.annotation.Nullable;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -23,14 +25,20 @@ public class KafkaGuiceModule extends AbstractModule {
     KafkaClientOptions getKafkaClientOptions(@Named("config") final JsonObject config) {
         log.info("KafkaClientGuiceModule.getKafkaClientOptions");
         final JsonObject kafkaClientConfig = config.getJsonObject("kafka");
+        if (kafkaClientConfig == null) {
+            return null;
+        }
         return new KafkaClientOptions(kafkaClientConfig);
     }
 
     @Singleton
     @Provides
-    KafkaProducer getKafkaProducer(Vertx vertx, KafkaClientOptions config) {
+    KafkaProducer getKafkaProducer(Vertx vertx, @Nullable KafkaClientOptions kafkaClientConfig) {
         log.info("KafkaClientGuiceModule.getKafkaProducer");
-        return KafkaProducer.createShared(vertx, "shared", config);
+        if (kafkaClientConfig == null) {
+            return null;
+        }
+        return KafkaProducer.createShared(vertx, "shared", kafkaClientConfig);
     }
 
 }
