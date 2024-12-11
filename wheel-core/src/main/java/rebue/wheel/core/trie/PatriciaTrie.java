@@ -59,9 +59,9 @@ public class PatriciaTrie<V> implements Trie<V> {
 
                 // 如果key的当前字符小于childKey的当前字符
                 if (compared < 0) {
-                    // 如果第一个字符就小了，直接在最前面插入一个新的子节点
+                    // 如果第一个字符就小了，直接在此节点的前面插入一个新的子节点
                     if (j == 0) {
-                        node.getChildren().add(j, TrieNode.of(true, key, value));
+                        node.getChildren().add(i, TrieNode.of(true, key, value));
                         return;
                     }
                     // 如果之前有相同的字符，那么在此处插入一个新的叶子节点，并将当前子节点移动到新的叶子节点下
