@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel</artifactId>
-        <version>3.5.46</version>
+        <version>3.5.47</version>
     </parent>
 
     <groupId>com.github.rebue.wheel-kafka</groupId>
@@ -22,7 +22,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wheel.version>3.5.46</wheel.version>
+        <wheel.version>3.5.47</wheel.version>
     </properties>
 
     <dependencyManagement>
