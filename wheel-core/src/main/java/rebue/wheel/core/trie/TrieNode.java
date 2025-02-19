@@ -3,17 +3,24 @@ package rebue.wheel.core.trie;
 import java.util.LinkedList;
 import java.util.List;
 
-import lombok.Data;
+import jakarta.annotation.Nonnull;
+import lombok.*;
 
 @Data
-class TrieNode<V> {
+@NoArgsConstructor
+@RequiredArgsConstructor(staticName = "of")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+final class TrieNode<V> {
     /**
      * 是否为叶子节点
      */
-    private Boolean           isLeaf   = false;
+    @Nonnull
+    private Boolean           isLeaf;
     /**
      * 键
      */
+    @Nonnull
     private String            key;
     /**
      * 值
@@ -22,26 +29,33 @@ class TrieNode<V> {
     /**
      * 子节点
      */
+    @Builder.Default
     private List<TrieNode<V>> children = new LinkedList<>();
 
-    public static <V> TrieNode<V> of(String key) {
-        TrieNode<V> node = new TrieNode<>();
-        node.key = key;
-        return node;
+    /**
+     * 构造一个非叶子节点，且此节点的值为null(用于构造中间路径的节点)
+     * 
+     * @param key 键
+     * @return 节点
+     */
+    public static <V> TrieNode<V> of(final String key) {
+        return TrieNode.of(false, key);
     }
 
-    public static <V> TrieNode<V> of(String key, V value) {
-        TrieNode<V> node = new TrieNode<>();
-        node.key   = key;
-        node.value = value;
-        return node;
-    }
-
+    /**
+     * 构造一个非叶子节点，且此节点的值为null(用于构造中间路径的节点)
+     * 
+     * @param isLeaf 是否为叶子节点
+     * @param key    键
+     * @param value  值
+     * @return 节点
+     */
     public static <V> TrieNode<V> of(boolean isLeaf, String key, V value) {
-        TrieNode<V> node = new TrieNode<>();
-        node.isLeaf = isLeaf;
-        node.key    = key;
-        node.value  = value;
-        return node;
+        return TrieNode.<V>builder()
+                .isLeaf(isLeaf)
+                .key(key)
+                .value(value)
+                .build();
     }
+
 }

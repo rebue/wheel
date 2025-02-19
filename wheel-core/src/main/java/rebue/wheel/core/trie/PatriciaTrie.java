@@ -119,7 +119,7 @@ public class PatriciaTrie<V> implements Trie<V> {
         node.getChildren().add(TrieNode.of(true, key, value));
     }
 
-    private V get(TrieNode<V> node, String key) {
+    private V get(final TrieNode<V> node, String key) {
         // 循环遍历子节点
         LOOP_CHILDREN: for (int i = 0; i < node.getChildren().size(); i++) {
             TrieNode<V> child     = node.getChildren().get(i);
