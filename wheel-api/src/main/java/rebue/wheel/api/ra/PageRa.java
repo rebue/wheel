@@ -1,5 +1,6 @@
 package rebue.wheel.api.ra;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,14 +22,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonInclude(Include.NON_NULL)
 public class PageRa<T> implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 当前页
+     * 当前页号
      */
     private Integer           pageNum;
     /**
-     * 总记录数
+     * 每页大小
+     */
+    private Integer           pageSize;
+    /**
+     * 总记录数(如果是树结构，则返回的是第1 层的总记录树)
      */
     protected Long            total;
     /**
