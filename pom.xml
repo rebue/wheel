@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.5.47</version>
+    <version>3.5.48</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -45,46 +45,46 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>3.3.5</spring-boot.version>
-        <spring-cloud-commons.version>4.1.4</spring-cloud-commons.version>
-        <spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
-        <spring-boot-admin.version>3.3.6</spring-boot-admin.version>
+        <spring-boot.version>3.4.2</spring-boot.version>
+        <spring-cloud-commons.version>4.2.0</spring-cloud-commons.version>
+        <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
+        <spring-boot-admin.version>3.4.2</spring-boot-admin.version>
 
-        <vertx.version>4.5.10</vertx.version>
+        <vertx.version>4.5.13</vertx.version>
 
         <brotli4j.version>1.16.0</brotli4j.version>
         <dubbo.version>3.2.11</dubbo.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <bouncycastle18.version>1.78.1</bouncycastle18.version>
         <bouncycastle18.ext.version>1.78</bouncycastle18.ext.version>
-        <netty.version>4.1.115.Final</netty.version>
-        <netty-tcnative>2.0.69.Final</netty-tcnative>
+        <netty.version>4.1.118.Final</netty.version>
+        <netty-tcnative>2.0.70.Final</netty-tcnative>
         <jetty.version>12.0.15</jetty.version>
         <guice.version>7.0.0</guice.version>
         <dagger.version>2.42</dagger.version>
         <javaparser.version>3.25.9</javaparser.version>
-        <jackson.version>2.15.2</jackson.version>
+        <jackson.version>2.18.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <mybatis.version>3.5.15</mybatis.version>
-        <bean-searcher.version>4.3.5</bean-searcher.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <bean-searcher.version>4.3.6</bean-searcher.version>
         <drools.version>10.0.0</drools.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
-        <zookeeper.version>3.9.2</zookeeper.version>
-        <curator.version>5.6.0</curator.version>
+        <zookeeper.version>3.9.3</zookeeper.version>
+        <curator.version>5.7.1</curator.version>
         <kafka.version>3.9.0</kafka.version>
         <easyexcel.version>4.0.1</easyexcel.version>
         <pulsar.version>3.2.2</pulsar.version>
         <ulid.version>5.2.3</ulid.version>
         <slf4j.version>2.0.7</slf4j.version>
-        <log4j.version>2.24.1</log4j.version>
-        <logback.version>1.5.15</logback.version>
+        <log4j.version>2.24.3</log4j.version>
+        <logback.version>1.5.16</logback.version>
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <!--        <spring-amqp.version>2.4.5</spring-amqp.version>-->
-        <lombok.version>1.18.34</lombok.version>
-        <junit.version>5.11.3</junit.version>
+        <lombok.version>1.18.36</lombok.version>
+        <junit.version>5.11.4</junit.version>
 
         <graal-sdk.version>23.0.0</graal-sdk.version>
 

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel-kafka</groupId>
         <artifactId>wheel-kafka</artifactId>
-        <version>3.5.47</version>
+        <version>3.5.48</version>
     </parent>
 
     <artifactId>connector-tests</artifactId>

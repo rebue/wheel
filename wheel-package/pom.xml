@@ -6,7 +6,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>3.5.47</version>
+    <version>3.5.48</version>
     <description>利用maven将常用的jar包打到lib目录下，方便复制的模块</description>
 
     <properties>
@@ -19,24 +19,24 @@
         <!-- <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes> -->
 
         <slf4j.version>2.0.7</slf4j.version>
-        <logback.version>1.5.15</logback.version>
-        <jackson.version>2.15.2</jackson.version>
+        <logback.version>1.5.16</logback.version>
+        <jackson.version>2.18.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
-        <netty.version>4.1.115.Final</netty.version>
-        <netty-tcnative.version>2.0.69.Final</netty-tcnative.version>
+        <netty.version>4.1.118.Final</netty.version>
+        <netty-tcnative.version>2.0.70.Final</netty-tcnative.version>
         <bouncycastle18.version>1.78.1</bouncycastle18.version>
         <bouncycastle18.ext.version>1.78</bouncycastle18.ext.version>
         <drools.version>10.0.0</drools.version>
         <skywalking.version>8.16.0</skywalking.version>
         <scram.version>2.1</scram.version>
-        <zookeeper.version>3.9.2</zookeeper.version>
+        <zookeeper.version>3.9.3</zookeeper.version>
         <curator.version>5.5.0</curator.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <ulid.version>5.2.3</ulid.version>
         <guice.version>7.0.0</guice.version>
         <pulsar.version>3.2.2</pulsar.version>
         <hazelcast.version>5.4.0</hazelcast.version>
-        <vertx.version>4.5.10</vertx.version>
+        <vertx.version>4.5.13</vertx.version>
     </properties>
 
     <dependencyManagement>
