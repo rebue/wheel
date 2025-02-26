@@ -1,18 +1,20 @@
 package rebue.wheel.api.exception;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 扩展RuntimeException，详细记录异常日志
  */
-@Slf4j
-@Getter
 public class RuntimeExceptionX extends RuntimeException {
+    private static final Logger log              = LoggerFactory.getLogger(RuntimeExceptionX.class);
+    private static final long   serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+    private final Long          errorCode;
 
-    private final Long        errorCode;
+    public Long getErrorCode() {
+        return errorCode;
+    }
 
     public RuntimeExceptionX(final String msg) {
         this(null, msg);

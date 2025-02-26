@@ -12,29 +12,31 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 /**
  * 脱敏序列化器
  */
-@NoArgsConstructor
-@AllArgsConstructor
 public class DesensitizationSerialize extends JsonSerializer<String> implements ContextualSerializer {
+    public DesensitizationSerialize(DesensitizeStrategy desensitizeStrategy, String regex, String replacement) {
+        super();
+        this.desensitizeStrategy = desensitizeStrategy;
+        this.regex               = regex;
+        this.replacement         = replacement;
+    }
+
     /**
      * 脱敏策略
      */
-    private DesensitizeStrategy desensitizeStrategy;
+    private final DesensitizeStrategy desensitizeStrategy;
 
     /**
-     * @return 匹配的正则表达式
+     * 匹配的正则表达式
      */
-    private String              regex;
+    private final String              regex;
 
     /**
-     * @return 要替换的表达式
+     * 要替换的表达式
      */
-    private String              replacement;
+    private final String              replacement;
 
     @Override
     public void serialize(String value, JsonGenerator generator, SerializerProvider provider) throws IOException {
@@ -60,7 +62,6 @@ public class DesensitizationSerialize extends JsonSerializer<String> implements 
      *                     null is passed instead (in which case impls usually pass
      *                     'this' serializer as is)
      * @return JsonSerializer
-     * @throws JsonMappingException
      */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty beanProperty)
