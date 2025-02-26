@@ -2,6 +2,9 @@ package rebue.wheel.core.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -73,11 +76,14 @@ public final class FileSearcher {
     }
 
     /**
+     * 查找文件
+     * 
      * @param sSearchRootDir 查找的文件夹路径
      * @param pattern        匹配文件名的正则表达式
+     * @return 匹配的文件列表
      * @throws IOException IO异常
      */
-    public static List<File> searchFiles(String sSearchRootDir, Pattern pattern) throws IOException {
+    public static List<File> findFiles(String sSearchRootDir, Pattern pattern) throws IOException {
         File searchDir = new File(sSearchRootDir);
         if (!searchDir.exists()) {
             throw new IOException("文件查找失败：不存在" + searchDir.getAbsolutePath() + "这个路径");
@@ -135,4 +141,30 @@ public final class FileSearcher {
             }
         });
     }
+
+    /**
+     * 查找文件
+     * 
+     * @param dir         扫描目录
+     * @param globPattern 匹配文件的glob模式
+     * @return 匹配的文件列表
+     * @throws IOException IO异常
+     */
+    public static List<Path> findFiles(Path dir, String globPattern) throws IOException {
+        List<Path>  matchedFiles = new ArrayList<>();
+        PathMatcher pathMatcher  = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
+
+        Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                if (pathMatcher.matches(file)) {
+                    matchedFiles.add(file);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        return matchedFiles;
+    }
+
 }

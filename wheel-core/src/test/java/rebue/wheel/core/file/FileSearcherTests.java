@@ -9,6 +9,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FileSearcherTests {
 
@@ -19,7 +22,7 @@ public class FileSearcherTests {
             try {
                 System.out.println("test01 " + file.getCanonicalPath());
             } catch (final IOException e) {
-                e.printStackTrace();
+                log.error("test01", e);
             }
         });
     }
@@ -31,7 +34,7 @@ public class FileSearcherTests {
             try {
                 System.out.println("test01 " + file.getCanonicalPath());
             } catch (final IOException e) {
-                e.printStackTrace();
+                log.error("test02", e);
             }
         });
     }
@@ -39,9 +42,9 @@ public class FileSearcherTests {
     @Test
     public void test03() throws IOException {
         final String     dirName = FileUtils.getProjectPath(); // 文件路径
-        final List<File> files   = FileSearcher.searchFiles(dirName, Pattern.compile(".*\\.java"));
+        final List<File> files   = FileSearcher.findFiles(dirName, Pattern.compile(".*\\.java"));
         for (final File file : files) {
-            System.out.println("test02 " + file.getCanonicalPath());
+            System.out.println("test03 " + file.getCanonicalPath());
         }
     }
 }
