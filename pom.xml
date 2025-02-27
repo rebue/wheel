@@ -62,7 +62,7 @@
         <jetty.version>12.0.15</jetty.version>
         <guice.version>7.0.0</guice.version>
         <dagger.version>2.42</dagger.version>
-        <javaparser.version>3.25.9</javaparser.version>
+        <javaparser.version>3.26.3</javaparser.version>
         <jackson.version>2.18.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.6.3</mapstruct.version>
