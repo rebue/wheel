@@ -212,4 +212,17 @@ public class FileUtils {
         return data;
     }
 
+    public static void writeToFile(String fileName, String renderContent) throws IOException {
+        // 写入文件内容
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(fileName))) {
+            out.write(renderContent);
+        }
+    }
+
+    public static void writeToFile(File file, String renderContent) throws IOException {
+        // 写入文件内容
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+            out.write(renderContent);
+        }
+    }
 }
