@@ -36,7 +36,7 @@
         <module>wheel-turing</module>
         <module>wheel-vertx</module>
         <module>wheel-kafka</module>
-        <!-- <module>wheel-package</module> -->
+        <!-- <module>wheel-package</module>-->
     </modules>
 
     <properties>
@@ -45,10 +45,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>3.4.2</spring-boot.version>
+        <spring-boot.version>3.4.3</spring-boot.version>
         <spring-cloud-commons.version>4.2.0</spring-cloud-commons.version>
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
-        <spring-boot-admin.version>3.4.2</spring-boot-admin.version>
+        <spring-boot-admin.version>3.4.4</spring-boot-admin.version>
 
         <vertx.version>4.5.13</vertx.version>
 
@@ -69,6 +69,8 @@
         <mybatis.version>3.5.19</mybatis.version>
         <bean-searcher.version>4.3.6</bean-searcher.version>
         <drools.version>10.0.0</drools.version>
+        <beetl.version>3.19.0.RELEASE</beetl.version>
+        <liteflow.version>2.13.0</liteflow.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.9.3</zookeeper.version>
@@ -84,7 +86,7 @@
         <scram.version>2.1</scram.version>
         <!--        <spring-amqp.version>2.4.5</spring-amqp.version>-->
         <lombok.version>1.18.36</lombok.version>
-        <junit.version>5.11.4</junit.version>
+        <junit.version>5.12.0</junit.version>
 
         <graal-sdk.version>23.0.0</graal-sdk.version>
 
@@ -282,7 +284,36 @@
             <dependency>
                 <groupId>com.ibeetl</groupId>
                 <artifactId>beetl</artifactId>
-                <version>3.16.0.RELEASE</version>
+                <version>${beetl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-core</artifactId>
+                <version>${liteflow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-script-javax-pro</artifactId>
+                <version>${liteflow.version}</version>
+            </dependency>
+            <!-- liteflow-script-graaljs 依赖的版本太旧-->
+<!--            <dependency>-->
+<!--                <groupId>org.graalvm.js</groupId>-->
+<!--                <artifactId>js</artifactId>-->
+<!--                <version>${graalvm.version}</version>-->
+<!--                <type>pom</type>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-script-graaljs</artifactId>
+                <version>${liteflow.version}</version>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <artifactId>js</artifactId>-->
+<!--                        <groupId>org.graalvm.js</groupId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
             </dependency>
 
             <dependency>

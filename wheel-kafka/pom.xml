@@ -7,7 +7,6 @@
         <version>3.5.49</version>
     </parent>
 
-    <groupId>com.github.rebue.wheel-kafka</groupId>
     <artifactId>wheel-kafka</artifactId>
     <packaging>pom</packaging>
     <name>wheel-kafka</name>

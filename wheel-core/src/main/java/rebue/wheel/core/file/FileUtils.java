@@ -26,6 +26,23 @@ public class FileUtils {
     }
 
     /**
+     * 获取工作目录
+     */
+    public static String getWorkDir() {
+        return System.getProperty("user.dir");
+    }
+
+    /**
+     * 获取Jar包所在目录
+     */
+    public static String getJarDir(Class<?> clazz) throws IOException {
+        // 获取运行程序文件所在的目录
+        URL  location = clazz.getProtectionDomain().getCodeSource().getLocation();
+        File jarFile  = new File(location.getPath());
+        return jarFile.getParentFile().getCanonicalPath();
+    }
+
+    /**
      * 得到类路径
      */
     public static String getClassesPath() {
