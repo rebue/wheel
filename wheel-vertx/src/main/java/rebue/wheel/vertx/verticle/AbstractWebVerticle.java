@@ -41,8 +41,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import rebue.wheel.api.cst.SsmCst;
 import rebue.wheel.api.ssm.StringSsm;
-import rebue.wheel.vertx.cst.CtxCst;
 import rebue.wheel.vertx.config.WebProperties;
+import rebue.wheel.vertx.cst.CtxCst;
 import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.*;
 import rebue.wheel.vertx.web.BlackListHandler;
@@ -106,11 +106,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             for (String compressor : list) {
                 log.info("add compressor: {}", compressor);
                 switch (compressor) {
-                case "brotli" -> httpServerOptions.addCompressor(StandardCompressionOptions.brotli());
+                case "brotli"  -> httpServerOptions.addCompressor(StandardCompressionOptions.brotli());
                 case "deflate" -> httpServerOptions.addCompressor(StandardCompressionOptions.deflate());
-                case "gzip" -> httpServerOptions.addCompressor(StandardCompressionOptions.gzip());
-                case "snappy" -> httpServerOptions.addCompressor(StandardCompressionOptions.snappy());
-                case "zstd" -> httpServerOptions.addCompressor(StandardCompressionOptions.zstd());
+                case "gzip"    -> httpServerOptions.addCompressor(StandardCompressionOptions.gzip());
+                case "snappy"  -> httpServerOptions.addCompressor(StandardCompressionOptions.snappy());
+                case "zstd"    -> httpServerOptions.addCompressor(StandardCompressionOptions.zstd());
                 }
             }
 
@@ -155,7 +155,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (webProperties.getLimitRate().getEnabled()) {
             log.info("开启限流");
             RedisAPI redisClient = injector.getInstance(RedisAPI.class);
-            globalRoute.handler(new LimitRateHandler(webProperties.getLimitRate(), webProperties.getBlackList(), redisClient));
+            globalRoute.handler(new LimitRateHandler(webProperties.getLimitRate(), redisClient));
         }
         // CORS
         if (webProperties.getIsCors()) {
@@ -357,7 +357,7 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                                     return Future.failedFuture(err);
                                 });
                     }
-                    case "kafka" -> {
+                    case "kafka"    -> {
                         // noinspection unchecked
                         KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
                         kafkaConsumer.subscribe(webProperties.getDynamicRoute().getMqName())

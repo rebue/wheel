@@ -100,9 +100,9 @@ public class WebProperties {
     public static class BlackListProperties {
         private Boolean enabled     = false;
         /**
-         * redis中key的前缀，默认是 rebue.wheel.vertx.web.black-list:
+         * redis中key的前缀，默认是 rebue.wheel.vertx.web.black-list::
          */
-        private String  redisPrefix = "rebue.wheel.vertx.web.black-list:";
+        private String  redisPrefix = "rebue.wheel.vertx.web.black-list::";
     }
 
     /**
@@ -110,11 +110,22 @@ public class WebProperties {
      */
     @Data
     public static class LimitRateProperties {
-        private Boolean enabled     = false;
         /**
-         * redis中key的前缀，默认是 rebue.wheel.vertx.web.limit-rate:
+         * 是否启用限流
          */
-        private String  redisPrefix = "rebue.wheel.vertx.web.limit-rate:";
+        private Boolean      enabled              = false;
+        /**
+         * 全局 redis 的 key，后面为 config 或 window
+         * config 的值使用 Hash 存储 size、limit、expires
+         * window 的值使用 Sorted Set 存储，用 ZADD/ZCARD/ZREMRANGEBYSCORE 来限流
+         */
+        private String       globalRedisKeyPrefix = "rebue.wheel.vertx.web.limit-rate.global::";
+        /**
+         * 来源IP 中 redis key 的前缀，后面跟 来源IP + config 或 window
+         * config 的值使用 Hash 存储 size、limit、expires
+         * window 的值使用 Sorted Set 存储，用 ZADD/ZCARD/ZREMRANGEBYSCORE 来限流
+         */
+        private final String srcIpRedisKeyPrefix  = "rebue.wheel.vertx.web.limit-rate.src-ip::";;
     }
 
     /**
