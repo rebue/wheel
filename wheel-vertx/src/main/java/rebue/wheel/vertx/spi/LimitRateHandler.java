@@ -1,19 +1,24 @@
 package rebue.wheel.vertx.spi;
 
+import java.util.Map;
+
 import com.google.inject.Injector;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.SecurityPolicyHandler;
 
 /**
- * Vert.x web插件工厂
+ * 限流处理器
  *
  * @author zbz
  */
-public interface VertxWebPluginFactory {
+public interface LimitRateHandler extends SecurityPolicyHandler {
 
     /**
-     * @return 工厂名称
+     * 处理器名称
+     * 
+     * @return 处理器名称
      */
     String name();
 
@@ -25,6 +30,6 @@ public interface VertxWebPluginFactory {
      * @param injector 注入器
      * @param options  处理器的配置选项
      */
-    void init(Vertx vertx, Router router, Injector injector, Object options);
+    void init(Vertx vertx, Router router, Injector injector, Map<String, Object> options);
 
 }

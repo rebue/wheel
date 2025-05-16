@@ -47,7 +47,6 @@ import rebue.wheel.vertx.guice.InjectorVerticle;
 import rebue.wheel.vertx.spi.*;
 import rebue.wheel.vertx.web.BlackListHandler;
 import rebue.wheel.vertx.web.CompressResponseHandler;
-import rebue.wheel.vertx.web.LimitRateHandler;
 import rebue.wheel.vertx.web.PrintSrcIpHandler;
 
 @Slf4j
@@ -152,11 +151,16 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             globalRoute.handler(new BlackListHandler(webProperties.getBlackList(), redisClient));
         }
         // 是否限流
-        if (webProperties.getLimitRate().getEnabled()) {
-            log.info("开启限流");
-            RedisAPI redisClient = injector.getInstance(RedisAPI.class);
-            globalRoute.handler(new LimitRateHandler(webProperties.getLimitRate(), redisClient));
-        }
+        log.info("通过SPI加载限流处理器");
+        ServiceLoader<LimitRateHandler> limitRateHandlerServiceLoader = ServiceLoader.load(LimitRateHandler.class);
+        log.info("初始化限流处理器");
+        limitRateHandlerServiceLoader.forEach(handler -> {
+            WebProperties.LimitRateProperties limitRateProperties = webProperties.getLimitRate().get(handler.name());
+            if (limitRateProperties != null && limitRateProperties.getEnabled()) {
+                log.info("初始化限流处理器: {}", handler.name());
+                handler.init(vertx, router, injector, limitRateProperties.getConfig());
+            }
+        });
         // CORS
         if (webProperties.getIsCors()) {
             log.info("开启CORS");

@@ -1,9 +1,6 @@
 package rebue.wheel.vertx.config;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import io.vertx.ext.web.handler.LoggerFormat;
 import lombok.Data;
@@ -13,12 +10,12 @@ public class WebProperties {
     /**
      * 是否记录日志
      */
-    private Boolean                  isLogging                 = false;
+    private Boolean                          isLogging                 = false;
     /**
      * 日志格式
      * 默认 DEFAULT: remote-client - - [timestamp] "method uri version" status content-length "referrer" "user-agent"
      */
-    private LoggerFormat             loggerFormat              = LoggerFormat.DEFAULT;
+    private LoggerFormat                     loggerFormat              = LoggerFormat.DEFAULT;
     /**
      * 路由器是否解析 forwarded 类型的 headers
      * 默认 NONE: 不解析
@@ -27,71 +24,71 @@ public class WebProperties {
      * X_FORWARD: X-Forward-*
      * ALL: 支持 FORWARD 和 X_FORWARD
      */
-    private String                   allowForward              = "NONE";
+    private String                           allowForward              = "NONE";
     /**
      * 是否打印来源的IP
      * 默认 false: 不打印
      */
-    private Boolean                  printSrcIp                = false;
+    private Boolean                          printSrcIp                = false;
     /**
      * 是否返回响应时间
      * 如果是，将在响应的header中包含x-response-time返回响应的时间
      */
-    private Boolean                  returnResponseTime        = false;
+    private Boolean                          returnResponseTime        = false;
     /**
      * 超时时间(毫秒)
      * 如果有设置且不为0，超时则返回503(返回值可以通过timeoutErrorCode自定义)
      * 如果未设置或为0则无超时处理
      */
-    private Long                     timeout                   = 0L;
+    private Long                             timeout                   = 0L;
     /**
      * 超时返回的错误状态码(如果不设置，默认为503)
      */
-    private Integer                  timeoutErrorCode;
+    private Integer                          timeoutErrorCode;
     /**
      * 是否自动响应content-type(处理器会通过 getAcceptableContentType 方法来选择适当的内容类型)
      */
-    private Boolean                  isAutoResponseContentType = false;
+    private Boolean                          isAutoResponseContentType = false;
     /**
      * 是否跨域
      */
-    private Boolean                  isCors                    = false;
+    private Boolean                          isCors                    = false;
     /**
      * 是否开启黑名单
      */
-    private BlackListProperties      blackList                 = new BlackListProperties();
+    private BlackListProperties              blackList                 = new BlackListProperties();
     /**
      * 是否限流
      */
-    private LimitRateProperties      limitRate                 = new LimitRateProperties();
+    private Map<String, LimitRateProperties> limitRate                 = new HashMap<>();
     /**
      * websocket
      */
-    private List<SseRouteProperties> websocketRoutes           = new LinkedList<>();
+    private List<SseRouteProperties>         websocketRoutes           = new LinkedList<>();
     /**
      * sockjs
      */
-    private List<SseRouteProperties> sockjsRoutes              = new LinkedList<>();
+    private List<SseRouteProperties>         sockjsRoutes              = new LinkedList<>();
     /**
      * 动态路由
      */
-    private DynamicRouteProperties   dynamicRoute              = new DynamicRouteProperties();
+    private DynamicRouteProperties           dynamicRoute              = new DynamicRouteProperties();
     /**
      * 实现自签名证书
      */
-    private Boolean                  selfSignedCertificate     = false;
+    private Boolean                          selfSignedCertificate     = false;
     /**
      * http转https(值为http监听的端口号，不设置、null或0则不进行http监听和转换)
      */
-    private Map<String, Object>      http2https;
+    private Map<String, Object>              http2https;
     /**
      * httpServerOptions
      */
-    private Map<String, Object>      server;
+    private Map<String, Object>              server;
     /**
      * 全局路由处理器列表
      */
-    private Map<String, Object>      globalRouteHandlers       = new LinkedHashMap<>();
+    private Map<String, Object>              globalRouteHandlers       = new LinkedHashMap<>();
 
     /**
      * 黑名单
@@ -111,21 +108,17 @@ public class WebProperties {
     @Data
     public static class LimitRateProperties {
         /**
+         * 限流组件名称
+         */
+        private String              name;
+        /**
          * 是否启用限流
          */
-        private Boolean      enabled              = false;
+        private Boolean             enabled = false;
         /**
-         * 全局 redis 的 key，后面为 config 或 window
-         * config 的值使用 Hash 存储 size、limit、expires
-         * window 的值使用 Sorted Set 存储，用 ZADD/ZCARD/ZREMRANGEBYSCORE 来限流
+         * 限流配置
          */
-        private String       globalRedisKeyPrefix = "rebue.wheel.vertx.web.limit-rate.global::";
-        /**
-         * 来源IP 中 redis key 的前缀，后面跟 来源IP + config 或 window
-         * config 的值使用 Hash 存储 size、limit、expires
-         * window 的值使用 Sorted Set 存储，用 ZADD/ZCARD/ZREMRANGEBYSCORE 来限流
-         */
-        private final String srcIpRedisKeyPrefix  = "rebue.wheel.vertx.web.limit-rate.src-ip::";;
+        private Map<String, Object> config  = new LinkedHashMap<>();
     }
 
     /**
