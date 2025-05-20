@@ -1,6 +1,6 @@
 /**
  * XXX 复制4.5.8版本的io.vertx.ext.web.impl.HttpServerRequestWrapper类的代码
- * 原类不是public的，外部无法访问，只是公开了设置ctx字段的方法
+ * 原类不是public的，外部无法访问，将其改为 public 并公开了设置ctx字段的方法
  */
 package io.vertx.ext.web.impl;
 
@@ -14,7 +14,6 @@ import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.WebServerRequest;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.nio.charset.Charset;
@@ -38,7 +37,7 @@ public class HttpServerRequestWrapper extends io.vertx.core.http.impl.HttpServer
     private String absoluteURI;
     private MultiMap params;
     /**
-     * 公开了设置ctx字段的方法
+     * XXX 公开了设置ctx字段的方法
      */
     @Setter
     private RoutingContext ctx;
