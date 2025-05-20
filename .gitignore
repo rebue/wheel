@@ -6,3 +6,4 @@ target
 logs
 .idea
 .factorypath
+dependency-reduced-pom.xml
