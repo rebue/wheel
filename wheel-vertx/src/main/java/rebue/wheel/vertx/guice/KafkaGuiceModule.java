@@ -16,29 +16,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class KafkaGuiceModule extends AbstractModule {
 
-    public KafkaGuiceModule() {
-        log.info("new KafkaGuiceModule");
-    }
+	public KafkaGuiceModule() {
+		log.info("new KafkaGuiceModule");
+	}
 
-    @Singleton
-    @Provides
-    KafkaClientOptions getKafkaClientOptions(@Named("config") final JsonObject config) {
-        log.info("KafkaClientGuiceModule.getKafkaClientOptions");
-        final JsonObject kafkaClientConfig = config.getJsonObject("kafka");
-        if (kafkaClientConfig == null) {
-            return null;
-        }
-        return new KafkaClientOptions(kafkaClientConfig);
-    }
+	@Singleton
+	@Provides
+	KafkaClientOptions getKafkaClientOptions(@Named("config") final JsonObject config) {
+		log.info("KafkaClientGuiceModule.getKafkaClientOptions");
+		final JsonObject kafkaClientConfig = config.getJsonObject("kafka");
+		if (kafkaClientConfig == null) {
+			return null;
+		}
+		return new KafkaClientOptions(kafkaClientConfig);
+	}
 
-    @Singleton
-    @Provides
-    KafkaProducer getKafkaProducer(Vertx vertx, @Nullable KafkaClientOptions kafkaClientConfig) {
-        log.info("KafkaClientGuiceModule.getKafkaProducer");
-        if (kafkaClientConfig == null) {
-            return null;
-        }
-        return KafkaProducer.createShared(vertx, "shared", kafkaClientConfig);
-    }
+	@Singleton
+	@Provides
+	<K, V> KafkaProducer<K, V> getKafkaProducer(Vertx vertx, @Nullable KafkaClientOptions kafkaClientConfig) {
+		log.info("KafkaClientGuiceModule.getKafkaProducer");
+		if (kafkaClientConfig == null) {
+			return null;
+		}
+		return KafkaProducer.createShared(vertx, "shared", kafkaClientConfig);
+	}
 
 }

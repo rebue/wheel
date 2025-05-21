@@ -22,8 +22,8 @@
         <logback.version>1.5.16</logback.version>
         <jackson.version>2.18.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
-        <netty.version>4.1.118.Final</netty.version>
-        <netty-tcnative.version>2.0.70.Final</netty-tcnative.version>
+        <netty.version>4.1.121.Final</netty.version>
+        <netty-tcnative.version>2.0.71.Final</netty-tcnative.version>
         <bouncycastle18.version>1.78.1</bouncycastle18.version>
         <bouncycastle18.ext.version>1.78</bouncycastle18.ext.version>
         <drools.version>10.0.0</drools.version>
@@ -36,7 +36,7 @@
         <guice.version>7.0.0</guice.version>
         <pulsar.version>3.2.2</pulsar.version>
         <hazelcast.version>5.4.0</hazelcast.version>
-        <vertx.version>4.5.14</vertx.version>
+        <vertx.version>4.5.15</vertx.version>
     </properties>
 
     <dependencyManagement>

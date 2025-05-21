@@ -1,34 +1,38 @@
 /**
- * XXX 复制4.5.7版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
+ * XXX 复制4.5.15版本的io.vertx.httpproxy.impl.ReverseProxy类的代码，让websocket也支持代理拦截器
+ *
  * Copyright (c) 2011-2020 Contributors to the Eclipse Foundation
- * <p>
+ *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
  * which is available at https://www.apache.org/licenses/LICENSE-2.0.
- * <p>
+ *
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
 package io.vertx.httpproxy.impl;
 
-import java.util.*;
-import java.util.function.BiFunction;
-
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import io.vertx.core.http.*;
+import io.vertx.core.impl.logging.Logger;
+import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.core.net.NetSocket;
 import io.vertx.httpproxy.*;
 import io.vertx.httpproxy.cache.CacheOptions;
 import io.vertx.httpproxy.spi.cache.Cache;
 
+import java.util.*;
+
+import static io.vertx.core.http.HttpHeaders.CONNECTION;
+import static io.vertx.core.http.HttpHeaders.UPGRADE;
+
 public class ReverseProxy implements HttpProxy {
 
-    private final HttpClient                                                     client;
-    private final boolean                                                        supportWebSocket;
-    private BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> selector     = (req, client) -> Future
-            .failedFuture("No origin available");
-    private final List<ProxyInterceptor>                                         interceptors = new ArrayList<>();
+    private final static Logger log = LoggerFactory.getLogger(ReverseProxy.class);
+    private final HttpClient client;
+    private final boolean supportWebSocket;
+    private OriginRequestProvider originRequestProvider = (pc) -> Future.failedFuture("No origin available");
+    private final List<ProxyInterceptor> interceptors = new ArrayList<>();
 
     public ReverseProxy(ProxyOptions options, HttpClient client) {
         CacheOptions cacheOptions = options.getCacheOptions();
@@ -36,14 +40,13 @@ public class ReverseProxy implements HttpProxy {
             Cache<String, Resource> cache = cacheOptions.newCache();
             addInterceptor(new CachingFilter(cache));
         }
-        this.client           = client;
+        this.client = client;
         this.supportWebSocket = options.getSupportWebSocket();
     }
 
     @Override
-    public HttpProxy originRequestProvider(
-            BiFunction<HttpServerRequest, HttpClient, Future<HttpClientRequest>> provider) {
-        selector = provider;
+    public HttpProxy origin(OriginRequestProvider provider) {
+        originRequestProvider = Objects.requireNonNull(provider);
         return this;
     }
 
@@ -53,34 +56,46 @@ public class ReverseProxy implements HttpProxy {
         return this;
     }
 
+
     @Override
     public void handle(HttpServerRequest request) {
         ProxyRequest proxyRequest = ProxyRequest.reverseProxy(request);
 
         // Encoding sanity check
-        Boolean      chunked      = HttpUtils.isChunked(request.headers());
+        Boolean chunked = HttpUtils.isChunked(request.headers());
         if (chunked == null) {
             end(proxyRequest, 400);
             return;
         }
 
+        Proxy proxy = new Proxy(proxyRequest);
+
         // WebSocket upgrade tunneling
         if (supportWebSocket && io.vertx.core.http.impl.HttpUtils.canUpgradeToWebSocket(request)) {
-            handleWebSocketUpgrade(proxyRequest);
+            handleWebSocketUpgrade(proxy);
             return;
         }
 
-        Proxy proxy = new Proxy(proxyRequest);
         proxy.filters = interceptors.listIterator();
-        proxy.sendRequest().compose(proxy::sendProxyResponse);
+        proxy.sendRequest()
+                .recover(throwable -> {
+                    log.trace("Error in sending the request", throwable);
+                    return Future.succeededFuture(proxyRequest.release().response().setStatusCode(502));
+                })
+                .compose(proxy::sendProxyResponse)
+                .recover(throwable -> {
+                    log.trace("Error in sending the response", throwable);
+                    return proxy.response().release().setStatusCode(502).send();
+                });
     }
 
-    private void handleWebSocketUpgrade(ProxyRequest proxyRequest) {
+    private void handleWebSocketUpgrade(ProxyContext proxyContext) {
         // XXX 添加调用拦截器修改代理请求
-        interceptors.forEach(proxyInterceptor -> proxyInterceptor.modifyProxyRequest(proxyRequest));
+        interceptors.forEach(proxyInterceptor -> proxyInterceptor.modifyProxyRequest(proxyContext));
 
+        ProxyRequest proxyRequest = proxyContext.request();
         HttpServerRequest proxiedRequest = proxyRequest.proxiedRequest();
-        resolveOrigin(proxiedRequest).onComplete(ar -> {
+        resolveOrigin(proxyContext).onComplete(ar -> {
             if (ar.succeeded()) {
                 HttpClientRequest request = ar.result();
                 request.setMethod(HttpMethod.GET);
@@ -89,7 +104,7 @@ public class ReverseProxy implements HttpProxy {
                 // request.setURI(proxiedRequest.uri());
                 request.setURI(proxyRequest.getURI());
 
-                request.headers().addAll(proxiedRequest.headers());
+                request.headers().addAll(proxiedRequest.headers()).set(CONNECTION, UPGRADE);
                 Future<HttpClientResponse> fut2 = request.connect();
                 proxiedRequest.handler(request::write);
                 proxiedRequest.endHandler(v -> request.end());
@@ -104,7 +119,7 @@ public class ReverseProxy implements HttpProxy {
                             Future<NetSocket> otherso = proxiedRequest.toNetSocket();
                             otherso.onComplete(ar3 -> {
                                 if (ar3.succeeded()) {
-                                    NetSocket responseSocket      = ar3.result();
+                                    NetSocket responseSocket = ar3.result();
                                     NetSocket proxyResponseSocket = proxiedResponse.netSocket();
                                     responseSocket.handler(proxyResponseSocket::write);
                                     proxyResponseSocket.handler(responseSocket::write);
@@ -143,15 +158,15 @@ public class ReverseProxy implements HttpProxy {
                 .send();
     }
 
-    private Future<HttpClientRequest> resolveOrigin(HttpServerRequest proxiedRequest) {
-        return selector.apply(proxiedRequest, client);
+    private Future<HttpClientRequest> resolveOrigin(ProxyContext proxyContext) {
+        return originRequestProvider.create(proxyContext);
     }
 
     private class Proxy implements ProxyContext {
 
-        private final ProxyRequest             request;
-        private ProxyResponse                  response;
-        private final Map<String, Object>      attachments = new HashMap<>();
+        private final ProxyRequest request;
+        private ProxyResponse response;
+        private final Map<String, Object> attachments = new HashMap<>();
         private ListIterator<ProxyInterceptor> filters;
 
         private Proxy(ProxyRequest request) {
@@ -167,6 +182,11 @@ public class ReverseProxy implements HttpProxy {
         public <T> T get(String name, Class<T> type) {
             Object o = attachments.get(name);
             return type.isInstance(o) ? type.cast(o) : null;
+        }
+
+        @Override
+        public HttpClient client() {
+            return client;
         }
 
         @Override
@@ -200,27 +220,7 @@ public class ReverseProxy implements HttpProxy {
         }
 
         private Future<ProxyResponse> sendProxyRequest(ProxyRequest proxyRequest) {
-            Future<HttpClientRequest> f = resolveOrigin(proxyRequest.proxiedRequest());
-            f.onFailure(err -> {
-                // Should this be done here ? I don't think so
-                HttpServerRequest proxiedRequest = proxyRequest.proxiedRequest();
-                proxiedRequest.resume();
-                Promise<Void> promise = Promise.promise();
-                proxiedRequest.exceptionHandler(promise::tryFail);
-                proxiedRequest.endHandler(promise::tryComplete);
-                promise.future().onComplete(ar2 -> {
-                    end(proxyRequest, 502);
-                });
-            });
-            return f.compose(a -> sendProxyRequest(proxyRequest, a));
-        }
-
-        private Future<ProxyResponse> sendProxyRequest(ProxyRequest proxyRequest, HttpClientRequest request) {
-            Future<ProxyResponse> fut = proxyRequest.send(request);
-            fut.onFailure(err -> {
-                proxyRequest.proxiedRequest().response().setStatusCode(502).end();
-            });
-            return fut;
+            return resolveOrigin(this).compose(proxyRequest::send);
         }
 
         private Future<Void> sendProxyResponse(ProxyResponse response) {

@@ -1,20 +1,24 @@
 /**
- * XXX 复制4.5.8版本的io.vertx.ext.web.impl.HttpServerRequestWrapper类的代码
+ * XXX 复制4.5.15版本的io.vertx.ext.web.impl.HttpServerRequestWrapper类的代码
  * 原类不是public的，外部无法访问，将其改为 public 并公开了设置ctx字段的方法
  */
 package io.vertx.ext.web.impl;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.vertx.codegen.annotations.Nullable;
-import io.vertx.core.*;
-import io.vertx.core.http.*;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.impl.HttpServerRequestInternal;
 import io.vertx.core.net.HostAndPort;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.WebServerRequest;
-import lombok.Setter;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -27,6 +31,14 @@ import java.util.Map;
 public class HttpServerRequestWrapper extends io.vertx.core.http.impl.HttpServerRequestWrapper implements WebServerRequest {
 
     private final ForwardedParser forwardedParser;
+    /**
+     * XXX 公开了设置ctx字段的方法
+     * 原先的字段是 final 的，为了能设置去掉final
+     */
+    private RoutingContext ctx;
+    public void setCtx(RoutingContext ctx) {
+        this.ctx = ctx;
+    }
 
     private boolean modified;
 
@@ -36,15 +48,6 @@ public class HttpServerRequestWrapper extends io.vertx.core.http.impl.HttpServer
     private String uri;
     private String absoluteURI;
     private MultiMap params;
-    /**
-     * XXX 公开了设置ctx字段的方法
-     */
-    @Setter
-    private RoutingContext ctx;
-
-    HttpServerRequestWrapper(HttpServerRequest request, AllowForwardHeaders allowForward) {
-        this(request, allowForward, null);
-    }
 
     HttpServerRequestWrapper(HttpServerRequest request, AllowForwardHeaders allowForward, RoutingContext ctx) {
         super((HttpServerRequestInternal) request);

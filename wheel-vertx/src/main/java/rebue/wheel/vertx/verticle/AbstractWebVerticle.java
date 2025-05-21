@@ -169,8 +169,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
 
         // 配置websocket路由
         if (!webProperties.getWebsocketRoutes().isEmpty()) {
-            // noinspection unchecked
-            KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
+            @SuppressWarnings("unchecked")
+			KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
             KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
             // 独立的组来使用广播模式
             kafkaClientOptions.setConfig("group.id", UlidCreator.getUlid().toLowerCase());
@@ -191,7 +191,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             SockJSHandler                 sockjsHandler      = injector.getInstance(SockJSHandler.class);
             // SockJSBridgeOptions sockjsBridgeOptions = injector.getInstance(SockJSBridgeOptions.class);
             // noinspection unchecked
-            KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
+            @SuppressWarnings("unchecked")
+			KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
             KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
             // 独立的组来使用广播模式
             kafkaClientOptions.setConfig("group.id", UlidCreator.getUlid().toLowerCase());
@@ -363,7 +364,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                     }
                     case "kafka"    -> {
                         // noinspection unchecked
-                        KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
+                        @SuppressWarnings("unchecked")
+						KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
                         kafkaConsumer.subscribe(webProperties.getDynamicRoute().getMqName())
                                 .compose(v -> {
                                     log.info("订阅动态路由刷新队列成功-kafka");
@@ -400,9 +402,11 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             KafkaConsumer<String, Buffer> kafkaConsumer) {
         log.info("接收到新的浏览器连接");
         // noinspection unchecked
-        ReadStream<Buffer>  readStream  = (ReadStream<Buffer>) socketStream;
+        @SuppressWarnings("unchecked")
+		ReadStream<Buffer>  readStream  = (ReadStream<Buffer>) socketStream;
         // noinspection unchecked
-        WriteStream<Buffer> writeStream = (WriteStream<Buffer>) socketStream;
+        @SuppressWarnings("unchecked")
+		WriteStream<Buffer> writeStream = (WriteStream<Buffer>) socketStream;
         String              userAgentId = UlidCreator.getUlid().toLowerCase();
         kafkaConsumer.handler(record -> {
             Buffer buffer = record.record().value();

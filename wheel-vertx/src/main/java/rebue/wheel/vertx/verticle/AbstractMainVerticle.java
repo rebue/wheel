@@ -216,7 +216,8 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
      * @param startPromise 运行状态控制
      * @param config       配置项
      */
-    private Future<?> startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
+	@SuppressWarnings("unchecked")
+	private Future<?> startWithConfig(final Promise<Void> startPromise, final JsonObject config) {
         log.info("start with config");
         log.info("添加注入模块");
         final List<Module> guiceModules = new LinkedList<>();
@@ -235,8 +236,9 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
         this.vertx.registerVerticleFactory(new GuiceVerticleFactory(injector));
 
         log.info("注册事件总线解码器");
-        ServiceLoader<MessageCodecAdapter> messageCodecAdapterServiceLoader = ServiceLoader.load(MessageCodecAdapter.class);
-        for (MessageCodecAdapter messageCodecAdapter : messageCodecAdapterServiceLoader) {
+		@SuppressWarnings("rawtypes")
+		ServiceLoader<MessageCodecAdapter> messageCodecAdapterServiceLoader = ServiceLoader.load(MessageCodecAdapter.class);		
+        for (MessageCodecAdapter<Object> messageCodecAdapter : messageCodecAdapterServiceLoader) {
             log.info("注册事件总线解码器: {}", messageCodecAdapter.name());
             // noinspection unchecked
             this.vertx.eventBus().registerDefaultCodec(
