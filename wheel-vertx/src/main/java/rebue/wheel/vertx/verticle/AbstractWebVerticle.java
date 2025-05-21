@@ -190,7 +190,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
         if (!webProperties.getSockjsRoutes().isEmpty()) {
             SockJSHandler                 sockjsHandler      = injector.getInstance(SockJSHandler.class);
             // SockJSBridgeOptions sockjsBridgeOptions = injector.getInstance(SockJSBridgeOptions.class);
-            // noinspection unchecked
             @SuppressWarnings("unchecked")
 			KafkaProducer<String, Buffer> kafkaProducer      = injector.getInstance(KafkaProducer.class);
             KafkaClientOptions            kafkaClientOptions = injector.getInstance(KafkaClientOptions.class);
@@ -363,7 +362,6 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
                                 });
                     }
                     case "kafka"    -> {
-                        // noinspection unchecked
                         @SuppressWarnings("unchecked")
 						KafkaConsumer<String, String> kafkaConsumer = injector.getInstance(KafkaConsumer.class);
                         kafkaConsumer.subscribe(webProperties.getDynamicRoute().getMqName())
@@ -401,10 +399,8 @@ public abstract class AbstractWebVerticle extends AbstractVerticle implements In
             KafkaProducer<String, Buffer> kafkaProducer,
             KafkaConsumer<String, Buffer> kafkaConsumer) {
         log.info("接收到新的浏览器连接");
-        // noinspection unchecked
         @SuppressWarnings("unchecked")
 		ReadStream<Buffer>  readStream  = (ReadStream<Buffer>) socketStream;
-        // noinspection unchecked
         @SuppressWarnings("unchecked")
 		WriteStream<Buffer> writeStream = (WriteStream<Buffer>) socketStream;
         String              userAgentId = UlidCreator.getUlid().toLowerCase();

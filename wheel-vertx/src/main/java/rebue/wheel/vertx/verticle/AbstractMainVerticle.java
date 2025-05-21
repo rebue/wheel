@@ -240,7 +240,6 @@ public abstract class AbstractMainVerticle extends AbstractVerticle {
 		ServiceLoader<MessageCodecAdapter> messageCodecAdapterServiceLoader = ServiceLoader.load(MessageCodecAdapter.class);		
         for (MessageCodecAdapter<Object> messageCodecAdapter : messageCodecAdapterServiceLoader) {
             log.info("注册事件总线解码器: {}", messageCodecAdapter.name());
-            // noinspection unchecked
             this.vertx.eventBus().registerDefaultCodec(
                     messageCodecAdapter.messageClass(), messageCodecAdapter.messageCodec());
         }
