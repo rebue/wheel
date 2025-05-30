@@ -16,27 +16,35 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
  * 脱敏序列化器
  */
 public class DesensitizationSerialize extends JsonSerializer<String> implements ContextualSerializer {
+    /**
+     * 脱敏策略
+     */
+    private DesensitizeStrategy desensitizeStrategy;
+
+    /**
+     * 匹配的正则表达式
+     */
+    private String              regex;
+
+    /**
+     * 要替换的表达式
+     */
+    private String              replacement;
+
+    /**
+     * 默认构造器
+     * XXX 必须要有，否则 SpringBoot 无法创建实例到容器中
+     */
+    public DesensitizationSerialize() {
+        super();
+    }
+
     public DesensitizationSerialize(DesensitizeStrategy desensitizeStrategy, String regex, String replacement) {
         super();
         this.desensitizeStrategy = desensitizeStrategy;
         this.regex               = regex;
         this.replacement         = replacement;
     }
-
-    /**
-     * 脱敏策略
-     */
-    private final DesensitizeStrategy desensitizeStrategy;
-
-    /**
-     * 匹配的正则表达式
-     */
-    private final String              regex;
-
-    /**
-     * 要替换的表达式
-     */
-    private final String              replacement;
 
     @Override
     public void serialize(String value, JsonGenerator generator, SerializerProvider provider) throws IOException {

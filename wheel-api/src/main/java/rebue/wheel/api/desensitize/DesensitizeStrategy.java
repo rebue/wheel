@@ -94,7 +94,7 @@ public enum DesensitizeStrategy {
      */
     ADDRESS(str -> "********");
 
-    private Function<String, String> desensitizer;
+    private final Function<String, String> desensitizer;
 
     DesensitizeStrategy(Function<String, String> desensitizer) {
         this.desensitizer = desensitizer;
