@@ -54,9 +54,13 @@
 
         <brotli4j.version>1.16.0</brotli4j.version>
         <dubbo.version>3.2.11</dubbo.version>
+
+        <!-- 旧版本 -->
         <bouncycastle.version>1.70</bouncycastle.version>
-        <bouncycastle18.version>1.78.1</bouncycastle18.version>
-        <bouncycastle18.ext.version>1.78</bouncycastle18.ext.version>
+        <!-- 新版本 -->
+        <bouncycastle18.version>1.81</bouncycastle18.version>
+        <bouncycastle18.ext.version>1.78.1</bouncycastle18.ext.version>
+
         <netty.version>4.1.121.Final</netty.version>
         <netty-tcnative>2.0.71.Final</netty-tcnative>
         <jetty.version>12.0.15</jetty.version>
@@ -298,22 +302,22 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- liteflow-script-graaljs 依赖的版本太旧-->
-<!--            <dependency>-->
-<!--                <groupId>org.graalvm.js</groupId>-->
-<!--                <artifactId>js</artifactId>-->
-<!--                <version>${graalvm.version}</version>-->
-<!--                <type>pom</type>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.graalvm.js</groupId>-->
+            <!--                <artifactId>js</artifactId>-->
+            <!--                <version>${graalvm.version}</version>-->
+            <!--                <type>pom</type>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-graaljs</artifactId>
                 <version>${liteflow.version}</version>
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <artifactId>js</artifactId>-->
-<!--                        <groupId>org.graalvm.js</groupId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <artifactId>js</artifactId>-->
+                <!--                        <groupId>org.graalvm.js</groupId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
 
             <dependency>
