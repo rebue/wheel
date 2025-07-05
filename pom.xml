@@ -45,7 +45,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>3.4.3</spring-boot.version>
+        <spring-boot.version>3.4.7</spring-boot.version>
         <spring-cloud-commons.version>4.2.0</spring-cloud-commons.version>
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
         <spring-boot-admin.version>3.4.4</spring-boot-admin.version>
@@ -71,7 +71,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mybatis.version>3.5.19</mybatis.version>
-        <bean-searcher.version>4.3.6</bean-searcher.version>
+        <bean-searcher.version>4.4.2</bean-searcher.version>
         <drools.version>10.0.0</drools.version>
         <beetl.version>3.19.0.RELEASE</beetl.version>
         <liteflow.version>2.13.0</liteflow.version>
@@ -520,6 +520,12 @@
                 <groupId>cn.zhxu</groupId>
                 <artifactId>bean-searcher-boot-starter</artifactId>
                 <version>${bean-searcher.version}</version>
+            </dependency>
+            <!-- bean search过滤器所需插件，简化前端传参 -->
+            <dependency>
+                <groupId>cn.zhxu</groupId>
+                <artifactId>xjsonkit-jackson</artifactId>
+                <version>1.5.1</version>
             </dependency>
 
             <dependency>
