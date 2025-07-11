@@ -6,7 +6,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel-package</artifactId>
-    <version>3.6.53</version>
+    <version>3.7.54</version>
     <description>利用maven将常用的jar包打到lib目录下，方便复制的模块</description>
 
     <properties>
@@ -34,7 +34,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <ulid.version>5.2.3</ulid.version>
         <guice.version>7.0.0</guice.version>
-        <pulsar.version>3.2.2</pulsar.version>
+        <pulsar.version>3.3.7</pulsar.version>
         <hazelcast.version>5.4.0</hazelcast.version>
         <vertx.version>4.5.15</vertx.version>
     </properties>
