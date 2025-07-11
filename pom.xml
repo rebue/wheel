@@ -80,6 +80,7 @@
         <zookeeper.version>3.9.3</zookeeper.version>
         <curator.version>5.7.1</curator.version>
         <kafka.version>3.9.0</kafka.version>
+        <fastexcel.version>1.2.0</fastexcel.version>
         <easyexcel.version>4.0.3</easyexcel.version>
         <pulsar.version>3.3.7</pulsar.version>
         <ulid.version>5.2.3</ulid.version>
@@ -632,6 +633,12 @@
             </dependency>
 
             <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>3.7.7</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>5.4.1</version>
@@ -687,6 +694,17 @@
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>3.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.idev.excel</groupId>
+                <artifactId>fastexcel</artifactId>
+                <version>${fastexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.idev.excel</groupId>
+                <artifactId>fastexcel-core</artifactId>
+                <version>${fastexcel.version}</version>
             </dependency>
 
             <dependency>
