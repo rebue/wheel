@@ -1,9 +1,12 @@
 package rebue.wheel.core.spring;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -19,6 +22,30 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 public class ExcelSpringUtils {
+
+    /**
+     * 使用FastExcel以批处理方式读取Excel文件中的数据
+     * 此方法适用于需要处理大量数据但只想批量处理特定数量的记录以减少内存消耗的场景
+     *
+     * @param fileInputStream Excel文件输入流，用于指定要读取的文件输入流
+     * @param voClazz         数据模型类的Class对象，用于FastExcel反射生成对象
+     * @param batchSize       每次批量处理的记录数，用于控制内存使用量
+     * @param saveData        消费者接口，用于处理每一批读取的数据
+     * @param errorDataList   错误数据列表，用于保存处理过程中遇到的错误数据(如果为null，一遇到错误就抛出异常)
+     * @param <T>             数据模型类的泛型，表示可以处理任意类型的数据
+     */
+    public static <T> void readBatch(InputStream fileInputStream, Class voClazz, int batchSize, List<T> errorDataList, Consumer<T> saveData) throws IOException {
+        FastExcel.read(fileInputStream, voClazz, new ExcelReadListener<>(batchSize, saveData, (vo, e) -> {
+            if (errorDataList == null) {
+                throw new IllegalArgumentException("批量导入失败: " + e.getMessage(), e);
+            }
+            errorDataList.add(vo);
+        }))
+                .sheet()            // 指定要读取的表格，默认第一个表格
+                .doRead();          // 执行读取操作，开始批量读取Excel数据
+        fileInputStream.close();
+    }
+
     /**
      * 下载excel格式的数据
      *
