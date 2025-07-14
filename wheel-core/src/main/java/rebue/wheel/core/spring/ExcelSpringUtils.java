@@ -1,7 +1,8 @@
 package rebue.wheel.core.spring;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
@@ -26,8 +27,8 @@ public class ExcelSpringUtils {
      * @param dataList 导出的数据列表
      */
     public static ResponseEntity<Flux<DataBuffer>> download(String fileName, Class voClazz, List<?> dataList) {
-        // URI编码文件名
-        String                     encodedFileName = URI.create(fileName).toASCIIString();
+        // URL编码文件名(防止中文乱码)
+        String                     encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         // 设置响应头
         ResponseEntity.BodyBuilder ok              = ResponseEntity.ok()
                 .header(
