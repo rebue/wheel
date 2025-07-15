@@ -3,8 +3,6 @@ package rebue.wheel.core.spring;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -20,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import cn.idev.excel.FastExcel;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
+import rebue.wheel.core.UriUtils;
 
 public class ExcelSpringUtils {
 
@@ -55,7 +54,7 @@ public class ExcelSpringUtils {
      */
     public static ResponseEntity<Flux<DataBuffer>> download(String fileName, Class voClazz, List<?> dataList) {
         // URL编码文件名(防止中文乱码)
-        String                     encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        String                     encodedFileName = UriUtils.encode(fileName);
         // 设置响应头
         ResponseEntity.BodyBuilder ok              = ResponseEntity.ok()
                 .header(

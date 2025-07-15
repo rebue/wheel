@@ -30,6 +30,21 @@ public class UriUtils {
     }
 
     /**
+     * 使用 UTF-8 字符集对字符串进行URL编码
+     * 此方法主要用于对URL中的中文字符进行编码，使其能够安全地在URL中传输
+     * URL编码会将空格编码为加号(+)，但加号在URL中有特殊意义，因此将其进一步编码为%20
+     *
+     * @param str 待编码的字符串
+     * @return 编码后的字符串，其中空格被编码为%20
+     */
+    public static String encode(String str) {
+        // 对字符串进行URL编码，使用UTF-8字符集
+        // 这里使用了Java标准类库中的URLEncoder.encode方法
+        // 然后使用replaceAll方法将所有加号替换为%20
+        return URLEncoder.encode(str, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+    }
+
+    /**
      * 添加查询参数
      * 
      * @param uri             要替换查询参数的uri
@@ -38,9 +53,9 @@ public class UriUtils {
      * @return 添加后的URI
      */
     public static String addQueryParam(String uri, String queryParamName, String queryParamValue) {
-        String queryParamPath = queryParamName + "=" + URLEncoder.encode(queryParamValue, StandardCharsets.UTF_8);
+        String queryParamPath = queryParamName + "=" + UriUtils.encode(queryParamValue);
 
-        String hash = null;
+        String hash           = null;
         if (uri.contains("#")) {
             String[] uriSplit = uri.split("#");
             uri  = uriSplit[0];

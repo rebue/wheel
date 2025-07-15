@@ -1,11 +1,10 @@
 package rebue.wheel.vertx.util;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
+import rebue.wheel.core.UriUtils;
 
 public class JsonObjectUtils {
     /**
@@ -21,8 +20,8 @@ public class JsonObjectUtils {
             if (!result.isEmpty()) {
                 result.append("&");
             }
-            String key   = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8);
-            String value = URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8);
+            String key   = UriUtils.encode(entry.getKey());
+            String value = UriUtils.encode(entry.getValue().toString());
             result.append(key).append("=").append(value);
         }
 

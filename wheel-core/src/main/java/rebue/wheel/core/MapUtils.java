@@ -1,8 +1,7 @@
 package rebue.wheel.core;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,7 +19,7 @@ public class MapUtils {
     public static String map2Str(final Map<String, ?> map) {
         final StringBuilder sb = new StringBuilder();
         for (final Entry<String, ?> item : map.entrySet()) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(",");
             }
             StringBuilder value = new StringBuilder();
@@ -123,11 +122,7 @@ public class MapUtils {
                 if (list == null) {
                     list = new ArrayList<>();
                 }
-                try {
-                    list.add(URLDecoder.decode(p[1], "utf-8"));
-                } catch (final UnsupportedEncodingException e) {
-                    // 不会报的异常
-                }
+                list.add(URLDecoder.decode(p[1], StandardCharsets.UTF_8));
                 map.put(p[0], list);
             }
         }
@@ -185,11 +180,7 @@ public class MapUtils {
         if (StringUtils.isBlank(valueStr)) {
             return null;
         }
-        try {
-            return URLEncoder.encode(valueStr, "utf-8");
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("不支持utf-8编码(不可能的)");
-        }
+        return UriUtils.encode(valueStr);
     }
 
     /**
@@ -199,13 +190,9 @@ public class MapUtils {
         log.info("将请求参数进行url解码");
         for (final Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof String) {
-                try {
-                    log.debug("解码前:{}", entry.getValue());
-                    entry.setValue(URLDecoder.decode(entry.getValue().toString(), "utf-8"));
-                    log.debug("解码后:{}", entry.getValue());
-                } catch (final UnsupportedEncodingException e) {
-                    throw new RuntimeException("不支持utf-8编码(不可能的)");
-                }
+                log.debug("解码前:{}", entry.getValue());
+                entry.setValue(URLDecoder.decode(entry.getValue().toString(), StandardCharsets.UTF_8));
+                log.debug("解码后:{}", entry.getValue());
             }
         }
     }
