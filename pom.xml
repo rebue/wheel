@@ -66,7 +66,7 @@
         <jetty.version>12.0.15</jetty.version>
         <guice.version>7.0.0</guice.version>
         <dagger.version>2.42</dagger.version>
-        <javaparser.version>3.26.3</javaparser.version>
+        <javaparser.version>3.27.0</javaparser.version>
         <jackson.version>2.18.2</jackson.version>
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -74,7 +74,7 @@
         <bean-searcher.version>4.4.2</bean-searcher.version>
         <drools.version>10.0.0</drools.version>
         <beetl.version>3.19.0.RELEASE</beetl.version>
-        <liteflow.version>2.13.0</liteflow.version>
+        <liteflow.version>2.13.2.1</liteflow.version>
         <itext.version>8.0.1</itext.version>
         <skywalking.version>8.16.0</skywalking.version>
         <zookeeper.version>3.9.3</zookeeper.version>
@@ -503,7 +503,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>3.0.4</version>
+                <version>3.0.5</version>
             </dependency>
 
             <dependency>
