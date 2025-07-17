@@ -49,7 +49,7 @@ public class JdbcUtils {
         dbMeta.setUserName(metaData.getUserName());
         dbMeta.setTableNamePattern(tableNamePattern);
         // 获取所有表
-        try (ResultSet tables = metaData.getTables(null, null, tableNamePattern, new String[] { "TABLE" })) {
+        try (ResultSet tables = metaData.getTables(dbMeta.getName(), null, tableNamePattern, new String[] { "TABLE" })) {
             // 遍历表元数据并读出表名和结构
             while (tables.next()) {
                 String    tableName = tables.getString("TABLE_NAME");
@@ -58,12 +58,12 @@ public class JdbcUtils {
                 table.setName(tableName);
                 table.setRemark(tables.getString("REMARKS").replaceAll("\\\\n", "\n"));
                 // 获取主键
-                ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(null, null, tableName);
+                ResultSet primaryKeysResultSet = metaData.getPrimaryKeys(dbMeta.getName(), null, tableName);
                 while (primaryKeysResultSet.next()) {
                     table.getPrimaryKeys().add(primaryKeysResultSet.getString("COLUMN_NAME"));
                 }
                 // 获取unique字段
-                ResultSet uniquesResultSet = metaData.getIndexInfo(null, null, tableName, true, false);
+                ResultSet uniquesResultSet = metaData.getIndexInfo(dbMeta.getName(), null, tableName, true, false);
                 while (uniquesResultSet.next()) {
                     String columnName = uniquesResultSet.getString("COLUMN_NAME");
                     // 排除主键
@@ -72,7 +72,7 @@ public class JdbcUtils {
                     table.getUniques().add(columnName);
                 }
                 // 获取外键
-                ResultSet foreignKeyResultSet = metaData.getImportedKeys(null, null, tableName);
+                ResultSet foreignKeyResultSet = metaData.getImportedKeys(dbMeta.getName(), null, tableName);
                 char      c                   = 'a';    // 数据库别名(主键表别名为a，外键表按字母表顺序b、c、d......)
                 while (foreignKeyResultSet.next()) {
                     ForeignKeyMeta foreignKey = new ForeignKeyMeta();
@@ -84,7 +84,7 @@ public class JdbcUtils {
                     table.getForeignKeys().add(foreignKey);
                 }
                 // 获取表的列元数据
-                try (ResultSet columnResultSet = metaData.getColumns(null, null, tableName, null)) {
+                try (ResultSet columnResultSet = metaData.getColumns(dbMeta.getName(), null, tableName, null)) {
                     // 遍历列元数据并读出列名和数据类型
                     while (columnResultSet.next()) {
                         FieldMeta field = new FieldMeta();
@@ -119,6 +119,7 @@ public class JdbcUtils {
                         }
                         // 如果是MySQL，判断是否是无符号
                         if ("MySQL".equalsIgnoreCase(dbMeta.getProductName())) {
+                            @SuppressWarnings("SqlNoDataSourceInspection")
                             PreparedStatement preparedStatement = connection.prepareStatement("""
                                     select count(*) from information_schema.COLUMNS
                                     where TABLE_NAME=? and COLUMN_NAME=? and COLUMN_TYPE LIKE '%unsigned'
@@ -236,11 +237,11 @@ public class JdbcUtils {
         Integer      fieldType       = property.getField().getType();
         final String fieldName       = property.getField().getName().toLowerCase();
         switch (fieldType) {
-        case BIT, BOOLEAN -> {
+        case BIT, BOOLEAN                                -> {
             clazz  = Boolean.class;
             jsType = "boolean";
         }
-        case TINYINT -> {
+        case TINYINT                                     -> {
             if (property.getName().startsWith("is")) {
                 clazz  = Boolean.class;
                 jsType = "boolean";
@@ -258,7 +259,7 @@ public class JdbcUtils {
                 }
             }
         }
-        case SMALLINT -> {
+        case SMALLINT                                    -> {
             clazz  = Short.class;
             jsType = "number";
             // 如果是字典类字段，获取字典类的全名和简称(全名不一定能获取)
@@ -272,17 +273,17 @@ public class JdbcUtils {
                 isKeyWord = true;
             }
         }
-        case INTEGER -> {
+        case INTEGER                                     -> {
             clazz     = Integer.class;
             jsType    = "number";
             isKeyWord = true;
         }
-        case BIGINT -> {
+        case BIGINT                                      -> {
             // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
             clazz  = Long.class;
             jsType = "string";
         }
-        case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
+        case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL       -> {
             clazz  = BigDecimal.class;
             jsType = "number";
             // 如果不是UUID字段，则加入keyword(判断精度为32的字符串为UUID字段)
@@ -295,7 +296,7 @@ public class JdbcUtils {
             jsType    = "string";
             isKeyWord = true;
         }
-        case DATE -> {
+        case DATE                                        -> {
             if (fieldName.endsWith("_time")) {
                 clazz = LocalTime.class;
             } else if (fieldName.endsWith("_date")) {
@@ -307,15 +308,15 @@ public class JdbcUtils {
             }
             jsType = "string";
         }
-        case TIME -> {
+        case TIME                                        -> {
             clazz  = LocalTime.class;
             jsType = "string";
         }
-        case TIMESTAMP -> {
+        case TIMESTAMP                                   -> {
             clazz  = LocalDateTime.class;
             jsType = "string";
         }
-        case OTHER -> {
+        case OTHER                                       -> {
             if (fieldName.endsWith("point_coord") || fieldName.endsWith("point_location")) {
                 clazz  = Point.class;
                 jsType = "string";
@@ -329,7 +330,7 @@ public class JdbcUtils {
                 throw new IllegalArgumentException("not support sql type: " + fieldType);
             }
         }
-        default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
+        default                                          -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
         // 设置是否密钥
         property.setIsKey(property.getRemark().contains("@密钥"));
@@ -394,10 +395,11 @@ public class JdbcUtils {
         // 类全名不一定能获取，因为从数据库中无法知道应该是哪个包，除非备注中有import:xxx.xxx.类简名
         String       className = null;
         String       classSimpleName;
-        // 如何注释标题下的第1行为导入语句，获取全名
+        // 如何注释标题下的 第1行 为导入语句，获取全名
         String       firstLine = remarks.get(1).strip();
         if (firstLine.startsWith("import:")) {
             List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, firstLine);
+            assert dicGroup != null;
             className       = dicGroup.get(1) + "." + dicGroup.get(2);
             classSimpleName = dicGroup.get(2);
         } else {
