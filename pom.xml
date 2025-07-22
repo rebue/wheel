@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.7.56</version>
+    <version>3.7.57</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -71,6 +71,7 @@
         <jackson-asl.version>1.9.13</jackson-asl.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mybatis.version>3.5.19</mybatis.version>
+        <mybatis-spring.version>3.0.5</mybatis-spring.version>
         <bean-searcher.version>4.4.2</bean-searcher.version>
         <drools.version>10.0.0</drools.version>
         <beetl.version>3.19.0.RELEASE</beetl.version>
@@ -501,9 +502,14 @@
                 <version>1.4.2</version>
             </dependency>
             <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>3.0.5</version>
+                <version>${mybatis-spring.version}</version>
             </dependency>
 
             <dependency>
