@@ -4,7 +4,7 @@
 
     <groupId>com.github.rebue.wheel</groupId>
     <artifactId>wheel</artifactId>
-    <version>3.7.58</version>
+    <version>3.8.59</version>
     <packaging>pom</packaging>
     <name>wheel</name>
     <description>基础函数和工具库</description>
@@ -50,7 +50,7 @@
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
         <spring-boot-admin.version>3.4.4</spring-boot-admin.version>
 
-        <vertx.version>4.5.15</vertx.version>
+        <vertx.version>4.5.18</vertx.version>
 
         <brotli4j.version>1.16.0</brotli4j.version>
         <dubbo.version>3.2.11</dubbo.version>
@@ -561,7 +561,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>4.30.0</version>
+                <version>4.33.0</version>
             </dependency>
 
             <!-- 经测试，liquibase目前不能使用8.0.23~8.0.27版本的mysql的jdbc库 -->
