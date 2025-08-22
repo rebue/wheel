@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.rebue.wheel</groupId>
         <artifactId>wheel-kafka</artifactId>
-        <version>3.8.59</version>
+        <version>3.8.60</version>
     </parent>
 
     <artifactId>http-sink-connector</artifactId>
