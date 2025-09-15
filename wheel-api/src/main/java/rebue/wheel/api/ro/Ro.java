@@ -46,6 +46,11 @@ public class Ro implements Serializable {
      */
     private String            code;
 
+    /**
+     * 创建对象时的时间戳
+     */
+    protected Long            timestamp        = System.currentTimeMillis();
+
     public Ro(final ResultDic result, final String msg) {
         this.result = result;
         this.msg    = msg;

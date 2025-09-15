@@ -54,6 +54,12 @@ public class Vro implements Serializable {
      */
     protected String          code;
 
+    /**
+     * 创建对象时的时间戳
+     */
+    @Builder.Default
+    protected Long            timestamp        = System.currentTimeMillis();
+
     public Vro(final ResultDic result, final String msg) {
         this.result = result;
         this.msg    = msg;
