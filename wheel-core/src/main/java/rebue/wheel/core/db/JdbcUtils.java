@@ -12,7 +12,10 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.CaseFormat;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.postgis.jdbc.geometry.LineString;
 import net.postgis.jdbc.geometry.Point;
 import net.postgis.jdbc.geometry.Polygon;
@@ -94,6 +97,7 @@ public class JdbcUtils {
                         field.setTypeName(columnResultSet.getString("TYPE_NAME"));
                         field.setPrecision(columnResultSet.getInt("COLUMN_SIZE"));
                         field.setScale(columnResultSet.getInt("DECIMAL_DIGITS"));
+                        field.setDefaultValue(columnResultSet.getString("COLUMN_DEF"));
                         field.setIsPrimaryKey(table.getPrimaryKeys().contains(field.getName()));
                         field.setIsUnique(table.getUniques().contains(field.getName()));
                         field.setIsNullable(columnResultSet.getBoolean("IS_NULLABLE"));
@@ -157,6 +161,9 @@ public class JdbcUtils {
      * 连接参数
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class ConnectParam {
         /**
          * 数据库连接字符串

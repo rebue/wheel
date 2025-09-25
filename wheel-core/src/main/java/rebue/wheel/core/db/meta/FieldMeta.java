@@ -34,6 +34,10 @@ public class FieldMeta {
      */
     private Integer scale;
     /**
+     * 默认值
+     */
+    private String  defaultValue;
+    /**
      * 是否主键
      */
     private Boolean isPrimaryKey;
