@@ -1,4 +1,4 @@
-package rebue.wheel.kafka.httpsink;
+package rebue.wheel.kafka.httpsink.config;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;

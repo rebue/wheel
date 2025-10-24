@@ -12,6 +12,7 @@ import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.sink.SinkConnector;
 
 import lombok.extern.slf4j.Slf4j;
+import rebue.wheel.kafka.httpsink.config.HttpSinkConfig;
 
 @Slf4j
 public class HttpSinkConnector extends SinkConnector {

@@ -21,10 +21,10 @@
             <artifactId>connect-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>connect-json</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

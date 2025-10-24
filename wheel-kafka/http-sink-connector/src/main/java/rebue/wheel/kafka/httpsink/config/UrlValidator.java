@@ -1,4 +1,4 @@
-package rebue.wheel.kafka.httpsink;
+package rebue.wheel.kafka.httpsink.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
