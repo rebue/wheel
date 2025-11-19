@@ -1,17 +1,6 @@
 package rebue.wheel.core.db;
 
-import static java.sql.Types.*;
-
-import java.math.BigDecimal;
-import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import com.google.common.base.CaseFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +10,16 @@ import net.postgis.jdbc.geometry.Point;
 import net.postgis.jdbc.geometry.Polygon;
 import rebue.wheel.api.util.RegexUtils;
 import rebue.wheel.core.db.meta.*;
+
+import java.math.BigDecimal;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static java.sql.Types.*;
 
 public class JdbcUtils {
     public static Connection getConnection(ConnectParam connectParam) throws SQLException {
@@ -52,7 +51,7 @@ public class JdbcUtils {
         dbMeta.setUserName(metaData.getUserName());
         dbMeta.setTableNamePattern(tableNamePattern);
         // 获取所有表
-        try (ResultSet tables = metaData.getTables(dbMeta.getName(), null, tableNamePattern, new String[] { "TABLE" })) {
+        try (ResultSet tables = metaData.getTables(dbMeta.getName(), null, tableNamePattern, new String[]{"TABLE"})) {
             // 遍历表元数据并读出表名和结构
             while (tables.next()) {
                 String    tableName = tables.getString("TABLE_NAME");
@@ -84,6 +83,8 @@ public class JdbcUtils {
                     foreignKey.setPkTableName(foreignKeyResultSet.getString("PKTABLE_NAME"));
                     foreignKey.setPkFieldName(foreignKeyResultSet.getString("PKCOLUMN_NAME"));
                     foreignKey.setPkTableAlias(String.valueOf(++c));
+                    String fkFieldName = foreignKey.getFkFieldName();
+                    foreignKey.setFkFieldAlias(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fkFieldName.substring(0, fkFieldName.length() - 3)));
                     table.getForeignKeys().add(foreignKey);
                 }
                 // 获取表的列元数据
@@ -108,6 +109,7 @@ public class JdbcUtils {
                             if (field.getName().equalsIgnoreCase(foreignKey.getFkFieldName())) {
                                 String pkTableName = foreignKey.getPkTableName();
                                 String pkFieldName = foreignKey.getPkFieldName();
+                                String fkFieldName = foreignKey.getFkFieldName();
                                 field.setIsForeignKey(true);
                                 field.setReferencedTableName(pkTableName);
                                 field.setReferencedTableClassName(
@@ -188,7 +190,7 @@ public class JdbcUtils {
     public static List<PojoMeta> dbMetaToPojoMetas(DbMeta dbMeta) {
         List<PojoMeta> pojoMetas = new ArrayList<>();
         for (TableMeta table : dbMeta.getTables()) {
-            PojoMeta pojo                   = PojoMeta.builder()
+            PojoMeta pojo = PojoMeta.builder()
                     .className(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()))
                     .instanceName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, table.getName()))
                     .lowerHyphenName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, table.getName()))
@@ -198,10 +200,12 @@ public class JdbcUtils {
                     .table(table)
                     .build();
             // 计算实例简名(不带项目前缀)
-            String   tableNameWithoutPrefix = table.getName();
-            int      beginIndex             = tableNameWithoutPrefix.indexOf("_") + 1;
-            pojo.setInstanceSimpleName(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,
-                    tableNameWithoutPrefix.substring(beginIndex)));
+            String tableNameWithoutPrefix = table.getName();
+            int    beginIndex             = tableNameWithoutPrefix.indexOf("_") + 1;
+            pojo.setInstanceSimpleName(CaseFormat.UPPER_UNDERSCORE.to(
+                    CaseFormat.LOWER_CAMEL,
+                    tableNameWithoutPrefix.substring(beginIndex)
+            ));
             // 计算小写连字号名(不带项目前缀)
             beginIndex = pojo.getLowerHyphenName().indexOf("-") + 1;
             pojo.setLowerHyphenNameWithoutPrefix(pojo.getLowerHyphenName().substring(beginIndex));
@@ -209,8 +213,9 @@ public class JdbcUtils {
             for (FieldMeta field : table.getFields()) {
                 PropertyMeta property = PropertyMeta.builder()
                         .name(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, field.getName()))
+                        .nameUpperCamel(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, field.getName()))
                         .alias(pojo.getInstanceSimpleName()
-                                + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, field.getName()))
+                               + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, field.getName()))
                         .remark(field.getRemark())
                         .remarks(RemarkUtils.getRemarks(field.getRemark()))
                         .title(pojo.getTitle() + RemarkUtils.getTitle(field.getRemark()))
@@ -244,20 +249,35 @@ public class JdbcUtils {
         Integer      fieldType       = property.getField().getType();
         final String fieldName       = property.getField().getName().toLowerCase();
         switch (fieldType) {
-        case BIT, BOOLEAN                                -> {
-            clazz  = Boolean.class;
-            jsType = "boolean";
-        }
-        case TINYINT                                     -> {
-            if (property.getName().startsWith("is")) {
-                clazz  = Boolean.class;
+            case BIT, BOOLEAN -> {
+                clazz = Boolean.class;
                 jsType = "boolean";
-            } else {
-                clazz  = Byte.class;
+            }
+            case TINYINT -> {
+                if (property.getName().startsWith("is")) {
+                    clazz = Boolean.class;
+                    jsType = "boolean";
+                } else {
+                    clazz = Byte.class;
+                    jsType = "number";
+                    if (fieldName.endsWith("_dic")) {
+                        DicMeta dicMeta = getDicMetaByProperty(property);
+                        className = dicMeta.getClassName();
+                        classSimpleName = dicMeta.getClassSimpleName();
+                    }
+                    // 如果不是字典类字段，加入keyword
+                    else {
+                        isKeyWord = true;
+                    }
+                }
+            }
+            case SMALLINT -> {
+                clazz = Short.class;
                 jsType = "number";
+                // 如果是字典类字段，获取字典类的全名和简称(全名不一定能获取)
                 if (fieldName.endsWith("_dic")) {
                     DicMeta dicMeta = getDicMetaByProperty(property);
-                    className       = dicMeta.getClassName();
+                    className = dicMeta.getClassName();
                     classSimpleName = dicMeta.getClassSimpleName();
                 }
                 // 如果不是字典类字段，加入keyword
@@ -265,79 +285,64 @@ public class JdbcUtils {
                     isKeyWord = true;
                 }
             }
-        }
-        case SMALLINT                                    -> {
-            clazz  = Short.class;
-            jsType = "number";
-            // 如果是字典类字段，获取字典类的全名和简称(全名不一定能获取)
-            if (fieldName.endsWith("_dic")) {
-                DicMeta dicMeta = getDicMetaByProperty(property);
-                className       = dicMeta.getClassName();
-                classSimpleName = dicMeta.getClassSimpleName();
-            }
-            // 如果不是字典类字段，加入keyword
-            else {
+            case INTEGER -> {
+                clazz = Integer.class;
+                jsType = "number";
                 isKeyWord = true;
             }
-        }
-        case INTEGER                                     -> {
-            clazz     = Integer.class;
-            jsType    = "number";
-            isKeyWord = true;
-        }
-        case BIGINT                                      -> {
-            // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
-            clazz  = Long.class;
-            jsType = "string";
-        }
-        case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL       -> {
-            clazz  = BigDecimal.class;
-            jsType = "number";
-            // 如果不是UUID字段，则加入keyword(判断精度为32的字符串为UUID字段)
-            if (property.getField().getPrecision() != 32) {
+            case BIGINT -> {
+                // 判断BIGINT为雪花算法生成的ID字段，所以不会加入keyword
+                clazz = Long.class;
+                jsType = "string";
+            }
+            case FLOAT, REAL, DOUBLE, NUMERIC, DECIMAL -> {
+                clazz = BigDecimal.class;
+                jsType = "number";
+                // 如果不是UUID字段，则加入keyword(判断精度为32的字符串为UUID字段)
+                if (property.getField().getPrecision() != 32) {
+                    isKeyWord = true;
+                }
+            }
+            case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> {
+                clazz = String.class;
+                jsType = "string";
                 isKeyWord = true;
             }
-        }
-        case CHAR, NCHAR, VARCHAR, NVARCHAR, LONGVARCHAR -> {
-            clazz     = String.class;
-            jsType    = "string";
-            isKeyWord = true;
-        }
-        case DATE                                        -> {
-            if (fieldName.endsWith("_time")) {
+            case DATE -> {
+                if (fieldName.endsWith("_time")) {
+                    clazz = LocalTime.class;
+                } else if (fieldName.endsWith("_date")) {
+                    clazz = LocalDate.class;
+                } else if (fieldName.endsWith("_datetime")) {
+                    clazz = LocalDateTime.class;
+                } else {
+                    throw new IllegalStateException("日期类型字段未按规范进行命名");
+                }
+                jsType = "string";
+            }
+            case TIME -> {
                 clazz = LocalTime.class;
-            } else if (fieldName.endsWith("_date")) {
-                clazz = LocalDate.class;
-            } else if (fieldName.endsWith("_datetime")) {
+                jsType = "string";
+            }
+            case TIMESTAMP -> {
                 clazz = LocalDateTime.class;
-            } else {
-                throw new IllegalStateException("日期类型字段未按规范进行命名");
+                jsType = "string";
             }
-            jsType = "string";
-        }
-        case TIME                                        -> {
-            clazz  = LocalTime.class;
-            jsType = "string";
-        }
-        case TIMESTAMP                                   -> {
-            clazz  = LocalDateTime.class;
-            jsType = "string";
-        }
-        case OTHER                                       -> {
-            if (fieldName.endsWith("point_coord") || fieldName.endsWith("point_location")) {
-                clazz  = Point.class;
-                jsType = "string";
-            } else if (fieldName.endsWith("line_coord") || fieldName.endsWith("line_location")) {
-                clazz  = LineString.class;
-                jsType = "string";
-            } else if (fieldName.endsWith("polygon_coord") || fieldName.endsWith("polygon_location")) {
-                clazz  = Polygon.class;
-                jsType = "string";
-            } else {
-                throw new IllegalArgumentException("not support sql type: " + fieldType);
+            case OTHER -> {
+                if (fieldName.endsWith("point_coord") || fieldName.endsWith("point_location")) {
+                    clazz = Point.class;
+                    jsType = "string";
+                } else if (fieldName.endsWith("line_coord") || fieldName.endsWith("line_location")) {
+                    clazz = LineString.class;
+                    jsType = "string";
+                } else if (fieldName.endsWith("polygon_coord") || fieldName.endsWith("polygon_location")) {
+                    clazz = Polygon.class;
+                    jsType = "string";
+                } else {
+                    throw new IllegalArgumentException("not support sql type: " + fieldType);
+                }
             }
-        }
-        default                                          -> throw new IllegalArgumentException("not support sql type: " + fieldType);
+            default -> throw new IllegalArgumentException("not support sql type: " + fieldType);
         }
         // 设置是否密钥
         property.setIsKey(property.getRemark().contains("@密钥"));
@@ -379,7 +384,8 @@ public class JdbcUtils {
                             dicMeta.getItems().add(DicItemMeta.of(
                                     dicGroup.get(0),
                                     dicGroup.get(1),
-                                    dicGroup.get(2)));
+                                    dicGroup.get(2)
+                            ));
                         }
                     }
                     if (!dicMeta.getItems().isEmpty()) {
@@ -393,21 +399,21 @@ public class JdbcUtils {
 
     /**
      * 通过属性获取字典类元数据
-     * 
+     *
      * @param property 属性
      * @return 字典类元数据
      */
     public static DicMeta getDicMetaByProperty(PropertyMeta property) {
-        List<String> remarks   = property.getRemarks();
+        List<String> remarks = property.getRemarks();
         // 类全名不一定能获取，因为从数据库中无法知道应该是哪个包，除非备注中有import:xxx.xxx.类简名
-        String       className = null;
-        String       classSimpleName;
+        String className = null;
+        String classSimpleName;
         // 如何注释标题下的 第1行 为导入语句，获取全名
-        String       firstLine = remarks.get(1).strip();
+        String firstLine = remarks.get(1).strip();
         if (firstLine.startsWith("import:")) {
             List<String> dicGroup = RegexUtils.listGroup(DIC_REGEX, firstLine);
             assert dicGroup != null;
-            className       = dicGroup.get(1) + "." + dicGroup.get(2);
+            className = dicGroup.get(1) + "." + dicGroup.get(2);
             classSimpleName = dicGroup.get(2);
         } else {
             classSimpleName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, property.getName());

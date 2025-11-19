@@ -1,11 +1,11 @@
 package rebue.wheel.core.db.meta;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * 属性元数据
@@ -20,8 +20,14 @@ public class PropertyMeta {
      */
     private String       name;
     /**
-     * 属性别名
+     * 属性名(大驼峰)
      */
+    private String       nameUpperCamel;
+    /**
+     * 属性别名
+     * 原用于给外键关联属性命名，后续用外键名称为前缀+属性类简名来命名
+     */
+    @Deprecated
     private String       alias;
     /**
      * 标题
