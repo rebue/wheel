@@ -57,4 +57,51 @@ public class RegexCst {
      * 在Base64uUrl编码中，字符集是[A-Z, a-z, 0-9, -, _]
      */
     public static final Pattern BASE64URL     = Pattern.compile("^[A-Za-z\\d-_]+$");
+
+    /**
+     * 车牌号码-大陆省份简称正则（不含台湾、香港、澳门）
+     */
+    private static final String CAR_PLATE_MAINLAND_PROVINCE_STRING = "([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼][A-Z])";
+
+    /**
+     * 车牌号码-大陆省份简称正则（含使领）
+     */
+    private static final String CAR_PLATE_MAINLAND_PROVINCE_ALL_STRING = "([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-Z])";
+
+    /**
+     * 车牌号码-大陆常规车牌（蓝牌/黄牌）: 省份+字母+5位序号（字母+数字）
+     */
+    private static final String CAR_PLATE_MAINLAND_NORMAL_STRING = CAR_PLATE_MAINLAND_PROVINCE_STRING + "[A-Z0-9]{5}";
+
+    /**
+     * 车牌号码-大陆常规所有车牌（含使领，蓝牌/黄牌）: 省份+字母+5位序号（字母+数字）
+     */
+    private static final String CAR_PLATE_MAINLAND_NORMAL_ALL_STRING = CAR_PLATE_MAINLAND_PROVINCE_ALL_STRING + "[A-Z0-9]{5}";
+
+    /**
+     * 车牌号码-大陆新能源车牌: 省份+字母+6位序号（最后1位为D/F）
+     */
+    private static final String CAR_PLATE_MAINLAND_NEW_ENERGY_STRING = CAR_PLATE_MAINLAND_PROVINCE_STRING + "[A-Z0-9]{5}[DF]";
+
+    /**
+     * 车牌号码-大陆警车车牌: 省份+字母+警+4位数字
+     */
+    private static final String CAR_PLATE_MAINLAND_POLICE_STRING = "([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼][A-Z])警[0-9]{4}";
+
+    /**
+     * 大陆车牌(不含使/领)
+     */
+    public static final Pattern CAR_PLATE_MAINLAND        =
+            Pattern.compile("^(" + CAR_PLATE_MAINLAND_NORMAL_STRING + "|" + CAR_PLATE_MAINLAND_NEW_ENERGY_STRING + "|" + CAR_PLATE_MAINLAND_POLICE_STRING + ")$");
+    /**
+     * 大陆车牌(含使/领/警)
+     */
+    public static final Pattern CAR_PLATE_MAINLAND_ALL    =
+            Pattern.compile("^(" + CAR_PLATE_MAINLAND_NORMAL_ALL_STRING + "|" + CAR_PLATE_MAINLAND_NEW_ENERGY_STRING + "|" + CAR_PLATE_MAINLAND_POLICE_STRING + ")$");
+    /**
+     * 大陆车牌(不含使/领/警)
+     */
+    public static final Pattern CAR_PLATE_MAINLAND_NORMAL =
+            Pattern.compile("^(" + CAR_PLATE_MAINLAND_NORMAL_STRING + "|" + CAR_PLATE_MAINLAND_NEW_ENERGY_STRING + ")$");
+
 }
