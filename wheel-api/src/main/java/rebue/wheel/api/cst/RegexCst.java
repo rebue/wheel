@@ -79,9 +79,9 @@ public class RegexCst {
     private static final String CAR_PLATE_MAINLAND_NORMAL_ALL_STRING = CAR_PLATE_MAINLAND_PROVINCE_ALL_STRING + "[A-Z0-9]{5}";
 
     /**
-     * 车牌号码-大陆新能源车牌: 省份+字母+6位序号（最后1位为D/F）
+     * 车牌号码-大陆新能源车牌: 省份+字母+6位序号
      */
-    private static final String CAR_PLATE_MAINLAND_NEW_ENERGY_STRING = CAR_PLATE_MAINLAND_PROVINCE_STRING + "[A-Z0-9]{5}[DF]";
+    private static final String CAR_PLATE_MAINLAND_NEW_ENERGY_STRING = CAR_PLATE_MAINLAND_PROVINCE_STRING + "[A-Z0-9]{6}";
 
     /**
      * 车牌号码-大陆警车车牌: 省份+字母+警+4位数字
