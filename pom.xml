@@ -295,6 +295,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.dtflys.forest</groupId>
+                <artifactId>forest-spring-boot-starter</artifactId>
+                <version>1.8.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.ibeetl</groupId>
                 <artifactId>beetl</artifactId>
                 <version>${beetl.version}</version>
