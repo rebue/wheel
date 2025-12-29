@@ -8,5 +8,5 @@ public interface HttpSinkCst {
     /**
      * Kafka 插件的版本
      */
-    String PLUGIN_VERSION          = "3.8.64";
+    String PLUGIN_VERSION          = "3.9.65";
 }
