@@ -91,7 +91,7 @@
         <protostuff.version>1.8.0</protostuff.version>
         <scram.version>2.1</scram.version>
         <!--        <spring-amqp.version>2.4.5</spring-amqp.version>-->
-        <lombok.version>1.18.36</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <junit.version>5.12.0</junit.version>
 
         <graal-sdk.version>23.0.0</graal-sdk.version>
@@ -955,6 +955,15 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
